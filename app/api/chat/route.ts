@@ -30,7 +30,7 @@ Ge korta, konkreta och hjälpsamma svar. Fokusera på praktisk tillämpning. Hå
     ];
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-5-mini",
       messages: messages as any,
       temperature: 0.7,
       max_tokens: 200,
