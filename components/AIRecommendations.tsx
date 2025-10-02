@@ -365,102 +365,100 @@ export default function AIRecommendations({
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto animate-fade-in-up relative px-4 sm:px-6 lg:px-8 py-4">
-      {/* Logo */}
-      <div className="flex items-center justify-center mb-4">
-        <img src="/Optero_logo.png" alt="Optero" className="h-8 lg:h-10 object-contain" />
-      </div>
+    <div className="w-full min-h-screen flex flex-col animate-fade-in-up">
+      {/* Remove duplicate logo - it's now in the global header */}
       
-      <div className="bg-white rounded-2xl lg:rounded-3xl shadow-xl border border-gray-100 overflow-hidden" style={{ minHeight: 'calc(100vh - 200px)' }}>
-        {/* Header */}
-        <div className="p-4 lg:p-6 border-b border-gray-100">
-          <h2 className="text-xl lg:text-2xl font-bold text-gray-900 text-center mb-1">
-            Dina AI-rekommendationer
-          </h2>
-          <p className="text-center text-gray-500 text-sm font-light">
-            Skräddarsydda för dig som{" "}
-            <span className="font-normal">{specialization.toLowerCase()}</span>
-          </p>
-        </div>
-
-        {/* Loading State */}
-        {loading && (
-          <div className="flex flex-col items-center justify-center py-16 lg:py-20">
-            <div className="relative">
-              <div className="w-16 h-16 lg:w-20 lg:h-20 border-4 border-gray-200 rounded-full animate-spin"></div>
-              <div className="absolute top-0 left-0 w-16 h-16 lg:w-20 lg:h-20 border-4 border-gray-900 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-            <p className="text-base lg:text-lg text-gray-700 mt-6 lg:mt-8 font-medium animate-pulse px-4 text-center">
-              {loadingMessage}
+      <div className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4">
+        <div className="bg-white rounded-2xl lg:rounded-3xl shadow-xl border border-gray-100 h-full flex flex-col">
+          {/* Header */}
+          <div className="p-4 lg:p-6 border-b border-gray-100 flex-shrink-0">
+            <h2 className="text-xl lg:text-2xl font-bold text-gray-900 text-center mb-1">
+              Dina AI-rekommendationer
+            </h2>
+            <p className="text-center text-gray-500 text-sm font-light">
+              Skräddarsydda för dig som{" "}
+              <span className="font-normal">{specialization.toLowerCase()}</span>
             </p>
-            <div className="flex gap-1 mt-4">
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-              <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
-              <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
-            </div>
           </div>
-        )}
 
-        {/* Error State */}
-        {error && (
-          <div className="p-6 lg:p-8">
-            <div className="bg-red-50 border border-red-200 rounded-xl lg:rounded-2xl p-4 lg:p-6">
-              <p className="text-red-800 text-sm lg:text-base">{error}</p>
-              <button 
-                onClick={fetchRecommendations} 
-                className="mt-4 px-4 py-2 lg:px-6 lg:py-2 bg-red-600 text-white rounded-lg lg:rounded-xl hover:bg-red-700 transition-all text-sm lg:text-base"
-              >
-                Försök igen
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Main Content with Tabs */}
-        {!loading && !error && recommendations.length > 0 && (
-          <>
-            {/* Tab Navigation */}
-            <div className="flex flex-col lg:flex-row">
-              {/* Mobile/Tablet Tab Navigation */}
-              <div className="lg:hidden border-b border-gray-200">
-                <div className="flex overflow-x-auto scrollbar-hide">
-                  <button
-                    onClick={() => setActiveTab("scenarios")}
-                    className={`flex-1 min-w-fit px-4 py-3 text-sm font-medium transition-all ${
-                      activeTab === "scenarios"
-                        ? "text-gray-900 border-b-2 border-gray-900"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                  >
-                    Verkliga exempel
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("tools")}
-                    className={`flex-1 min-w-fit px-4 py-3 text-sm font-medium transition-all ${
-                      activeTab === "tools"
-                        ? "text-gray-900 border-b-2 border-gray-900"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                  >
-                    AI-verktyg
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("plan")}
-                    className={`flex-1 min-w-fit px-4 py-3 text-sm font-medium transition-all ${
-                      activeTab === "plan"
-                        ? "text-gray-900 border-b-2 border-gray-900"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                  >
-                    Kom igång
-                  </button>
-                </div>
+          {/* Loading State */}
+          {loading && (
+            <div className="flex flex-col items-center justify-center flex-1 py-16 lg:py-20">
+              <div className="relative">
+                <div className="w-16 h-16 lg:w-20 lg:h-20 border-4 border-gray-200 rounded-full animate-spin"></div>
+                <div className="absolute top-0 left-0 w-16 h-16 lg:w-20 lg:h-20 border-4 border-gray-900 border-t-transparent rounded-full animate-spin"></div>
               </div>
+              <p className="text-base lg:text-lg text-gray-700 mt-6 lg:mt-8 font-medium animate-pulse px-4 text-center">
+                {loadingMessage}
+              </p>
+              <div className="flex gap-1 mt-4">
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
+                <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
+              </div>
+            </div>
+          )}
 
-              {/* Desktop Tab Navigation */}
-              <div className="hidden lg:block w-64 border-r border-gray-200 bg-gray-50">
-                <nav className="p-4 space-y-1">
-                  <button
+          {/* Error State */}
+          {error && (
+            <div className="flex-1 p-6 lg:p-8">
+              <div className="bg-red-50 border border-red-200 rounded-xl lg:rounded-2xl p-4 lg:p-6">
+                <p className="text-red-800 text-sm lg:text-base">{error}</p>
+                <button 
+                  onClick={fetchRecommendations} 
+                  className="mt-4 px-4 py-2 lg:px-6 lg:py-2 bg-red-600 text-white rounded-lg lg:rounded-xl hover:bg-red-700 transition-all text-sm lg:text-base"
+                >
+                  Försök igen
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Main Content with Tabs */}
+          {!loading && !error && recommendations.length > 0 && (
+            <div className="flex-1 flex flex-col overflow-hidden">
+              {/* Tab Navigation */}
+              <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
+                {/* Mobile/Tablet Tab Navigation */}
+                <div className="lg:hidden border-b border-gray-200 flex-shrink-0">
+                  <div className="flex overflow-x-auto scrollbar-hide">
+                    <button
+                      onClick={() => setActiveTab("scenarios")}
+                      className={`flex-1 min-w-fit px-4 py-3 text-sm font-medium transition-all whitespace-nowrap ${
+                        activeTab === "scenarios"
+                          ? "text-gray-900 border-b-2 border-gray-900"
+                          : "text-gray-500 hover:text-gray-700"
+                      }`}
+                    >
+                      Verkliga exempel
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("tools")}
+                      className={`flex-1 min-w-fit px-4 py-3 text-sm font-medium transition-all whitespace-nowrap ${
+                        activeTab === "tools"
+                          ? "text-gray-900 border-b-2 border-gray-900"
+                          : "text-gray-500 hover:text-gray-700"
+                      }`}
+                    >
+                      AI-verktyg
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("plan")}
+                      className={`flex-1 min-w-fit px-4 py-3 text-sm font-medium transition-all whitespace-nowrap ${
+                        activeTab === "plan"
+                          ? "text-gray-900 border-b-2 border-gray-900"
+                          : "text-gray-500 hover:text-gray-700"
+                      }`}
+                    >
+                      Kom igång
+                    </button>
+                  </div>
+                </div>
+
+                {/* Desktop Tab Navigation */}
+                <div className="hidden lg:block w-64 border-r border-gray-200 bg-gray-50 flex-shrink-0">
+                  <nav className="p-4 space-y-1">
+                    <button
                     onClick={() => setActiveTab("scenarios")}
                     className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all ${
                       activeTab === "scenarios"
@@ -540,8 +538,8 @@ export default function AIRecommendations({
                 </nav>
               </div>
 
-              {/* Tab Content */}
-              <div className="flex-1 p-6 lg:p-8 overflow-y-auto min-h-[600px] max-h-[800px] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                {/* Tab Content */}
+                <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                   {/* Scenarios Tab */}
                   {activeTab === "scenarios" && scenarios.length > 0 && (
                   <div>
@@ -715,70 +713,71 @@ export default function AIRecommendations({
               </div>
             </div>
 
-            {/* Mobile "Visa hur vi tänkte" for mobile */}
-            {inferredTasks.length > 0 && (
-              <div className="lg:hidden border-t border-gray-200 p-4">
-                <button
-                  onClick={() => setShowThinking(!showThinking)}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <svg 
-                      className={`w-4 h-4 transform transition-transform ${showThinking ? 'rotate-90' : ''}`}
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                    <span>Visa hur vi tänkte</span>
-                  </div>
-                </button>
-                {showThinking && (
-                  <div className="mt-2 p-3 bg-gray-50 rounded-lg text-xs text-gray-600">
-                    <p className="font-semibold mb-2">Vanliga arbetsuppgifter:</p>
-                    <ul className="space-y-1">
-                      {inferredTasks.map((task, i) => (
-                        <li key={i} className="pl-2">• {task}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
+              {/* Mobile "Visa hur vi tänkte" for mobile */}
+              {inferredTasks.length > 0 && (
+                <div className="lg:hidden border-t border-gray-200 p-4">
+                  <button
+                    onClick={() => setShowThinking(!showThinking)}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <svg 
+                        className={`w-4 h-4 transform transition-transform ${showThinking ? 'rotate-90' : ''}`}
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      <span>Visa hur vi tänkte</span>
+                    </div>
+                  </button>
+                  {showThinking && (
+                    <div className="mt-2 p-3 bg-gray-50 rounded-lg text-xs text-gray-600">
+                      <p className="font-semibold mb-2">Vanliga arbetsuppgifter:</p>
+                      <ul className="space-y-1">
+                        {inferredTasks.map((task, i) => (
+                          <li key={i} className="pl-2">• {task}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
 
-            {/* Premium Upgrade CTA - hide in demo mode */}
-            {!isDemo && (
-              <div className="px-6 lg:px-8 pb-6 lg:pb-8">
-                <PremiumUpgrade 
-                  profession={profession}
-                  specialization={specialization}
-                  onUpgrade={handlePremiumUpgrade}
-                />
-              </div>
-            )}
+              {/* Premium Upgrade CTA - hide in demo mode */}
+              {!isDemo && (
+                <div className="px-4 sm:px-6 lg:px-8 pb-4 sm:pb-6 lg:pb-8">
+                  <PremiumUpgrade 
+                    profession={profession}
+                    specialization={specialization}
+                    onUpgrade={handlePremiumUpgrade}
+                  />
+                </div>
+              )}
 
-            <ChatAssistant 
-              context={{
-                profession,
-                specialization,
-                experience,
-                challenges,
-                tasks: tasks.map((t) => ({ task: t.task || t.name || "", priority: t.priority })),
-                recommendations
-              }}
-            />
-          </>
-        )}
+              <ChatAssistant 
+                context={{
+                  profession,
+                  specialization,
+                  experience,
+                  challenges,
+                  tasks: tasks.map((t) => ({ task: t.task || t.name || "", priority: t.priority })),
+                  recommendations
+                }}
+              />
+            </div>
+          )}
 
-        {/* Reset button */}
-        <div className="p-6 lg:p-8 border-t border-gray-100 text-center bg-gray-50">
-          <button 
-            onClick={onReset} 
-            className="px-6 py-2 lg:px-8 lg:py-3 bg-gray-900 text-white rounded-lg lg:rounded-xl hover:bg-gray-800 transition-all duration-200 font-medium text-sm lg:text-base"
-          >
-            Gör en ny analys
-          </button>
+          {/* Reset button */}
+          <div className="p-4 sm:p-6 lg:p-8 border-t border-gray-100 text-center bg-gray-50 flex-shrink-0">
+            <button 
+              onClick={onReset} 
+              className="px-4 py-2 sm:px-6 sm:py-2 lg:px-8 lg:py-3 bg-gray-900 text-white rounded-lg lg:rounded-xl hover:bg-gray-800 transition-all duration-200 font-medium text-sm lg:text-base"
+            >
+              Gör en ny analys
+            </button>
+          </div>
         </div>
       </div>
     </div>
