@@ -5,6 +5,7 @@ import FeedbackSystem from "@/components/FeedbackSystem";
 import ChatAssistant from "@/components/ChatAssistant";
 import ImplementationPlan from "@/components/ImplementationPlan";
 import PremiumUpgrade from "@/components/PremiumUpgrade";
+import StructuredData from "@/components/StructuredData";
 import { useRouter } from "next/navigation";
 
 interface Scenario {
@@ -367,6 +368,15 @@ export default function AIRecommendations({
   return (
     <div className="w-full min-h-screen flex flex-col animate-fade-in-up">
       {/* Remove duplicate logo - it's now in the global header */}
+      
+      {/* Add structured data for SEO */}
+      {!loading && recommendations.length > 0 && (
+        <StructuredData 
+          profession={profession}
+          specialization={specialization}
+          recommendations={recommendations}
+        />
+      )}
       
       <div className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4">
         <div className="bg-white rounded-2xl lg:rounded-3xl shadow-xl border border-gray-100 h-full flex flex-col">

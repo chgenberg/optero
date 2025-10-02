@@ -14,3 +14,28 @@ model ProfessionSpecialization {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
+
+model RecommendationCache {
+  id              Int      @id @default(autoincrement())
+  cacheKey        String   @unique // Hash of profession+specialization+tasks
+  profession      String
+  specialization  String
+  tasks           Json     // Array of tasks with priorities
+  experience      String?
+  challenges      Json?    // Array of challenges
+  
+  // Cached AI responses
+  recommendations Json     // Array of AI tool recommendations
+  scenarios       Json     // Array of real-world scenarios
+  inferredTasks   Json?    // Array of inferred tasks
+  
+  // Metadata
+  hitCount        Int      @default(0)
+  lastUsed        DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Indexes for faster queries
+  @@index([profession, specialization])
+  @@index([lastUsed])
+}

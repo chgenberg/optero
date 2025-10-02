@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { createHash } from "crypto";
+import prisma from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,6 +17,52 @@ export async function POST(request: NextRequest) {
     const safeChallenges: string[] = Array.isArray(challenges) ? challenges : [];
     const safeTasks: { task: string; priority: number }[] = Array.isArray(tasks) ? tasks : [];
 
+    // Create a deterministic cache key based on input
+    const cacheInput = {
+      profession: profession.toLowerCase().trim(),
+      specialization: specialization.toLowerCase().trim(),
+      tasks: safeTasks
+        .sort((a, b) => a.task.localeCompare(b.task))
+        .map(t => ({ task: t.task.toLowerCase().trim(), priority: t.priority }))
+    };
+    
+    const cacheKey = createHash('sha256')
+      .update(JSON.stringify(cacheInput))
+      .digest('hex');
+
+    // Check cache first
+    if (process.env.DATABASE_URL) {
+      try {
+        const cached = await prisma.recommendationCache.findUnique({
+          where: { cacheKey }
+        });
+
+        if (cached) {
+          // Update hit count and last used
+          await prisma.recommendationCache.update({
+            where: { id: cached.id },
+            data: { 
+              hitCount: { increment: 1 },
+              lastUsed: new Date()
+            }
+          });
+
+          console.log(`Cache hit for ${profession}/${specialization}`);
+          
+          return NextResponse.json({
+            scenarios: cached.scenarios,
+            inferredTasks: cached.inferredTasks || [],
+            recommendations: cached.recommendations,
+            cached: true
+          });
+        }
+      } catch (dbError) {
+        console.error("Cache lookup error:", dbError);
+        // Continue without cache
+      }
+    }
+
+    // If not in cache, generate new recommendations
     const prioritizedTasks = safeTasks
       .sort((a, b) => (b?.priority ?? 0) - (a?.priority ?? 0))
       .map((t) => `${t.task} (prioritet: ${t.priority === 5 ? 'HÖG' : t.priority === 3 ? 'MEDEL' : t.priority === 1 ? 'LÅG' : 'OKÄND'})`);
@@ -87,7 +131,11 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
 
     let result: any = { scenarios: [], inferredTasks: [], recommendations: [] };
 
-    if (process.env.OPENAI_API_KEY) {
+    const openai = process.env.OPENAI_API_KEY
+      ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+      : null;
+
+    if (openai) {
       try {
         const response = await openai.responses.create({
           model: "gpt-5",
@@ -107,6 +155,29 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
             result.scenarios = Array.isArray(parsed.scenarios) ? parsed.scenarios : [];
             result.inferredTasks = Array.isArray(parsed.inferredTasks) ? parsed.inferredTasks : [];
             result.recommendations = Array.isArray(parsed.recommendations) ? parsed.recommendations : [];
+
+            // Save to cache if we have valid results
+            if (process.env.DATABASE_URL && result.recommendations.length > 0) {
+              try {
+                await prisma.recommendationCache.create({
+                  data: {
+                    cacheKey,
+                    profession,
+                    specialization,
+                    tasks: safeTasks,
+                    experience,
+                    challenges: safeChallenges,
+                    recommendations: result.recommendations,
+                    scenarios: result.scenarios,
+                    inferredTasks: result.inferredTasks
+                  }
+                });
+                console.log(`Cached new results for ${profession}/${specialization}`);
+              } catch (cacheError) {
+                console.error("Failed to cache results:", cacheError);
+                // Continue anyway
+              }
+            }
           }
         }
       } catch (aiErr) {
@@ -120,4 +191,3 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
     return NextResponse.json({ scenarios: [], inferredTasks: [], recommendations: [] });
   }
 }
-
