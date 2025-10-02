@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(request: NextRequest) {
   try {
     const { industry, challenge } = await request.json();
+    const apiKey = process.env.OPENAI_API_KEY;
 
     const prompt = `Du är en AI-expert och business consultant. Skapa en komplett AI-lösning för detta hackathon-scenario:
 
@@ -78,25 +75,30 @@ VIKTIGT:
 
 Gör lösningen så värdefull och konkret som möjligt!`;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: "Du är en expert på AI-verktyg för business. Du skapar konkreta, implementerbara lösningar. Svara ENDAST med valid JSON.",
-        },
-        { role: "user", content: prompt },
-      ],
-      response_format: { type: "json_object" },
-      temperature: 0.7,
-    });
-
-    const content = completion.choices[0].message.content;
-    if (!content) {
-      throw new Error("No response from AI");
+    // Om ingen API-nyckel: returnera en minimal men giltig fallback så build/deploy inte bryts
+    if (!apiKey) {
+      return NextResponse.json({
+        summary: { timeSaved: "[?]h/vecka", monthlyValue: "[?] kr", implementationTime: "2–4 veckor" },
+        solutions: [],
+        implementationPlan: [],
+        nextSteps: []
+      });
     }
 
-    const result = JSON.parse(content);
+    const openai = new OpenAI({ apiKey });
+    const response = await openai.responses.create({
+      model: "gpt-5-mini",
+      input: prompt,
+    });
+    const content = (response as any).output_text || "";
+    if (!content) throw new Error("Tomt AI-svar");
+    let result: any;
+    try {
+      result = JSON.parse(content);
+    } catch {
+      const match = content.match(/\{[\s\S]*\}/);
+      result = match ? JSON.parse(match[0]) : { summary: {}, solutions: [], implementationPlan: [], nextSteps: [] };
+    }
 
     return NextResponse.json(result);
   } catch (error) {

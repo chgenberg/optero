@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 // Global sessions map
 declare global {
   var interviewSessions: Map<string, any>;
@@ -15,6 +11,7 @@ const interviewSessions = global.interviewSessions || new Map();
 export async function POST(request: NextRequest) {
   try {
     const { sessionId, email } = await request.json();
+    const apiKey = process.env.OPENAI_API_KEY;
 
     // Hämta intervju-session
     const session = interviewSessions.get(sessionId);
@@ -125,14 +122,17 @@ Vanliga problem och lösningar:
 
 Var EXTREMT detaljerad och personlig. Referera till specifika svar från intervjun. Ge KONKRETA, hands-on råd.`;
 
-    const completion = await openai.chat.completions.create({
-      model: "o1", // Använd GPT-5 för djup analys
-      messages: [
-        { role: "user", content: reportPrompt },
-      ],
-    });
-
-    const reportContent = completion.choices[0].message.content || "Rapport kunde inte genereras";
+    let reportContent = "Rapport kunde inte genereras";
+    if (apiKey) {
+      const openai = new OpenAI({ apiKey });
+      try {
+        const response = await openai.responses.create({ model: "gpt-5", input: reportPrompt });
+        const text = (response as any).output_text || "";
+        if (text) reportContent = text;
+      } catch (e) {
+        console.warn("Report generation failed, using placeholder");
+      }
+    }
 
     // I produktion: Generera PDF och skicka via email
     // För nu: returnera markdown-innehåll
