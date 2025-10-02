@@ -1,0 +1,180 @@
+{
+  "specializations": {
+    "Advokat": [
+      "Affärsjuridik",
+      "Arbetsrätt",
+      "Bank och finans",
+      "Brottmål",
+      "Familjerätt",
+      "Fastighetsrätt",
+      "Immaterialrätt",
+      "IT- och dataskydd (GDPR)",
+      "Konkurrensrätt",
+      "Miljörätt",
+      "Processjuridik",
+      "Skatterätt",
+      "Tvistelösning",
+      "Upphandlingsrätt (LOU)",
+      "Bolagsrätt och M&A"
+    ],
+    "Apotekare och receptarie": [
+      "Offentligt apotek",
+      "Sjukhusapotek",
+      "Klinisk farmaci",
+      "Läkemedelssäkerhet (Pharmacovigilance)",
+      "Regulatory Affairs",
+      "Kvalitetssäkring (QA)",
+      "Läkemedelsutveckling",
+      "Tillverkning och produktion"
+    ],
+    "Arkitekt": [
+      "Bostadsarkitektur",
+      "Kommersiella byggnader",
+      "Offentliga byggnader",
+      "Landskapsarkitektur",
+      "Inredningsarkitektur",
+      "Stadsplanering",
+      "Hållbarhet och energidesign",
+      "Kulturmiljö och restaurering"
+    ],
+    "Arbetsterapeut": [
+      "Primärvård",
+      "Äldreomsorg",
+      "Psykiatri",
+      "Barn och ungdom",
+      "Habilitering",
+      "Rehabilitering efter skada",
+      "Arbetslivsinriktad rehabilitering"
+    ],
+
+    "Bagare och konditor": [
+      "Matbröd och surdeg",
+      "Konditori och bakverk",
+      "Tårtor och dessert",
+      "Choklad och konfekt",
+      "Glutenfritt och specialkost",
+      "Industriell produktion",
+      "Café och butik"
+    ],
+    "Barnmorska": [
+      "MVC (mödravård)",
+      "Förlossning",
+      "BB/eftervård",
+      "Gynekologisk mottagning",
+      "Ungdomsmottagning",
+      "Abortvård"
+    ],
+    "Bibliotekarie": [
+      "Folkbibliotek",
+      "Skolbibliotek",
+      "Högskolebibliotek",
+      "Barnbibliotekarie",
+      "Digital bibliotekarie",
+      "Specialbibliotek / myndighet"
+    ],
+    "Brandman": [
+      "Operativ tjänst",
+      "Räddningsledare",
+      "Förebyggande brandskydd",
+      "Utbildning och övning",
+      "Specialenhet (dyk, höjd, CBRN)"
+    ],
+    "Bartender": [
+      "Cocktailbar",
+      "Vinbar",
+      "Öl / tap room",
+      "Hotellbar",
+      "Nattklubb",
+      "Event / catering"
+    ],
+    "Barnskötare": [
+      "Småbarn (1–3 år)",
+      "Storbarn (4–5 år)",
+      "Språkstöd",
+      "Särskilt stöd",
+      "Utepedagogik"
+    ],
+    "Bussförare": [
+      "Stadstrafik",
+      "Region- och landsbygdstrafik",
+      "Flygbuss / express",
+      "Charter och turist",
+      "Skoltrafik"
+    ],
+
+    "Civilingenjör": [
+      "Maskin",
+      "Elektroteknik",
+      "Datateknik",
+      "Industriell ekonomi",
+      "Väg- och vatten / Bygg",
+      "Kemiteknik",
+      "Teknisk fysik",
+      "Medieteknik",
+      "Bioteknik",
+      "Energi och miljö"
+    ],
+    "CNC-operatör": [
+      "Svarv",
+      "Fräs",
+      "Fleroperationsmaskin",
+      "CAM-programmering",
+      "Prototyp / verktyg",
+      "Serietillverkning"
+    ],
+    "Controller": [
+      "Business Controller",
+      "Financial Controller",
+      "Projektcontroller",
+      "Supply Chain Controller",
+      "Sales/Commercial Controller",
+      "Group/Corporate Controller"
+    ],
+    "Copywriter": [
+      "Brand / koncept",
+      "Performance / konvertering",
+      "Sociala medier",
+      "B2B-kommunikation",
+      "Teknisk copy",
+      "Script / rörligt"
+    ]
+    ,
+    "Trafiklärare": [
+      "Personbil (B)",
+      "Motorcykel (A)",
+      "Tung lastbil (C)",
+      "Buss (D)",
+      "Tungt släp (BE/CE)",
+      "Riskutbildning/Riskettan",
+      "Eco-driving & säker körning",
+      "Teori/utbildningsledning"
+    ],
+    "Läkare": [
+      "Allmänmedicin / Primärvård",
+      "Akutsjukvård",
+      "Kirurgi",
+      "Ortopedi",
+      "Kardiologi",
+      "Neurologi",
+      "Psykiatri",
+      "Onkologi",
+      "Anestesi och intensivvård (IVA)",
+      "Barn- och ungdomsmedicin",
+      "Gynekologi & Obstetrik",
+      "Radiologi",
+      "Dermatologi",
+      "ÖNH (öron, näsa, hals)",
+      "Oftalmologi (ögon)",
+      "Geriatrik",
+      "Infektionsmedicin",
+      "Rehabiliteringsmedicin"
+    ]
+  },
+  "defaults": [
+    "Generalist",
+    "Specialist",
+    "Konsult",
+    "Chef/Ledare",
+    "Administrativ roll"
+  ]
+}

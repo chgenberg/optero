@@ -1,0 +1,1790 @@
+{
+  "professions": [
+    {
+      "name": "Administratör och sekreterare",
+      "description": "Administrera, hantera och leverera – rollen är bred!",
+      "category": "Administration",
+      "tasks": [
+        "Ha kontakt med allmänhet, kunder, leverantörer och myndigheter samt ge administrativ service och stöd till chefer eller avdelningar",
+        "Förbereda ärenden, hämta information ur databaser och sammanställa underlag för beslut",
+        "Sköta administration av fakturor, ordrar och inköp samt boka konferenser, resor och andra möten"
+      ]
+    },
+    {
+      "name": "Advokat",
+      "description": "Juridisk expert med klientens intresse i fokus",
+      "category": "Juridik",
+      "tasks": [
+        "Ge juridisk rådgivning och förhandla för klienters räkning inom olika rättsområden, till exempel affärsjuridik, där advokaten tolkar och upprättar avtal",
+        "Företräda klienter i domstol – försvara misstänkta i brottmål eller företräda parter i tvistemål – vilket innebär att granska utredningsmaterial, förhöra vittnen och föra klientens talan",
+        "Bistå i familjerättsliga ärenden genom att ge råd om arv, testamenten och skilsmässor samt genomföra boutredningar och avveckla dödsbon"
+      ]
+    },
+    {
+      "name": "Akutsjuksköterska",
+      "description": "Specialistsjuksköterska som tar snabba beslut vid omvårdnad av akuta och komplexa tillstånd",
+      "category": "Vård och omsorg",
+      "tasks": [
+        "Ge avancerad akut omvårdnad till svårt sjuka eller skadade patienter – göra snabba initiala bedömningar, ta prover, förbereda inför läkarundersökningar, assistera vid behandlingar och påbörja akuta insatser",
+        "Snabbt identifiera livshotande tillstånd hos patienter och fatta omedelbara beslut om prioritering av vård och omvårdnadsåtgärder, trots begränsad information",
+        "Överlämna kritisk patientinformation till nästa vårdgivare (t.ex. när patienten flyttas till en annan avdelning) för att säkerställa kontinuitet i vården"
+      ]
+    },
+    {
+      "name": "Ambulanssjuksköterska",
+      "description": "Sjuksköterska med specialistutbildning som ger akut vård och transporterar patienter i ambulans",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Ambulanssjukvårdare",
+      "description": "Vårdar akut sjuka/skadade i ambulans och assisterar ambulanssjuksköterskan vid utryckningar",
+      "category": "Vård och omsorg",
+      "tasks": [
+        "Ge första hjälpen och akutsjukvård på plats vid olyckor och i patienters hem samt under ambulansfärd – till exempel lägga förband, kontrollera andning, puls och blodtryck, utföra hjärt-lungräddning (HLR) och assistera ambulanssjuksköterskan",
+        "Sköta om ambulansen och dess utrustning genom tekniskt underhåll och regelbunden kontroll – hålla fordon och medicinsk utrustning i ordning, se till att allt är påfyllt samt dokumentera utförda insatser",
+        "Leda och samordna räddningsarbetet på en olycksplats, vilket innefattar att kommunicera med larmcentral (SOS Alarm) och samarbeta med sjukhus, polis och räddningstjänst för en effektiv insats"
+      ]
+    },
+    {
+      "name": "Anestesi- och intensivvårdssjuksköterska",
+      "description": "Specialistsjuksköterska som söver patienter inför operation och vårdar kritiskt sjuka på intensivvårdsavdelning",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Anläggningsarbetare",
+      "description": "Arbetar med mark- och anläggningsprojekt, t.ex. vägbyggnad, rörläggning och grundarbeten",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Anläggningsmaskinförare",
+      "description": "Kör och hanterar tunga arbetsmaskiner vid bygg- och anläggningsarbete",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Användbarhetsexpert",
+      "description": "Specialiserad på att göra produkter och system användarvänliga genom tester och designförbättringar",
+      "category": "IT och teknik"
+    },
+    {
+      "name": "Apotekare och receptarie",
+      "description": "Läkemedelsexperter som utvecklar, tillverkar och informerar om läkemedel",
+      "category": "Vård och omsorg",
+      "tasks": [
+        "Informera och ge råd till kunder om läkemedel – både receptbelagda och receptfria – samt om egenvårdsprodukter, med stort fokus på kundservice",
+        "Ansvara för säker hantering av läkemedel på apoteket, till exempel som läkemedelsansvarig som ser till att verksamheten följer lagen, upprätthåller hög kvalitet och patientsäkerhet",
+        "Arbeta inom läkemedelsindustrin med utveckling av nya mediciner – från forskning, tillverkning och kliniska prövningar till registrering hos myndigheter samt marknadsföring och försäljning"
+      ]
+    },
+    {
+      "name": "Apotekstekniker",
+      "description": "Medarbetare på apotek som hjälper kunder, hanterar kassan och ger enklare receptfria läkemedelsrådgivning",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Arbetsförmedlare",
+      "description": "För samman personer som letar arbete med arbetsgivare som letar arbetskraft",
+      "category": "Social verksamhet"
+    },
+    {
+      "name": "Arbetsmiljöingenjör",
+      "description": "Arbetar med att förebygga och förbättra arbetsmiljön genom riskbedömningar, mätningar och utbildningar",
+      "category": "Teknik och ingenjör"
+    },
+    {
+      "name": "Arbetsmiljöinspektör",
+      "description": "Myndighetsperson som inspekterar arbetsplatser för att kontrollera att arbetsmiljölagar följs",
+      "category": "Myndighet"
+    },
+    {
+      "name": "Arbetsterapeut",
+      "description": "Hjälper personer att återfå eller förbättra sin förmåga att utföra dagliga aktiviteter",
+      "category": "Vård och omsorg",
+      "tasks": [
+        "Träna och stötta personer som på grund av skada, sjukdom eller funktionsnedsättning har nedsatt förmåga, så att de kan klara sina dagliga aktiviteter – till exempel personlig vård, arbete eller fritid",
+        "Anpassa personens miljö och hjälpmedel efter behov – prova ut och justera tekniska hjälpmedel (som rullstolar eller andra hjälpmedel) samt vid behov anpassa bostad, arbetsplats eller skola för att underlätta vardagen",
+        "Ge handledning och stöd till anhöriga och andra professioner (t.ex. vårdpersonal) om hur de kan hjälpa och underlätta för personen i det dagliga livet"
+      ]
+    },
+    {
+      "name": "Arkitekt",
+      "description": "Förbereder byggnadsprojekt, skapar nya idéer och lösningar utifrån beställarens behov och krav",
+      "category": "Bygg och design",
+      "tasks": [
+        "Skissa och utforma byggnader och miljöer – allt från enskilda rum och hus till parker och stadsdelar – utifrån beställarens behov och önskemål",
+        "Projektera byggnadsprojekt genom att ta fram ritningar, modeller och kostnadsberäkningar som underlag för hur det färdiga resultatet ska se ut",
+        "Integrera estetiska, tekniska, ekonomiska och miljömässiga krav i designprocessen och samarbeta med beställare och ingenjörer för att skapa funktionella, hållbara lösningar för användarna"
+      ]
+    },
+    {
+      "name": "Arkivarie",
+      "description": "Ansvarar för att organisera, bevara och tillgängliggöra arkivmaterial",
+      "category": "Administration"
+    },
+    {
+      "name": "Audionom",
+      "description": "Specialist på hörsel som utreder hörselnedsättningar och provar ut hörapparater",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Automationstekniker",
+      "description": "Installerar, programmerar och underhåller automatiserade system och industrirobotar",
+      "category": "Teknik och ingenjör"
+    },
+    {
+      "name": "Bagare och konditor",
+      "description": "Morgonpigg kreatör som bakar allt ifrån bullar och bröd till bakverk",
+      "category": "Livsmedel",
+      "tasks": [
+        "Baka olika sorters matbröd och kaffebröd – mäta upp ingredienser, blanda och jäsa degar, forma bröd och bullar samt grädda dem till färdiga bakverk",
+        "Skapa tårtor, bakelser och andra sötsaker – vispa grädde, baka tårtbottnar, fylla och glasera bakverk samt dekorera exempelvis bröllopstårtor och desserter",
+        "Planera den dagliga produktionen i bageriet och sköta inköp av råvaror, så att ingredienser alltid finns tillgängliga för brödbak och konditorivaror"
+      ]
+    },
+    {
+      "name": "Bankrådgivare och banktjänsteman",
+      "description": "Hjälper kunder med bankärenden, ger ekonomisk rådgivning och hanterar lån",
+      "category": "Ekonomi och finans"
+    },
+    {
+      "name": "Bantekniker",
+      "description": "Underhåller och reparerar järnvägsspår, växlar och signalsystem",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Barnmorska",
+      "description": "Specialistutbildad sjuksköterska som vårdar kvinnor före, under och efter förlossning",
+      "category": "Vård och omsorg",
+      "tasks": [
+        "Vårda blivande mödrar under graviditeten – genomföra kontroller av mammans och fostrets hälsa, ge information och rådgivning om graviditet samt förbereda föräldrar genom föräldrautbildning",
+        "Ansvara för förlossningar och eftervård – stötta och övervaka kvinnan och barnet under förlossningen, ge smärtlindring vid behov, hjälpa till under själva födseln och ta hand om mamman och det nyfödda barnet direkt efteråt (inklusive första amningen)",
+        "Arbeta med sexuell och reproduktiv hälsa – ge preventivmedelsrådgivning, utföra gynekologiska hälsokontroller, skriva ut preventivmedel samt ge vård och stöd i samband med aborter"
+      ]
+    },
+    {
+      "name": "Barnsjuksköterska",
+      "description": "Sjuksköterska specialiserad på vård av sjuka barn",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Barnskötare",
+      "description": "Tar hand om barn på förskolor eller fritidshem",
+      "category": "Pedagogik och utbildning",
+      "tasks": [
+        "Ta hand om barnens dagliga omsorg och trygghet på förskolan – arbeta tillsammans med förskollärare för att ge varje barn en säker, omhändertagande och stimulerande miljö som följer förskolans läroplan",
+        "Delta aktivt i barnens lek och pedagogiska aktiviteter, både inomhus och utomhus – leka med barnen, läsa sagor, sjunga, måla och utforska omvärlden för att främja deras fantasi, lärande och utveckling",
+        "Uppmuntra och utmana barnens nyfikenhet och färdigheter – stödja språkutveckling, tidig matematik och upptäckarglädje i naturvetenskap/teknik genom lek, samt hjälpa barnen att utveckla sociala förmågor och värdegrund (t.ex. samarbete och respekt)"
+      ]
+    },
+    {
+      "name": "Bartender",
+      "description": "Blandar drinkar och serverar drycker i barer och restauranger",
+      "category": "Hotell och restaurang",
+      "tasks": [
+        "Blanda drinkar och servera drycker över baren – blanda cocktails enligt recept, servera öl, vin, alkoholfria alternativ och kaffe med hög servicekänsla, även under tider med högt tryck",
+        "Ta emot gästernas beställningar och ge rekommendationer – föreslå passande drycker, svara på frågor om dryckernas smak och ursprung, samt hantera betalningar och se till att kassan stämmer efter arbetspasset",
+        "Hålla ordning i baren – se till att barområdet är rent och trevligt, fylla på glas, is, frukter och andra tillbehör, och övervaka att det finns tillräckligt med drycker. Följa alkohollagens regler så att alkohol serveras ansvarsfullt"
+      ]
+    },
+    {
+      "name": "Begravningsentreprenör",
+      "description": "Organiserar och genomför begravningar",
+      "category": "Service"
+    },
+    {
+      "name": "Behandlingsassistent och socialpedagog",
+      "description": "Arbetar med människor som har sociala problem, missbruk eller funktionsvariationer",
+      "category": "Social verksamhet"
+    },
+    {
+      "name": "Bergarbetare i gruva",
+      "description": "Bryter malm och mineral under jord",
+      "category": "Gruva och berg"
+    },
+    {
+      "name": "Bergarbetare inom bygg och anläggning",
+      "description": "Spränger och bryter berg vid tunneldrift och vägbyggen",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Besiktningstekniker, bilprovning",
+      "description": "Genomför kontrollbesiktningar av fordon",
+      "category": "Fordon"
+    },
+    {
+      "name": "Betongarbetare",
+      "description": "Armerar och gjuter betongkonstruktioner",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Bibliotekarie",
+      "description": "Arbetar på bibliotek med att organisera, låna ut och vägleda i informationssökning",
+      "category": "Kultur och media",
+      "tasks": [
+        "Hantera bibliotekets mediabestånd – samla in, katalogisera och kvalitetsgranska information samt ansvara för inköp av böcker, tidskrifter och digitala medier så att användarna har tillgång till pålitligt material",
+        "Ge service och vägledning till besökare – hjälpa låntagare att söka och hitta information, lära ut hur man använder bibliotekets söktjänster samt arrangera läsfrämjande aktiviteter som sagostunder, bokcirklar eller författarbesök",
+        "Anpassa verksamheten till olika målgrupper – till exempel stötta barn och ungdomar i deras läsutveckling på folk- och skolbibliotek (genom lästräning och källkritik) eller hjälpa studenter och forskare med avancerad informationssökning på högskolebibliotek"
+      ]
+    },
+    {
+      "name": "Bilförsäljare",
+      "description": "Säljer bilar och ger råd till kunder kring bilköp",
+      "category": "Försäljning"
+    },
+    {
+      "name": "Bilskadereparatör",
+      "description": "Reparerar kaross- och lackskador på fordon",
+      "category": "Fordon"
+    },
+    {
+      "name": "Biolog",
+      "description": "Utför forskning och utredningar om levande organismer, ekologi och miljö",
+      "category": "Naturvetenskap"
+    },
+    {
+      "name": "Biomedicinsk analytiker",
+      "description": "Utför laboratorieanalyser av prover inom hälso- och sjukvård",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Biståndsbedömare",
+      "description": "Utreder äldres eller funktionshindrades behov av hjälp",
+      "category": "Social verksamhet"
+    },
+    {
+      "name": "Borrtekniker",
+      "description": "Borrar efter vatten, energi eller vid byggprojekt",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Brandingenjör",
+      "description": "Arbetar med brandsäkerhet och förebyggande brandskydd",
+      "category": "Säkerhet"
+    },
+    {
+      "name": "Brandman",
+      "description": "Rycker ut vid bränder, olyckor och andra nödlägen",
+      "category": "Säkerhet",
+      "tasks": [
+        "Rycka ut vid bränder, trafikolyckor och andra akuta nödlägen för att rädda människor, egendom och miljö samt begränsa skador – arbeta effektivt under press för att släcka bränder eller hjälpa skadade så snabbt som möjligt",
+        "Förbereda sig och utrustningen för insats – träna regelbundet på räddningsinsatser, kontrollera och underhålla brandutrustning och fordon, så att allt fungerar felfritt vid larm",
+        "Bedriva förebyggande arbete – genomföra brandskyddsinspektioner och informera allmänhet, skolor och företag om brandsäkerhet för att förhindra att bränder och olyckor uppstår"
+      ]
+    },
+    {
+      "name": "Brevbärare",
+      "description": "Sorterar och delar ut post till hushåll och företag",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Budbilsförare",
+      "description": "Kör mindre transportbilar för att hämta och leverera paket",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Bussförare",
+      "description": "Kör buss i linjetrafik eller beställningstrafik",
+      "category": "Transport och logistik",
+      "tasks": [
+        "Köra buss säkert i linjetrafik enligt tidtabell – transportera passagerare på stads- eller landsbygdslinjer, express- eller flygbussar, och se till att de kommer fram tryggt och i tid",
+        "Sälja och kontrollera biljetter ombord, assistera passagerare (t.ex. hjälpa till vid påstigning av äldre eller funktionshindrade) samt ropa ut hållplatser och ge trafikinformation under resans gång",
+        "Hantera kassan och administrativa rutiner – räkna och redovisa biljettintäkter efter avslutat arbetspass, samt ibland ta hand om paket eller gods som skickas med bussen"
+      ]
+    },
+    {
+      "name": "Butikssäljare",
+      "description": "Arbetar i butik med att hjälpa kunder och ge god service",
+      "category": "Försäljning",
+      "tasks": [
+        "Hjälpa kunder och ge god service – vara lyhörd för kundernas behov, besvara frågor om olika varor och ge råd om produktval och skötsel",
+        "Sköta försäljning och kassaarbete – registrera kundernas köp i kassan, hantera betalningar (kontant eller elektroniskt) samt räkna kassan och redovisa dagskassan efter stängning",
+        "Ansvara för varuflödet i butiken – beställa nya varor, packa upp leveranser, prismärka produkter och fylla på hyllor löpande; i vissa butiker även hantera post- och pakettjänster samt stå för skyltning och exponering i butiken"
+      ]
+    },
+    {
+      "name": "Byggnadsplåtslagare",
+      "description": "Tillverkar och monterar plåtdetaljer på byggnader",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "CNC-operatör",
+      "description": "Ställer in och kör CNC-maskiner för att tillverka komponenter",
+      "category": "Tillverkning",
+      "tasks": [
+        "Programmera, ställa in och övervaka CNC-styrda maskiner för tillverkning av detaljer",
+        "Läsa och tolka ritningar samt mäta och kontrollera att de producerade komponenterna uppfyller kvalitetskraven",
+        "Utföra löpande underhåll på maskinerna och lösa tekniska problem vid driftstopp"
+      ]
+    },
+    {
+      "name": "Controller",
+      "description": "Kontrollerar, analyserar och rapporterar hur företag styrs",
+      "category": "Ekonomi och finans",
+      "tasks": [
+        "Sköta företagets budgetering och ekonomiska prognoser för att planera verksamhetens ekonomi",
+        "Analysera finansiella rapporter och nyckeltal för att identifiera trender, risker och förbättringsområden",
+        "Genomföra kostnadsuppföljning och lönsamhetsanalyser samt föreslå effektiviseringar för att stödja affärsbeslut"
+      ]
+    },
+    {
+      "name": "Copywriter",
+      "description": "Skriver reklamtexter och budskap för kampanjer",
+      "category": "Marknadsföring",
+      "tasks": [
+        "Skapa reklamtexter och kreativa budskap för annonser, kampanjer och annan marknadsföring i olika medier",
+        "Göra research och samla fakta om produkter eller tjänster som underlag, för att sedan bearbeta informationen till målgruppsanpassade texter",
+        "Utforma slagkraftiga sloganer och innehåll som engagerar läsaren, samt anpassa språk och ton efter olika kanaler (tryck, webb, radio/TV)"
+      ]
+    },
+    {
+      "name": "Dansare",
+      "description": "Utövar scenisk dans inom olika genrer",
+      "category": "Kultur och media",
+      "tasks": [
+        "Repetera koreografier och träna fysiskt flera timmar varje dag för att upprätthålla teknik och kondition inför föreställningar",
+        "Framföra dansnummer på scen och uttrycka känslor och berättelser med kroppen som instrument vid olika föreställningar och evenemang",
+        "Samarbeta med koreografer och andra dansare genom gemensamma repetitioner, samt anpassa sig till olika dansstilar och uppsättningar"
+      ]
+    },
+    {
+      "name": "Dietist",
+      "description": "Expert på kost och näringslära",
+      "category": "Vård och omsorg",
+      "tasks": [
+        "Bedöma och analysera patienters näringsbehov utifrån hälsotillstånd och sjukdom, t.ex. genom att utreda näringsstatus",
+        "Ge kostrådgivning och upprätta individuella kostplaner för patienter, med målet att förbättra hälsa eller behandla näringsrelaterade problem",
+        "Informera och utbilda om näringslära, till exempel föreläsa för patientgrupper eller handleda vårdpersonal i kost- och näringsfrågor"
+      ]
+    },
+    {
+      "name": "Distributionselektriker",
+      "description": "Underhåller eldistributionsnät och reparerar elledningar",
+      "category": "El och elektronik",
+      "tasks": [
+        "Bygga och dra nya kraftledningar och kablar för eldistribution, både luftledningar och markkablar",
+        "Underhålla, inspektera och reparera elnätet, inklusive ledningar, ställverk och transformatorer, för att säkerställa driftsäkerhet",
+        "Felsöka och åtgärda fel i eldistributionsnätet, särskilt vid strömavbrott, samt snabbt rycka ut för att återställa ström till kunder"
+      ]
+    },
+    {
+      "name": "Djurskötare",
+      "description": "Tar hand om djur inom lantbruk eller djurparker",
+      "category": "Djurvård",
+      "tasks": [
+        "Utfodra och vattna lantbruksdjuren dagligen samt se till att de får rätt foder och näring efter behov",
+        "Rengöra stall och djurens utrymmen för att upprätthålla god hygien och djurhälsa",
+        "Övervaka djurens hälsotillstånd och välbefinnande, upptäcka tecken på sjukdom och vid behov assistera vid vård eller tillkalla veterinär"
+      ]
+    },
+    {
+      "name": "Djurvårdare (djurpark)",
+      "description": "Tar hand om djur i djurpark och möter besökare",
+      "category": "Djurvård",
+      "tasks": [
+        "Mata och ge vatten till djurparksdjuren samt hålla rent i burar, hägn, akvarier, terrarier och stall så att djuren har en trygg och ren miljö",
+        "Observera djurens hälsa – märka om något djur verkar bli sjukt eller skadat, vårda sjuka djur i samråd med veterinär och arbeta förebyggande för god djurhälsa",
+        "Informera och guida besökare om djuren och verksamheten, t.ex. vid visningar eller pedagogiska program, särskilt på mindre djurparker där kundkontakt ingår i rollen"
+      ]
+    },
+    {
+      "name": "Drifttekniker vid värme- och vattenverk",
+      "description": "Övervakar anläggningar som producerar fjärrvärme eller rent vatten",
+      "category": "Teknik och ingenjör",
+      "tasks": [
+        "Övervaka och styra driften av tekniska system eller anläggningar för att se till att allt fungerar optimalt",
+        "Utföra service, underhåll och reparationer på maskiner och utrustning regelbundet, så att driften hålls igång utan avbrott",
+        "Förebygga och åtgärda driftstörningar, vilket innebär att felsöka problem snabbt och vidta åtgärder för att undvika stopp i verksamheten"
+      ]
+    },
+    {
+      "name": "Ekonom",
+      "description": "Arbetar med analys, redovisning, finans eller management",
+      "category": "Ekonomi och finans",
+      "tasks": [
+        "Budgetera och planera ekonomin – upprätta budgetar och ekonomiska planer samt följa upp utfallet mot budget för verksamheten",
+        "Sköta redovisning och bokföring – hantera bokföringen löpande, göra bokslut och se till att rapporter och revisioner utförs korrekt",
+        "Analysera ekonomiska underlag – utreda och utvärdera ekonomiska resultat, ta fram utredningar/rapporter och ge underlag för affärsbeslut inom företaget"
+      ]
+    },
+    {
+      "name": "Ekonomiassistent",
+      "description": "Sköter löpande bokföring och fakturahantering",
+      "category": "Ekonomi och finans",
+      "tasks": [
+        "Hantera leverantörs- och kundfakturor – sköta leverantörsreskontra samt kundreskontra",
+        "Sköta löpande bokföring och avstämningar – bokföra dagliga affärshändelser, stämma av konton och kontrollera att bokföringen stämmer mot verifikationer",
+        "Bistå vid bokslut och ekonomisk rapportering – hjälpa till med månads- och årsbokslut, upprätta enklare rapporter och stötta redovisningsekonomer eller ekonomichefer"
+      ]
+    },
+    {
+      "name": "Elektriker",
+      "description": "Installerar och underhåller elektriska system",
+      "category": "El och elektronik",
+      "tasks": [
+        "Installera elutrustning och ledningar i olika miljöer – t.ex. montera elcentraler och belysning, dra kablar samt sätta upp uttag och strömbrytare",
+        "Felsöka och reparera elektriska anläggningar – åtgärda fel i elinstallationer, byta ut trasiga komponenter och se till att anläggningen fungerar säkert efter ritningar och elscheman",
+        "Utföra underhåll och service på elsystem – regelbundet kontrollera installationer, genomföra mindre ombyggnationer och säkerställa att el-arbeten följer gällande säkerhetsregler"
+      ]
+    },
+    {
+      "name": "El- och kontaktledningstekniker",
+      "description": "Arbetar med kontaktledningar för spårtrafik",
+      "category": "El och elektronik",
+      "tasks": [
+        "Underhålla och reparera kontaktledningar för järnväg, tunnelbana eller spårväg",
+        "Bygga och montera nya kontaktledningssystem vid ny- eller ombyggnation av järnvägslinjer",
+        "Felsöka problem i elförsörjningen till tåg och snabbt återställa driften"
+      ]
+    },
+    {
+      "name": "Elkraftingenjör",
+      "description": "Arbetar med elkraftsystem och eldistribution",
+      "category": "El och elektronik",
+      "tasks": [
+        "Projektera och driftsätta elkraftsystem – planera utformning av elproduktions- och eldistributionsanläggningar",
+        "Underhålla och optimera elnät och elkraftutrustning – analysera kraftsystemens prestanda och genomföra förbättringar",
+        "Utföra tekniska beräkningar och simuleringar av elnätet för att dimensionera komponenter och föreslå tekniska lösningar"
+      ]
+    },
+    {
+      "name": "Energiingenjör",
+      "description": "Effektiviserar energianvändning och utvecklar energisystem",
+      "category": "Teknik och ingenjör",
+      "tasks": [
+        "Kartlägga och analysera energiförbrukning i byggnader eller industrier",
+        "Föreslå energieffektiviseringsåtgärder och beräkna kostnad/effekt",
+        "Utveckla och optimera energisystem, införa förnybar teknik och övervaka drift"
+      ]
+    },
+    {
+      "name": "Entreprenör",
+      "description": "Startar och driver företag utifrån identifierade affärsmöjligheter",
+      "category": "Företagande",
+      "tasks": [
+        "Identifiera affärsmöjligheter och utveckla affärsidéer",
+        "Starta och driva företag – affärsplan, finansiering, budget och ekonomi",
+        "Marknadsföra och sälja – bygga kundrelationer och leda försäljningsarbete"
+      ]
+    },
+    {
+      "name": "Eventkoordinator",
+      "description": "Planerar och leder genomförandet av evenemang",
+      "category": "Event och kommunikation",
+      "tasks": [
+        "Planera och projektleda evenemang – från koncept till genomförande på plats",
+        "Koordinera logistik och resurser – lokaler, teknik, catering, budget och kontrakt",
+        "Genomföra och följa upp event – hantera oförutsedda problem och utvärdera"
+      ]
+    },
+    {
+      "name": "Elevassistent",
+      "description": "Stöttar elever med särskilda behov i skolan",
+      "category": "Pedagogik och utbildning",
+      "tasks": [
+        "Stödja elever i behov av extra stöd under skoldagen – i klassrum och på raster",
+        "Hjälpa till med anpassade uppgifter och pedagogiskt stöd samt skapa trygg miljö",
+        "Samarbeta med lärare och föräldrar – planera stödet, ge återkoppling och delta i möten"
+      ]
+    },
+    {
+      "name": "Fotograf",
+      "description": "Tar fotografier för olika syften",
+      "category": "Kultur och media"
+    },
+    {
+      "name": "Fotterapeut",
+      "description": "Behandlar fotbesvär och ger fotvård",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Friskvårdskonsulent och hälsopedagog",
+      "description": "Arbetar med att främja hälsa och välmående",
+      "category": "Hälsa och träning"
+    },
+    {
+      "name": "Frisör",
+      "description": "Klipper och stylar hår",
+      "category": "Service"
+    },
+    {
+      "name": "Fritidsledare",
+      "description": "Planerar och leder fritidsaktiviteter",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Frivårdsinspektör",
+      "description": "Arbetar inom kriminalvårdens frivård",
+      "category": "Säkerhet"
+    },
+    {
+      "name": "Fysiker",
+      "description": "Studerar fysikens lagar",
+      "category": "Naturvetenskap"
+    },
+    {
+      "name": "Fysioterapeut",
+      "description": "Rehabiliterar genom rörelse- och träningsterapi",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Företagssäljare",
+      "description": "Säljer varor eller tjänster från företag till företag",
+      "category": "Försäljning"
+    },
+    {
+      "name": "Författare",
+      "description": "Skriver böcker, manus eller andra texter",
+      "category": "Kultur och media"
+    },
+    {
+      "name": "Församlingspedagog",
+      "description": "Bedriver pedagogisk verksamhet inom kyrkan",
+      "category": "Kyrka"
+    },
+    {
+      "name": "Förskollärare",
+      "description": "Undervisar och tar hand om barn i förskolan",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Försäkringssäljare och försäkringsrådgivare",
+      "description": "Säljer försäkringar och ger råd om försäkringslösningar",
+      "category": "Ekonomi och finans"
+    },
+    {
+      "name": "GIS-ingenjör",
+      "description": "Arbetar med geografiska informationssystem",
+      "category": "IT och teknik"
+    },
+    {
+      "name": "Glastekniker och glasmästare",
+      "description": "Monterar glas i fönster, dörrar och fasader",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Golvläggare",
+      "description": "Lägger in golvmaterial som parkett och plastmattor",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Grafisk formgivare",
+      "description": "Designar trycksaker och digital grafik",
+      "category": "Design och formgivning"
+    },
+    {
+      "name": "Grovarbetare",
+      "description": "Utför enklare, fysiskt tunga arbetsuppgifter",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Grovplåtslagare",
+      "description": "Tillverkar och monterar större plåtkonstruktioner",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Grundlärare i fritidshem",
+      "description": "Lärare med inriktning mot arbete i fritidshem",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Grundlärare",
+      "description": "Lärare i grundskolan",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Grundutbildad sjuksköterska",
+      "description": "Sjuksköterska med grundutbildning",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Guide",
+      "description": "Leder turister och ger information om sevärdheter",
+      "category": "Turism"
+    },
+    {
+      "name": "Guldsmed och silversmed",
+      "description": "Tillverkar och reparerar smycken",
+      "category": "Hantverk"
+    },
+    {
+      "name": "Hamnarbetare",
+      "description": "Lastar, lossar och stuvar gods i hamnar",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Handpaketerare",
+      "description": "Packar varor för hand i förpackningar",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Hjälpmedelstekniker",
+      "description": "Anpassar och reparerar hjälpmedel",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Hotellreceptionist",
+      "description": "Tar emot gäster på hotell",
+      "category": "Hotell och restaurang"
+    },
+    {
+      "name": "Hovslagare",
+      "description": "Sätter hästskor på hästar",
+      "category": "Djurvård"
+    },
+    {
+      "name": "Hudterapeut",
+      "description": "Behandlar kunders hud",
+      "category": "Skönhet och hälsa"
+    },
+    {
+      "name": "Håltagare",
+      "description": "Borrar och sågar öppningar i betong och berg",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "IT-säkerhetsspecialist",
+      "description": "Skyddar IT-system mot intrång och cyberattacker",
+      "category": "IT och teknik"
+    },
+    {
+      "name": "Idrottstränare",
+      "description": "Tränar och leder idrottsutövare",
+      "category": "Hälsa och träning"
+    },
+    {
+      "name": "Illustratör",
+      "description": "Skapar tecknade eller målade bilder",
+      "category": "Design och formgivning"
+    },
+    {
+      "name": "Industridesigner",
+      "description": "Formger produkter med fokus på funktion och estetik",
+      "category": "Design och formgivning"
+    },
+    {
+      "name": "Industrielektriker",
+      "description": "Underhåller och reparerar elektrisk utrustning i industrin",
+      "category": "El och elektronik"
+    },
+    {
+      "name": "Industrilackerare",
+      "description": "Lackerar och ytbehandlar industriprodukter",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Ingenjör inom bygg- och anläggning",
+      "description": "Planerar och leder byggprojekt",
+      "category": "Teknik och ingenjör"
+    },
+    {
+      "name": "Ingenjör inom elektroteknik",
+      "description": "Utvecklar och förbättrar el- och elektroniksystem",
+      "category": "Teknik och ingenjör"
+    },
+    {
+      "name": "Ingenjör inom kemi och kemiteknik",
+      "description": "Arbetar med kemiska processer och produkter",
+      "category": "Teknik och ingenjör"
+    },
+    {
+      "name": "Ingenjör inom maskinteknik",
+      "description": "Konstruerar och utvecklar maskiner",
+      "category": "Teknik och ingenjör"
+    },
+    {
+      "name": "Inköpare och upphandlare",
+      "description": "Ansvarar för att köpa in varor och tjänster",
+      "category": "Ekonomi och finans"
+    },
+    {
+      "name": "Inrednings- och möbelsnickare",
+      "description": "Tillverkar specialanpassade möbler och inredningar",
+      "category": "Hantverk"
+    },
+    {
+      "name": "Inredningsarkitekt",
+      "description": "Formger interiörer",
+      "category": "Design och formgivning"
+    },
+    {
+      "name": "Installations- och serviceelektriker",
+      "description": "Installerar el-system i byggnader",
+      "category": "El och elektronik"
+    },
+    {
+      "name": "Isoleringsmontör",
+      "description": "Monterar värme-, kyla- eller ljudisolering",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "IT-arkitekt",
+      "description": "Planerar IT-systemens övergripande struktur",
+      "category": "IT och teknik"
+    },
+    {
+      "name": "Journalist",
+      "description": "Samlar in information och rapporterar nyheter",
+      "category": "Kultur och media"
+    },
+    {
+      "name": "Jurist",
+      "description": "Arbetar med lagar och avtal",
+      "category": "Juridik"
+    },
+    {
+      "name": "Kabinpersonal",
+      "description": "Tar hand om passagerare ombord på flygplan",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Kafé- och konditoribiträde",
+      "description": "Arbetar på café eller konditori",
+      "category": "Hotell och restaurang"
+    },
+    {
+      "name": "Kallskänka",
+      "description": "Förbereder kalla rätter i restaurangkök",
+      "category": "Hotell och restaurang"
+    },
+    {
+      "name": "Kemist",
+      "description": "Forskar i och analyserar kemiska ämnen",
+      "category": "Naturvetenskap"
+    },
+    {
+      "name": "Kiropraktor",
+      "description": "Behandlar smärta i rörelseapparaten",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Naprapat",
+      "description": "Behandlar smärta i mjukdelar och leder",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Osteopat",
+      "description": "Behandlar helhetligt genom muskuloskeletal terapi",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Kock",
+      "description": "Lagare av mat på restaurang eller storkök",
+      "category": "Hotell och restaurang"
+    },
+    {
+      "name": "Kommunikatör",
+      "description": "Arbetar med kommunikation och information",
+      "category": "Marknadsföring"
+    },
+    {
+      "name": "Konstnär",
+      "description": "Skapar konstnärliga verk",
+      "category": "Kultur och media"
+    },
+    {
+      "name": "Kranförare",
+      "description": "Opererar lyftkranar vid byggarbetsplatser",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Kriminalvårdare",
+      "description": "Arbetar inom kriminalvården",
+      "category": "Säkerhet"
+    },
+    {
+      "name": "Kronofogde",
+      "description": "Driver in obetalda skulder",
+      "category": "Juridik"
+    },
+    {
+      "name": "Kundtjänstmedarbetare",
+      "description": "Ger service och support åt kunder",
+      "category": "Service"
+    },
+    {
+      "name": "Kurator",
+      "description": "Ger psykosocialt stöd och samtalsterapi",
+      "category": "Social verksamhet"
+    },
+    {
+      "name": "Kustbevakningstjänsteman",
+      "description": "Övervakar havsområden",
+      "category": "Säkerhet"
+    },
+    {
+      "name": "Kyl- och värmepumpstekniker",
+      "description": "Installerar och servar kylaggregat och värmepumpar",
+      "category": "Teknik och ingenjör"
+    },
+    {
+      "name": "Köks- och restaurangbiträden",
+      "description": "Hjälper till i storkök eller restaurangkök",
+      "category": "Hotell och restaurang"
+    },
+    {
+      "name": "Laboratorieingenjör",
+      "description": "Utför kemiska, biologiska eller tekniska analyser",
+      "category": "Naturvetenskap"
+    },
+    {
+      "name": "Lagerarbetare",
+      "description": "Arbetar på lager med att ta emot, plocka och packa varor",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Landskapsarkitekt",
+      "description": "Planerar och utformar utemiljöer",
+      "category": "Design och formgivning"
+    },
+    {
+      "name": "Landskapsingenjör",
+      "description": "Arbetar med teknik och drift av utemiljöer",
+      "category": "Teknik och ingenjör"
+    },
+    {
+      "name": "Lantbrukare",
+      "description": "Driver jordbruk med växtodling eller djurhållning",
+      "category": "Lantbruk"
+    },
+    {
+      "name": "Lantmätare",
+      "description": "Kartlägger och mäter upp markområden",
+      "category": "Teknik och ingenjör"
+    },
+    {
+      "name": "Larm- och säkerhetstekniker",
+      "description": "Installerar och servar larm och säkerhetsanläggningar",
+      "category": "Säkerhet"
+    },
+    {
+      "name": "Lastbils- och maskinmekaniker",
+      "description": "Reparerar och underhåller tunga fordon",
+      "category": "Fordon"
+    },
+    {
+      "name": "Lastbilsförare",
+      "description": "Kör lastbil för att transportera gods",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Lednings- och organisationsutvecklare",
+      "description": "Analyserar och förbättrar organisationers struktur",
+      "category": "Management"
+    },
+    {
+      "name": "Ljudtekniker",
+      "description": "Sköter ljudupptagning och ljudåtergivning",
+      "category": "Kultur och media"
+    },
+    {
+      "name": "Logistiker",
+      "description": "Planerar och optimerar flöden av varor",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Logoped",
+      "description": "Behandlar tal-, röst- och språksvårigheter",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Lokförare",
+      "description": "Kör tåg enligt tidtabell",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Läkare",
+      "description": "Utreder, diagnostiserar och behandlar sjukdomar",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Läkemedelskonsulent",
+      "description": "Marknadsför läkemedel till hälso- och sjukvårdspersonal",
+      "category": "Försäljning"
+    },
+    {
+      "name": "Lärare i bild",
+      "description": "Undervisar elever i bildämnet",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Lärare i hem- och konsumentkunskap",
+      "description": "Undervisar i matlagning och näringslära",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Lärare i idrott och hälsa",
+      "description": "Undervisar i idrottsämnet",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Låssmed och låstekniker",
+      "description": "Installerar, byter och reparerar lås",
+      "category": "Service"
+    },
+    {
+      "name": "Löne- och personaladministratörer",
+      "description": "Sköter lönehantering och personaladministration",
+      "category": "Administration"
+    },
+    {
+      "name": "Makeup-artist",
+      "description": "Professionell sminkör",
+      "category": "Skönhet och hälsa"
+    },
+    {
+      "name": "Marknadsassistent",
+      "description": "Hjälper marknadsavdelningen med administrativa uppgifter",
+      "category": "Marknadsföring"
+    },
+    {
+      "name": "Marknadsförare",
+      "description": "Planerar och genomför marknadsföringsstrategier",
+      "category": "Marknadsföring"
+    },
+    {
+      "name": "Maskinförare inom lantbruk",
+      "description": "Kör jordbruksmaskiner",
+      "category": "Lantbruk"
+    },
+    {
+      "name": "Maskinmontör",
+      "description": "Monterar maskindelar och utrustning",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Maskinoperatör",
+      "description": "Sköter produktionsmaskiner",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Maskinsnickare",
+      "description": "Bearbetar trä med maskiner",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Massör",
+      "description": "Ger professionell massagebehandlingar",
+      "category": "Skönhet och hälsa"
+    },
+    {
+      "name": "Medicinteknisk ingenjör",
+      "description": "Underhåller medicinsk utrustning",
+      "category": "Teknik och ingenjör"
+    },
+    {
+      "name": "Miljö- och hälsoskyddsinspektör",
+      "description": "Utför livsmedelstillsyn och miljökontroller",
+      "category": "Myndighet"
+    },
+    {
+      "name": "Miljövårdsyrken",
+      "description": "Arbetar med att skydda miljön och naturen",
+      "category": "Miljö"
+    },
+    {
+      "name": "Modedesigner",
+      "description": "Formger kläder och modekollektioner",
+      "category": "Design och formgivning"
+    },
+    {
+      "name": "Textildesigner",
+      "description": "Designar textilmönster",
+      "category": "Design och formgivning"
+    },
+    {
+      "name": "Modersmålslärare",
+      "description": "Undervisar elever i deras modersmål",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Murare",
+      "description": "Bygger väggar och fasader med tegel",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Musiker",
+      "description": "Utövar musik professionellt",
+      "category": "Kultur och media"
+    },
+    {
+      "name": "Musiklärare",
+      "description": "Undervisar elever i musik",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Mäklare inom finans",
+      "description": "Handlar med värdepapper",
+      "category": "Ekonomi och finans"
+    },
+    {
+      "name": "Målare",
+      "description": "Målar byggnader",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Nagelterapeut",
+      "description": "Sköter om och förskönar naglar",
+      "category": "Skönhet och hälsa"
+    },
+    {
+      "name": "Nätverkstekniker",
+      "description": "Installerar och underhåller datanätverk",
+      "category": "IT och teknik"
+    },
+    {
+      "name": "Officer",
+      "description": "Befäl inom Försvarsmakten",
+      "category": "Försvar"
+    },
+    {
+      "name": "Operationssjuksköterska",
+      "description": "Assisterar kirurger under operationer",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Optiker",
+      "description": "Undersöker syn och provar ut glasögon",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Ordersamordnare",
+      "description": "Koordinerar kundorder och leveranser",
+      "category": "Logistik"
+    },
+    {
+      "name": "Ortopedingenjör",
+      "description": "Utformar proteser och ortoser",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Ortopedtekniker",
+      "description": "Tillverkar proteser och ortoser",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Parkarbetare",
+      "description": "Sköter parker och grönytor",
+      "category": "Trädgård"
+    },
+    {
+      "name": "Trädgårdsanläggare",
+      "description": "Anlägger nya trädgårdar",
+      "category": "Trädgård"
+    },
+    {
+      "name": "Parkeringsvakt",
+      "description": "Övervakar parkerade fordon",
+      "category": "Säkerhet"
+    },
+    {
+      "name": "Personalspecialist",
+      "description": "Arbetar med personalfrågor",
+      "category": "HR"
+    },
+    {
+      "name": "Personbilsmekaniker",
+      "description": "Servar och reparerar personbilar",
+      "category": "Fordon",
+      "tasks": [
+        "Felsöka och reparera personbilar – utföra service, underhåll och reparationer på bilar, ofta med hjälp av datoriserad diagnostik för att hitta felkoder och problem",
+        "Ha kundkontakt och utföra felsökning genom samtal – ta emot kunder som lämnar in sin bil, lyssna på deras beskrivning av problem, uppskatta tid och kostnad för reparationen samt informera kunden om vad som behöver åtgärdas",
+        "Byta ut eller laga trasiga bildelar och system (t.ex. motor, bromsar, elektronik) och kontrollera att allt fungerar efter reparation, till exempel genom provkörning och slutlig funktionskontroll"
+      ]
+    },
+    {
+      "name": "Personlig assistent",
+      "description": "Hjälper personer med funktionsnedsättning",
+      "category": "Social verksamhet"
+    },
+    {
+      "name": "Pilot",
+      "description": "Flyger passagerarflygplan",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Pizzabagare",
+      "description": "Lagare av pizzor",
+      "category": "Hotell och restaurang"
+    },
+    {
+      "name": "Planeringsarkitekt",
+      "description": "Planerar utformningen av stadsdelar",
+      "category": "Design och formgivning"
+    },
+    {
+      "name": "Plattsättare",
+      "description": "Monterar kakel och klinker",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Polis",
+      "description": "Skyddar allmänheten och upprätthåller lag och ordning",
+      "category": "Säkerhet"
+    },
+    {
+      "name": "Prepresstekniker",
+      "description": "Förbereder material för tryck",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Processoperatör",
+      "description": "Övervakar processer i industrin",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Produktionstekniker",
+      "description": "Förbättrar tillverkningsprocesser",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Projektledare",
+      "description": "Planerar och leder projekt",
+      "category": "Management"
+    },
+    {
+      "name": "Präst",
+      "description": "Leder församlingar inom kyrkan",
+      "category": "Kyrka"
+    },
+    {
+      "name": "Pastor",
+      "description": "Leder församlingar inom kyrkan",
+      "category": "Kyrka"
+    },
+    {
+      "name": "Psykiatrisjuksköterska",
+      "description": "Vårdar patienter med psykiska sjukdomar",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Psykolog",
+      "description": "Utreder och behandlar psykisk ohälsa",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Psykoterapeut",
+      "description": "Behandlar genom terapeutiska samtal",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Receptionist",
+      "description": "Tar emot besökare och kunder",
+      "category": "Administration"
+    },
+    {
+      "name": "Redovisningsekonom",
+      "description": "Sköter bokslut och årsredovisningar",
+      "category": "Ekonomi och finans"
+    },
+    {
+      "name": "Regissör",
+      "description": "Leder arbetet vid en film-, TV- eller teaterproduktion",
+      "category": "Kultur och media"
+    },
+    {
+      "name": "Rekryterare",
+      "description": "Arbetar med att hitta och anställa personal",
+      "category": "HR"
+    },
+    {
+      "name": "Renhållningsarbetare",
+      "description": "Samlar in hushållsavfall",
+      "category": "Service"
+    },
+    {
+      "name": "Reseledare",
+      "description": "Leder och tar hand om turistgrupper",
+      "category": "Turism"
+    },
+    {
+      "name": "Reservdelsspecialist",
+      "description": "Identifierar och beställer reservdelar",
+      "category": "Försäljning"
+    },
+    {
+      "name": "Resesäljare",
+      "description": "Säljer resor och semesterpaket",
+      "category": "Försäljning"
+    },
+    {
+      "name": "Revisor",
+      "description": "Granskar företags bokföring",
+      "category": "Ekonomi och finans"
+    },
+    {
+      "name": "Ridlärare",
+      "description": "Utbildar ryttare i ridning",
+      "category": "Djurvård"
+    },
+    {
+      "name": "Ridtränare",
+      "description": "Tränar tävlingsryttare",
+      "category": "Djurvård"
+    },
+    {
+      "name": "Röntgensjuksköterska",
+      "description": "Genomför röntgen- och MRI-undersökningar",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "SOS-operatör",
+      "description": "Tar emot nödsamtal via 112",
+      "category": "Säkerhet"
+    },
+    {
+      "name": "Larmoperatör",
+      "description": "Tar emot larm och skickar ut hjälp",
+      "category": "Säkerhet"
+    },
+    {
+      "name": "Saneringsarbetare",
+      "description": "Rengör och sanerar skadade miljöer",
+      "category": "Service"
+    },
+    {
+      "name": "Scenograf",
+      "description": "Designar scenmiljöer och dekorer",
+      "category": "Kultur och media"
+    },
+    {
+      "name": "Servitör",
+      "description": "Serverar mat och dryck på restauranger",
+      "category": "Hotell och restaurang"
+    },
+    {
+      "name": "Servitris",
+      "description": "Serverar mat och dryck på restauranger",
+      "category": "Hotell och restaurang"
+    },
+    {
+      "name": "Signaltekniker",
+      "description": "Underhåller signalsystem för järnvägen",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Sjukhusfysiker",
+      "description": "Expert på strålning och medicinsk fysik",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Sjuksköterska inom äldrevård",
+      "description": "Vårdar äldre patienter",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Sjuksköterska",
+      "description": "Vårdar patienter inom hälso- och sjukvården",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Sjö- och flygräddningsledare",
+      "description": "Koordinerar räddningsinsatser till sjöss eller i luften",
+      "category": "Säkerhet"
+    },
+    {
+      "name": "Sjöfartsyrken",
+      "description": "Olika yrken ombord på fartyg",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Skadereglerare",
+      "description": "Utreder försäkringsärenden efter skador",
+      "category": "Ekonomi och finans"
+    },
+    {
+      "name": "Skattehandläggare",
+      "description": "Granskar deklarationer och fattar skattebeslut",
+      "category": "Myndighet"
+    },
+    {
+      "name": "Skogsarbetare",
+      "description": "Utför praktiskt arbete i skogen",
+      "category": "Skogsvård"
+    },
+    {
+      "name": "Skogsmaskinförare",
+      "description": "Kör skördare eller skotare i skogsbruket",
+      "category": "Skogsvård"
+    },
+    {
+      "name": "Skolsköterska",
+      "description": "Arbetar med hälsovård i skolan",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Skorstensfejare",
+      "description": "Rengör skorstenar och eldstäder",
+      "category": "Service"
+    },
+    {
+      "name": "Skådespelare",
+      "description": "Gestaltar roller i teater, film eller TV",
+      "category": "Kultur och media"
+    },
+    {
+      "name": "Skötare inom psykiatrisk vård",
+      "description": "Vårdar patienter med psykiska sjukdomar",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Slaktare",
+      "description": "Avlivar djur och hanterar slaktkroppar",
+      "category": "Livsmedel"
+    },
+    {
+      "name": "Styckare",
+      "description": "Styckar kött i detaljstycken",
+      "category": "Livsmedel"
+    },
+    {
+      "name": "Slöjdlärare",
+      "description": "Undervisar i trä-, metall- eller textilslöjd",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Smed",
+      "description": "Bearbetar metall genom smide",
+      "category": "Hantverk"
+    },
+    {
+      "name": "Stålbyggare",
+      "description": "Monterar stålstommar och konstruktioner",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Socialförsäkringshandläggare",
+      "description": "Handlägger ärenden kring socialförsäkringar",
+      "category": "Myndighet"
+    },
+    {
+      "name": "Socialsekreterare",
+      "description": "Utreder och beslutar om sociala insatser",
+      "category": "Social verksamhet"
+    },
+    {
+      "name": "Socionom",
+      "description": "Arbetar med socialt arbete",
+      "category": "Social verksamhet"
+    },
+    {
+      "name": "Solcellsinstallatör",
+      "description": "Monterar och installerar solpaneler",
+      "category": "El och elektronik"
+    },
+    {
+      "name": "Soldat",
+      "description": "Grundutbildad soldat i Försvarsmakten",
+      "category": "Försvar"
+    },
+    {
+      "name": "Sjöman",
+      "description": "Grundutbildad sjöman i Försvarsmakten",
+      "category": "Försvar"
+    },
+    {
+      "name": "Specialist och rådgivare inom lantbruk",
+      "description": "Ger expertråd till lantbrukare",
+      "category": "Lantbruk"
+    },
+    {
+      "name": "Specialist och rådgivare inom trädgård",
+      "description": "Ger expertråd inom trädgård",
+      "category": "Trädgård"
+    },
+    {
+      "name": "Specialist och rådgivare inom skogsbruk",
+      "description": "Ger skogsägare råd om skogsskötsel",
+      "category": "Skogsvård"
+    },
+    {
+      "name": "Specialistofficer",
+      "description": "Erfaren officer med fördjupad kompetens",
+      "category": "Försvar"
+    },
+    {
+      "name": "Speciallärare",
+      "description": "Hjälper elever med särskilda behov",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Specialpedagog",
+      "description": "Handleder lärare och utvecklar stödinsatser",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Speditör",
+      "description": "Organiserar internationella transporter",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Spelutvecklare",
+      "description": "Utvecklar datorspel eller mobilspel",
+      "category": "IT och teknik"
+    },
+    {
+      "name": "Spårsvetsare",
+      "description": "Svetsar samman räls på järnväg",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Stenmontör",
+      "description": "Monterar stenmaterial i byggprojekt",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Studie- och yrkesvägledare",
+      "description": "Vägleder i frågor om utbildning och yrkesval",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Städare",
+      "description": "Rengör kontor, skolor och andra lokaler",
+      "category": "Service"
+    },
+    {
+      "name": "Lokalvårdare",
+      "description": "Rengör kontor, skolor och andra lokaler",
+      "category": "Service"
+    },
+    {
+      "name": "Ställningsbyggare",
+      "description": "Monterar och river byggnadsställningar",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Stödassistent",
+      "description": "Ger stöd åt personer med funktionsvariationer",
+      "category": "Social verksamhet"
+    },
+    {
+      "name": "Supporttekniker, IT",
+      "description": "Ger teknisk support till IT-användare",
+      "category": "IT och teknik"
+    },
+    {
+      "name": "Svetsare",
+      "description": "Fogar samman metall med svetsning",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Systemförvaltare",
+      "description": "Förvaltar och vidareutvecklar IT-system",
+      "category": "IT och teknik"
+    },
+    {
+      "name": "Systemutvecklare",
+      "description": "Utvecklar och programmerar mjukvara",
+      "category": "IT och teknik"
+    },
+    {
+      "name": "Sågverksoperatör",
+      "description": "Sågar stockar till plank",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Tak- och tätskiktsmontör",
+      "description": "Lägger takpapp och tätskikt",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Tandhygienist",
+      "description": "Förebygger och behandlar tandsjukdomar",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Tandläkare",
+      "description": "Undersöker och behandlar tänder",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Tandsköterska",
+      "description": "Assisterar tandläkaren",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Tandtekniker",
+      "description": "Tillverkar tandersättningar",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Tatuerare",
+      "description": "Ritar konstverk på huden med nål och bläck",
+      "category": "Skönhet och hälsa"
+    },
+    {
+      "name": "Taxiförare",
+      "description": "Kör taxi och transporterar kunder",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Telefonförsäljare",
+      "description": "Säljer via telefon",
+      "category": "Försäljning"
+    },
+    {
+      "name": "Telefonist",
+      "description": "Arbetar i telefonväxel",
+      "category": "Administration"
+    },
+    {
+      "name": "Teletekniker",
+      "description": "Installerar telekommunikationsutrustning",
+      "category": "IT och teknik"
+    },
+    {
+      "name": "Testare",
+      "description": "Testar mjukvara",
+      "category": "IT och teknik"
+    },
+    {
+      "name": "Testledare",
+      "description": "Leder mjukvarutestning",
+      "category": "IT och teknik"
+    },
+    {
+      "name": "Tidningsbud",
+      "description": "Delar ut tidningar",
+      "category": "Service"
+    },
+    {
+      "name": "Tolk",
+      "description": "Översätter tal mellan olika språk",
+      "category": "Service"
+    },
+    {
+      "name": "Trader",
+      "description": "Köper och säljer värdepapper",
+      "category": "Ekonomi och finans"
+    },
+    {
+      "name": "Fondförvaltare",
+      "description": "Hanterar investerares kapital i fonder",
+      "category": "Ekonomi och finans"
+    },
+    {
+      "name": "Trafikassistent",
+      "description": "Arbetar på flygplats med service till resenärer",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Trafikledare",
+      "description": "Styr och övervakar trafik",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Trafiklärare",
+      "description": "Utbildar blivande förare",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Transportledare",
+      "description": "Planerar transporter av gods",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Transportsamordnare",
+      "description": "Samordnar transporter",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Truckförare",
+      "description": "Kör gaffeltruck på lager",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Tryckare",
+      "description": "Sköter tryckpressar",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Träarbetare",
+      "description": "Bygger träkonstruktioner",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Snickare",
+      "description": "Bygger träkonstruktioner",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Trädgårdsodlare",
+      "description": "Odlar blommor och växter",
+      "category": "Trädgård"
+    },
+    {
+      "name": "Tunnplåtslagare",
+      "description": "Tillverkar tunna plåtdetaljer",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Turistinformatör",
+      "description": "Ger besökare information om sevärdheter",
+      "category": "Turism"
+    },
+    {
+      "name": "Tågvärd",
+      "description": "Sköter service och säkerhet ombord på tåg",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Ombordansvarig",
+      "description": "Ansvarar för säkerhet och ordning ombord på tåg",
+      "category": "Transport och logistik"
+    },
+    {
+      "name": "Underhållstekniker",
+      "description": "Utför underhåll på maskiner",
+      "category": "Teknik och ingenjör"
+    },
+    {
+      "name": "Undersköterska inom hemtjänst",
+      "description": "Ger omvårdnad till äldre i hemmet",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Undersköterska inom äldreboende",
+      "description": "Ger omvårdnad på äldreboende",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Undersköterska inom vårdavdelning",
+      "description": "Arbetar på sjukhusavdelningar",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Undersköterska",
+      "description": "Ger omvårdnad inom vården",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Undertaksmontör",
+      "description": "Monterar innertakskonstruktioner",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Underwriter",
+      "description": "Riskbedömare på försäkringsbolag",
+      "category": "Ekonomi och finans"
+    },
+    {
+      "name": "Universitets- och högskolelärare",
+      "description": "Undervisar på universitet och högskola",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Utbildningsadministratör",
+      "description": "Administrerar utbildningar",
+      "category": "Administration"
+    },
+    {
+      "name": "Utredare",
+      "description": "Utreder olika frågor",
+      "category": "Myndighet"
+    },
+    {
+      "name": "VS-montör",
+      "description": "Installerar rörsystem för VVS",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Industrirörmontör",
+      "description": "Installerar industriella rörsystem",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Vaktmästare",
+      "description": "Sköter vaktmästeriuppgifter",
+      "category": "Service"
+    },
+    {
+      "name": "Ventilationsmontör",
+      "description": "Installerar ventilationskanaler",
+      "category": "Bygg och anläggning"
+    },
+    {
+      "name": "Verktygsmakare",
+      "description": "Tillverkar precisionsverktyg",
+      "category": "Tillverkning"
+    },
+    {
+      "name": "Veterinär",
+      "description": "Djurläkare",
+      "category": "Djurvård"
+    },
+    {
+      "name": "Vindkrafttekniker",
+      "description": "Underhåller vindkraftverk",
+      "category": "Energi"
+    },
+    {
+      "name": "Visual merchandiser",
+      "description": "Utformar skyltfönster och butiksytor",
+      "category": "Försäljning"
+    },
+    {
+      "name": "Butikskommunikatör",
+      "description": "Utformar skyltfönster och butiksytor",
+      "category": "Försäljning"
+    },
+    {
+      "name": "Väktare",
+      "description": "Bevakar lokaler och områden",
+      "category": "Säkerhet"
+    },
+    {
+      "name": "Ordningsvakt",
+      "description": "Upprätthåller ordning på offentliga platser",
+      "category": "Säkerhet"
+    },
+    {
+      "name": "Vårdadministratör",
+      "description": "Sköter administrativa uppgifter i sjukvården",
+      "category": "Administration"
+    },
+    {
+      "name": "Medicinsk sekreterare",
+      "description": "Sköter administrativa uppgifter i sjukvården",
+      "category": "Administration"
+    },
+    {
+      "name": "Vårdbiträde",
+      "description": "Hjälper patienter med grundläggande behov",
+      "category": "Vård och omsorg"
+    },
+    {
+      "name": "Webbdesigner",
+      "description": "Utvecklar och designar webbsidor",
+      "category": "IT och teknik"
+    },
+    {
+      "name": "Yrkeslärare i gymnasieskolan",
+      "description": "Undervisar på yrkesprogram",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Ämneslärare i gymnasieskolan",
+      "description": "Undervisar i specifika ämnen på gymnasiet",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Ämneslärare åk 7–9",
+      "description": "Undervisar i högstadiet",
+      "category": "Pedagogik och utbildning"
+    },
+    {
+      "name": "Åklagare",
+      "description": "Utreder brott och för talan i domstol",
+      "category": "Juridik"
+    },
+    {
+      "name": "Återvinningsarbetare",
+      "description": "Sorterar och bearbetar återvinningsmaterial",
+      "category": "Miljö"
+    },
+    {
+      "name": "Översättare",
+      "description": "Översätter skriven text mellan språk",
+      "category": "Service"
+    }
+  ]
+}
+
