@@ -691,7 +691,7 @@ export default function AIRecommendations({
                           </div>
 
                           <div onClick={(e) => e.stopPropagation()}>
-                            <FeedbackSystem recommendation={rec.name} />
+                            <FeedbackSystem recommendationId={index} recommendationName={rec.name} />
                           </div>
                         </div>
                       ))}
@@ -709,7 +709,6 @@ export default function AIRecommendations({
                       recommendations={recommendations} 
                       profession={profession} 
                       specialization={specialization} 
-                      onClose={() => {}} 
                     />
                   </div>
                 )}
@@ -765,7 +764,7 @@ export default function AIRecommendations({
                 specialization,
                 experience,
                 challenges,
-                tasks,
+                tasks: tasks.map((t) => ({ task: t.task || t.name || "", priority: t.priority })),
                 recommendations
               }}
             />
