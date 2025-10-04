@@ -138,6 +138,12 @@ export default function Home() {
         <div className="space-y-12 max-w-2xl mx-auto w-full">
           {/* Hero section */}
           <div className="text-center animate-fade-in-up">
+            {/* Social proof badge */}
+            <div className="inline-flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full mb-6 animate-pulse-scale">
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              <span className="text-sm text-gray-700 font-medium">1,247 yrkesverksamma sparar redan 8+ timmar/vecka</span>
+            </div>
+            
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4 tracking-tight uppercase">
               AI SOM FÖRLÄNGER DIN TID
             </h1>
@@ -148,6 +154,28 @@ export default function Home() {
               <span className="text-2xl">🔍</span>
               <span>Sök efter ditt yrke och upptäck hur AI kan hjälpa dig.</span>
             </p>
+            
+            {/* Trust badges */}
+            <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-sm text-gray-500">
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                Resultat på 60 sekunder
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                100% GDPR-säkert
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                Ingen kreditkort krävs
+              </span>
+            </div>
           </div>
           
           <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>

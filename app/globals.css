@@ -243,3 +243,32 @@ button, a, input, textarea, select {
   transform: scale(0.98);
 }
 
+/* Additional animations for exit intent and premium */
+.animate-scale-up {
+  animation: scale-up 0.3s ease-out;
+}
+
+.animate-pulse-scale {
+  animation: pulse-scale 2s ease-in-out infinite;
+}
+
+@keyframes scale-up {
+  0% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-scale {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
