@@ -138,11 +138,15 @@ export default function Home() {
         <div className="space-y-12 max-w-2xl mx-auto w-full">
           {/* Hero section */}
           <div className="text-center animate-fade-in-up">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 tracking-tight uppercase">
-              AI FÖR DITT YRKE
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4 tracking-tight uppercase">
+              AI SOM FÖRLÄNGER DIN TID
             </h1>
-            <p className="text-xl sm:text-2xl text-gray-600 font-light">
-              Hitta rätt verktyg, spara tid varje dag
+            <p className="text-xl sm:text-2xl text-gray-700 mb-4">
+              Gör jobbet enklare, så du får mer tid till det som betyder mest.
+            </p>
+            <p className="text-lg text-gray-600 flex items-center justify-center gap-2">
+              <span className="text-2xl">🔍</span>
+              <span>Sök efter ditt yrke och upptäck hur AI kan hjälpa dig.</span>
             </p>
           </div>
           
@@ -150,13 +154,13 @@ export default function Home() {
             <ProfessionInput onSelect={handleProfessionSelect} />
             
             {/* Subtle demo link below input */}
-            <div className="text-center mt-4">
+            <div className="text-center mt-6">
               <a
                 href="/demo/ekonomiassistent"
-                className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors group"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 rounded-full transition-all group text-sm font-medium"
               >
-                <span>Se demo</span>
-                <svg className="w-3 h-3 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span>Se hur det funkar</span>
+                <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </a>
