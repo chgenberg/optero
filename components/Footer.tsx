@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Logo and tagline */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <img src="/optero_logo2.png" alt="Optero" className="h-6" />
+              <img src="/mendio_logo.png" alt="Mendio" className="h-6" />
             </div>
             <p className="text-sm text-gray-600 max-w-sm">
               Gör vardagen lättare med AI. Hitta verktyg anpassade för ditt yrke och spara 5-15 timmar varje vecka.
@@ -19,7 +19,7 @@ export default function Footer() {
           
           {/* Quick links */}
           <div>
-            <h3 className="font-medium text-gray-900 mb-4">Om Optero</h3>
+            <h3 className="font-medium text-gray-900 mb-4">Om Mendio</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/om" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">

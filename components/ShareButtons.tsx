@@ -21,12 +21,12 @@ export default function ShareButtons({
   // LinkedIn share text
   const linkedInText = encodeURIComponent(
     `🚀 Jag sparar nu ${timeSaved} som ${specialization || profession} tack vare AI!\n\n` +
-    `Upptäckte precis Optero - en tjänst som visar exakt vilka AI-verktyg som passar mitt yrke.\n\n` +
-    `Rekommenderar starkt alla ${profession.toLowerCase()}s att testa: https://optero.se\n\n` +
+    `Upptäckte precis Mendio - en tjänst som visar exakt vilka AI-verktyg som passar mitt yrke.\n\n` +
+    `Rekommenderar starkt alla ${profession.toLowerCase()}s att testa: https://mendio.io\n\n` +
     `#AI #Produktivitet #${profession}`
   );
 
-  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://optero.se')}`;
+  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://mendio.io')}`;
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,7 +126,7 @@ export default function ShareButtons({
         {showEmailForm && (
           <form onSubmit={handleEmailSubmit} className="bg-white rounded-xl p-4 space-y-3 animate-fade-in">
             <p className="text-sm text-gray-600 mb-3">
-              Vi skickar en kort inbjudan från dig med information om Optero
+              Vi skickar en kort inbjudan från dig med information om Mendio
             </p>
             
             {emails.map((email, index) => (

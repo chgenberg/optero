@@ -5,19 +5,19 @@ import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
 
 export const metadata: Metadata = {
-  title: "Optero - Gör vardagen lättare med AI",
+  title: "Mendio - Gör vardagen lättare med AI",
   description: "Hitta AI-verktyg anpassade för ditt yrke. Spara 5-15 timmar varje vecka med smarta lösningar för din arbetsdag.",
   keywords: ["AI-verktyg", "produktivitet", "automation", "arbetsverktyg", "AI för yrken"],
-  authors: [{ name: "Optero" }],
+  authors: [{ name: "Mendio" }],
   openGraph: {
-    title: "Optero - Gör vardagen lättare med AI",
+    title: "Mendio - Gör vardagen lättare med AI",
     description: "Hitta AI-verktyg anpassade för ditt yrke",
     type: "website",
     locale: "sv_SE",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Optero - Gör vardagen lättare med AI",
+    title: "Mendio - Gör vardagen lättare med AI",
     description: "Hitta AI-verktyg anpassade för ditt yrke",
   },
 };
@@ -34,7 +34,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Optero" />
+              <meta name="apple-mobile-web-app-title" content="Mendio" />
       </head>
       <body className="antialiased bg-white text-gray-900 min-h-screen flex flex-col">
         <Header />

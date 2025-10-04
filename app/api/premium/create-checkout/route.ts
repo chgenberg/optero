@@ -25,11 +25,11 @@ export async function POST(request: NextRequest) {
         {
           price_data: {
             currency: "eur",
-            product_data: {
-              name: `Optero Premium - ${specialization || profession}`,
-              description: "Personlig AI-guide med djupgående analys, 15+ verktyg, 50+ prompts, implementeringsplan och 30 dagars support",
-              images: ["https://optero.se/optero_logo2.png"],
-            },
+          product_data: {
+            name: `Mendio Premium - ${specialization || profession}`,
+            description: "Personlig AI-guide med djupgående analys, 15+ verktyg, 50+ prompts, implementeringsplan och 30 dagars support",
+            images: ["https://mendio.io/mendio_logo.png"],
+          },
             unit_amount: (discountPrice || 10) * 100, // Price in cents
           },
           quantity: 1,
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       locale: "sv",
       // Swedish payment experience
       payment_intent_data: {
-        description: `Optero Premium för ${specialization || profession}`,
+        description: `Mendio Premium för ${specialization || profession}`,
       },
       // Customer info collection
       billing_address_collection: "required",
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       invoice_creation: {
         enabled: true,
         invoice_data: {
-          description: `Optero Premium - AI-guide för ${specialization || profession}`,
+          description: `Mendio Premium - AI-guide för ${specialization || profession}`,
           metadata: {
             profession,
             specialization,
