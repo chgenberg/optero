@@ -85,12 +85,38 @@ export default function PremiumResultsPage() {
   const downloadPdf = async () => {
     setGeneratingPdf(true);
     
-    // In real app, this would generate a proper PDF
-    // For now, simulate PDF generation
-    setTimeout(() => {
-      alert("PDF genereras och skickas till din email!");
+    try {
+      // Open PDF in new window
+      const pdfWindow = window.open('', '_blank');
+      if (pdfWindow) {
+        pdfWindow.document.write('<html><body><p>Genererar PDF...</p></body></html>');
+        
+        const response = await fetch("/api/premium/download-pdf", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            context: { profession: "Ekonom", specialization: "Redovisningskonsult" },
+            results,
+          }),
+        });
+
+        if (response.ok) {
+          const html = await response.text();
+          pdfWindow.document.write(html);
+          pdfWindow.document.close();
+        } else {
+          pdfWindow.close();
+          alert("Kunde inte generera PDF. Försök igen senare.");
+        }
+      } else {
+        alert("Tillåt popup-fönster för att ladda ner PDF.");
+      }
+    } catch (error) {
+      console.error("PDF download failed:", error);
+      alert("Ett fel uppstod. Försök igen.");
+    } finally {
       setGeneratingPdf(false);
-    }, 2000);
+    }
   };
 
   if (loading || !results) {
