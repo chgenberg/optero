@@ -168,89 +168,119 @@ export default function BusinessCheckoutPage() {
   const router = useRouter();
 
   return (
-    <main className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+      {/* Animated background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-40 right-10 w-96 h-96 bg-purple-200 rounded-full blur-3xl opacity-20 animate-pulse-slow" />
+        <div className="absolute bottom-20 left-10 w-[30rem] h-[30rem] bg-blue-200 rounded-full blur-3xl opacity-20 animate-pulse-slow" style={{ animationDelay: '2s' }} />
+      </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <button
           onClick={() => router.back()}
-          className="mb-8 text-gray-600 hover:text-gray-900 transition-colors flex items-center gap-2"
+          className="mb-8 text-gray-600 hover:text-gray-900 transition-all flex items-center gap-2 group"
         >
-          ← Tillbaka
+          <span className="transform group-hover:-translate-x-1 transition-transform">←</span>
+          <span>Tillbaka</span>
         </button>
 
         <div className="grid lg:grid-cols-5 gap-8">
           {/* Order summary */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl p-6 border border-gray-100">
-              <h2 className="text-xl font-bold mb-6">Din beställning</h2>
+            <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
+              <h2 className="text-2xl font-bold mb-8">Din beställning</h2>
               
-              <div className="space-y-4 mb-6">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Team Premium</span>
-                  <span className="font-medium">99€</span>
-                </div>
-                <div className="pt-4 border-t border-gray-200">
-                  <div className="flex justify-between text-lg font-bold">
-                    <span>Totalt</span>
-                    <span>99€</span>
+              <div className="mb-8">
+                <div className="bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-2xl p-6">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <p className="text-lg font-bold">Team Premium</p>
+                      <p className="text-sm opacity-90">Komplett AI-transformation</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-3xl font-bold">99€</p>
+                      <p className="text-xs opacity-90">engångspris</p>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Moms ingår</p>
                 </div>
               </div>
 
-              <div className="space-y-3 text-sm text-gray-600">
-                <p className="font-medium text-gray-900 mb-2">Detta ingår:</p>
-                <div className="flex items-start gap-2">
-                  <span>✓</span>
-                  <span>12-veckors implementeringsplan</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span>✓</span>
-                  <span>Team training-material</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span>✓</span>
-                  <span>Change management-guide</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span>✓</span>
-                  <span>30 dagars email-support</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span>✓</span>
-                  <span>Komplett PDF-rapport (30+ sidor)</span>
-                </div>
+              <div className="space-y-4">
+                <p className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <span className="text-2xl">✨</span>
+                  Vad ingår:
+                </p>
+                {[
+                  { icon: "📋", text: "12-veckors implementeringsplan" },
+                  { icon: "🎓", text: "Team training-material" },
+                  { icon: "🔄", text: "Change management-guide" },
+                  { icon: "💬", text: "30 dagars email-support" },
+                  { icon: "📄", text: "Komplett PDF-rapport (30+ sidor)" }
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                    <span className="text-2xl">{item.icon}</span>
+                    <span className="text-gray-700">{item.text}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 p-4 bg-green-50 rounded-xl border border-green-200">
+                <p className="text-green-800 text-sm font-medium">
+                  💰 ROI-garanti: Får ni inte resultat inom 90 dagar får ni pengarna tillbaka
+                </p>
               </div>
             </div>
           </div>
 
           {/* Payment form */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-xl p-8 shadow-lg">
-              <h1 className="text-2xl font-bold mb-2">Kontaktuppgifter</h1>
-              <p className="text-gray-600 mb-8">Vi skickar faktura och material hit</p>
+            <div className="bg-white rounded-3xl shadow-xl p-10">
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold mb-2">Slutför beställningen</h1>
+                <p className="text-gray-600">Få direkt tillgång till er AI-strategi</p>
+              </div>
 
               <Elements stripe={stripePromise}>
                 <CheckoutForm />
               </Elements>
 
-              <div className="mt-8 pt-8 border-t border-gray-200 space-y-2 text-sm text-gray-500">
-                <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  <span>Säker betalning med Stripe</span>
+              <div className="mt-10 pt-8 border-t border-gray-100">
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="text-center p-4 bg-gray-50 rounded-xl">
+                    <svg className="w-8 h-8 mx-auto mb-2 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <p className="text-sm font-medium text-gray-700">Säker betalning</p>
+                    <p className="text-xs text-gray-500">256-bit kryptering</p>
+                  </div>
+                  <div className="text-center p-4 bg-gray-50 rounded-xl">
+                    <svg className="w-8 h-8 mx-auto mb-2 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-sm font-medium text-gray-700">Direkt tillgång</p>
+                    <p className="text-xs text-gray-500">Börja direkt</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  <span>30 dagars pengarna-tillbaka-garanti</span>
+
+                <div className="text-center space-y-2 text-sm text-gray-500">
+                  <p>🔒 Betalas säkert med Stripe</p>
+                  <p>✅ 30 dagars pengarna-tillbaka-garanti</p>
+                  <p>📧 Faktura skickas direkt till er email</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* CSS for animations */}
+      <style jsx>{`
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.2; transform: scale(1); }
+          50% { opacity: 0.3; transform: scale(1.1); }
+        }
+        .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+      `}</style>
     </main>
   );
 }
