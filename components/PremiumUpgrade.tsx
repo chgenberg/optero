@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface PremiumUpgradeProps {
   profession: string;
@@ -10,184 +10,205 @@ interface PremiumUpgradeProps {
 
 export default function PremiumUpgrade({ profession, specialization, onUpgrade }: PremiumUpgradeProps) {
   const [showDetails, setShowDetails] = useState(false);
+  const [preparingQuestions, setPreparingQuestions] = useState(false);
+  const [questionsReady, setQuestionsReady] = useState(false);
+
+  useEffect(() => {
+    // Prepare questions in the background when component mounts
+    prepareQuestions();
+  }, [profession, specialization]);
+
+  const prepareQuestions = async () => {
+    setPreparingQuestions(true);
+    try {
+      const response = await fetch("/api/premium/prepare-questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          profession,
+          specialization,
+          tasks: [], // We can pass tasks if we have them
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Store questions in session storage for later use
+        sessionStorage.setItem("premiumQuestions", JSON.stringify(data));
+        setQuestionsReady(true);
+      }
+    } catch (error) {
+      console.error("Failed to prepare questions:", error);
+    } finally {
+      setPreparingQuestions(false);
+    }
+  };
+
+  const handleUpgrade = () => {
+    // Store current context for premium flow
+    sessionStorage.setItem("premiumContext", JSON.stringify({
+      profession,
+      specialization,
+    }));
+    onUpgrade();
+  };
 
   return (
-    <div className="mt-8 mb-8">
-      {/* Premium CTA Card */}
-      <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl lg:rounded-3xl p-6 lg:p-8 text-white overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-24 -mb-24"></div>
-        
-        <div className="relative z-10">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white bg-opacity-20 rounded-full text-xs font-medium mb-4">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
-            <span>PREMIUM</span>
+    <div className="relative">
+      {/* Premium CTA - Minimal design */}
+      <div className="bg-gray-900 text-white rounded-2xl p-6 lg:p-8">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h3 className="text-xl lg:text-2xl font-bold mb-1">
+              Få din personliga AI-guide
+            </h3>
+            <p className="text-gray-300 text-sm">
+              Skräddarsydd analys för {specialization.toLowerCase()}
+            </p>
           </div>
-
-          <h3 className="text-2xl lg:text-3xl font-bold mb-3">
-            Få en skräddarsydd AI-strategi
-          </h3>
-          <p className="text-gray-200 text-sm lg:text-base mb-6">
-            Djupgående personlig analys för dig som {specialization.toLowerCase()}
-          </p>
-
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 mb-6">
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                </svg>
-              </div>
-              <div>
-                <h4 className="font-semibold text-sm lg:text-base">10-minuters djupintervju</h4>
-                <p className="text-xs lg:text-sm text-gray-300">AI-driven konversation om din arbetsvardag</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <div>
-                <h4 className="font-semibold text-sm lg:text-base">Personlig rapport (PDF)</h4>
-                <p className="text-xs lg:text-sm text-gray-300">8-12 sidor med konkret analys</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                </svg>
-              </div>
-              <div>
-                <h4 className="font-semibold text-sm lg:text-base">Implementeringsplan</h4>
-                <p className="text-xs lg:text-sm text-gray-300">Steg-för-steg guide anpassad för dig</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              </div>
-              <div>
-                <h4 className="font-semibold text-sm lg:text-base">30 dagars support</h4>
-                <p className="text-xs lg:text-sm text-gray-300">AI-assistent med full kontext</p>
-              </div>
-            </div>
-          </div>
-
-          {/* ROI Highlight */}
-          <div className="bg-white bg-opacity-10 rounded-xl p-4 mb-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs lg:text-sm text-gray-300">Beräknad tidsbesparing</p>
-                <p className="text-2xl lg:text-3xl font-bold">5-10h/vecka</p>
-              </div>
-              <div className="text-right">
-                <p className="text-xs lg:text-sm text-gray-300">Värde</p>
-                <p className="text-2xl lg:text-3xl font-bold">12 000+ kr/mån</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Price and CTA */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl lg:text-5xl font-bold">299 kr</span>
-                <span className="text-gray-400 line-through text-lg">599 kr</span>
-              </div>
-              <p className="text-xs lg:text-sm text-gray-300 mt-1">Engångspris • Ingen prenumeration</p>
-            </div>
-            
-            <button
-              onClick={onUpgrade}
-              className="w-full sm:w-auto px-8 py-4 bg-white text-gray-900 rounded-xl font-bold hover:bg-gray-100 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 text-sm lg:text-base"
-            >
-              Kom igång nu →
-            </button>
-          </div>
-
-          {/* Show more details */}
-          <button
-            onClick={() => setShowDetails(!showDetails)}
-            className="mt-4 text-sm text-gray-300 hover:text-white transition-colors underline"
-          >
-            {showDetails ? "Dölj detaljer" : "Vad ingår exakt?"}
-          </button>
-
-          {showDetails && (
-            <div className="mt-4 pt-4 border-t border-white border-opacity-20 animate-fade-in">
-              <h4 className="font-semibold mb-3 text-sm lg:text-base">Din Premium-upplevelse:</h4>
-              <ol className="space-y-2 text-xs lg:text-sm text-gray-300">
-                <li className="flex gap-2">
-                  <span className="font-semibold text-white">1.</span>
-                  <span>Betala säkert med kort (Stripe)</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-semibold text-white">2.</span>
-                  <span>Genomför en 10-minuters AI-intervju om din arbetsvardag</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-semibold text-white">3.</span>
-                  <span>GPT analyserar dina svar och identifierar ineffektiviteter</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-semibold text-white">4.</span>
-                  <span>Få din personliga rapport via email (PDF, 8-12 sidor)</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-semibold text-white">5.</span>
-                  <span>Implementeringsplan med copy-paste prompts och mallar</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-semibold text-white">6.</span>
-                  <span>30 dagars tillgång till support-chatt (sparad kontext)</span>
-                </li>
-              </ol>
-
-              <div className="mt-4 p-3 bg-white bg-opacity-10 rounded-lg">
-                <p className="text-xs text-gray-200">
-                  💡 <span className="font-semibold">Tips:</span> Många kunder sparar in kostnaden redan första veckan genom ökad effektivitet.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Trust badges */}
-          <div className="mt-6 pt-6 border-t border-white border-opacity-20 flex flex-wrap items-center justify-center gap-6 text-xs text-gray-400">
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span>Säker betalning</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-              </svg>
-              <span>Rapport inom 24h</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L11 6.477V16h2a1 1 0 110 2H7a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L9 4.323V3a1 1 0 011-1z" clipRule="evenodd" />
-              </svg>
-              <span>Nöjd-kund-garanti</span>
-            </div>
+          <div className="text-right">
+            <div className="text-3xl font-bold">10€</div>
+            <div className="text-xs text-gray-400">engångspris</div>
           </div>
         </div>
+
+        {/* What's included */}
+        <div className="space-y-3 mb-6">
+          <div className="flex items-center gap-3">
+            <svg className="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            <span className="text-sm">15-20 djupgående frågor om ditt arbete</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <svg className="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            <span className="text-sm">Komplett PDF-guide med steg-för-steg instruktioner</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <svg className="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            <span className="text-sm">Konkreta exempel anpassade för ditt yrke</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <svg className="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            <span className="text-sm">Beräknad tidsbesparing: 5-10h per vecka</span>
+          </div>
+        </div>
+
+        {/* CTA Button */}
+        <button
+          onClick={handleUpgrade}
+          disabled={preparingQuestions}
+          className="w-full bg-white text-gray-900 py-3 px-6 rounded-xl font-medium hover:bg-gray-100 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          {preparingQuestions ? (
+            <>
+              <div className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin" />
+              <span>Förbereder...</span>
+            </>
+          ) : (
+            <>
+              <span>Kom igång nu</span>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </>
+          )}
+        </button>
+
+        {/* Trust badges */}
+        <div className="mt-4 pt-4 border-t border-gray-800 flex items-center justify-center gap-6 text-xs text-gray-400">
+          <div className="flex items-center gap-1">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            Säker betalning
+          </div>
+          <div className="flex items-center gap-1">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd" />
+            </svg>
+            Direkt tillgång
+          </div>
+        </div>
+
+        {questionsReady && (
+          <div className="mt-2 text-center text-xs text-green-400">
+            ✓ Frågor förbereds för dig
+          </div>
+        )}
       </div>
+
+      {/* Expandable details */}
+      <button
+        onClick={() => setShowDetails(!showDetails)}
+        className="w-full mt-4 text-sm text-gray-600 hover:text-gray-900 transition-colors flex items-center justify-center gap-2"
+      >
+        <span>Vad ingår exakt?</span>
+        <svg 
+          className={`w-4 h-4 transition-transform ${showDetails ? "rotate-180" : ""}`} 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {showDetails && (
+        <div className="mt-4 p-6 bg-gray-50 rounded-xl animate-fade-in">
+          <h4 className="font-semibold text-gray-900 mb-4">Komplett Premium-paket inkluderar:</h4>
+          
+          <div className="space-y-4">
+            <div>
+              <h5 className="font-medium text-gray-900 mb-1">1. Djupgående intervju (10-15 min)</h5>
+              <p className="text-sm text-gray-600">
+                15-20 skräddarsydda frågor som kartlägger exakt hur du arbetar, vilka utmaningar du har, 
+                och var AI kan göra störst skillnad för just dig.
+              </p>
+            </div>
+
+            <div>
+              <h5 className="font-medium text-gray-900 mb-1">2. Personlig AI-guide (PDF)</h5>
+              <ul className="text-sm text-gray-600 space-y-1 ml-4">
+                <li>• Steg-för-steg instruktioner för varje verktyg</li>
+                <li>• Konkreta exempel från ditt arbetsområde</li>
+                <li>• Färdiga prompts du kan kopiera</li>
+                <li>• Tidsbesparingsberäkningar</li>
+                <li>• Implementeringsplan vecka för vecka</li>
+              </ul>
+            </div>
+
+            <div>
+              <h5 className="font-medium text-gray-900 mb-1">3. Interaktiv resultatssida</h5>
+              <p className="text-sm text-gray-600">
+                Mer detaljerade rekommendationer, fler användningsfall, och praktiska övningar 
+                för att komma igång direkt.
+              </p>
+            </div>
+
+            <div>
+              <h5 className="font-medium text-gray-900 mb-1">4. 30 dagars uppföljning</h5>
+              <p className="text-sm text-gray-600">
+                Möjlighet att ställa följdfrågor och få hjälp med implementeringen via email.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+            <p className="text-sm text-blue-900">
+              <strong>100% nöjd-garanti:</strong> Om du inte är nöjd med din personliga AI-guide 
+              får du pengarna tillbaka. Inga krångliga villkor.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-

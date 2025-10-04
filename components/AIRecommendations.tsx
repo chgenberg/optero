@@ -6,6 +6,7 @@ import ImplementationPlan from "@/components/ImplementationPlan";
 import PremiumUpgrade from "@/components/PremiumUpgrade";
 import StructuredData from "@/components/StructuredData";
 import ProfessionPrompts from "@/components/ProfessionPrompts";
+import ShareResults from "@/components/ShareResults";
 import { useRouter } from "next/navigation";
 
 interface Scenario {
@@ -353,12 +354,21 @@ export default function AIRecommendations({
       <div className="border-t border-gray-100 mt-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <button
-              onClick={onReset}
-              className="btn-secondary"
-            >
-              Gör en ny analys
-            </button>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={onReset}
+                className="btn-secondary"
+              >
+                Gör en ny analys
+              </button>
+              
+              <ShareResults
+                profession={profession}
+                specialization={specialization}
+                recommendations={recommendations}
+                scenarios={scenarios}
+              />
+            </div>
             
             {!isDemo && (
               <PremiumUpgrade

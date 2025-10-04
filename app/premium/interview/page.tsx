@@ -1,194 +1,216 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import PremiumInterview from "@/components/PremiumInterview";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-function InterviewContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [isVerified, setIsVerified] = useState(false);
-  const [profession, setProfession] = useState("");
-  const [specialization, setSpecialization] = useState("");
-  const [userContext, setUserContext] = useState<any>({});
-  const [showReport, setShowReport] = useState(false);
-  const [email, setEmail] = useState("");
-  const [reportContent, setReportContent] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
+interface Question {
+  id: string;
+  question: string;
+  type: "text" | "multiselect" | "scale";
+  options?: string[];
+  followUp?: string;
+}
 
-  useEffect(() => {
-    // Verifiera att användaren har betalat (mock för development)
-    const isMock = searchParams.get("mock") === "true";
-    const profParam = searchParams.get("profession");
-    const specParam = searchParams.get("specialization");
-
-    if (isMock && profParam && specParam) {
-      setIsVerified(true);
-      setProfession(profParam);
-      setSpecialization(specParam);
-      // I produktion: hämta från localStorage eller database
-      setUserContext({
-        tasks: [],
-        challenges: [],
-        experience: "Medel",
-      });
-    } else {
-      // I produktion: Verifiera Stripe session
-      // Om inte verifierad, redirect till start
-      // router.push("/");
-      setIsVerified(true); // Temporary for development
-    }
-  }, [searchParams, router]);
-
-  const handleInterviewComplete = async (sessionId: string) => {
-    setShowReport(true);
-  };
-
-  const handleGenerateReport = async () => {
-    if (!email.trim()) {
-      alert("Vänligen ange din email");
-      return;
-    }
-
-    setIsGenerating(true);
-    // Här skulle vi anropa generate-report API
-    // För nu: simulera
-    setTimeout(() => {
-      setReportContent("Din rapport har genererats och skickas till " + email);
-      setIsGenerating(false);
-    }, 3000);
-  };
-
-  if (!isVerified) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Verifierar betalning...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (showReport) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12">
-        <div className="max-w-2xl mx-auto px-4">
-          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-            </div>
-
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Intervju slutförd! 🎉
-            </h2>
-            <p className="text-gray-600 mb-8">
-              Nu genererar vi din personliga AI-strategi
-            </p>
-
-            {!reportContent ? (
-              <div className="space-y-4">
-                <div className="text-left">
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Skicka rapporten till:
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="din@email.se"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-900 focus:outline-none"
-                  />
-                </div>
-
-                <button
-                  onClick={handleGenerateReport}
-                  disabled={isGenerating}
-                  className="w-full px-6 py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-all duration-200 font-medium disabled:opacity-50"
-                >
-                  {isGenerating ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Genererar rapport...
-                    </span>
-                  ) : (
-                    "Generera min rapport"
-                  )}
-                </button>
-
-                <p className="text-xs text-gray-500">
-                  Rapporten tar ca 2-3 minuter att generera
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                  <p className="text-green-800 text-sm">{reportContent}</p>
-                </div>
-
-                <div className="bg-gray-50 rounded-xl p-6 text-left">
-                  <h3 className="font-bold text-gray-900 mb-3">Vad händer nu?</h3>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-start gap-2">
-                      <span className="text-gray-900 font-bold">1.</span>
-                      <span>Din rapport skickas till {email} inom 10-15 minuter</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-gray-900 font-bold">2.</span>
-                      <span>Rapporten innehåller 8-12 sidor med personlig analys</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-gray-900 font-bold">3.</span>
-                      <span>Du får tillgång till support-chatten i 30 dagar</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-gray-900 font-bold">4.</span>
-                      <span>Börja implementera direkt med våra copy-paste prompts!</span>
-                    </li>
-                  </ul>
-                </div>
-
-                <button
-                  onClick={() => router.push("/")}
-                  className="w-full px-6 py-3 border-2 border-gray-900 text-gray-900 rounded-xl hover:bg-gray-900 hover:text-white transition-all duration-200 font-medium"
-                >
-                  Tillbaka till startsidan
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-8">
-      <PremiumInterview
-        profession={profession}
-        specialization={specialization}
-        userContext={userContext}
-        onComplete={handleInterviewComplete}
-      />
-    </div>
-  );
+interface Category {
+  name: string;
+  questions: Question[];
 }
 
 export default function PremiumInterviewPage() {
-  return (
-    <Suspense fallback={
+  const router = useRouter();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [loading, setLoading] = useState(true);
+  const [currentAnswer, setCurrentAnswer] = useState("");
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Load prepared questions from session storage
+    const questionsData = sessionStorage.getItem("premiumQuestions");
+    const contextData = sessionStorage.getItem("premiumContext");
+    
+    if (questionsData) {
+      const parsed = JSON.parse(questionsData);
+      setCategories(parsed.categories || []);
+      setLoading(false);
+    } else {
+      // If no questions, redirect back
+      router.push("/");
+    }
+  }, []);
+
+  const currentCategory = categories[currentCategoryIndex];
+  const currentQuestion = currentCategory?.questions[currentQuestionIndex];
+  const totalQuestions = categories.reduce((sum, cat) => sum + cat.questions.length, 0);
+  const answeredQuestions = Object.keys(answers).length;
+  const progress = (answeredQuestions / totalQuestions) * 100;
+
+  const handleNext = () => {
+    if (!currentQuestion) return;
+
+    // Save answer
+    const answer = currentQuestion.type === "multiselect" ? selectedOptions : currentAnswer;
+    setAnswers({ ...answers, [currentQuestion.id]: answer });
+
+    // Reset answer fields
+    setCurrentAnswer("");
+    setSelectedOptions([]);
+
+    // Move to next question
+    if (currentQuestionIndex < currentCategory.questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    } else if (currentCategoryIndex < categories.length - 1) {
+      setCurrentCategoryIndex(currentCategoryIndex + 1);
+      setCurrentQuestionIndex(0);
+    } else {
+      // All questions answered, proceed to payment
+      proceedToPayment();
+    }
+  };
+
+  const proceedToPayment = () => {
+    // Save answers
+    sessionStorage.setItem("premiumAnswers", JSON.stringify(answers));
+    
+    // In real app, this would go to Stripe checkout
+    // For now, simulate payment success and go to results
+    router.push("/premium/results");
+  };
+
+  const toggleOption = (option: string) => {
+    if (selectedOptions.includes(option)) {
+      setSelectedOptions(selectedOptions.filter(o => o !== option));
+    } else {
+      setSelectedOptions([...selectedOptions, option]);
+    }
+  };
+
+  if (loading) {
+    return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Laddar...</p>
+          <div className="inline-flex items-center gap-3 mb-4">
+            <div className="w-2 h-2 bg-gray-900 rounded-full animate-pulse" />
+            <div className="w-2 h-2 bg-gray-900 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
+            <div className="w-2 h-2 bg-gray-900 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
+          </div>
+          <p className="text-gray-600">Förbereder dina frågor...</p>
         </div>
       </div>
-    }>
-      <InterviewContent />
-    </Suspense>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Progress bar */}
+      <div className="fixed top-0 left-0 right-0 h-1 bg-gray-200 z-50">
+        <div 
+          className="h-full bg-gray-900 transition-all duration-300"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
+      <div className="max-w-3xl mx-auto px-4 py-20">
+        {/* Category header */}
+        <div className="text-center mb-8">
+          <h2 className="text-sm font-medium text-gray-500 mb-2">
+            {currentCategory?.name}
+          </h2>
+          <p className="text-sm text-gray-400">
+            Fråga {answeredQuestions + 1} av {totalQuestions}
+          </p>
+        </div>
+
+        {/* Question card */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+          <h3 className="text-xl sm:text-2xl font-medium text-gray-900 mb-6">
+            {currentQuestion?.question}
+          </h3>
+
+          {/* Answer input based on type */}
+          {currentQuestion?.type === "text" && (
+            <textarea
+              value={currentAnswer}
+              onChange={(e) => setCurrentAnswer(e.target.value)}
+              placeholder="Beskriv så detaljerat som möjligt..."
+              className="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-gray-300 focus:outline-none transition-all duration-200 min-h-[120px] resize-none"
+              autoFocus
+            />
+          )}
+
+          {currentQuestion?.type === "multiselect" && currentQuestion.options && (
+            <div className="space-y-3">
+              {currentQuestion.options.map((option) => (
+                <button
+                  key={option}
+                  onClick={() => toggleOption(option)}
+                  className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
+                    selectedOptions.includes(option)
+                      ? "bg-gray-900 text-white border-gray-900"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span>{option}</span>
+                    {selectedOptions.includes(option) && (
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {currentQuestion?.type === "scale" && currentQuestion.options && (
+            <div className="space-y-3">
+              {currentQuestion.options.map((option) => (
+                <button
+                  key={option}
+                  onClick={() => setCurrentAnswer(option)}
+                  className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
+                    currentAnswer === option
+                      ? "bg-gray-900 text-white border-gray-900"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex justify-between items-center">
+          <button
+            onClick={() => router.push("/")}
+            className="text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            Avbryt
+          </button>
+
+          <button
+            onClick={handleNext}
+            disabled={
+              !currentAnswer && 
+              currentQuestion?.type !== "multiselect" || 
+              (currentQuestion?.type === "multiselect" && selectedOptions.length === 0)
+            }
+            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {answeredQuestions === totalQuestions - 1 ? "Gå till betalning" : "Nästa fråga"}
+          </button>
+        </div>
+
+        {/* Trust message */}
+        <p className="text-center text-xs text-gray-500 mt-8">
+          Dina svar används endast för att skapa din personliga AI-guide och sparas inte.
+        </p>
+      </div>
+    </div>
   );
 }
-
