@@ -1,0 +1,100 @@
+{
+  "hero": {
+    "title": "AI som sparar dig tid, varje vecka",
+    "subtitle": "Skriv vad du jobbar med och få din personliga AI-guide. Helt gratis!",
+    "demoLink": "Se exempel →"
+  },
+  "profession": {
+    "label": "Vilket yrke har du?",
+    "placeholder": "T.ex. Lärare, Ekonom, Projektledare...",
+    "button": "Fortsätt",
+    "customLabel": "Eller skriv ditt eget:",
+    "customPlaceholder": "Skriv ditt yrke här...",
+    "customHint": "Beskriv ditt yrke så specifikt som möjligt"
+  },
+  "specialization": {
+    "title": "Vilken inriktning har du inom {profession}?",
+    "button": "Fortsätt",
+    "customLabel": "Passar ingen? Skriv din egen:",
+    "customPlaceholder": "T.ex. Gymnasielärare i matematik...",
+    "loading": "Hämtar specialiseringar..."
+  },
+  "tasks": {
+    "title": "Vilka arbetsuppgifter har du?",
+    "subtitle": "Välj de uppgifter du vill förenkla med AI",
+    "button": "Skapa min AI-guide",
+    "selected": "{count} uppgifter valda",
+    "loading": "Hämtar arbetsuppgifter..."
+  },
+  "email": {
+    "title": "Få ditt resultat via email",
+    "subtitle": "Vi skickar din personliga AI-guide direkt till din inkorg",
+    "label": "Din e-postadress",
+    "placeholder": "namn@exempel.se",
+    "button": "Få min AI-guide",
+    "consent": "Jag godkänner att Mendio sparar min data för att utveckla tjänsten enligt",
+    "privacyPolicy": "integritetspolicyn",
+    "error": "Vänligen ange en giltig e-postadress"
+  },
+  "results": {
+    "title": "AI-verktyg för {specialization}",
+    "subtitle": "Vi hittade {count} verktyg som kan spara dig tid",
+    "tabs": {
+      "scenarios": "Användningsfall",
+      "tools": "AI-verktyg",
+      "prompts": "Färdiga prompts",
+      "plan": "Din plan"
+    },
+    "scenario": {
+      "situation": "Situation:",
+      "solution": "Lösning:",
+      "tools": "Rekommenderade verktyg:"
+    },
+    "tool": {
+      "timeSaved": "Sparar",
+      "difficulty": "Svårighetsgrad",
+      "tips": "Tips:",
+      "testTool": "Testa verktyget",
+      "easy": "Lätt",
+      "medium": "Medel",
+      "hard": "Avancerad"
+    },
+    "loading": "Analyserar dina behov...",
+    "error": "Något gick fel. Försök igen."
+  },
+  "premium": {
+    "button": "Få en djupgående analys",
+    "subtitle": "Personlig AI-guide med 15-20 frågor om din arbetsdag"
+  },
+  "share": {
+    "title": "Dela med dina kollegor!",
+    "subtitle": "Hjälp andra {profession}s att spara tid med AI",
+    "linkedin": "Dela på LinkedIn",
+    "email": "Tipsa kollegor via email",
+    "tip": "Tips: För varje kollega som testar får du en månad extra support gratis!"
+  },
+  "footer": {
+    "tagline": "Gör vardagen lättare med AI. Hitta verktyg anpassade för ditt yrke och spara 5-15 timmar varje vecka.",
+    "about": "Om Mendio",
+    "aboutUs": "Om oss",
+    "promptLibrary": "Prompt-bibliotek",
+    "contact": "Kontakt",
+    "legal": "Juridiskt & GDPR",
+    "privacy": "Integritetspolicy",
+    "terms": "Användarvillkor",
+    "export": "Exportera mina uppgifter",
+    "delete": "Radera mina uppgifter",
+    "rights": "Alla rättigheter förbehållna."
+  },
+  "demo": {
+    "banner": "Demo-läge: Detta är ett exempel för yrkesrollen {profession}",
+    "link": "Testa med ditt eget yrke →"
+  },
+  "buttons": {
+    "back": "Tillbaka",
+    "continue": "Fortsätt",
+    "submit": "Skicka",
+    "reset": "Gör en ny analys",
+    "close": "Stäng"
+  }
+}

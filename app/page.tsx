@@ -11,6 +11,7 @@ import InfoPopup from "@/components/InfoPopup";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import EmailCapture from "@/components/EmailCapture";
 import OnboardingTutorial from "@/components/OnboardingTutorial";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export type Step = "profession" | "specialization" | "tasks" | "email" | "results";
 
@@ -23,6 +24,7 @@ const STEP_NUMBER: Record<Step, number> = {
 };
 
 export default function Home() {
+  const { t } = useLanguage();
   const [step, setStep] = useState<Step>("profession");
   const [profession, setProfession] = useState("");
   const [specialization, setSpecialization] = useState("");
@@ -139,10 +141,10 @@ export default function Home() {
           {/* Hero section */}
           <div className="text-center animate-fade-in-up">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-wider uppercase">
-              AI som sparar dig tid, varje vecka
+              {t('hero.title')}
             </h1>
             <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light px-4 sm:px-0 tracking-wide">
-              Skriv vad du jobbar med och få din personliga AI-guide. Helt gratis!
+              {t('hero.subtitle')}
             </p>
           </div>
           
@@ -155,7 +157,7 @@ export default function Home() {
                 href="/demo/ekonomiassistent"
                 className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
               >
-                Se exempel →
+                {t('hero.demoLink')}
               </a>
             </div>
           </div>

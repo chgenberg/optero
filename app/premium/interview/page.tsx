@@ -30,7 +30,7 @@ function PremiumInterviewContent() {
 
   useEffect(() => {
     // Check if coming from Stripe success
-    const sessionId = searchParams.get("session_id");
+    const sessionId = searchParams?.get("session_id");
     if (sessionId) {
       setShowSuccessMessage(true);
       // Hide success message after 5 seconds

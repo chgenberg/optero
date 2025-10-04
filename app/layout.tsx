@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 export const metadata: Metadata = {
   title: "Mendio - Gör vardagen lättare med AI",
@@ -37,10 +38,12 @@ export default function RootLayout({
               <meta name="apple-mobile-web-app-title" content="Mendio" />
       </head>
       <body className="antialiased bg-white text-gray-900 min-h-screen flex flex-col">
-        <Header />
-        <main className="pt-16 flex-grow">{children}</main>
-        <Footer />
-        <CookieBanner />
+        <LanguageProvider>
+          <Header />
+          <main className="pt-16 flex-grow">{children}</main>
+          <Footer />
+          <CookieBanner />
+        </LanguageProvider>
       </body>
     </html>
   );

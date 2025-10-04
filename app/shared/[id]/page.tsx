@@ -7,7 +7,7 @@ import AIRecommendations from "@/components/AIRecommendations";
 export default function SharedResultsPage() {
   const params = useParams();
   const router = useRouter();
-  const shareId = params.id as string;
+  const shareId = params?.id as string;
   
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
