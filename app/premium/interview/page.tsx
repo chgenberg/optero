@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 interface Question {
@@ -16,7 +16,7 @@ interface Category {
   questions: Question[];
 }
 
-export default function PremiumInterviewPage() {
+function PremiumInterviewContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -237,5 +237,17 @@ export default function PremiumInterviewPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function PremiumInterviewPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="w-12 h-12 rounded-full border-4 border-gray-200 border-t-gray-900 animate-spin" />
+      </div>
+    }>
+      <PremiumInterviewContent />
+    </Suspense>
   );
 }
