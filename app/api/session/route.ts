@@ -63,10 +63,21 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.error("Error saving session:", error);
-    return NextResponse.json(
-      { error: "Failed to save session" },
-      { status: 500 }
-    );
+    
+    // More detailed error response for debugging
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorDetails = {
+      error: "Failed to save session",
+      message: errorMessage,
+      type: error?.constructor?.name || "UnknownError"
+    };
+    
+    // Check if it's a Prisma connection error
+    if (errorMessage.includes("P1001") || errorMessage.includes("connection")) {
+      errorDetails.error = "Database connection failed";
+    }
+    
+    return NextResponse.json(errorDetails, { status: 500 });
   }
 }
 

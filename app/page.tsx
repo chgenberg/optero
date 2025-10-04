@@ -13,13 +13,14 @@ import EmailCapture from "@/components/EmailCapture";
 import OnboardingTutorial from "@/components/OnboardingTutorial";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-export type Step = "profession" | "specialization" | "tasks" | "email" | "results";
+export type Step = "profession" | "specialization" | "tasks" | "email" | "loading" | "results";
 
 const STEP_NUMBER: Record<Step, number> = {
   profession: 1,
   specialization: 2,
   tasks: 3,
   email: 4,
+  loading: 5,
   results: 5
 };
 
@@ -87,7 +88,7 @@ export default function Home() {
   const handleEmailSubmit = (email: string, consent: boolean) => {
     setUserEmail(email);
     setUserConsent(consent);
-    setStep("results");
+    setStep("loading");
   };
 
   const handleReset = () => {
@@ -200,6 +201,21 @@ export default function Home() {
         />
       )}
 
+      {step === "loading" && (
+        <div className="w-full animate-fade-in-up">
+          <AIRecommendations
+            profession={profession}
+            specialization={specialization}
+            experience={experience}
+            challenges={challenges}
+            tasks={selectedTasks}
+            onReset={handleReset}
+            onDataLoaded={() => setStep("results")}
+            showLoadingState={true}
+          />
+        </div>
+      )}
+
       {step === "results" && (
         <AIRecommendations
           profession={profession}
@@ -208,6 +224,7 @@ export default function Home() {
           challenges={challenges}
           tasks={selectedTasks}
           onReset={handleReset}
+          showLoadingState={false}
         />
       )}
       </div>

@@ -132,7 +132,11 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
     let result: any = { scenarios: [], inferredTasks: [], recommendations: [] };
 
     const openai = process.env.OPENAI_API_KEY
-      ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+      ? new OpenAI({ 
+          apiKey: process.env.OPENAI_API_KEY,
+          maxRetries: 2,
+          timeout: 30000 // 30 seconds
+        })
       : null;
 
     if (openai) {
@@ -188,6 +192,27 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
     return NextResponse.json(result);
   } catch (error) {
     console.error("Error generating recommendations:", error);
-    return NextResponse.json({ scenarios: [], inferredTasks: [], recommendations: [] });
+    
+    // More detailed error logging
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorDetails = {
+      error: "Failed to generate recommendations",
+      message: errorMessage,
+      type: error?.constructor?.name || "UnknownError",
+      scenarios: [],
+      inferredTasks: [],
+      recommendations: []
+    };
+    
+    // Check for specific error types
+    if (errorMessage.includes("P1001") || errorMessage.includes("connection")) {
+      errorDetails.error = "Database connection failed";
+    } else if (errorMessage.includes("OPENAI_API_KEY")) {
+      errorDetails.error = "AI service not configured";
+    } else if (errorMessage.includes("rate limit")) {
+      errorDetails.error = "Too many requests, please try again later";
+    }
+    
+    return NextResponse.json(errorDetails, { status: 500 });
   }
 }

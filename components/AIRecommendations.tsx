@@ -37,6 +37,8 @@ interface AIRecommendationsProps {
   tasks: { task?: string; name?: string; priority: number }[];
   onReset: () => void;
   isDemo?: boolean;
+  onDataLoaded?: () => void;
+  showLoadingState?: boolean;
 }
 
 type TabType = "scenarios" | "tools" | "prompts" | "plan";
@@ -49,6 +51,8 @@ export default function AIRecommendations({
   tasks,
   onReset,
   isDemo = false,
+  onDataLoaded,
+  showLoadingState = true,
 }: AIRecommendationsProps) {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
@@ -170,12 +174,18 @@ export default function AIRecommendations({
       ]);
       
       setLoading(false);
+      
+      // Notify parent that demo data is loaded
+      if (onDataLoaded) {
+        onDataLoaded();
+      }
+      
       return;
     }
 
     // Real API call
     fetchRecommendations();
-  }, [isDemo]);
+  }, [isDemo, onDataLoaded]);
 
   const fetchRecommendations = async () => {
     try {
@@ -201,6 +211,11 @@ export default function AIRecommendations({
       const data = await response.json();
       setScenarios(data.scenarios || []);
       setRecommendations(data.recommendations || []);
+      
+      // Notify parent that data is loaded
+      if (onDataLoaded) {
+        onDataLoaded();
+      }
     } catch (err) {
       console.error("Error fetching recommendations:", err);
       setError("Kunde inte hämta rekommendationer. Försök igen senare.");
@@ -209,7 +224,7 @@ export default function AIRecommendations({
     }
   };
 
-  if (loading) {
+  if (loading && showLoadingState) {
     return <LoadingAnalysis />;
   }
 
