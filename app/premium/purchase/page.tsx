@@ -8,38 +8,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-const TIERS = {
-  basic: {
-    name: "Basic",
-    price: 19,
-    features: [
-      "✅ Personlig AI-guide",
-      "✅ 5 utvalda AI-verktyg",
-      "✅ Användningsfall & exempel",
-      "✅ Implementeringstips",
-      "❌ PDF-nedladdning",
-      "❌ AI-Coach support"
-    ],
-    description: "Perfekt för att komma igång med AI",
-    popular: false
-  },
-  pro: {
-    name: "Pro",
-    price: 29,
-    features: [
-      "✅ Allt i Basic",
-      "✅ 15+ AI-verktyg",
-      "✅ Nedladdningsbar PDF-guide",
-      "✅ AI-Coach i 30 dagar",
-      "✅ Detaljerad implementeringsplan",
-      "✅ Prioriterad support"
-    ],
-    description: "För dig som vill maximera AI:s potential",
-    popular: true
-  }
-};
+// Single premium tier - simplified pricing
+const PREMIUM_PRICE_EUR = 19;
+const PREMIUM_PRICE_SEK = 197;
 
-function CheckoutForm({ selectedTier }: { selectedTier: "basic" | "pro" }) {
+function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -63,9 +36,9 @@ function CheckoutForm({ selectedTier }: { selectedTier: "basic" | "pro" }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: TIERS[selectedTier].price * 100, // Convert to cents
+          amount: PREMIUM_PRICE_EUR * 100, // Convert to cents
           currency: "eur",
-          tier: selectedTier,
+          tier: "pro",
           email: email
         })
       });
@@ -86,7 +59,7 @@ function CheckoutForm({ selectedTier }: { selectedTier: "basic" | "pro" }) {
         setError(stripeError.message || "Betalningen misslyckades");
       } else if (paymentIntent?.status === "succeeded") {
         // Save tier info and redirect
-        sessionStorage.setItem("purchasedTier", selectedTier);
+        sessionStorage.setItem("purchasedTier", "pro");
         sessionStorage.setItem("purchaseDate", new Date().toISOString());
         sessionStorage.setItem("premiumEmail", email);
         router.push("/premium/interview");
@@ -157,7 +130,7 @@ function CheckoutForm({ selectedTier }: { selectedTier: "basic" | "pro" }) {
         disabled={!stripe || processing}
         className="w-full py-4 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
       >
-        {processing ? "Behandlar..." : `Betala ${TIERS[selectedTier].price}€`}
+        {processing ? "Behandlar..." : `Betala ${PREMIUM_PRICE_EUR}€ (${PREMIUM_PRICE_SEK} SEK)`}
       </button>
 
       <p className="text-xs text-gray-500 text-center">
@@ -168,23 +141,19 @@ function CheckoutForm({ selectedTier }: { selectedTier: "basic" | "pro" }) {
 }
 
 export default function PremiumPurchasePage() {
-  const [selectedTier, setSelectedTier] = useState<"basic" | "pro">("pro");
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const router = useRouter();
 
   // Get context from session
   const context = typeof window !== "undefined" ? JSON.parse(sessionStorage.getItem("premiumContext") || "{}") : {};
   const profession = context.profession || "ditt yrke";
+  
+  // Show SEK for Swedish users, EUR for others
+  const displayPrice = locale === "sv" ? `${PREMIUM_PRICE_SEK} SEK` : `${PREMIUM_PRICE_EUR}€`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
-      {/* Background elements */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-200 rounded-full blur-3xl opacity-20 animate-pulse-slow" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-200 rounded-full blur-3xl opacity-20 animate-pulse-slow" style={{ animationDelay: '2s' }} />
-      </div>
-
-      <div className="relative z-10 max-w-6xl mx-auto px-4 py-12">
+    <div className="min-h-screen bg-gray-50">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 py-12">
         <button
           onClick={() => router.back()}
           className="mb-8 text-gray-600 hover:text-gray-900 transition-all flex items-center gap-2 group"
@@ -196,68 +165,60 @@ export default function PremiumPurchasePage() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Välj din AI-guide för {profession}
+            Uppgradera till Premium
           </h1>
           <p className="text-xl text-gray-600">
-            Få tillgång till allt du behöver för att lyckas med AI
+            Få din kompletta AI-guide för {profession}
           </p>
         </div>
 
-        {/* Tier Selection */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12 max-w-4xl mx-auto">
-          {(Object.entries(TIERS) as [keyof typeof TIERS, typeof TIERS[keyof typeof TIERS]][]).map(([key, tier]) => (
-            <div
-              key={key}
-              onClick={() => setSelectedTier(key)}
-              className={`relative bg-white rounded-3xl p-8 cursor-pointer transition-all transform hover:scale-105 ${
-                selectedTier === key
-                  ? "ring-4 ring-gray-900 shadow-2xl"
-                  : "ring-1 ring-gray-200 hover:ring-gray-400 shadow-lg"
-              }`}
-            >
-              {tier.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-2 rounded-full text-sm font-bold">
-                    POPULÄRAST
-                  </span>
-                </div>
-              )}
-
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{tier.name}</h3>
-                <p className="text-gray-600 text-sm">{tier.description}</p>
+        {/* Single premium offering */}
+        <div className="max-w-2xl mx-auto mb-12">
+          <div className="bg-white rounded-2xl p-8 border-2 border-gray-900 shadow-xl">
+            <div className="text-center mb-8">
+              <div className="text-5xl font-bold text-gray-900 mb-2">
+                {displayPrice}
               </div>
-
-              <div className="text-center mb-6">
-                <span className="text-5xl font-bold text-gray-900">{tier.price}€</span>
-                <span className="text-gray-500 ml-2">engångspris</span>
-              </div>
-
-              <ul className="space-y-3 mb-8">
-                {tier.features.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm">
-                    <span className={feature.startsWith("❌") ? "opacity-50" : ""}>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className={`text-center font-medium ${
-                selectedTier === key ? "text-gray-900" : "text-gray-500"
-              }`}>
-                {selectedTier === key ? "✓ Vald" : "Välj detta"}
-              </div>
+              <p className="text-gray-600">Engångsbetalning - livstid tillgång</p>
             </div>
-          ))}
+
+            <div className="space-y-4 mb-8">
+              <h3 className="font-bold text-lg text-gray-900 mb-4">Vad ingår:</h3>
+              {[
+                "15-20 djupgående frågor om din arbetsdag",
+                "Komplett AI-guide skräddarsydd för dig",
+                "15+ AI-verktyg med detaljerade guider",
+                "Nedladdningsbar PDF (20-30 sidor)",
+                "AI-Coach i 30 dagar",
+                "4-veckors implementeringsplan",
+                "Färdiga prompts att kopiera",
+                "Prioriterad support"
+              ].map((feature, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-gray-700">{feature}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-blue-50 rounded-lg p-4 mb-6">
+              <p className="text-sm text-blue-800">
+                💡 <strong>Värde:</strong> Spara 5-15 timmar/vecka = 2,000-6,000 SEK/månad i tidsvärde
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Checkout Form */}
-        <div className="max-w-md mx-auto bg-white rounded-3xl shadow-xl p-8">
+        <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
             Slutför din beställning
           </h2>
           
           <Elements stripe={stripePromise}>
-            <CheckoutForm selectedTier={selectedTier} />
+            <CheckoutForm />
           </Elements>
         </div>
 

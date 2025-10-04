@@ -464,10 +464,10 @@ export default function AIRecommendations({
               onClick={() => router.push("/premium/purchase")}
               className="btn-primary px-8 py-4 text-lg"
             >
-              Uppgradera för mer
+              Få din kompletta guide
             </button>
             <p className="text-gray-600 text-sm mt-2">
-              Från 19€ - Få personlig AI-guide, PDF och coaching
+              19€ (197 SEK) - PDF, AI-Coach i 30 dagar & mer
             </p>
         </div>
       )}
