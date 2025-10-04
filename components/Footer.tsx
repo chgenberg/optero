@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -10,8 +9,11 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and tagline */}
           <div className="md:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
-              <Image src="/mendio_logo.png" alt="Mendio" width={24} height={24} />
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-6 h-6 bg-gray-900 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xs">M</span>
+              </div>
+              <span className="font-bold text-gray-900 text-lg">Mendio</span>
             </div>
             <p className="text-sm text-gray-600 max-w-sm">
               Gör vardagen lättare med AI. Hitta verktyg anpassade för ditt yrke och spara 5-15 timmar varje vecka.
