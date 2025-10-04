@@ -109,28 +109,36 @@ export default function SpecializationInput({
           </div>
         )}
 
-        <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
+        <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-200">
           <form onSubmit={handleCustomSubmit}>
-            <label htmlFor="custom" className="block text-xs sm:text-sm text-gray-600 mb-2">
-              Eller ange en annan inriktning:
-            </label>
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="text-center mb-4">
+              <p className="text-sm sm:text-base text-gray-700 font-medium mb-1">
+                Hittar du inte din inriktning?
+              </p>
+              <p className="text-xs sm:text-sm text-gray-500">
+                Skriv in din egen specialisering nedan
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
               <input
                 id="custom"
                 type="text"
                 value={customInput}
                 onChange={(e) => setCustomInput(e.target.value)}
-                className="flex-1 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-xl lg:rounded-2xl focus:border-gray-400 focus:outline-none transition-all"
-                placeholder="Skriv din inriktning..."
+                className="flex-1 px-4 sm:px-5 py-3 sm:py-4 text-sm sm:text-base border-2 border-gray-300 rounded-xl lg:rounded-2xl focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-100 transition-all"
+                placeholder="T.ex. B2B-säljare, Fastighetssäljare..."
               />
               <button
                 type="submit"
                 disabled={!customInput.trim()}
-                className="px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base bg-gray-800 text-white rounded-xl lg:rounded-2xl hover:bg-gray-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base bg-gray-900 text-white rounded-xl lg:rounded-2xl hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
               >
-                Fortsätt
+                Fortsätt →
               </button>
             </div>
+            <p className="text-xs text-gray-400 mt-3 text-center">
+              💡 Skriv så specifikt som möjligt för bästa resultat
+            </p>
           </form>
         </div>
       </div>
