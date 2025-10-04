@@ -91,21 +91,6 @@ export default function ProfessionInput({ onSelect }: ProfessionInputProps) {
         )}
       </form>
 
-      {/* Popular professions - minimal pills */}
-      <div className="mt-8">
-        <p className="text-sm text-gray-500 mb-3 text-center">Populära yrken:</p>
-        <div className="flex flex-wrap justify-center gap-2">
-          {["Lärare", "Ekonom", "Sjuksköterska", "Projektledare", "Säljare", "HR-specialist"].map((prof) => (
-            <button
-              key={prof}
-              onClick={() => handleSelect(prof)}
-              className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-all duration-200 hover:scale-105"
-            >
-              {prof}
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

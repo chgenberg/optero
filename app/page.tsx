@@ -133,37 +133,19 @@ export default function Home() {
           
           <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
             <ProfessionInput onSelect={handleProfessionSelect} />
-          </div>
-          
-          {/* Quick actions */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-            <a
-              href="/demo/ekonomiassistent"
-              className="btn-secondary group"
-            >
-              <span>Se demo</span>
-              <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </a>
-            <a
-              href="/prompts"
-              className="btn-ghost group"
-            >
-              <span>Upptäck prompts</span>
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </a>
-            <a
-              href="/demo/pdf"
-              className="btn-ghost group"
-            >
-              <span>PDF-exempel</span>
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </a>
+            
+            {/* Subtle demo link below input */}
+            <div className="text-center mt-4">
+              <a
+                href="/demo/ekonomiassistent"
+                className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors group"
+              >
+                <span>Se demo</span>
+                <svg className="w-3 h-3 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
       )}
