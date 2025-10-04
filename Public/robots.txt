@@ -1,11 +1,11 @@
-# Robots.txt for Optero
+# Robots.txt for Mendio
 # Allow all web crawlers
 
 User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://optero-production.up.railway.app/sitemap.xml
+Sitemap: https://mendio.io/sitemap.xml
 
 # Crawl-delay for respectful crawling
 Crawl-delay: 1
