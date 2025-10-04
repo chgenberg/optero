@@ -680,6 +680,260 @@
       "totalPrompts": 12,
       "averageTimeSaved": "5-8h per vecka",
       "difficulty": "55% Lätt, 45% Medel"
+    },
+
+    "Ekonom": {
+      "categories": {
+        "Bokföring & Redovisning": [
+          {
+            "id": "econ_book_1",
+            "name": "Kontera leverantörsfakturor - snabbt",
+            "description": "AI hjälper dig kontera fakturor korrekt baserat på beskrivning",
+            "timeSaved": "5-10 min per faktura",
+            "difficulty": "Lätt",
+            "prompt": "Jag är ekonom och behöver kontera denna faktura:\n\nLeverantör: [LEVERANTÖR]\nBelopp: [BELOPP] kr\nBeskrivning: [BESKRIVNING AV VAD SOM KÖPTS]\nMomsbelopp: [MOMS]\n\nGe mig:\n1. KORREKT KONTERING\n   - Debetkontonummer och namn\n   - Kreditkontonummer och namn\n   - Momshantering\n\n2. MOTIVERING\n   - Varför just dessa konton?\n   - Bokföringsregel som tillämpas\n\n3. VERIFIKATIONSTEXT\n   - Professionell text för verifikationen\n\n4. KONTROLLPUNKTER\n   - Vad jag ska dubbelkolla\n\nAnvänd BAS-kontoplanen (svensk standard).\nFormat: Redo att bokföra.",
+            "example": "Från 'Köpt papper' till korrekt kontering 5410 + 2641 med motivering",
+            "howToUse": "Klistra in fakturadetaljer → Få konteringsförslag → Verifiera → Bokför",
+            "tools": ["ChatGPT", "Claude"]
+          },
+          {
+            "id": "econ_book_2",
+            "name": "Avstämning - hitta differenser",
+            "description": "Identifiera och förklara avstämningsdifferenser",
+            "timeSaved": "30-60 min per avstämning",
+            "difficulty": "Medel",
+            "prompt": "Jag stämmer av [KONTO/BALANSPOST] och har en differens.\n\nBokfört saldo: [BELOPP]\nVerklighet (bank/leverantör): [BELOPP]\nDifferens: [BELOPP]\n\nPeriod: [MÅNAD/KVARTAL]\n\nHjälp mig systematiskt hitta felet:\n\n1. VANLIGA ORSAKER\n   - Lista troliga orsaker till denna typ av differens\n   - Prioritera efter sannolikhet\n\n2. KONTROLLSTEG\n   - Steg-för-steg checklista för att hitta felet\n   - Vad ska jag kolla först, sedan, sist?\n\n3. KORRIGERINGSFÖRSLAG\n   - Om [X] är felet, hur rättar jag?\n   - Verifikationsmallar\n\n4. FÖREBYGGANDE\n   - Hur undviker jag detta nästa gång?\n\nFormat: Systematisk felsökningsguide.",
+            "example": "Hitta varför banken visar 50 000 men bokföring visar 48 500",
+            "howToUse": "Beskriv differens → Få felsökningssteg → Följ systematiskt → Hitta fel",
+            "tools": ["ChatGPT", "Claude"]
+          },
+          {
+            "id": "econ_book_3",
+            "name": "Periodiseringar - automatisk beräkning",
+            "description": "Beräkna och bokför periodiseringar korrekt",
+            "timeSaved": "20-30 min per period",
+            "difficulty": "Medel",
+            "prompt": "Jag behöver periodisera följande:\n\nTyp: [T.EX. 'förutbetald kostnad', 'upplupet intäkt', etc.]\nTotalt belopp: [BELOPP]\nPeriod som betalats: [FRÅN - TILL]\nBokföringsperiod: [MÅNAD/KVARTAL]\n\nBeräkna och ge mig:\n\n1. PERIODISERINGSBELOPP\n   - Beräkning (visa uträkning)\n   - Belopp att periodisera\n\n2. KONTERING\n   - Debetkontonummer och namn\n   - Kreditkontonummer och namn\n   - Verifikationstext\n\n3. ÅTERFÖRING\n   - När ska detta återföras?\n   - Kontering för återföring\n\n4. DOKUMENTATION\n   - Vad ska jag spara som underlag?\n\nFormat: Komplett periodiseringsverifikation.",
+            "example": "Periodisera hyra 120 000 kr för jan-dec, bokför i januari",
+            "howToUse": "Ange belopp och period → Få beräkning → Bokför → Sätt påminnelse för återföring",
+            "tools": ["ChatGPT", "Excel"]
+          }
+        ],
+        "Rapportering & Analys": [
+          {
+            "id": "econ_report_1",
+            "name": "Månadsrapport - snabb sammanställning",
+            "description": "Skapa professionell månadsrapport på 30 minuter",
+            "timeSaved": "2-3h per rapport",
+            "difficulty": "Medel",
+            "prompt": "Skapa en månadsrapport för [MÅNAD] [ÅR].\n\nData:\n- Omsättning: [BELOPP] (Budget: [BELOPP])\n- Kostnader: [BELOPP] (Budget: [BELOPP])\n- Resultat: [BELOPP]\n- Jämfört med föregående månad: [+/- %]\n- Jämfört med föregående år: [+/- %]\n\nViktiga händelser: [LISTA SÄRSKILDA HÄNDELSER]\n\nSkapa en rapport med:\n\n1. EXECUTIVE SUMMARY\n   - 3-4 meningar om månadens resultat\n   - Röd/gul/grön status\n\n2. NYCKELTAL\n   - Utfall vs budget\n   - Avvikelser (belopp och %)\n   - Trend jämfört med tidigare\n\n3. ANALYS\n   - Vad förklarar avvikelserna?\n   - Positiva överraskningar\n   - Områden att uppmärksamma\n\n4. PROGNOS\n   - Förväntad utveckling nästa månad\n   - Risker/möjligheter\n\n5. REKOMMENDATIONER\n   - 2-3 konkreta åtgärder\n\nTon: Professionell, faktabaserad, actionable.\nFormat: Redo för ledningsgrupp.",
+            "example": "Från siffror till insiktsfull rapport på 30 minuter",
+            "howToUse": "Exportera siffror från bokföring → Klistra in → Få färdig rapport → Justera → Skicka",
+            "tools": ["ChatGPT", "Claude", "Excel"]
+          },
+          {
+            "id": "econ_report_2",
+            "name": "Budgetavvikelser - förklara tydligt",
+            "description": "Analysera och förklara budgetavvikelser för ledning",
+            "timeSaved": "1-2h per analys",
+            "difficulty": "Medel",
+            "prompt": "Analysera denna budgetavvikelse:\n\nKonto/Post: [KONTONAMN]\nBudget: [BELOPP]\nUtfall: [BELOPP]\nAvvikelse: [BELOPP] ([%])\n\nKontext: [BESKRIV VAD SOM HÄNT - t.ex. 'ny anställning', 'oväntad reparation', etc.]\n\nSkapa en analys som:\n\n1. FÖRKLARING\n   - Varför uppstod avvikelsen?\n   - Var det förutsägbart?\n   - Engångshändelse eller trend?\n\n2. PÅVERKAN\n   - Hur påverkar det årsresultatet?\n   - Andra poster som påverkas?\n\n3. ÅTGÄRDER\n   - Vad kan vi göra?\n   - Kortsiktigt vs långsiktigt\n\n4. FRAMÅT\n   - Ska budgeten justeras?\n   - Vad ska vi bevaka?\n\nTon: Objektiv, lösningsfokuserad, ej skuldbeläggande.\nFormat: Redo att presentera för chef.",
+            "example": "Förklara varför personalkostnader är 15% över budget",
+            "howToUse": "Identifiera avvikelse → Fyll i kontext → Få analys → Presentera lösningar",
+            "tools": ["ChatGPT", "Power BI"]
+          },
+          {
+            "id": "econ_report_3",
+            "name": "Kassaflödesprognos - enkel",
+            "description": "Skapa 3-månaders kassaflödesprognos",
+            "timeSaved": "1-2h",
+            "difficulty": "Medel",
+            "prompt": "Skapa en kassaflödesprognos för [FÖRETAG].\n\nNuläge:\n- Kassa idag: [BELOPP]\n- Kundfordringar: [BELOPP] (betalas inom [DAGAR])\n- Leverantörsskulder: [BELOPP] (förfaller [DATUM])\n\nLöpande:\n- Månatlig omsättning: [BELOPP]\n- Månatliga kostnader: [BELOPP]\n- Lön utbetalas: [DATUM varje månad]\n- Moms betalas: [DATUM]\n\nExtra:\n- Kommande investeringar: [LISTA]\n- Andra större betalningar: [LISTA]\n\nSkapa prognos (3 månader framåt) med:\n\n1. MÅNAD FÖR MÅNAD\n   - Ingående kassa\n   - Inbetalningar (specificerat)\n   - Utbetalningar (specificerat)\n   - Utgående kassa\n\n2. KRITISKA PUNKTER\n   - När blir kassan låg?\n   - Behövs åtgärder?\n\n3. SCENARIOANALYS\n   - Best case\n   - Worst case\n   - Most likely\n\n4. REKOMMENDATIONER\n   - Vad ska vi göra?\n\nFormat: Excel-vänlig tabell + sammanfattning.",
+            "example": "Förutse likviditetsproblem 2 månader i förväg",
+            "howToUse": "Samla data → Klistra in → Få prognos → Exportera till Excel → Uppdatera månadsvis",
+            "tools": ["ChatGPT", "Excel"]
+          }
+        ],
+        "Löner & Skatter": [
+          {
+            "id": "econ_payroll_1",
+            "name": "Lönekörning - checklista",
+            "description": "Systematisk checklista för felfri lönekörning",
+            "timeSaved": "30 min per lönekörning",
+            "difficulty": "Lätt",
+            "prompt": "Skapa en checklista för lönekörning [MÅNAD].\n\nAntal anställda: [ANTAL]\nSärskilda händelser denna månad: [T.EX. 'ny anställd', 'föräldraledighet', 'bonus', etc.]\n\nGe mig en komplett checklista:\n\n1. FÖRE LÖNEKÖRNING (1 vecka innan)\n   - Vad ska jag kontrollera?\n   - Vilka underlag behövs?\n   - Deadlines att hålla koll på\n\n2. UNDER LÖNEKÖRNING\n   - Steg-för-steg i lönesystemet\n   - Kontrollpunkter\n   - Vanliga fel att undvika\n\n3. EFTER LÖNEKÖRNING\n   - Vad ska bokföras?\n   - Rapporter till Skatteverket\n   - Utbetalningar\n   - Arkivering\n\n4. SÄRSKILDA HÄNDELSER\n   - Hur hanterar jag [HÄNDELSE]?\n   - Extra kontroller\n\nFormat: Checklistor att bocka av.",
+            "example": "Från stress till systematisk lönekörning",
+            "howToUse": "Uppdatera med månadens händelser → Följ checklistan → Bocka av → Klar",
+            "tools": ["ChatGPT", "Notion"]
+          },
+          {
+            "id": "econ_payroll_2",
+            "name": "Momsdeklaration - förberedelse",
+            "description": "Förbered momsdeklaration systematiskt",
+            "timeSaved": "1-2h per deklaration",
+            "difficulty": "Medel",
+            "prompt": "Förbered momsdeklaration för [PERIOD].\n\nFörsäljning:\n- Momspliktig försäljning 25%: [BELOPP]\n- Momspliktig försäljning 12%: [BELOPP]\n- Momspliktig försäljning 6%: [BELOPP]\n- Momsfri försäljning: [BELOPP]\n- Export (0%): [BELOPP]\n\nInköp:\n- Ingående moms: [BELOPP]\n- Varav EU-inköp: [BELOPP]\n\nSkapa en systematisk genomgång:\n\n1. KONTROLLER\n   - Vad ska jag dubbelkolla?\n   - Vanliga fel för min bransch\n   - Avstämning mot bokföring\n\n2. BERÄKNINGAR\n   - Utgående moms per momssats\n   - Ingående moms\n   - Att betala/få tillbaka\n\n3. IFYLLNING\n   - Vilka rutor i deklarationen?\n   - Siffror att fylla i\n\n4. DOKUMENTATION\n   - Vad ska jag spara?\n   - Hur länge?\n\n5. BETALNING\n   - Belopp\n   - Datum\n   - Kontering\n\nFormat: Steg-för-steg guide.",
+            "example": "Felfri momsdeklaration på 30 minuter",
+            "howToUse": "Exportera siffror → Klistra in → Följ kontroller → Deklarera → Bokför",
+            "tools": ["ChatGPT", "Skatteverket"]
+          }
+        ],
+        "Årsredovisning & Bokslut": [
+          {
+            "id": "econ_year_1",
+            "name": "Bokslutsdispositioner - planera",
+            "description": "Optimera bokslutsdispositioner för bästa resultat",
+            "timeSaved": "2-3h planering",
+            "difficulty": "Avancerad",
+            "prompt": "Planera bokslutsdispositioner för [FÖRETAG].\n\nResultat före dispositioner: [BELOPP]\nÖnskad vinstutdelning: [BELOPP]\nLikviditet: [BELOPP]\n\nMöjliga dispositioner:\n- Avsättning till periodiseringsfond: Max [BELOPP]\n- Överavskrivningar: Möjliga [BELOPP]\n- Koncernbidrag: [OM AKTUELLT]\n\nGe mig:\n\n1. OPTIMERINGSFÖRSLAG\n   - Vilka dispositioner ska göras?\n   - I vilken ordning?\n   - Belopp per disposition\n\n2. SKATTEEFFEKT\n   - Skatt att betala\n   - Jämför olika scenarion\n\n3. KONTERING\n   - Hur bokförs varje disposition?\n   - Verifikationstexter\n\n4. FRAMTIDA PÅVERKAN\n   - Hur påverkar det nästa år?\n   - Återföring/upplösning\n\n5. DOKUMENTATION\n   - Vad ska styrelsen besluta?\n   - Underlag till revisor\n\nOBS: Detta är endast förslag - konsultera alltid revisor!\nFormat: Beslutsunderlag.",
+            "example": "Optimera skatt och utdelning samtidigt",
+            "howToUse": "Fyll i siffror → Få förslag → Diskutera med revisor → Besluta → Bokför",
+            "tools": ["ChatGPT", "Excel"]
+          },
+          {
+            "id": "econ_year_2",
+            "name": "Årsredovisning - förvaltningsberättelse",
+            "description": "Skriv professionell förvaltningsberättelse",
+            "timeSaved": "2-4h skrivande",
+            "difficulty": "Medel",
+            "prompt": "Skriv förvaltningsberättelse för [FÖRETAG] [ÅR].\n\nNyckeldata:\n- Omsättning: [BELOPP] (förra året: [BELOPP])\n- Resultat: [BELOPP] (förra året: [BELOPP])\n- Antal anställda: [ANTAL]\n- Viktiga händelser: [LISTA]\n\nSkapa en förvaltningsberättelse enligt ÅRL med:\n\n1. VERKSAMHETEN\n   - Vad företaget gör\n   - Marknad och konkurrens\n   - Viktiga händelser under året\n\n2. FLERÅRSÖVERSIKT\n   - Tabell med 3-5 års data\n   - Nyckeltal\n\n3. RESULTAT OCH STÄLLNING\n   - Kommentar till resultat\n   - Kommentar till balansräkning\n   - Förändring eget kapital\n\n4. VÄSENTLIGA HÄNDELSER\n   - Efter räkenskapsårets utgång\n\n5. FÖRVÄNTAD UTVECKLING\n   - Framtidsutsikter\n\n6. FÖRSLAG TILL VINSTDISPOSITION\n   - Hur resultatet ska disponeras\n\nTon: Professionell, faktabaserad, framåtblickande.\nFormat: Enligt ÅRL krav.",
+            "example": "Från siffror till professionell årsredovisning",
+            "howToUse": "Samla nyckeldata → Klistra in → Få utkast → Justera → Skicka till revisor",
+            "tools": ["ChatGPT", "Word"]
+          }
+        ],
+        "Kommunikation": [
+          {
+            "id": "econ_comm_1",
+            "name": "Email till chef - ekonomisk update",
+            "description": "Skriv tydliga ekonomiska uppdateringar",
+            "timeSaved": "15-20 min per email",
+            "difficulty": "Lätt",
+            "prompt": "Skriv ett email till [CHEF/VD] om ekonomisk status.\n\nBudskap: [VAD JAG VILL KOMMUNICERA - t.ex. 'vi är över budget', 'bra resultat', 'behöver beslut om X']\n\nSiffror:\n[LISTA RELEVANTA SIFFROR]\n\nSkriv ett professionellt email som:\n\n1. SUBJECT LINE\n   - Tydlig, visar vad det handlar om\n\n2. SAMMANFATTNING (2-3 meningar)\n   - Huvudbudskap\n   - Grön/gul/röd status\n\n3. DETALJER\n   - Relevanta siffror\n   - Förklaring\n   - Kontext\n\n4. ÅTGÄRD/BESLUT\n   - Vad behöver göras?\n   - Av vem?\n   - När?\n\n5. NÄSTA STEG\n   - Vad händer nu?\n\nTon: Professionell, tydlig, lösningsfokuserad.\nFormat: Redo att skicka.",
+            "example": "Från 'vi har problem' till konstruktiv kommunikation",
+            "howToUse": "Fyll i budskap och siffror → Få email → Justera ton → Skicka",
+            "tools": ["ChatGPT", "Notion AI"]
+          }
+        ]
+      },
+      "totalPrompts": 15,
+      "averageTimeSaved": "8-12h per vecka",
+      "difficulty": "60% Lätt, 30% Medel, 10% Avancerad"
+    },
+
+    "HR-specialist": {
+      "categories": {
+        "Rekrytering": [
+          {
+            "id": "hr_recruit_1",
+            "name": "Jobbannons - engagerande",
+            "description": "Skapa attraktiva jobbannonser som lockar rätt kandidater",
+            "timeSaved": "1-2h per annons",
+            "difficulty": "Lätt",
+            "prompt": "Skapa en jobbannons för:\n\nRoll: [TITEL]\nAvdelning: [AVDELNING]\nPlats: [STAD]\nAnställningsform: [TILLSVIDARE/VIKARIAT/etc.]\n\nVi söker någon som:\n[LISTA KRAV OCH ÖNSKEMÅL]\n\nArbetsuppgifter:\n[LISTA HUVUDSAKLIGA UPPGIFTER]\n\nVi erbjuder:\n[FÖRMÅNER, KULTUR, etc.]\n\nSkapa en annons som:\n\n1. RUBRIK\n   - Catchy, tydlig\n   - Inkluderar roll och plats\n\n2. INGRESS (2-3 meningar)\n   - Väcker intresse\n   - Visar vad som är unikt\n\n3. OM ROLLEN\n   - Huvudansvar\n   - Varför rollen är viktig\n   - Utvecklingsmöjligheter\n\n4. VI SÖKER DIG SOM\n   - Must-have kompetenser\n   - Nice-to-have\n   - Personliga egenskaper\n\n5. VI ERBJUDER\n   - Konkreta förmåner\n   - Kultur och värderingar\n   - Karriärmöjligheter\n\n6. ANSÖKAN\n   - Vad ska skickas in\n   - Deadline\n   - Kontaktperson\n\nTon: Inkluderande, inspirerande, professionell.\nFormat: Redo för LinkedIn/karriärsida.",
+            "example": "Från tråkig lista till annons som får 3x fler ansökningar",
+            "howToUse": "Fyll i rollinfo → Få annons → Justera till företagets ton → Publicera",
+            "tools": ["ChatGPT", "Claude"]
+          },
+          {
+            "id": "hr_recruit_2",
+            "name": "Screeningfrågor - effektiva",
+            "description": "Skapa frågor som kvalificerar kandidater snabbt",
+            "timeSaved": "30 min per rekrytering",
+            "difficulty": "Lätt",
+            "prompt": "Skapa screeningfrågor för rollen:\n\nRoll: [TITEL]\nViktigaste kompetenser: [LISTA TOP 3-5]\nDealbreakers: [VAD SOM ABSOLUT KRÄVS]\n\nSkapa 5-8 screeningfrågor som:\n\n1. KOMPETENSKONTROLL\n   - Verifierar must-have skills\n   - Konkreta exempel-frågor\n\n2. ERFARENHETSNIVÅ\n   - Hur lång erfarenhet?\n   - Relevanta projekt?\n\n3. PRAKTISKA FRÅGOR\n   - Tillgänglighet\n   - Löneanspråk\n   - Uppsägningstid\n\n4. KULTURFIT (subtilt)\n   - Arbetssätt\n   - Värderingar\n\nVarje fråga ska:\n- Ha tydligt syfte\n- Vara lätt att svara på\n- Ge mig beslutsinformation\n\nFormat: Frågor för ansökningsformulär.",
+            "example": "Från 200 ansökningar till 15 kvalificerade på 2h",
+            "howToUse": "Ange roll och krav → Få frågor → Lägg in i ATS → Screena effektivt",
+            "tools": ["ChatGPT", "Teamtailor"]
+          },
+          {
+            "id": "hr_recruit_3",
+            "name": "Intervjuguide - strukturerad",
+            "description": "Skapa komplett intervjuguide med följdfrågor",
+            "timeSaved": "1-2h förberedelse per roll",
+            "difficulty": "Medel",
+            "prompt": "Skapa en intervjuguide för:\n\nRoll: [TITEL]\nIntervjulängd: [30/45/60 min]\nKompetenser att bedöma: [LISTA]\n\nSkapa en strukturerad guide:\n\n1. ÖPPNING (5 min)\n   - Välkomnande\n   - Agenda\n   - Sätta tonen\n\n2. KOMPETENSBASERADE FRÅGOR (30 min)\n   För varje kompetens:\n   - Huvudfråga\n   - 3 följdfrågor\n   - Vad jag lyssnar efter\n   - Röda flaggor\n\n3. SITUATIONSFRÅGOR (10 min)\n   - 2-3 scenarion från verklig arbetsvardag\n   - Vad är bra svar?\n\n4. KANDIDATENS FRÅGOR (10 min)\n   - Förbered svar på vanliga frågor\n\n5. AVSLUTNING (5 min)\n   - Nästa steg\n   - Timeline\n\n6. BEDÖMNINGSMATRIS\n   - Hur poängsätter jag?\n   - Vad väger tyngst?\n\nFormat: Intervjuguide att skriva ut.",
+            "example": "Strukturerade intervjuer = bättre rekryteringar",
+            "howToUse": "Ange roll → Få guide → Öva → Intervjua → Bedöm systematiskt",
+            "tools": ["ChatGPT", "Notion"]
+          }
+        ],
+        "Onboarding": [
+          {
+            "id": "hr_onboard_1",
+            "name": "Onboarding-plan - 90 dagar",
+            "description": "Skapa komplett introduktionsplan för nya medarbetare",
+            "timeSaved": "2-3h per nyanställd",
+            "difficulty": "Medel",
+            "prompt": "Skapa en 90-dagars onboarding-plan för:\n\nRoll: [TITEL]\nAvdelning: [AVDELNING]\nStartdatum: [DATUM]\nChef: [NAMN]\n\nSkapa en strukturerad plan:\n\nDAG 1:\n- Välkomnande\n- IT-setup\n- Introduktion till team\n- Första uppgifter\n\nVECKA 1:\n- Viktiga möten\n- System och verktyg\n- Processer att lära\n- Mål för veckan\n\nMÅNAD 1 (30 dagar):\n- Kompetensutveckling\n- Projekt att äga\n- Nätverk att bygga\n- Check-in med chef\n\nMÅNAD 2-3 (60-90 dagar):\n- Större ansvar\n- Självständiga projekt\n- Utvärdering\n- Feedback-samtal\n\nFör varje fas, inkludera:\n- Konkreta aktiviteter\n- Ansvarig person\n- Resurser/material\n- Framgångskriterier\n\nFormat: Checklista att följa.",
+            "example": "Från ad-hoc till systematisk onboarding",
+            "howToUse": "Fyll i rollinfo → Få plan → Anpassa → Dela med chef → Följ upp",
+            "tools": ["ChatGPT", "Notion", "Trello"]
+          },
+          {
+            "id": "hr_onboard_2",
+            "name": "Välkomstmail - personligt",
+            "description": "Skriv varmt välkomstmail till nya medarbetare",
+            "timeSaved": "20-30 min",
+            "difficulty": "Lätt",
+            "prompt": "Skriv ett välkomstmail till:\n\nNamn: [NAMN]\nRoll: [TITEL]\nStartdatum: [DATUM]\nChef: [NAMN]\nTeam: [TEAMNAMN]\n\nSkriv ett mail som:\n\n1. VÄLKOMNANDE\n   - Genuint och varmt\n   - Visa att vi är glada\n\n2. PRAKTISK INFO\n   - Första dagen: tid, plats, vad som händer\n   - Vad ska tas med\n   - Kontaktperson\n\n3. FÖRBEREDELSE\n   - Vad kan läsas på innan (om något)\n   - System-access som ordnas\n\n4. KULTUR\n   - Kort om företagskulturen\n   - Vad vi värdesätter\n\n5. AVSLUTNING\n   - Uppmuntrande\n   - Öppen dörr för frågor\n\nTon: Varm, professionell, välkomnande.\nFormat: Redo att skicka.",
+            "example": "Första intrycket räknas - gör det bra!",
+            "howToUse": "Fyll i info → Få mail → Personalisera → Skicka 1 vecka innan start",
+            "tools": ["ChatGPT", "Notion AI"]
+          }
+        ],
+        "Performance & Utveckling": [
+          {
+            "id": "hr_perf_1",
+            "name": "Utvecklingssamtal - struktur",
+            "description": "Skapa strukturerade utvecklingssamtal",
+            "timeSaved": "30-45 min förberedelse",
+            "difficulty": "Medel",
+            "prompt": "Förbered utvecklingssamtal för:\n\nMedarbetare: [NAMN]\nRoll: [TITEL]\nTid i rollen: [ANTAL MÅNADER/ÅR]\nSenaste samtalet: [DATUM]\n\nSkapa en samtalsstruktur:\n\n1. ÅTERBLICK\n   - Vad har gått bra?\n   - Utmaningar?\n   - Mål från förra samtalet - hur gick det?\n\n2. NULÄGE\n   - Trivsel (1-10)\n   - Arbetsbörda\n   - Relation med team/chef\n\n3. UTVECKLING\n   - Vad vill medarbetaren lära sig?\n   - Karriärmål (1-3 år)\n   - Kompetensgap\n\n4. ÅTGÄRDSPLAN\n   - Konkreta utvecklingsaktiviteter\n   - Resurser som behövs\n   - Timeline\n   - Uppföljning\n\n5. MÅL FRAMÅT\n   - 3 utvecklingsmål nästa period\n   - Hur mäter vi framgång?\n\nGe mig:\n- Frågor att ställa\n- Hur jag faciliterar samtalet\n- Dokumentationsmall\n\nFormat: Samtalsguide.",
+            "example": "Från 'hur mår du?' till utvecklande samtal",
+            "howToUse": "Fyll i medarbetarinfo → Få struktur → Håll samtal → Dokumentera → Följ upp",
+            "tools": ["ChatGPT", "Notion"]
+          },
+          {
+            "id": "hr_perf_2",
+            "name": "Feedback - konstruktiv",
+            "description": "Formulera svår feedback på rätt sätt",
+            "timeSaved": "30-60 min förberedelse",
+            "difficulty": "Medel",
+            "prompt": "Jag behöver ge feedback på:\n\nSituation: [BESKRIV VAD SOM HÄNT]\nMedarbetare: [ROLL/KONTEXT]\nPåverkan: [HUR DET PÅVERKAT TEAM/RESULTAT]\n\nHjälp mig formulera konstruktiv feedback:\n\n1. ÖPPNING\n   - Hur startar jag samtalet?\n   - Sätta rätt ton\n\n2. SITUATION (Fakta)\n   - Objektiv beskrivning\n   - Konkreta exempel\n   - Ingen tolkning\n\n3. PÅVERKAN\n   - Hur det påverkat\n   - Varför det är viktigt\n\n4. LYSSNA\n   - Frågor att ställa\n   - Ge utrymme för perspektiv\n\n5. FRAMÅT\n   - Vad behöver förändras?\n   - Hur kan jag stötta?\n   - Konkreta nästa steg\n\n6. UPPFÖLJNING\n   - När följer vi upp?\n   - Hur mäter vi förbättring?\n\nTon: Respektfull, tydlig, stödjande.\nFormat: Samtalsmanuskript.",
+            "example": "Från undvikande till konstruktiv feedback",
+            "howToUse": "Beskriv situation → Få struktur → Öva → Håll samtal → Följ upp",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "Policy & Administration": [
+          {
+            "id": "hr_policy_1",
+            "name": "Policy-dokument - tydliga",
+            "description": "Skriv lättförståeliga HR-policys",
+            "timeSaved": "2-4h per policy",
+            "difficulty": "Medel",
+            "prompt": "Skapa en policy för:\n\nOmråde: [T.EX. 'distansarbete', 'föräldraledighet', 'semester', etc.]\nSyfte: [VARFÖR DENNA POLICY BEHÖVS]\nRegler: [HUVUDSAKLIGA REGLER]\n\nSkapa ett policy-dokument som:\n\n1. SYFTE\n   - Varför har vi denna policy?\n   - Vem gäller den för?\n\n2. RIKTLINJER\n   - Tydliga regler\n   - Konkreta exempel\n   - Vad är OK, vad är inte OK\n\n3. PROCESS\n   - Hur ansöker/anmäler man?\n   - Vem godkänner?\n   - Timeline\n\n4. ANSVAR\n   - Medarbetarens ansvar\n   - Chefens ansvar\n   - HR:s ansvar\n\n5. UNDANTAG\n   - När kan undantag göras?\n   - Vem beslutar?\n\n6. FRÅGOR\n   - Vem kontaktar man?\n\nTon: Tydlig, inkluderande, professionell.\nSpråk: Enkelt, inga krångliga juridiska termer.\nFormat: Policy-dokument.",
+            "example": "Från otydliga regler till tydlig policy",
+            "howToUse": "Definiera område → Få utkast → Granska juridiskt → Publicera",
+            "tools": ["ChatGPT", "Notion"]
+          },
+          {
+            "id": "hr_policy_2",
+            "name": "Medarbetarhandbok - uppdatera",
+            "description": "Håll medarbetarhandboken aktuell och engagerande",
+            "timeSaved": "3-5h uppdatering",
+            "difficulty": "Medel",
+            "prompt": "Uppdatera detta avsnitt i medarbetarhandboken:\n\nAvsnitt: [T.EX. 'Förmåner', 'Arbetsmiljö', etc.]\nNuvarande text: [KLISTRA IN GAMMAL TEXT]\nVad som ändrats: [BESKRIV FÖRÄNDRINGAR]\n\nOmskriv avsnittet så att det:\n\n1. ÄR AKTUELLT\n   - Inkluderar nya förändringar\n   - Tar bort föråldrat\n\n2. ÄR ENGAGERANDE\n   - Inte tråkig byråkrattext\n   - Visar företagskultur\n   - Konkreta exempel\n\n3. ÄR TYDLIGT\n   - Lätt att förstå\n   - Visuellt strukturerat\n   - Bullet points där det passar\n\n4. ÄR KOMPLETT\n   - Svarar på vanliga frågor\n   - Länkar till mer info\n   - Kontaktpersoner\n\nTon: Välkomnande, informativ, företagets röst.\nFormat: Redo för handbok.",
+            "example": "Från tråkig manual till inspirerande guide",
+            "howToUse": "Klistra in gammalt → Beskriv ändringar → Få uppdaterat → Publicera",
+            "tools": ["ChatGPT", "Notion"]
+          }
+        ]
+      },
+      "totalPrompts": 12,
+      "averageTimeSaved": "6-10h per vecka",
+      "difficulty": "70% Lätt, 30% Medel"
     }
   }
 }

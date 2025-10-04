@@ -6,6 +6,7 @@ import ChatAssistant from "@/components/ChatAssistant";
 import ImplementationPlan from "@/components/ImplementationPlan";
 import PremiumUpgrade from "@/components/PremiumUpgrade";
 import StructuredData from "@/components/StructuredData";
+import ProfessionPrompts from "@/components/ProfessionPrompts";
 import { useRouter } from "next/navigation";
 
 interface Scenario {
@@ -709,7 +710,10 @@ export default function AIRecommendations({
 
                   {/* Plan Tab */}
                   {activeTab === "plan" && (
-                  <div>
+                  <div className="space-y-8">
+                    {/* Profession-specific prompts if available */}
+                    <ProfessionPrompts profession={profession} />
+
                     <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-6">
                       Din implementeringsplan
                     </h3>
