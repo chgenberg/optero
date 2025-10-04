@@ -1802,6 +1802,422 @@
       "totalPrompts": 4,
       "averageTimeSaved": "4-5h per vecka",
       "difficulty": "25% Lätt, 75% Medel"
+    },
+    "Controller": {
+      "categories": {
+        "Budgetering": [
+          {
+            "id": "ctrl_budget_1",
+            "name": "Budgetmall för avdelning",
+            "description": "Skapa strukturerad budgetmall",
+            "timeSaved": "1-2h",
+            "difficulty": "Medel",
+            "prompt": "Skapa budgetmall för:\n\nAvdelning: [NAMN]\nKostnadsposter: [LISTA]\nIntäktsposter: [LISTA]\n\nSkapa en budgetmall med:\n- Alla kostnadskategorier\n- Förväntade intäkter\n- Månadsfördelning\n- Jämförelse med föregående år\n- Nyckeltal att följa\n- Kommentarsfält\n\nFormat: Excel-vänlig struktur.",
+            "example": "Från tomma blad till komplett budgetmall",
+            "howToUse": "Ange avdelning → Få mall → Fyll i siffror",
+            "tools": ["ChatGPT", "Excel Copilot"]
+          }
+        ],
+        "Analys": [
+          {
+            "id": "ctrl_analysis_1",
+            "name": "Avvikelseanalys - djupgående",
+            "description": "Analysera och förklara budgetavvikelser",
+            "timeSaved": "30-45 min",
+            "difficulty": "Medel",
+            "prompt": "Analysera avvikelse:\n\nKostnadscenter: [NAMN]\nBudget: [BELOPP]\nUtfall: [BELOPP]\nAvvikelse: [BELOPP, %]\n\nSkapa en analys:\n- Vad som orsakade avvikelsen\n- Är det engångseffekt eller trend?\n- Påverkan på helår\n- Åtgärder att vidta\n- Rekommendationer\n\nFormat: Analysrapport.",
+            "example": "Från siffror till insiktsfull analys",
+            "howToUse": "Mata in data → Få analys → Presentera för ledning",
+            "tools": ["ChatGPT", "Claude"]
+          },
+          {
+            "id": "ctrl_analysis_2",
+            "name": "KPI-dashboard beskrivning",
+            "description": "Förklara nyckeltal pedagogiskt",
+            "timeSaved": "20-30 min",
+            "difficulty": "Lätt",
+            "prompt": "Förklara dessa KPI:er för ledning:\n\n[LISTA KPI:ER OCH VÄRDEN]\n\nSkriv en beskrivning som:\n- Förklarar varje KPI (vad det mäter)\n- Varför det är viktigt\n- Vad siffrorna betyder\n- Trend (bättre/sämre)\n- Vad vi bör göra\n\nTon: Pedagogisk, actionable.",
+            "example": "Från siffror till insikter",
+            "howToUse": "Lista KPI:er → Få förklaring → Dela i dashboard",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Prognoser": [
+          {
+            "id": "ctrl_forecast_1",
+            "name": "Helårsprognos baserat på utfall",
+            "description": "Skapa realistiska prognoser",
+            "timeSaved": "1-2h",
+            "difficulty": "Medel",
+            "prompt": "Skapa helårsprognos:\n\nUtfall jan-[MÅNAD]: [SIFFROR]\nBudget helår: [SIFFROR]\nKända händelser framåt: [BESKRIV]\n\nSkapa en prognos med:\n- Förväntad omsättning\n- Förväntade kostnader\n- Resultatprognos\n- Avvikelse mot budget\n- Osäkerhetsfaktorer\n- Rekommendationer\n\nFormat: Prognosrapport med motiveringar.",
+            "example": "Från delårsutfall till helårsprognos",
+            "howToUse": "Mata in utfall → Få prognos → Presentera",
+            "tools": ["ChatGPT", "Excel Copilot"]
+          }
+        ]
+      },
+      "totalPrompts": 4,
+      "averageTimeSaved": "5-7h per vecka",
+      "difficulty": "25% Lätt, 75% Medel"
+    },
+    "Rekryterare": {
+      "categories": {
+        "Jobbannons": [
+          {
+            "id": "rec_job_1",
+            "name": "Skapa lockande jobbannons",
+            "description": "Skriv annonser som attraherar rätt kandidater",
+            "timeSaved": "30-45 min per annons",
+            "difficulty": "Lätt",
+            "prompt": "Skapa jobbannons för:\n\nRoll: [TITEL]\nFöretag: [NAMN, BRANSCH]\nKrav: [LISTA]\nArbetsuppgifter: [LISTA]\nFörmåner: [LISTA]\n\nSkriv en annons som:\n- Fångar uppmärksamhet (stark ingress)\n- Beskriver rollen inspirerande\n- Tydliggör krav och kvalifikationer\n- Säljer in företaget\n- Har tydlig call-to-action\n\nTon: Engagerande, inkluderande, professionell.",
+            "example": "Från kravspec till lockande annons",
+            "howToUse": "Ange rollinfo → Få annons → Publicera",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "Kandidatbedömning": [
+          {
+            "id": "rec_assess_1",
+            "name": "Intervjufrågor - beteendebaserade",
+            "description": "Skapa STAR-baserade intervjufrågor",
+            "timeSaved": "20-30 min",
+            "difficulty": "Lätt",
+            "prompt": "Skapa intervjufrågor för:\n\nRoll: [TITEL]\nNyckelkompetenser: [LISTA]\nTeamkultur: [BESKRIV]\n\nSkapa 15 STAR-frågor som:\n- Testar nyckelkompetenser\n- Avslöjar arbetssätt\n- Bedömer cultural fit\n- Är öppna (inte ja/nej)\n- Inkluderar uppföljningsfrågor\n\nFormat: Frågor med vad du letar efter i svaret.",
+            "example": "Från rollbeskrivning till intervjuguide",
+            "howToUse": "Ange roll → Få frågor → Använd i intervju",
+            "tools": ["ChatGPT"]
+          },
+          {
+            "id": "rec_assess_2",
+            "name": "Kandidatsammanfattning för hiring manager",
+            "description": "Sammanfatta kandidat koncist",
+            "timeSaved": "15-20 min per kandidat",
+            "difficulty": "Lätt",
+            "prompt": "Sammanfatta kandidat:\n\nNamn: [NAMN]\nCV: [SAMMANFATTA]\nIntervju: [INTRYCK]\nStyrkor: [LISTA]\nSvagheter: [LISTA]\n\nSkapa en sammanfattning för hiring manager:\n- Översikt (3 meningar)\n- Styrkor och svagheter\n- Fit för rollen (1-10)\n- Rekommendation (gå vidare/nej)\n- Nästa steg\n\nFormat: Executive summary.",
+            "example": "Från intervju till koncis rekommendation",
+            "howToUse": "Samla intryck → Få sammanfattning → Dela med chef",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Kommunikation": [
+          {
+            "id": "rec_comm_1",
+            "name": "Avslag - respektfullt och konstruktivt",
+            "description": "Skriv avslag som lämnar god känsla",
+            "timeSaved": "10-15 min per kandidat",
+            "difficulty": "Lätt",
+            "prompt": "Skriv avslag till kandidat:\n\nKandidat: [NAMN]\nRoll: [TITEL]\nVarför nej: [INTERN MOTIVERING]\n\nSkriv ett email som:\n- Tackar för intresset\n- Är respektfullt och värdigt\n- Ger konstruktiv feedback (om möjligt)\n- Håller dörren öppen för framtiden\n- Önskar lycka till\n\nTon: Respektfull, varm, professionell.",
+            "example": "Från avslag till positiv kandidatupplevelse",
+            "howToUse": "Ange kandidat → Få avslag → Skicka",
+            "tools": ["ChatGPT"]
+          }
+        ]
+      },
+      "totalPrompts": 4,
+      "averageTimeSaved": "3-5h per vecka",
+      "difficulty": "75% Lätt, 25% Medel"
+    },
+    "Kommunikatör": {
+      "categories": {
+        "Pressmeddelanden": [
+          {
+            "id": "comms_press_1",
+            "name": "Pressmeddelande - nyhetsvärdigt",
+            "description": "Skriv pressmeddelanden som publiceras",
+            "timeSaved": "45-60 min",
+            "difficulty": "Medel",
+            "prompt": "Skriv pressmeddelande om:\n\nNyhet: [BESKRIV]\nFöretag: [NAMN]\nCitat från: [VEM]\nFakta: [SIFFROR/DATA]\n\nSkapa ett pressmeddelande med:\n- Stark rubrik (nyhetsvinkel)\n- Ingress (5W: vem, vad, när, var, varför)\n- Brödtext (detaljer, kontext)\n- Citat (minst 2)\n- Boilerplate\n- Kontaktinfo\n\nFormat: Standard pressmeddelande.",
+            "example": "Från företagsnyheter till publicerbart PM",
+            "howToUse": "Beskriv nyhet → Få PM → Skicka till media",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "Intern kommunikation": [
+          {
+            "id": "comms_internal_1",
+            "name": "Internt nyhetsbrev - engagerande",
+            "description": "Skriv nyhetsbrev som medarbetare läser",
+            "timeSaved": "1-2h per nyhetsbrev",
+            "difficulty": "Lätt",
+            "prompt": "Skapa internt nyhetsbrev:\n\nNyheter: [LISTA NYHETER]\nMålgrupp: [MEDARBETARE]\nTon: [FORMELL/INFORMELL]\n\nSkriv ett nyhetsbrev med:\n- Catchy rubrik\n- Intro (varför läsa detta)\n- Nyheter (prioriterat, koncist)\n- Medarbetarspotlight\n- Kommande events\n- Avslutning (call-to-action)\n\nFormat: Email-vänligt, lätt att skanna.",
+            "example": "Från punktlista till engagerande nyhetsbrev",
+            "howToUse": "Lista nyheter → Få nyhetsbrev → Skicka ut",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Kriskommunikation": [
+          {
+            "id": "comms_crisis_1",
+            "name": "Kriskommunikation - snabb och korrekt",
+            "description": "Hantera krissituationer kommunikativt",
+            "timeSaved": "30-45 min",
+            "difficulty": "Avancerad",
+            "prompt": "Krissituation:\n[BESKRIV VAD SOM HÄNT]\n\nMålgrupper: [MEDIA/KUNDER/MEDARBETARE]\n\nSkapa kriskommunikation:\n- Första uttalande (snabbt, korrekt)\n- Vad vi vet / inte vet\n- Vad vi gör åt det\n- Nästa uppdatering\n- Kontaktperson\n\nTon: Transparent, ansvarsfull, lugn.",
+            "example": "Från kris till kontrollerad kommunikation",
+            "howToUse": "Beskriv kris → Få uttalande → Granska och publicera SNABBT",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "Social media": [
+          {
+            "id": "comms_social_1",
+            "name": "LinkedIn-inlägg för företag",
+            "description": "Skriv engagerande företagsinlägg",
+            "timeSaved": "15-20 min per inlägg",
+            "difficulty": "Lätt",
+            "prompt": "Skapa LinkedIn-inlägg om:\n\n[ÄMNE/NYHET]\n\nSkriv ett inlägg som:\n- Fångar uppmärksamhet (första meningen)\n- Berättar en story\n- Ger värde till läsare\n- Inkluderar call-to-action\n- Använder hashtags smart (3-5 st)\n\nLängd: 150-200 ord\nTon: Professionell men personlig.",
+            "example": "Från nyhet till engagerande inlägg",
+            "howToUse": "Beskriv ämne → Få inlägg → Publicera",
+            "tools": ["ChatGPT"]
+          }
+        ]
+      },
+      "totalPrompts": 4,
+      "averageTimeSaved": "4-6h per vecka",
+      "difficulty": "50% Lätt, 25% Medel, 25% Avancerad"
+    },
+    "Copywriter": {
+      "categories": {
+        "Annonstexter": [
+          {
+            "id": "copy_ad_1",
+            "name": "Annonstexter - olika varianter",
+            "description": "Skapa A/B-testbara annonstexter",
+            "timeSaved": "30-45 min",
+            "difficulty": "Lätt",
+            "prompt": "Skriv annonstexter för:\n\nProdukt/Tjänst: [NAMN]\nMålgrupp: [BESKRIV]\nUnikt värde: [VAD GÖR OSS UNIKA]\nKanal: [FACEBOOK/GOOGLE/INSTAGRAM]\n\nSkapa 5 varianter med:\n- Olika vinklar (problem, lösning, benefit)\n- Olika toner (rationell, emotionell, humoristisk)\n- Olika längder (kort/lång)\n- Call-to-action\n\nFormat: Redo för A/B-test.",
+            "example": "Från produktinfo till 5 testbara annonser",
+            "howToUse": "Beskriv produkt → Få varianter → Testa i kampanj",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "Produktbeskrivningar": [
+          {
+            "id": "copy_prod_1",
+            "name": "Produktbeskrivning - säljande",
+            "description": "Skriv produkttexter som konverterar",
+            "timeSaved": "20-30 min per produkt",
+            "difficulty": "Lätt",
+            "prompt": "Skriv produktbeskrivning för:\n\nProdukt: [NAMN]\nEgenskaper: [LISTA]\nFördelar: [LISTA]\nMålgrupp: [VEM]\n\nSkriv en beskrivning som:\n- Fångar uppmärksamhet (rubrik)\n- Fokuserar på benefits (inte bara features)\n- Skapar känsla/upplevelse\n- Hanterar invändningar\n- Stark call-to-action\n\nFormat: Webbshop-redo text.",
+            "example": "Från teknisk spec till säljande text",
+            "howToUse": "Lista egenskaper → Få säljtext → Publicera",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Email-kampanjer": [
+          {
+            "id": "copy_email_1",
+            "name": "Email-sekvens - konverterande",
+            "description": "Skapa email-sekvenser som säljer",
+            "timeSaved": "1-2h per kampanj",
+            "difficulty": "Medel",
+            "prompt": "Skapa email-sekvens för:\n\nProdukt: [NAMN]\nMålgrupp: [BESKRIV]\nMål: [KÖPA/BOKA/REGISTRERA]\nAntal emails: [3-5]\n\nSkapa en sekvens med:\n- Email 1: Introducera problem\n- Email 2: Presentera lösning\n- Email 3: Social proof\n- Email 4: Urgency\n- Email 5: Sista chansen\n\nVarje email: Subject line + body + CTA.",
+            "example": "Från produkt till komplett email-kampanj",
+            "howToUse": "Beskriv kampanj → Få sekvens → Schemalägg emails",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "Landningssidor": [
+          {
+            "id": "copy_landing_1",
+            "name": "Landningssida - konverterande",
+            "description": "Skriv copy för high-converting landningssidor",
+            "timeSaved": "1-2h",
+            "difficulty": "Medel",
+            "prompt": "Skriv copy för landningssida:\n\nErbjudande: [VAD]\nMålgrupp: [VEM]\nSmärtpunkter: [PROBLEM DE HAR]\nLösning: [HUR VI LÖSER DET]\n\nSkapa copy för:\n- Hero (rubrik + underrubrik)\n- Problem-sektion\n- Lösning-sektion\n- Features & Benefits\n- Social proof\n- FAQ (5 frågor)\n- CTA (3 varianter)\n\nFormat: Sektionsvis, redo att designa.",
+            "example": "Från idé till komplett landningssida",
+            "howToUse": "Beskriv erbjudande → Få copy → Ge till designer",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ]
+      },
+      "totalPrompts": 4,
+      "averageTimeSaved": "5-7h per vecka",
+      "difficulty": "50% Lätt, 50% Medel"
+    },
+    "Eventkoordinator": {
+      "categories": {
+        "Planering": [
+          {
+            "id": "event_plan_1",
+            "name": "Event-checklista - komplett",
+            "description": "Skapa detaljerad checklista för event",
+            "timeSaved": "1-2h",
+            "difficulty": "Lätt",
+            "prompt": "Planera event:\n\nTyp: [KONFERENS/MINGEL/LANSERING]\nDatum: [NÄR]\nDeltagare: [ANTAL]\nBudget: [BELOPP]\n\nSkapa en checklista med:\n- Alla uppgifter (kronologiskt)\n- Deadlines\n- Ansvarig person\n- Budget per post\n- Leverantörer att kontakta\n- Backup-planer\n\nFormat: Detaljerad checklista, 8-12 veckor före event.",
+            "example": "Från idé till komplett eventplan",
+            "howToUse": "Ange eventinfo → Få checklista → Bocka av uppgifter",
+            "tools": ["ChatGPT", "Notion AI"]
+          }
+        ],
+        "Kommunikation": [
+          {
+            "id": "event_comm_1",
+            "name": "Inbjudan - lockande",
+            "description": "Skriv inbjudningar som får folk att komma",
+            "timeSaved": "30-45 min",
+            "difficulty": "Lätt",
+            "prompt": "Skapa inbjudan till:\n\nEvent: [NAMN]\nDatum/Plats: [INFO]\nMålgrupp: [VEM]\nVarför komma: [VÄRDE]\n\nSkriv en inbjudan som:\n- Fångar uppmärksamhet\n- Kommunicerar värde\n- Skapar FOMO\n- Har tydlig agenda\n- Enkel anmälan\n\nFormat: Email eller webb.",
+            "example": "Från eventinfo till lockande inbjudan",
+            "howToUse": "Ange eventinfo → Få inbjudan → Skicka ut",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Leverantörshantering": [
+          {
+            "id": "event_vendor_1",
+            "name": "Förfrågan till leverantörer",
+            "description": "Skapa tydliga offerförfrågningar",
+            "timeSaved": "20-30 min per leverantör",
+            "difficulty": "Lätt",
+            "prompt": "Skapa offerförfrågan för:\n\nTjänst: [CATERING/LJUD/LOKAL]\nEvent: [BESKRIV]\nKrav: [LISTA]\nBudget: [RAM]\n\nSkriv en förfrågan med:\n- Eventöversikt\n- Specifika krav\n- Antal personer\n- Datum och tider\n- Budget-ram\n- Deadline för offert\n\nFormat: Professionell förfrågan.",
+            "example": "Från behov till tydlig offerförfrågan",
+            "howToUse": "Beskriv behov → Få förfrågan → Skicka till leverantörer",
+            "tools": ["ChatGPT"]
+          }
+        ]
+      },
+      "totalPrompts": 3,
+      "averageTimeSaved": "3-4h per vecka",
+      "difficulty": "100% Lätt"
+    },
+    "Inköpare": {
+      "categories": {
+        "Förfrågningsunderlag": [
+          {
+            "id": "purch_rfq_1",
+            "name": "RFQ - detaljerat och tydligt",
+            "description": "Skapa professionella förfrågningsunderlag",
+            "timeSaved": "1-2h per RFQ",
+            "difficulty": "Medel",
+            "prompt": "Skapa RFQ för:\n\nProdukt/Tjänst: [BESKRIV]\nSpecifikationer: [TEKNISKA KRAV]\nVolym: [ANTAL]\nLeveranstid: [NÄR]\n\nSkapa ett RFQ med:\n- Bakgrund och syfte\n- Detaljerade specifikationer\n- Volymer och leveransvillkor\n- Kvalitetskrav\n- Utvärderingskriterier\n- Deadline och format för svar\n\nFormat: Professionellt RFQ-dokument.",
+            "example": "Från behov till komplett RFQ",
+            "howToUse": "Ange krav → Få RFQ → Skicka till leverantörer",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "Leverantörskommunikation": [
+          {
+            "id": "purch_vendor_1",
+            "name": "Förhandla pris - diplomatiskt",
+            "description": "Formulera prisförhandlingar professionellt",
+            "timeSaved": "20-30 min",
+            "difficulty": "Medel",
+            "prompt": "Förhandla pris med leverantör:\n\nDeras offert: [BELOPP]\nVår budget: [BELOPP]\nVolym: [ANTAL]\n\nSkriv ett email som:\n- Tackar för offert\n- Förklarar vår situation\n- Frågar om bättre pris\n- Erbjuder något i gengäld (volym, långsiktigt)\n- Håller dörren öppen\n\nTon: Professionell, respektfull, win-win.",
+            "example": "Från 'För dyrt' till konstruktiv förhandling",
+            "howToUse": "Ange offert → Få förhandlingsmail → Skicka",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Kontraktshantering": [
+          {
+            "id": "purch_contract_1",
+            "name": "Sammanfatta leverantörsavtal",
+            "description": "Kondensera långa avtal till nyckelpoäng",
+            "timeSaved": "30-45 min per avtal",
+            "difficulty": "Lätt",
+            "prompt": "Sammanfatta detta avtal:\n\n[KLISTRA IN AVTAL]\n\nSkapa en sammanfattning med:\n- Parter och syfte\n- Nyckelvillkor (pris, leverans, kvalitet)\n- Ansvar och skyldigheter\n- Uppsägningstid\n- Risker att vara medveten om\n- Viktiga datum\n\nFormat: Executive summary.",
+            "example": "Från 20-sidigt avtal till 1-sida sammanfattning",
+            "howToUse": "Klistra in avtal → Få sammanfattning → Spara för framtida referens",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ]
+      },
+      "totalPrompts": 3,
+      "averageTimeSaved": "3-5h per vecka",
+      "difficulty": "30% Lätt, 70% Medel"
+    },
+    "Logistiker": {
+      "categories": {
+        "Transportplanering": [
+          {
+            "id": "log_transport_1",
+            "name": "Optimera transportrutter",
+            "description": "Planera effektiva leveransrutter",
+            "timeSaved": "30-45 min per planering",
+            "difficulty": "Medel",
+            "prompt": "Optimera transporter:\n\nLeveranser: [LISTA ADRESSER]\nFordon: [ANTAL, TYP]\nTidsfönster: [BEGRÄNSNINGAR]\n\nSkapa en transportplan:\n- Optimerade rutter\n- Tidsestimat per rutt\n- Lastningsordning\n- Backup-plan vid förseningar\n- Kostnadsuppskattning\n\nFormat: Rutt-plan med karta-beskrivning.",
+            "example": "Från leveranslista till optimal rutt",
+            "howToUse": "Lista leveranser → Få rutt-plan → Ge till förare",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "Problemlösning": [
+          {
+            "id": "log_problem_1",
+            "name": "Hantera förseningar - kommunikation",
+            "description": "Kommunicera förseningar proaktivt",
+            "timeSaved": "15-20 min",
+            "difficulty": "Lätt",
+            "prompt": "Försening uppstått:\n\nOrsak: [BESKRIV]\nPåverkade leveranser: [LISTA]\nNy leveranstid: [ESTIMAT]\n\nSkriv kommunikation till kund:\n- Informera om försening\n- Förklara orsak (transparent)\n- Ny leveranstid\n- Vad vi gör för att minimera påverkan\n- Kompensation om relevant\n\nTon: Proaktiv, transparent, lösningsorienterad.",
+            "example": "Från problem till professionell kommunikation",
+            "howToUse": "Beskriv försening → Få meddelande → Skicka till kunder",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Rapportering": [
+          {
+            "id": "log_report_1",
+            "name": "KPI-rapport för logistik",
+            "description": "Sammanställ logistik-KPI:er insiktsfullt",
+            "timeSaved": "45-60 min",
+            "difficulty": "Medel",
+            "prompt": "Skapa KPI-rapport:\n\nData:\n- Leveransprecision: [%]\n- Genomsnittlig leveranstid: [DAGAR]\n- Transportkostnad: [KR/LEVERANS]\n- Skador: [ANTAL]\n\nSkapa en rapport med:\n- Översikt (sammanfattning)\n- Trend-analys\n- Jämförelse med mål\n- Identifierade problem\n- Förbättringsförslag\n\nFormat: Management-rapport.",
+            "example": "Från data till insikter",
+            "howToUse": "Mata in KPI:er → Få rapport → Presentera",
+            "tools": ["ChatGPT", "Excel Copilot"]
+          }
+        ]
+      },
+      "totalPrompts": 3,
+      "averageTimeSaved": "3-4h per vecka",
+      "difficulty": "30% Lätt, 70% Medel"
+    },
+    "Tandläkare": {
+      "categories": {
+        "Journalföring": [
+          {
+            "id": "dent_journal_1",
+            "name": "Behandlingsdokumentation",
+            "description": "Dokumentera tandvårdsbehandlingar strukturerat",
+            "timeSaved": "5-10 min per patient",
+            "difficulty": "Lätt",
+            "prompt": "Dokumentera behandling:\n\nPatient: [ID]\nBehandling: [BESKRIV]\nFynd: [BESKRIV]\n\nSkapa journalanteckning:\n- Status före behandling\n- Behandling utförd\n- Material använda\n- Patientens reaktion\n- Uppföljning som behövs\n- Nästa besök\n\nFormat: Tandvårdsjournalformat.",
+            "example": "Från behandling till strukturerad journal",
+            "howToUse": "Beskriv behandling → Få journaltext → Dokumentera",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Patientkommunikation": [
+          {
+            "id": "dent_comm_1",
+            "name": "Behandlingsplan - pedagogisk",
+            "description": "Förklara tandvårdsbehandlingar för patienter",
+            "timeSaved": "10-15 min",
+            "difficulty": "Lätt",
+            "prompt": "Förklara för patient:\n\nBehandling: [PROCEDUR]\nVarför: [DIAGNOS/PROBLEM]\nAlternativ: [ANDRA MÖJLIGHETER]\n\nSkriv en förklaring som:\n- Beskriver problemet (enkelt)\n- Förklarar behandlingen (steg-för-steg)\n- Vad patienten kan förvänta sig\n- Kostnad och tid\n- Alternativ\n\nTon: Pedagogisk, lugnande, professionell.",
+            "example": "Från 'Du behöver rotfyllning' till fullständig förklaring",
+            "howToUse": "Ange behandling → Få förklaring → Dela med patient",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Administration": [
+          {
+            "id": "dent_admin_1",
+            "name": "Påminnelser - vänliga men effektiva",
+            "description": "Skriv påminnelser som minskar no-shows",
+            "timeSaved": "20-30 min",
+            "difficulty": "Lätt",
+            "prompt": "Skapa påminnelser för:\n\nTyp: [KONTROLL/BEHANDLING]\nTon: [VÄNLIG/PROFESSIONELL]\n\nSkriv påminnelser för:\n- SMS (dag före)\n- Email (vecka före)\n- Påminnelse om avbokning\n\nInkludera:\n- Datum och tid\n- Vad som ska göras\n- Förberedelser\n- Avbokningspolicy\n\nTon: Vänlig, tydlig, serviceinriktad.",
+            "example": "Minska no-shows med bra påminnelser",
+            "howToUse": "Ange typ → Få påminnelser → Schemalägg",
+            "tools": ["ChatGPT"]
+          }
+        ]
+      },
+      "totalPrompts": 3,
+      "averageTimeSaved": "2-3h per vecka",
+      "difficulty": "100% Lätt"
     }
   }
 }
