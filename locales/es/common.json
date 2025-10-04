@@ -1,0 +1,101 @@
+{
+  "hero": {
+    "title": "IA que te ahorra tiempo, cada semana",
+    "subtitle": "Escribe tu profesión y obtén tu guía personalizada de IA. ¡Completamente gratis!",
+    "demoLink": "Ver ejemplo →"
+  },
+  "profession": {
+    "label": "¿Cuál es tu profesión?",
+    "placeholder": "Ej. Profesor, Contador, Director de Proyectos...",
+    "button": "Continuar",
+    "customLabel": "O escribe la tuya:",
+    "customPlaceholder": "Escribe tu profesión aquí...",
+    "customHint": "Describe tu profesión lo más específicamente posible"
+  },
+  "specialization": {
+    "title": "¿Cuál es tu especialización dentro de {profession}?",
+    "button": "Continuar",
+    "customLabel": "¿No encuentras tu especialización?",
+    "customHint": "Escribe tu propia especialización abajo",
+    "customPlaceholder": "Ej. Ventas B2B, Ventas inmobiliarias...",
+    "loading": "Cargando especializaciones..."
+  },
+  "tasks": {
+    "title": "¿Cuáles son tus tareas laborales?",
+    "subtitle": "Selecciona las tareas que quieres simplificar con IA",
+    "button": "Crear mi guía de IA",
+    "selected": "{count} tareas seleccionadas",
+    "loading": "Cargando tareas laborales..."
+  },
+  "email": {
+    "title": "Recibe tus resultados por correo",
+    "subtitle": "Te enviaremos tu guía personalizada de IA directamente a tu bandeja de entrada",
+    "label": "Tu dirección de correo",
+    "placeholder": "nombre@ejemplo.com",
+    "button": "Obtener mi guía de IA",
+    "consent": "Acepto que Mendio almacene mis datos para desarrollar el servicio según la",
+    "privacyPolicy": "política de privacidad",
+    "error": "Por favor, introduce una dirección de correo válida"
+  },
+  "results": {
+    "title": "Herramientas de IA para {specialization}",
+    "subtitle": "Encontramos {count} herramientas que pueden ahorrarte tiempo",
+    "tabs": {
+      "scenarios": "Casos de uso",
+      "tools": "Herramientas de IA",
+      "prompts": "Prompts listos",
+      "plan": "Tu plan"
+    },
+    "scenario": {
+      "situation": "Situación:",
+      "solution": "Solución:",
+      "tools": "Herramientas recomendadas:"
+    },
+    "tool": {
+      "timeSaved": "Ahorra",
+      "difficulty": "Dificultad",
+      "tips": "Consejos:",
+      "testTool": "Probar la herramienta",
+      "easy": "Fácil",
+      "medium": "Medio",
+      "hard": "Avanzado"
+    },
+    "loading": "Analizando tus necesidades...",
+    "error": "Algo salió mal. Por favor, inténtalo de nuevo."
+  },
+  "premium": {
+    "button": "Obtener un análisis en profundidad",
+    "subtitle": "Guía personalizada de IA con 15-20 preguntas sobre tu jornada laboral"
+  },
+  "share": {
+    "title": "¡Comparte con tus colegas!",
+    "subtitle": "Ayuda a otros {profession}s a ahorrar tiempo con IA",
+    "linkedin": "Compartir en LinkedIn",
+    "email": "Recomendar a colegas por correo",
+    "tip": "Consejo: ¡Por cada colega que lo pruebe, obtienes un mes de soporte extra gratis!"
+  },
+  "footer": {
+    "tagline": "Facilita tu día a día con IA. Encuentra herramientas adaptadas a tu profesión y ahorra 5-15 horas cada semana.",
+    "about": "Acerca de Mendio",
+    "aboutUs": "Sobre nosotros",
+    "promptLibrary": "Biblioteca de prompts",
+    "contact": "Contacto",
+    "legal": "Legal y GDPR",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "export": "Exportar mis datos",
+    "delete": "Eliminar mis datos",
+    "rights": "Todos los derechos reservados."
+  },
+  "demo": {
+    "banner": "Modo demo: Este es un ejemplo para la profesión {profession}",
+    "link": "Prueba con tu propia profesión →"
+  },
+  "buttons": {
+    "back": "Atrás",
+    "continue": "Continuar",
+    "submit": "Enviar",
+    "reset": "Hacer un nuevo análisis",
+    "close": "Cerrar"
+  }
+}

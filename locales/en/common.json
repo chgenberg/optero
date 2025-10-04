@@ -1,0 +1,101 @@
+{
+  "hero": {
+    "title": "AI that saves you time, every week",
+    "subtitle": "Enter your profession and get your personalized AI guide. Completely free!",
+    "demoLink": "See example →"
+  },
+  "profession": {
+    "label": "What is your profession?",
+    "placeholder": "E.g. Teacher, Accountant, Project Manager...",
+    "button": "Continue",
+    "customLabel": "Or write your own:",
+    "customPlaceholder": "Enter your profession here...",
+    "customHint": "Describe your profession as specifically as possible"
+  },
+  "specialization": {
+    "title": "What is your specialization within {profession}?",
+    "button": "Continue",
+    "customLabel": "Can't find your specialization?",
+    "customHint": "Enter your own specialization below",
+    "customPlaceholder": "E.g. B2B Sales, Real Estate Sales...",
+    "loading": "Loading specializations..."
+  },
+  "tasks": {
+    "title": "What are your work tasks?",
+    "subtitle": "Select the tasks you want to simplify with AI",
+    "button": "Create my AI guide",
+    "selected": "{count} tasks selected",
+    "loading": "Loading work tasks..."
+  },
+  "email": {
+    "title": "Get your results via email",
+    "subtitle": "We'll send your personalized AI guide directly to your inbox",
+    "label": "Your email address",
+    "placeholder": "name@example.com",
+    "button": "Get my AI guide",
+    "consent": "I agree that Mendio stores my data to develop the service according to the",
+    "privacyPolicy": "privacy policy",
+    "error": "Please enter a valid email address"
+  },
+  "results": {
+    "title": "AI tools for {specialization}",
+    "subtitle": "We found {count} tools that can save you time",
+    "tabs": {
+      "scenarios": "Use cases",
+      "tools": "AI tools",
+      "prompts": "Ready-made prompts",
+      "plan": "Your plan"
+    },
+    "scenario": {
+      "situation": "Situation:",
+      "solution": "Solution:",
+      "tools": "Recommended tools:"
+    },
+    "tool": {
+      "timeSaved": "Saves",
+      "difficulty": "Difficulty",
+      "tips": "Tips:",
+      "testTool": "Try the tool",
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Advanced"
+    },
+    "loading": "Analyzing your needs...",
+    "error": "Something went wrong. Please try again."
+  },
+  "premium": {
+    "button": "Get an in-depth analysis",
+    "subtitle": "Personalized AI guide with 15-20 questions about your workday"
+  },
+  "share": {
+    "title": "Share with your colleagues!",
+    "subtitle": "Help other {profession}s save time with AI",
+    "linkedin": "Share on LinkedIn",
+    "email": "Recommend to colleagues via email",
+    "tip": "Tip: For every colleague who tries it, you get one month of extra support for free!"
+  },
+  "footer": {
+    "tagline": "Make everyday life easier with AI. Find tools tailored to your profession and save 5-15 hours every week.",
+    "about": "About Mendio",
+    "aboutUs": "About us",
+    "promptLibrary": "Prompt library",
+    "contact": "Contact",
+    "legal": "Legal & GDPR",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "export": "Export my data",
+    "delete": "Delete my data",
+    "rights": "All rights reserved."
+  },
+  "demo": {
+    "banner": "Demo mode: This is an example for the profession {profession}",
+    "link": "Try with your own profession →"
+  },
+  "buttons": {
+    "back": "Back",
+    "continue": "Continue",
+    "submit": "Submit",
+    "reset": "Do a new analysis",
+    "close": "Close"
+  }
+}

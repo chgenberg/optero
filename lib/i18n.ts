@@ -1,7 +1,7 @@
-import sv from '../public/locales/sv/common.json';
-import en from '../public/locales/en/common.json';
-import es from '../public/locales/es/common.json';
-import fr from '../public/locales/fr/common.json';
+import sv from '../locales/sv/common.json';
+import en from '../locales/en/common.json';
+import es from '../locales/es/common.json';
+import fr from '../locales/fr/common.json';
 
 export type Locale = 'sv' | 'en' | 'es' | 'fr';
 

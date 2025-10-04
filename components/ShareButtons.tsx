@@ -164,14 +164,13 @@ export default function ShareButtons({
             </button>
           </form>
         )}
-      </div>
 
-      {/* Incentive */}
-      <div className="mt-6 p-3 bg-yellow-50 rounded-lg">
-        <p className="text-sm text-yellow-800">
-          💡 <strong>Tips:</strong> För varje kollega som testar får du en månad extra support gratis!
-        </p>
+        {/* Incentive */}
+        <div className="p-3 bg-yellow-50 rounded-lg">
+          <p className="text-sm text-yellow-800">
+            💡 <strong>Tips:</strong> För varje kollega som testar får du en månad extra support gratis!
+          </p>
+        </div>
       </div>
-    </div>
   );
 }
