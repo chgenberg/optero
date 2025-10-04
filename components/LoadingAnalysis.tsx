@@ -55,19 +55,16 @@ export default function LoadingAnalysis() {
   const [currentFactIndex, setCurrentFactIndex] = useState(0);
 
   useEffect(() => {
-    // Smooth progress animation that speeds up over time
+    // Slower progress animation over ~2 minutes
     const progressInterval = setInterval(() => {
       setProgress(prev => {
+        // Stop at 95% and wait for actual data
         if (prev >= 95) {
-          // Slow down near the end (waiting for actual data)
-          return prev + 0.1;
-        } else if (prev >= 80) {
-          return prev + 0.5;
-        } else if (prev >= 50) {
-          return prev + 1;
-        } else {
-          return prev + 2;
+          return prev;
         }
+        // Very slow linear progression: 95% over 120 seconds = ~0.79% per second
+        // With 100ms intervals = ~0.079% per interval
+        return prev + 0.079;
       });
     }, 100);
 
