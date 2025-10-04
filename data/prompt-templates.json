@@ -934,6 +934,225 @@
       "totalPrompts": 12,
       "averageTimeSaved": "6-10h per vecka",
       "difficulty": "70% Lätt, 30% Medel"
+    },
+
+    "Marknadsförare": {
+      "categories": {
+        "Content Creation": [
+          {
+            "id": "market_content_1",
+            "name": "Bloggpost - SEO-optimerad",
+            "description": "Skriv engagerande bloggposter som rankar på Google",
+            "timeSaved": "2-3h per post",
+            "difficulty": "Lätt",
+            "prompt": "Skriv en bloggpost om:\n\nTema: [ÄMNE]\nMålgrupp: [BESKRIV MÅLGRUPP]\nNyckelord: [HUVUDNYCKELORD + 2-3 RELATERADE]\nLängd: [800/1200/1500+ ord]\nTon: [T.EX. 'professionell', 'lättsam', 'pedagogisk']\n\nSkapa en komplett bloggpost med:\n\n1. SEO-TITEL (max 60 tecken)\n   - Inkluderar huvudnyckelord\n   - Lockande och klickbar\n\n2. META-BESKRIVNING (max 160 tecken)\n   - Sammanfattar innehållet\n   - Inkluderar nyckelord\n   - Call-to-action\n\n3. INGRESS (2-3 meningar)\n   - Fångar uppmärksamhet\n   - Visar vad läsaren får\n\n4. HUVUDINNEHÅLL\n   - H2 och H3 rubriker (inkludera nyckelord)\n   - Korta stycken (3-4 meningar)\n   - Bullet points där det passar\n   - Konkreta exempel\n   - Statistik/fakta (om relevant)\n\n5. AVSLUTNING\n   - Sammanfattning\n   - Tydlig call-to-action\n\n6. INTERN LÄNKFÖRSLAG\n   - 3-5 förslag på relaterade ämnen att länka till\n\nFormat: Redo att publicera.",
+            "example": "Från idé till färdig SEO-post på 30 minuter",
+            "howToUse": "Välj ämne → Ange nyckelord → Få post → Justera → Publicera",
+            "tools": ["ChatGPT", "Claude", "Jasper"]
+          },
+          {
+            "id": "market_content_2",
+            "name": "Sociala medier - veckoplanering",
+            "description": "Skapa en veckas innehåll för sociala medier",
+            "timeSaved": "3-4h per vecka",
+            "difficulty": "Lätt",
+            "prompt": "Skapa en veckas innehåll för sociala medier.\n\nPlattform: [LINKEDIN/INSTAGRAM/FACEBOOK/etc.]\nBransch: [BRANSCH]\nMålgrupp: [BESKRIV]\nTema denna vecka: [T.EX. 'produktlansering', 'kundcase', 'tips', etc.]\nPostfrekvens: [ANTAL] inlägg per vecka\n\nSkapa [ANTAL] inlägg med:\n\nFör varje inlägg:\n1. INNEHÅLLSTYP\n   - [T.ex. 'tips', 'case study', 'fråga', 'bakom kulisserna']\n\n2. TEXT\n   - Hook (första meningen som fångar)\n   - Huvudbudskap\n   - Call-to-action\n   - Hashtags (5-10 relevanta)\n\n3. VISUELLT FÖRSLAG\n   - Typ av bild/video\n   - Vad ska synas\n\n4. BÄSTA PUBLICERINGSTID\n   - Dag och tid\n\nVariera mellan:\n- Utbildande innehåll\n- Underhållande\n- Inspirerande\n- Konverterande\n\nFormat: Färdigt att schemalägga.",
+            "example": "En veckas innehåll på 45 minuter",
+            "howToUse": "Ange tema → Få 5-7 inlägg → Skapa visuellt → Schemalägg",
+            "tools": ["ChatGPT", "Buffer", "Later"]
+          },
+          {
+            "id": "market_content_3",
+            "name": "Email-kampanj - konverterande",
+            "description": "Skriv email-sekvenser som säljer",
+            "timeSaved": "2-3h per kampanj",
+            "difficulty": "Medel",
+            "prompt": "Skapa en email-kampanj för:\n\nMål: [T.EX. 'sälja produkt', 'boka demo', 'ladda ner guide']\nMålgrupp: [BESKRIV]\nErbjudande: [VAD DE FÅR]\nAntal emails: [3/5/7]\n\nSkapa en email-sekvens:\n\nEMAIL 1 (Dag 1): AWARENESS\n- Subject line (3 alternativ)\n- Preview text\n- Huvudbudskap: Introducera problem\n- CTA: Mjuk (t.ex. 'läs mer')\n\nEMAIL 2 (Dag 3): INTEREST\n- Subject line\n- Fördjupa problemet\n- Introducera lösning\n- Social proof\n- CTA: Medel (t.ex. 'se hur det fungerar')\n\nEMAIL 3 (Dag 5): DESIRE\n- Subject line\n- Visa resultat/benefits\n- Testimonials\n- Hantera invändningar\n- CTA: Stark (t.ex. 'köp nu', 'boka demo')\n\nEMAIL 4 (Dag 7): ACTION\n- Subject line (urgency)\n- Sista chansen\n- Bonuserbjudande?\n- Tydlig CTA\n\nEMAIL 5 (Dag 10): BREAKUP\n- Subject line\n- 'Vi ger upp... men...'\n- Sista möjligheten\n- Stark CTA\n\nFormat: Redo för email-verktyg.",
+            "example": "Från idé till färdig kampanj på 1 timme",
+            "howToUse": "Definiera mål → Få sekvens → Designa → Schemalägg → Skicka",
+            "tools": ["ChatGPT", "Mailchimp", "Klaviyo"]
+          }
+        ],
+        "Kampanjplanering": [
+          {
+            "id": "market_campaign_1",
+            "name": "Kampanjstrategi - komplett",
+            "description": "Skapa en heltäckande marknadsföringskampanj",
+            "timeSaved": "4-6h planering",
+            "difficulty": "Medel",
+            "prompt": "Skapa en kampanjstrategi för:\n\nProdukt/Tjänst: [BESKRIVNING]\nMål: [T.EX. 'öka försäljning 20%', 'generera 500 leads']\nBudget: [BELOPP]\nTidsram: [STARTDATUM - SLUTDATUM]\nMålgrupp: [DETALJERAD BESKRIVNING]\n\nSkapa en komplett strategi:\n\n1. KAMPANJKONCEPT\n   - Huvudbudskap\n   - Kreativ vinkel\n   - Kampanjnamn\n\n2. MÅLGRUPPSANALYS\n   - Primär målgrupp\n   - Sekundär målgrupp\n   - Pain points\n   - Motivationer\n\n3. KANALER & TAKTIK\n   För varje kanal:\n   - Vad vi gör\n   - Budget allokering\n   - Förväntad reach\n   - KPIs\n\n4. INNEHÅLLSPLAN\n   - Vilka assets behövs\n   - Timeline för produktion\n\n5. TIMELINE\n   - Vecka för vecka\n   - Milestones\n   - Deadlines\n\n6. MÄTNING\n   - KPIs per kanal\n   - Hur vi spårar\n   - Rapportering\n\n7. BUDGET BREAKDOWN\n   - Per kanal\n   - Per fas\n\nFormat: Kampanjplan att presentera.",
+            "example": "Från idé till färdig kampanjplan",
+            "howToUse": "Fyll i mål och budget → Få strategi → Justera → Exekvera",
+            "tools": ["ChatGPT", "Notion", "Asana"]
+          },
+          {
+            "id": "market_campaign_2",
+            "name": "A/B-test hypoteser",
+            "description": "Skapa testbara hypoteser för optimering",
+            "timeSaved": "1-2h per test",
+            "difficulty": "Medel",
+            "prompt": "Skapa A/B-test hypoteser för:\n\nVad som testas: [T.EX. 'landningssida', 'email subject', 'annons']\nNuvarande resultat: [KONVERTERINGSGRAD/KLICKFREKVENS]\nMål: [VAD VI VILL FÖRBÄTTRA]\n\nSkapa 5 testbara hypoteser:\n\nFör varje hypotes:\n\n1. HYPOTES\n   - \"Om vi ändrar [X] till [Y], då kommer [METRIC] att öka med [%] eftersom [ANLEDNING]\"\n\n2. VARFÖR VI TROR DET\n   - Psykologisk princip\n   - Data/insights som stödjer\n\n3. VAD SOM TESTAS\n   - Kontroll (nuvarande)\n   - Variant (ny version)\n   - Exakt vad som ändras\n\n4. FRAMGÅNGSKRITERIER\n   - Primär metric\n   - Sekundära metrics\n   - Statistisk signifikans\n\n5. TIDSRAM\n   - Hur länge ska testet köra?\n   - Sample size behövt\n\nPrioritera hypoteserna efter:\n- Potential impact (hög/medel/låg)\n- Effort (lätt/medel/svår)\n- Confidence (hur säkra är vi?)\n\nFormat: Test-plan att implementera.",
+            "example": "Systematisk optimering istället för gissningar",
+            "howToUse": "Välj vad som ska testas → Få hypoteser → Prioritera → Testa → Analysera",
+            "tools": ["ChatGPT", "Google Optimize", "VWO"]
+          }
+        ],
+        "Analytics & Rapportering": [
+          {
+            "id": "market_analytics_1",
+            "name": "Månadsrapport - insiktsfull",
+            "description": "Skapa actionable marknadsföringsrapporter",
+            "timeSaved": "2-3h per rapport",
+            "difficulty": "Medel",
+            "prompt": "Skapa en månadsrapport för [MÅNAD].\n\nData:\n- Webbtraffik: [BESÖKARE] (förra månaden: [ANTAL])\n- Leads: [ANTAL] (mål: [ANTAL])\n- Konverteringsgrad: [%]\n- Kostnad per lead: [BELOPP]\n- Sociala medier: [FÖLJARE/ENGAGEMENT]\n- Email: [ÖPPNINGSGRAD/KLICKFREKVENS]\n- Kampanjer som körts: [LISTA]\n\nSkapa en rapport med:\n\n1. EXECUTIVE SUMMARY\n   - 3 meningar om månadens resultat\n   - Grön/gul/röd status\n\n2. NYCKELTAL\n   - Utfall vs mål\n   - Trend (upp/ner jämfört med förra månaden)\n   - Visuell representation (beskriv graf)\n\n3. KANALANALYS\n   För varje kanal:\n   - Performance\n   - Vad som fungerade\n   - Vad som inte fungerade\n   - ROI\n\n4. KAMPANJRESULTAT\n   - Vilka kampanjer kördes\n   - Resultat per kampanj\n   - Learnings\n\n5. INSIGHTS & REKOMMENDATIONER\n   - 3 viktiga insikter\n   - 3 konkreta åtgärder för nästa månad\n\n6. NÄSTA MÅNAD\n   - Planerade aktiviteter\n   - Förväntade resultat\n\nFormat: Presentation för ledning.",
+            "example": "Från siffror till actionable insights",
+            "howToUse": "Exportera data → Klistra in → Få rapport → Presentera",
+            "tools": ["ChatGPT", "Google Analytics", "Data Studio"]
+          },
+          {
+            "id": "market_analytics_2",
+            "name": "ROI-kalkyl - tydlig",
+            "description": "Beräkna och presentera marknadsföringens ROI",
+            "timeSaved": "1-2h",
+            "difficulty": "Medel",
+            "prompt": "Beräkna ROI för:\n\nKampanj/Kanal: [NAMN]\nInvestering: [BELOPP]\nResultat:\n- Leads genererade: [ANTAL]\n- Kunder vunna: [ANTAL]\n- Intäkt: [BELOPP]\n\nÖvrig data:\n- Genomsnittlig deal size: [BELOPP]\n- Lead-to-customer rate: [%]\n- Customer lifetime value: [BELOPP]\n\nSkapa en ROI-analys med:\n\n1. ENKEL ROI\n   - Formel: (Intäkt - Kostnad) / Kostnad × 100\n   - Resultat: [%]\n   - Vad det betyder i klartext\n\n2. KOSTNAD PER LEAD\n   - Beräkning\n   - Jämförelse med bransch/mål\n\n3. KOSTNAD PER KUND\n   - Beräkning\n   - Är det hållbart?\n\n4. LIFETIME VALUE vs CAC\n   - LTV:CAC ratio\n   - Vad är bra (3:1 eller bättre)\n\n5. BREAK-EVEN ANALYS\n   - När tjänar vi tillbaka investeringen?\n\n6. PROJEKTION\n   - Om vi skalar upp, vad händer?\n   - Best/worst/likely scenario\n\n7. REKOMMENDATION\n   - Ska vi fortsätta/skala/stoppa?\n   - Varför?\n\nFormat: Beslutsunderlag.",
+            "example": "Bevisa marknadsföringens värde",
+            "howToUse": "Samla data → Klistra in → Få analys → Presentera för ledning",
+            "tools": ["ChatGPT", "Excel", "Google Sheets"]
+          }
+        ],
+        "Copywriting": [
+          {
+            "id": "market_copy_1",
+            "name": "Landningssida - konverterande",
+            "description": "Skriv copy som konverterar besökare till leads",
+            "timeSaved": "2-4h per sida",
+            "difficulty": "Medel",
+            "prompt": "Skriv copy för en landningssida:\n\nErbjudande: [PRODUKT/TJÄNST/LEAD MAGNET]\nMålgrupp: [BESKRIV]\nHuvudsaklig pain point: [PROBLEM DE HAR]\nUnikt värde: [VAD GÖR ER LÖSNING UNIK]\n\nSkapa komplett copy:\n\n1. HERO SECTION\n   - Headline (tydlig, benefit-driven)\n   - Subheadline (förtydligar)\n   - CTA-knapp text\n\n2. PROBLEM SECTION\n   - Beskriv problemet (3 bullet points)\n   - Agitate (gör det verkligt)\n\n3. SOLUTION SECTION\n   - Introducera lösningen\n   - Hur det fungerar (3-5 steg)\n\n4. BENEFITS\n   - 3-5 huvudsakliga fördelar\n   - Varje med rubrik + förklaring\n   - Fokus på outcome, inte features\n\n5. SOCIAL PROOF\n   - Testimonial-struktur\n   - Vad ska kunden säga?\n   - Statistik att visa\n\n6. OBJECTION HANDLING\n   - 3 vanliga invändningar\n   - Hur vi hanterar dem\n\n7. FINAL CTA\n   - Urgency/scarcity\n   - Tydlig action\n   - Risk reversal (garanti)\n\nFormat: Redo för designer att bygga.",
+            "example": "Från 2% till 8% konvertering",
+            "howToUse": "Definiera erbjudande → Få copy → Designa → Testa → Optimera",
+            "tools": ["ChatGPT", "Copy.ai"]
+          },
+          {
+            "id": "market_copy_2",
+            "name": "Annonstext - klickbar",
+            "description": "Skriv annonser som får höga klickfrekvenser",
+            "timeSaved": "30-60 min per annons",
+            "difficulty": "Lätt",
+            "prompt": "Skriv annonstext för:\n\nPlattform: [GOOGLE ADS/FACEBOOK/LINKEDIN/etc.]\nProdukt/Tjänst: [BESKRIVNING]\nMålgrupp: [BESKRIV]\nErbjudande: [VAD DE FÅR]\nBudget: [DAGLIG BUDGET]\n\nSkapa 5 annonsvarianter:\n\nFör varje variant:\n\n1. HEADLINE (max 30 tecken)\n   - Fångar uppmärksamhet\n   - Tydlig benefit\n\n2. DESCRIPTION (max 90 tecken)\n   - Förtydligar erbjudandet\n   - Inkluderar CTA\n\n3. PSYKOLOGISK TRIGGER\n   - [T.ex. 'scarcity', 'social proof', 'curiosity']\n   - Varför denna variant fungerar\n\n4. MÅLGRUPP FÖR DENNA VARIANT\n   - Vem denna variant tilltalar mest\n\nVariera mellan:\n- Problem-fokuserad\n- Lösning-fokuserad\n- Benefit-fokuserad\n- Urgency-driven\n- Nyfikenhets-driven\n\nFormat: Redo att klistra in i annonsplattform.",
+            "example": "5 testvärda annonser på 15 minuter",
+            "howToUse": "Fyll i produktinfo → Få 5 varianter → Testa alla → Skala vinnaren",
+            "tools": ["ChatGPT", "Google Ads", "Facebook Ads"]
+          }
+        ]
+      },
+      "totalPrompts": 13,
+      "averageTimeSaved": "10-15h per vecka",
+      "difficulty": "60% Lätt, 40% Medel"
+    },
+
+    "Chef": {
+      "categories": {
+        "Ledning & Kommunikation": [
+          {
+            "id": "leader_comm_1",
+            "name": "Teamm\u00f6te - effektiv agenda",
+            "description": "Skapa produktiva teammötesagendor",
+            "timeSaved": "30 min per möte",
+            "difficulty": "Lätt",
+            "prompt": "Skapa en agenda för teammöte:\n\nMöteslängd: [30/60/90 min]\nFrekvens: [VECKOVIS/VARANNAN VECKA/etc.]\nTeamstorlek: [ANTAL]\nAktuella fokusområden: [LISTA]\n\nSkapa en effektiv agenda:\n\n1. CHECK-IN (5-10 min)\n   - Hur mår teamet?\n   - Snabb runda\n\n2. UPPDATERINGAR (15-20 min)\n   - Vad som hänt sedan sist\n   - Viktiga nyheter\n   - Blockers/utmaningar\n\n3. DISKUSSIONSPUNKTER (20-30 min)\n   För varje punkt:\n   - Vad ska diskuteras\n   - Mål med diskussionen\n   - Vem leder\n   - Tidsram\n\n4. BESLUT SOM SKA TAS (10-15 min)\n   - Lista beslutspunkter\n   - Beslutsmetod\n\n5. NÄSTA STEG (5-10 min)\n   - Action items\n   - Vem gör vad\n   - Deadlines\n\n6. AVSLUTNING (5 min)\n   - Summering\n   - Nästa möte\n\nTips för att hålla mötet effektivt:\n- Tidsboxing\n- Parkeringsplats för off-topic\n- Roterande facilitator\n\nFormat: Agenda att dela ut.",
+            "example": "Från 'vad ska vi prata om?' till strukturerat möte",
+            "howToUse": "Fyll i fokusområden → Få agenda → Skicka ut → Håll möte → Följ upp",
+            "tools": ["ChatGPT", "Notion", "Google Docs"]
+          },
+          {
+            "id": "leader_comm_2",
+            "name": "Svår konversation - förbered",
+            "description": "Förbered dig för utmanande samtal med medarbetare",
+            "timeSaved": "1-2h förberedelse",
+            "difficulty": "Medel",
+            "prompt": "Jag ska ha ett svårt samtal om:\n\nSituation: [BESKRIV VAD SOM HÄNT]\nMedarbetare: [ROLL/KONTEXT]\nÖnskat utfall: [VAD JAG VILL UPPNÅ]\n\nHjälp mig förbereda:\n\n1. ÖPPNING\n   - Hur startar jag?\n   - Sätta rätt ton\n   - Skapa psykologisk trygghet\n\n2. FAKTA (inte känslor)\n   - Objektiv beskrivning\n   - Konkreta exempel\n   - Vad jag observerat\n\n3. PÅVERKAN\n   - Hur det påverkat team/resultat\n   - Varför det är viktigt\n\n4. LYSSNA AKTIVT\n   - Frågor att ställa\n   - Ge utrymme för perspektiv\n   - Validera känslor\n\n5. GEMENSAM LÖSNING\n   - Vad behöver förändras?\n   - Hur kan jag stötta?\n   - Konkreta nästa steg\n\n6. UPPFÖLJNING\n   - När träffas vi igen?\n   - Hur mäter vi framsteg?\n\n7. WORST-CASE SCENARIOS\n   - Om medarbetaren blir arg\n   - Om medarbetaren gråter\n   - Om medarbetaren förnekar\n   - Hur hanterar jag det?\n\nFormat: Samtalsguide att öva på.",
+            "example": "Från undvikande till konstruktivt samtal",
+            "howToUse": "Beskriv situation → Få struktur → Öva → Håll samtal → Följ upp",
+            "tools": ["ChatGPT", "Claude"]
+          },
+          {
+            "id": "leader_comm_3",
+            "name": "Kommunikation till teamet - tydlig",
+            "description": "Skriv tydliga meddelanden vid förändringar",
+            "timeSaved": "30-60 min",
+            "difficulty": "Lätt",
+            "prompt": "Skriv ett meddelande till teamet om:\n\nÄmne: [T.EX. 'omorganisation', 'ny strategi', 'svårt besked']\nViktig info: [FAKTA]\nPåverkan på teamet: [HUR DET PÅVERKAR DEM]\n\nSkriv ett meddelande som:\n\n1. ÖPPNING\n   - Vad meddelandet handlar om\n   - Varför det är viktigt\n\n2. KONTEXT\n   - Bakgrund\n   - Varför detta beslut/förändring\n\n3. VAD DET BETYDER\n   - För organisationen\n   - För teamet\n   - För individen\n\n4. NÄSTA STEG\n   - Vad händer nu?\n   - Timeline\n   - Vem gör vad?\n\n5. FRÅGOR & SVAR\n   - Förutse vanliga frågor\n   - Ge svar\n\n6. STÖD\n   - Vart kan de vända sig?\n   - Hur får de mer info?\n\n7. AVSLUTNING\n   - Uppmuntrande\n   - Framåtblickande\n\nTon: Transparent, empatisk, tydlig.\nFormat: Email/Slack-meddelande.",
+            "example": "Från otydlighet till klarhet",
+            "howToUse": "Fyll i info → Få meddelande → Justera ton → Skicka → Följ upp",
+            "tools": ["ChatGPT", "Notion AI"]
+          }
+        ],
+        "Strategi & Planering": [
+          {
+            "id": "leader_strategy_1",
+            "name": "Kvartalsmål - SMART",
+            "description": "Sätt tydliga, mätbara mål för teamet",
+            "timeSaved": "2-3h planering",
+            "difficulty": "Medel",
+            "prompt": "Sätt kvartalsmål för teamet:\n\nTeam: [TEAM/AVDELNING]\nÖvergripande företagsmål: [LISTA]\nNuvarande utmaningar: [LISTA]\nResurser: [BUDGET/PERSONER]\n\nSkapa 3-5 kvartalsmål enligt SMART:\n\nFör varje mål:\n\n1. SPECIFIC (Specifikt)\n   - Exakt vad ska uppnås?\n   - Vem är ansvarig?\n\n2. MEASURABLE (Mätbart)\n   - Hur mäter vi framgång?\n   - Vilka metrics?\n   - Nuläge vs målvärde\n\n3. ACHIEVABLE (Uppnåeligt)\n   - Är det realistiskt?\n   - Vad krävs för att nå det?\n\n4. RELEVANT (Relevant)\n   - Varför är detta viktigt?\n   - Koppling till företagsmål\n\n5. TIME-BOUND (Tidsbundet)\n   - Deadline\n   - Milestones på vägen\n\n6. KEY RESULTS\n   - 3-5 konkreta resultat per mål\n   - Hur vet vi att vi lyckats?\n\n7. POTENTIAL OBSTACLES\n   - Vad kan gå fel?\n   - Mitigation plan\n\nFormat: OKR/målsättningsdokument.",
+            "example": "Från vaga ambitioner till konkreta mål",
+            "howToUse": "Fyll i kontext → Få mål → Diskutera med team → Commit → Följ upp",
+            "tools": ["ChatGPT", "Notion", "Asana"]
+          },
+          {
+            "id": "leader_strategy_2",
+            "name": "Prioritering - vad ska vi fokusera på?",
+            "description": "Prioritera initiativ och projekt",
+            "timeSaved": "1-2h",
+            "difficulty": "Medel",
+            "prompt": "Hjälp mig prioritera mellan dessa initiativ:\n\nInitiativ att välja mellan:\n[LISTA ALLA MÖJLIGA PROJEKT/INITIATIV]\n\nKontext:\n- Teamstorlek: [ANTAL]\n- Tidsram: [T.EX. 'detta kvartal']\n- Viktigaste målet: [MÅL]\n\nAnvänd prioriteringsramverk:\n\n1. IMPACT vs EFFORT MATRIX\n   För varje initiativ:\n   - Impact (1-10): Hur mycket påverkar det målet?\n   - Effort (1-10): Hur mycket resurser krävs?\n   - Score: Impact / Effort\n\n2. MUST/SHOULD/COULD/WON'T\n   - Must: Kritiskt, måste göras\n   - Should: Viktigt, bör göras\n   - Could: Bra att ha, om tid finns\n   - Won't: Inte nu\n\n3. REKOMMENDERAD PRIORITERING\n   - Top 3 att fokusera på\n   - Varför just dessa?\n   - I vilken ordning?\n\n4. VAD VI SÄGER NEJ TILL\n   - Vad skjuter vi på?\n   - Varför?\n   - När kan vi återkomma?\n\n5. KOMMUNIKATION\n   - Hur kommunicerar vi prioriteringarna?\n   - Till teamet\n   - Till stakeholders\n\nFormat: Prioriteringsbeslut.",
+            "example": "Från 'allt är viktigt' till fokuserad exekvering",
+            "howToUse": "Lista initiativ → Få analys → Besluta → Kommunicera → Exekvera",
+            "tools": ["ChatGPT", "Miro", "Notion"]
+          }
+        ],
+        "Utveckling & Feedback": [
+          {
+            "id": "leader_dev_1",
+            "name": "1-on-1 struktur - utvecklande",
+            "description": "Skapa meningsfulla 1-on-1 samtal",
+            "timeSaved": "20-30 min per samtal",
+            "difficulty": "Lätt",
+            "prompt": "Skapa en 1-on-1 struktur för:\n\nMedarbetare: [NAMN/ROLL]\nFrekvens: [VECKOVIS/VARANNAN VECKA]\nLängd: [30/45/60 min]\nFokusområden: [T.EX. 'utveckling', 'performance', 'wellbeing']\n\nSkapa en samtalsstruktur:\n\n1. CHECK-IN (5-10 min)\n   - Hur mår du? (genuint)\n   - Vad ger/tar energi?\n   - Work-life balance\n\n2. PROJEKTUPPDATERING (10-15 min)\n   - Vad går bra?\n   - Vad är utmanande?\n   - Blockers jag kan hjälpa med?\n\n3. UTVECKLING (10-15 min)\n   - Vad lär du dig?\n   - Vad vill du lära dig?\n   - Karriärmål (långsiktigt)\n   - Nästa steg?\n\n4. FEEDBACK (5-10 min)\n   - Från mig till medarbetaren\n   - Från medarbetaren till mig\n   - Vad kan jag göra bättre som chef?\n\n5. ACTION ITEMS (5 min)\n   - Konkreta åtaganden\n   - Från medarbetaren\n   - Från mig\n   - Deadlines\n\n6. AVSLUTNING\n   - Summering\n   - Nästa möte\n\nFrågor att rotera:\n- Vad är du mest stolt över denna vecka?\n- Om du var chef, vad skulle du ändra?\n- Vad behöver du mer/mindre av från mig?\n\nFormat: Samtalsguide.",
+            "example": "Från statusuppdatering till utvecklande samtal",
+            "howToUse": "Förbered frågor → Håll samtal → Anteckna → Följ upp actions",
+            "tools": ["ChatGPT", "Notion", "Fellow"]
+          },
+          {
+            "id": "leader_dev_2",
+            "name": "Utvecklingsplan - individuell",
+            "description": "Skapa personliga utvecklingsplaner",
+            "timeSaved": "1-2h per medarbetare",
+            "difficulty": "Medel",
+            "prompt": "Skapa en utvecklingsplan för:\n\nMedarbetare: [NAMN]\nNuvarande roll: [TITEL]\nTid i rollen: [ANTAL MÅNADER/ÅR]\nKarriärmål: [VAD MEDARBETAREN VILL]\nStyrkor: [LISTA]\nUtvecklingsområden: [LISTA]\n\nSkapa en 6-månaders utvecklingsplan:\n\n1. NULÄGESBEDÖMNING\n   - Kompetenser idag (1-10 per område)\n   - Gap till önskad roll\n\n2. UTVECKLINGSMÅL\n   - 3 konkreta mål\n   - Varför viktiga?\n   - Hur mäter vi framsteg?\n\n3. AKTIVITETER\n   För varje mål:\n   - Konkreta aktiviteter\n   - Resurser (kurser, böcker, mentorer)\n   - Timeline\n   - Kostnad (om relevant)\n\n4. ON-THE-JOB LEARNING\n   - Projekt att äga\n   - Stretch assignments\n   - Nya ansvarsområden\n\n5. STÖD FRÅN MIG\n   - Vad jag ska göra\n   - Coaching/feedback\n   - Nätverk jag kan öppna\n\n6. MILESTONES & CHECK-INS\n   - Månad 1, 3, 6\n   - Vad ska vara uppnått?\n   - Hur utvärderar vi?\n\n7. FRAMGÅNGSKRITERIER\n   - Hur vet vi att planen fungerar?\n\nFormat: Utvecklingsplan att signera.",
+            "example": "Från 'vill utvecklas' till konkret plan",
+            "howToUse": "Diskutera mål → Fyll i → Få plan → Signera → Följ upp kvartalsvis",
+            "tools": ["ChatGPT", "Notion"]
+          }
+        ],
+        "Problemlösning": [
+          {
+            "id": "leader_problem_1",
+            "name": "Konfliktlösning - mellan teammedlemmar",
+            "description": "Hantera konflikter konstruktivt",
+            "timeSaved": "2-3h",
+            "difficulty": "Avancerad",
+            "prompt": "Jag behöver lösa en konflikt mellan:\n\nPerson A: [ROLL]\nPerson B: [ROLL]\nKonflikt: [BESKRIV SITUATION]\nPåverkan: [HUR DET PÅVERKAR TEAMET]\n\nHjälp mig facilitera en lösning:\n\n1. FÖRBEREDELSE\n   - Vad jag behöver veta innan\n   - Separata samtal först?\n   - Sätta förväntningar\n\n2. KONFLIKTSAMTAL - STRUKTUR\n   \n   ÖPPNING (5 min):\n   - Syfte med mötet\n   - Grundregler\n   - Min roll som facilitator\n   \n   PERSPEKTIV (20 min):\n   - Person A: Berätta din sida\n   - Person B: Lyssna, sedan berätta din sida\n   - Jag: Sammanfatta, hitta gemensamt\n   \n   FÖRSTÅELSE (15 min):\n   - Vad är grundorsaken?\n   - Missförstånd eller värderingsskillnad?\n   - Gemensamma intressen?\n   \n   LÖSNING (15 min):\n   - Brainstorma lösningar\n   - Vad kan vardera göra annorlunda?\n   - Konkreta åtaganden\n   \n   AVSLUTNING (5 min):\n   - Summera överenskommelse\n   - Uppföljning\n\n3. FRÅGOR ATT STÄLLA\n   - För att skapa förståelse\n   - För att hitta gemensamt\n   - För att gå framåt\n\n4. OM DET ESKALERAR\n   - Hur hanterar jag det?\n   - När involverar jag HR?\n\n5. UPPFÖLJNING\n   - När träffas vi igen?\n   - Hur mäter vi framsteg?\n\nFormat: Facilitatorguide.",
+            "example": "Från konflikt till samarbete",
+            "howToUse": "Förbered → Håll separata samtal → Facilitera gemensamt möte → Följ upp",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ]
+      },
+      "totalPrompts": 11,
+      "averageTimeSaved": "5-8h per vecka",
+      "difficulty": "50% Lätt, 40% Medel, 10% Avancerad"
     }
   }
 }
