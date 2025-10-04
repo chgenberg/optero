@@ -7,7 +7,7 @@ export default function Header() {
           <div className="flex items-center justify-between h-16">
             <a href="/" className="flex items-center gap-2 group">
               <img 
-                src="/mendio_logo.png" 
+                src="/mendio_logo.png?v=2" 
                 alt="Mendio" 
                 className="h-7 w-auto transition-transform group-hover:scale-105" 
               />
