@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import IndustryInput from "@/components/IndustryInput";
 
-type Step = "intro" | "company" | "department" | "industry";
+type Step = "industry" | "company" | "department";
 
 const COMPANY_SIZES = [
   { 
@@ -40,26 +41,10 @@ const DEPARTMENTS = [
   { value: "management", label: "Ledning", description: "Beslutsunderlag & strategisk analys" },
 ];
 
-const INDUSTRIES = [
-  { value: "tech", label: "Tech & SaaS" },
-  { value: "ecommerce", label: "E-handel" },
-  { value: "retail", label: "Retail" },
-  { value: "manufacturing", label: "Tillverkning" },
-  { value: "consulting", label: "Konsulting" },
-  { value: "finance", label: "Finans" },
-  { value: "healthcare", label: "Vård & Omsorg" },
-  { value: "education", label: "Utbildning" },
-  { value: "realestate", label: "Fastigheter" },
-  { value: "transport", label: "Transport & Logistik" },
-  { value: "hospitality", label: "Hotell & Restaurang" },
-  { value: "media", label: "Media & Kommunikation" },
-  { value: "other", label: "Annat" },
-];
-
 export default function BusinessPage() {
   const router = useRouter();
   const { t } = useLanguage();
-  const [step, setStep] = useState<Step>("intro");
+  const [step, setStep] = useState<Step>("industry");
   
   const [companyInfo, setCompanyInfo] = useState({
     name: "",
@@ -70,70 +55,103 @@ export default function BusinessPage() {
   
   const [department, setDepartment] = useState("");
 
-  const handleSizeSelect = (size: string) => {
-    setCompanyInfo({...companyInfo, size});
+  const handleIndustrySelect = (industry: string) => {
+    setCompanyInfo({...companyInfo, industry});
+    setStep("company");
+  };
+
+  const handleCompanySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     setStep("department");
   };
 
   const handleDepartmentSelect = (dept: string) => {
     setDepartment(dept);
-    setStep("industry");
-  };
-
-  const handleIndustrySelect = (industry: string) => {
-    setCompanyInfo({...companyInfo, industry});
-    router.push(`/business/analysis?dept=${department}&size=${companyInfo.size}&industry=${industry}`);
-  };
-
-  const handleStartJourney = () => {
-    setStep("company");
+    router.push(`/business/analysis?dept=${dept}&size=${companyInfo.size}&industry=${companyInfo.industry}`);
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 py-12">
+    <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="max-w-6xl mx-auto w-full">
         
-        {/* Intro step */}
-        {step === "intro" && (
-          <div className="text-center mb-16 animate-fade-in-up">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-wider uppercase">
-              AI SOM GER DITT TEAM TID ATT FOKUSERA PÅ DET SOM RÄKNAS
-            </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light px-4 sm:px-0 tracking-wide">
-              Få en plan som frigör timmar varje vecka – skräddarsydd för ert företag.
-            </p>
+        {/* Industry input step - same layout as consumer */}
+        {step === "industry" && (
+          <div className="space-y-12 max-w-2xl mx-auto w-full">
+            <div className="text-center animate-fade-in-up">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-wider uppercase">
+                AI SOM GER DITT TEAM TID ATT FOKUSERA PÅ DET SOM RÄKNAS
+              </h1>
+              <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light px-4 sm:px-0 tracking-wide">
+                Få en plan som frigör timmar varje vecka – skräddarsydd för ert företag.
+              </p>
+            </div>
 
-            <div className="flex justify-center mt-12 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-              <button
-                onClick={handleStartJourney}
-                className="btn-primary px-8 py-4 text-lg"
-              >
-                Starta er AI-resa →
-              </button>
+            <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+              <IndustryInput onSelect={handleIndustrySelect} />
             </div>
           </div>
         )}
 
-        {/* Company size step */}
+        {/* Company info step */}
         {step === "company" && (
-          <div className="animate-fade-in-up">
+          <div className="animate-fade-in-up max-w-xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-              Hur stort är ert företag?
+              Berätta om ert företag
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              {COMPANY_SIZES.map((size) => (
-                <button
-                  key={size.value}
-                  onClick={() => handleSizeSelect(size.value)}
-                  className="p-8 bg-white rounded-lg border-2 border-gray-200 hover:border-gray-900 transition-all group text-left"
-                >
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-gray-700">
-                    {size.label}
-                  </h3>
-                  <p className="text-gray-600">{size.subtitle}</p>
-                </button>
-              ))}
-            </div>
+            <form onSubmit={handleCompanySubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Företagsnamn
+                </label>
+                <input
+                  type="text"
+                  value={companyInfo.name}
+                  onChange={(e) => setCompanyInfo({...companyInfo, name: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-gray-900 focus:outline-none transition-all"
+                  placeholder="Exempel AB"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-4">
+                  Antal anställda
+                </label>
+                <div className="grid grid-cols-2 gap-4">
+                  {COMPANY_SIZES.map((size) => (
+                    <label
+                      key={size.value}
+                      className={`p-4 bg-white rounded-lg border-2 cursor-pointer transition-all ${
+                        companyInfo.size === size.value 
+                          ? 'border-gray-900 bg-gray-50' 
+                          : 'border-gray-200 hover:border-gray-400'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="size"
+                        value={size.value}
+                        checked={companyInfo.size === size.value}
+                        onChange={(e) => setCompanyInfo({...companyInfo, size: e.target.value})}
+                        className="sr-only"
+                        required
+                      />
+                      <div className="text-center">
+                        <div className="font-bold text-gray-900">{size.label}</div>
+                        <div className="text-sm text-gray-600">{size.subtitle}</div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full btn-primary py-4 text-lg"
+              >
+                Nästa →
+              </button>
+            </form>
           </div>
         )}
 
@@ -160,25 +178,6 @@ export default function BusinessPage() {
           </div>
         )}
 
-        {/* Industry step */}
-        {step === "industry" && (
-          <div className="animate-fade-in-up">
-            <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-              Vilken bransch är ni verksamma inom?
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
-              {INDUSTRIES.map((industry) => (
-                <button
-                  key={industry.value}
-                  onClick={() => handleIndustrySelect(industry.value)}
-                  className="p-4 bg-white rounded-lg border-2 border-gray-200 hover:border-gray-900 transition-all text-center"
-                >
-                  <span className="text-gray-900 font-medium">{industry.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </main>
   );
