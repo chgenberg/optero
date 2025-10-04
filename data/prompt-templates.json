@@ -1153,6 +1153,74 @@
       "totalPrompts": 11,
       "averageTimeSaved": "5-8h per vecka",
       "difficulty": "50% Lätt, 40% Medel, 10% Avancerad"
+    },
+    "Undersköterska": {
+      "categories": {
+        "Dokumentation": [
+          {
+            "id": "usk_doc_1",
+            "name": "Omvårdnadsdokumentation - snabb och korrekt",
+            "description": "Dokumentera omvårdnadsåtgärder strukturerat",
+            "timeSaved": "5-10 min per patient",
+            "difficulty": "Lätt",
+            "prompt": "Jag är undersköterska och behöver dokumentera omvårdnad.\n\nPatient: [NAMN/ID]\nÅtgärder utförda: [BESKRIV FRITT]\n\nSkapa professionell omvårdnadsdokumentation med:\n- Vad jag gjort (ADL-stöd, medicinering, observation)\n- Patientens tillstånd och reaktion\n- Eventuella avvikelser\n- Vad som behöver följas upp\n\nFormat: Koncist, faktabaserat, journalmässigt.",
+            "example": "Från 'Hjälpte patienten' till 'Assisterade vid morgontoalett, patienten stabil, inga anmärkningar'",
+            "howToUse": "Beskriv vad du gjort → Få strukturerad text → Klistra in i journalsystem",
+            "tools": ["ChatGPT", "Claude"]
+          },
+          {
+            "id": "usk_doc_2",
+            "name": "Rapportera förändringar i patienttillstånd",
+            "description": "Dokumentera försämringar eller förbättringar tydligt",
+            "timeSaved": "5-10 min",
+            "difficulty": "Lätt",
+            "prompt": "Jag har observerat en förändring hos patient:\n\nPatient: [ID]\nFörändring: [BESKRIV]\nTidpunkt: [NÄR]\n\nSkriv en tydlig rapport om förändringen som:\n- Beskriver vad jag observerat (objektiva tecken)\n- Jämför med tidigare tillstånd\n- Anger vad jag gjort (åtgärder)\n- Tydliggör om sjuksköterska/läkare kontaktats\n\nTon: Professionell, tydlig, faktabaserad.",
+            "example": "Rapportera försämring så att nästa skift förstår allvaret",
+            "howToUse": "Beskriv förändring → Få strukturerad rapport → Dokumentera",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Kommunikation": [
+          {
+            "id": "usk_comm_1",
+            "name": "Anhörigkommunikation - empatisk men tydlig",
+            "description": "Informera anhöriga om patientens tillstånd",
+            "timeSaved": "10-15 min förberedelse",
+            "difficulty": "Medel",
+            "prompt": "Jag ska prata med anhörig om patient.\n\nSituation: [BESKRIV PATIENTENS TILLSTÅND]\nVad anhörig behöver veta: [INFORMATION]\n\nHjälp mig formulera:\n1. Öppning (empatisk)\n2. Information (tydlig men inte skrämmande)\n3. Svara på vanliga frågor\n4. Avslutning (trygghet, nästa steg)\n\nTon: Empatisk, lugn, professionell.",
+            "example": "Förbereda svåra samtal med anhöriga",
+            "howToUse": "Beskriv situation → Få samtalsmanus → Öva innan samtal",
+            "tools": ["ChatGPT", "Claude"]
+          },
+          {
+            "id": "usk_comm_2",
+            "name": "Rapportera till sjuksköterska - strukturerat",
+            "description": "Rapportera observationer tydligt till sjuksköterska",
+            "timeSaved": "5 min per rapport",
+            "difficulty": "Lätt",
+            "prompt": "Jag behöver rapportera till sjuksköterska:\n\nPatient: [ID]\nObservation: [VAD JAG SETT/HÖRT]\n\nStrukturera min rapport:\n- Vad jag observerat (konkret)\n- När det hände\n- Vad patienten sa/gjorde\n- Vad jag redan gjort\n- Min bedömning av brådskande\n\nFormat: Kort, tydlig, SBAR-liknande.",
+            "example": "Från 'Patienten mår dåligt' till konkret observation",
+            "howToUse": "Beskriv observation → Få strukturerad rapport → Rapportera muntligt/skriftligt",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Planering": [
+          {
+            "id": "usk_plan_1",
+            "name": "Dagplanering - prioritera arbetsuppgifter",
+            "description": "Planera dagen effektivt med många patienter",
+            "timeSaved": "15-20 min per dag",
+            "difficulty": "Lätt",
+            "prompt": "Jag har ansvar för [ANTAL] patienter idag.\n\nPatienter och behov:\n[LISTA PATIENTER OCH DERAS BEHOV]\n\nSkapa en effektiv dagsplanering:\n- Prioritera brådskande först\n- Gruppera liknande uppgifter\n- Föreslå tidsblock\n- Flagga vad som kan delegeras\n- Buffert för oförutsett\n\nFormat: Timschema med prioriteringar.",
+            "example": "Från kaos till strukturerad dag",
+            "howToUse": "Lista patienter → Få dagsplan → Följ strukturen",
+            "tools": ["ChatGPT", "Notion AI"]
+          }
+        ]
+      },
+      "totalPrompts": 5,
+      "averageTimeSaved": "4-6h per vecka",
+      "difficulty": "80% Lätt, 20% Medel"
     }
   }
 }
