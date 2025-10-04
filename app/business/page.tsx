@@ -88,6 +88,23 @@ export default function BusinessPage() {
 
             <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
               <IndustryInput onSelect={handleIndustrySelect} />
+              
+              {/* Subtle links below input */}
+              <div className="text-center mt-6 flex items-center justify-center gap-4">
+                <a
+                  href="/business/demo"
+                  className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
+                >
+                  Se exempel →
+                </a>
+                <span className="text-gray-300">•</span>
+                <a
+                  href="/"
+                  className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
+                >
+                  För privatpersoner →
+                </a>
+              </div>
             </div>
           </div>
         )}
