@@ -141,7 +141,7 @@ export default function Home() {
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-wider uppercase">
               AI som sparar dig tid, varje vecka
             </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light px-4 sm:px-0 uppercase tracking-wide">
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light px-4 sm:px-0 tracking-wide">
               Skriv vad du jobbar med och få din personliga AI-guide. Helt gratis!
             </p>
           </div>
