@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
 const openai = process.env.OPENAI_API_KEY 
-  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  ? new OpenAI({ 
+      apiKey: process.env.OPENAI_API_KEY,
+      maxRetries: 1,
+      timeout: 120000 // 2 minutes for question generation
+    })
   : null;
 
 export async function POST(request: NextRequest) {

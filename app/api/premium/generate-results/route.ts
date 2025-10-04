@@ -3,6 +3,8 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
+  maxRetries: 1,
+  timeout: 180000 // 3 minutes for premium analysis
 });
 
 export async function POST(request: NextRequest) {

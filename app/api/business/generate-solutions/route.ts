@@ -3,6 +3,8 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
+  maxRetries: 1,
+  timeout: 180000 // 3 minutes for thorough B2B analysis
 });
 
 export async function POST(request: NextRequest) {
@@ -53,7 +55,7 @@ export async function POST(request: NextRequest) {
     Om de sa att de skickar 100 emails/vecka, beräkna ROI baserat på det.`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-5", // Using GPT-5 for highest quality B2B analysis
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },

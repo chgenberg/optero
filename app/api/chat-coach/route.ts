@@ -4,6 +4,8 @@ import prisma from "@/lib/prisma";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
+  maxRetries: 1,
+  timeout: 60000 // 1 minute for chat responses (faster for better UX)
 });
 
 export async function POST(request: NextRequest) {
