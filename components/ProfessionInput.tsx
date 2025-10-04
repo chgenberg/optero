@@ -52,7 +52,7 @@ export default function ProfessionInput({ onSelect }: ProfessionInputProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="T.ex. Lärare, Ekonom, Projektledare..."
-            className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg bg-gray-50 border-2 border-transparent rounded-xl sm:rounded-2xl focus:bg-white focus:border-gray-900 focus:outline-none transition-all duration-200 placeholder-gray-400"
+            className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg bg-white border-2 border-gray-900 rounded-xl sm:rounded-2xl focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all duration-200 placeholder-gray-500 font-medium"
             autoComplete="off"
             autoFocus
           />
@@ -60,10 +60,10 @@ export default function ProfessionInput({ onSelect }: ProfessionInputProps) {
           <button
             type="submit"
             disabled={!input.trim()}
-            className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+            className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-5 py-2.5 rounded-xl font-medium transition-all duration-200 ${
               input.trim()
-                ? "bg-gray-900 text-white hover:bg-gray-800 hover:scale-105 active:scale-95"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                ? "bg-gray-900 text-white hover:bg-gray-800 hover:scale-105 active:scale-95 shadow-md"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

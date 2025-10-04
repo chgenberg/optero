@@ -138,10 +138,10 @@ export default function Home() {
         <div className="space-y-12 max-w-2xl mx-auto w-full">
           {/* Hero section */}
           <div className="text-center animate-fade-in-up">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-wider uppercase">
               AI som sparar dig tid, varje vecka
             </h1>
-            <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light px-4 sm:px-0">
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light px-4 sm:px-0 uppercase tracking-wide">
               Skriv vad du jobbar med och få din personliga AI-guide. Helt gratis!
             </p>
           </div>
