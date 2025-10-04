@@ -7,8 +7,8 @@ export default function Header() {
           <div className="flex items-center justify-between h-16">
             <a href="/" className="flex items-center gap-2 group">
               <img 
-                src="/mendio_logo.png" 
-                alt="Mendio" 
+                src="/optero_logo2.png" 
+                alt="Optero" 
                 className="h-7 w-auto transition-transform group-hover:scale-105" 
               />
             </a>
