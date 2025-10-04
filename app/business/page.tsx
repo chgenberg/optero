@@ -124,51 +124,21 @@ export default function BusinessPage() {
         {step === "intro" && (
           <div className={`relative z-10 transition-all duration-500 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
             <div className="text-center mb-16 animate-fade-in-up">
-              <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full text-sm font-medium mb-8 animate-bounce-slow">
-                <span>✨</span>
-                <span>För företag & team</span>
-                <span>✨</span>
-              </div>
-              
-              <h1 className="text-5xl md:text-7xl font-bold mb-8 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent animate-gradient">
-                AI SOM TRANSFORMERAR<br />
-                <span className="text-4xl md:text-6xl">HELA DITT TEAM</span>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-wider uppercase">
+                AI SOM GER DITT TEAM TID ATT FOKUSERA PÅ DET SOM RÄKNAS
               </h1>
-              
-              <p className="text-xl md:text-2xl text-gray-600 mb-4 max-w-3xl mx-auto">
-                Få en skräddarsydd AI-strategi som sparar <span className="font-bold text-gray-900">20-50 timmar</span> per vecka för ditt team
+              <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light px-4 sm:px-0 tracking-wide">
+                Få en plan som frigör timmar varje vecka – skräddarsydd för ert företag.
               </p>
-              
-              <p className="text-lg text-gray-500 mb-12">
-                Svara på 20-30 frågor → Få 5 konkreta AI-lösningar → Se ROI direkt
-              </p>
-
-              <button
-                onClick={handleStartJourney}
-                className="group relative px-12 py-6 bg-gray-900 text-white text-xl font-medium rounded-2xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-              >
-                <span className="relative z-10">Starta er AI-resa →</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </button>
             </div>
 
-            {/* Animated trust badges */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20 max-w-4xl mx-auto">
-              {[
-                { icon: "⚡", title: "Resultat på 10 minuter", subtitle: "Komplett AI-strategi för ert team" },
-                { icon: "🎯", title: "Bransch-anpassat", subtitle: "Lösningar för just er bransch" },
-                { icon: "💰", title: "Garanterad ROI", subtitle: "Eller pengarna tillbaka" },
-              ].map((badge, i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 transform transition-all duration-300 hover:scale-105 hover:shadow-xl animate-fade-in-up"
-                  style={{ animationDelay: `${i * 0.1}s` }}
-                >
-                  <div className="text-4xl mb-3">{badge.icon}</div>
-                  <h3 className="font-bold text-gray-900 mb-1">{badge.title}</h3>
-                  <p className="text-sm text-gray-600">{badge.subtitle}</p>
-                </div>
-              ))}
+            <div className="flex justify-center animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+              <button
+                onClick={handleStartJourney}
+                className="btn-primary px-8 py-4 text-lg"
+              >
+                Starta er AI-resa →
+              </button>
             </div>
           </div>
         )}
