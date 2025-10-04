@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import specData from "@/data/specializations.json";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SpecializationInputProps {
   profession: string;
@@ -14,6 +15,7 @@ export default function SpecializationInput({
   onSelect,
   onBack,
 }: SpecializationInputProps) {
+  const { t } = useLanguage();
   const [specializations, setSpecializations] = useState<string[]>([]);
   const [customInput, setCustomInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -81,12 +83,11 @@ export default function SpecializationInput({
           onClick={onBack}
           className="mb-4 sm:mb-6 text-gray-500 hover:text-gray-800 transition-colors flex items-center gap-2 text-sm sm:text-base"
         >
-          ← Tillbaka
+          ← {t('buttons.back')}
         </button>
 
         <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 text-center mb-6 lg:mb-8">
-          Vilken inriktning har du inom <br />
-          <span className="font-bold">{profession.toLowerCase()}</span>?
+          {t('specialization.title', { profession: profession.toLowerCase() })}
         </h2>
 
         {loading ? (
@@ -113,10 +114,10 @@ export default function SpecializationInput({
           <form onSubmit={handleCustomSubmit}>
             <div className="text-center mb-4">
               <p className="text-sm sm:text-base text-gray-700 font-medium mb-1">
-                Hittar du inte din inriktning?
+                {t('specialization.customLabel')}
               </p>
               <p className="text-xs sm:text-sm text-gray-500">
-                Skriv in din egen specialisering nedan
+                {t('specialization.customHint')}
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
@@ -126,18 +127,18 @@ export default function SpecializationInput({
                 value={customInput}
                 onChange={(e) => setCustomInput(e.target.value)}
                 className="flex-1 px-4 sm:px-5 py-3 sm:py-4 text-sm sm:text-base border-2 border-gray-300 rounded-xl lg:rounded-2xl focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-100 transition-all"
-                placeholder="T.ex. B2B-säljare, Fastighetssäljare..."
+                placeholder={t('specialization.customPlaceholder')}
               />
               <button
                 type="submit"
                 disabled={!customInput.trim()}
                 className="px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base bg-gray-900 text-white rounded-xl lg:rounded-2xl hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
               >
-                Fortsätt →
+                {t('specialization.button')} →
               </button>
             </div>
             <p className="text-xs text-gray-400 mt-3 text-center">
-              💡 Skriv så specifikt som möjligt för bästa resultat
+              💡 {t('profession.customHint')}
             </p>
           </form>
         </div>

@@ -15,8 +15,9 @@
   "specialization": {
     "title": "Quelle est votre spécialisation dans {profession} ?",
     "button": "Continuer",
-    "customLabel": "Aucune ne convient ? Écrivez la vôtre :",
-    "customPlaceholder": "Ex. Professeur de mathématiques au lycée...",
+    "customLabel": "Vous ne trouvez pas votre spécialisation ?",
+    "customHint": "Entrez votre propre spécialisation ci-dessous",
+    "customPlaceholder": "Ex. Ventes B2B, Ventes immobilières...",
     "loading": "Chargement des spécialisations..."
   },
   "tasks": {

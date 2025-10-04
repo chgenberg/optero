@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import professionsData from "@/data/professions.json";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ProfessionInputProps {
   onSelect: (profession: string) => void;
@@ -10,6 +11,7 @@ interface ProfessionInputProps {
 const PROFESSIONS = professionsData.professions.map(p => p.name);
 
 export default function ProfessionInput({ onSelect }: ProfessionInputProps) {
+  const { t } = useLanguage();
   const [input, setInput] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -51,7 +53,7 @@ export default function ProfessionInput({ onSelect }: ProfessionInputProps) {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="T.ex. Lärare, Ekonom, Projektledare..."
+            placeholder={t('profession.placeholder')}
             className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg bg-white border-2 border-gray-900 rounded-xl sm:rounded-2xl focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all duration-200 placeholder-gray-500 font-medium"
             autoComplete="off"
             autoFocus

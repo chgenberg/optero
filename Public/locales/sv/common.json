@@ -15,8 +15,9 @@
   "specialization": {
     "title": "Vilken inriktning har du inom {profession}?",
     "button": "Fortsätt",
-    "customLabel": "Passar ingen? Skriv din egen:",
-    "customPlaceholder": "T.ex. Gymnasielärare i matematik...",
+    "customLabel": "Hittar du inte din inriktning?",
+    "customHint": "Skriv in din egen specialisering nedan",
+    "customPlaceholder": "T.ex. B2B-säljare, Fastighetssäljare...",
     "loading": "Hämtar specialiseringar..."
   },
   "tasks": {

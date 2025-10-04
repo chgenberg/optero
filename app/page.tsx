@@ -166,16 +166,6 @@ export default function Home() {
 
       {step === "specialization" && (
         <div className="space-y-6 max-w-2xl mx-auto w-full animate-fade-in-up">
-          <button
-            onClick={() => setStep("profession")}
-            className="btn-ghost mb-8"
-          >
-            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Tillbaka
-          </button>
-          
           <SpecializationInput
             profession={profession}
             onSelect={handleSpecializationSelect}
@@ -186,16 +176,6 @@ export default function Home() {
 
       {step === "tasks" && (
         <div className="max-w-2xl mx-auto w-full animate-fade-in-up">
-          <button
-            onClick={() => setStep("specialization")}
-            className="btn-ghost mb-8"
-          >
-            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Tillbaka
-          </button>
-          
           <TaskSelection
             profession={profession}
             specialization={specialization}

@@ -15,8 +15,9 @@
   "specialization": {
     "title": "What is your specialization within {profession}?",
     "button": "Continue",
-    "customLabel": "None fit? Write your own:",
-    "customPlaceholder": "E.g. High school math teacher...",
+    "customLabel": "Can't find your specialization?",
+    "customHint": "Enter your own specialization below",
+    "customPlaceholder": "E.g. B2B Sales, Real Estate Sales...",
     "loading": "Loading specializations..."
   },
   "tasks": {
