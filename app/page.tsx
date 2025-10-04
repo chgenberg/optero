@@ -53,65 +53,72 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
-      {/* Logo i övre vänstra hörnet */}
-      {step === "profession" && (
-        <div className="fixed top-4 left-4 sm:top-6 sm:left-6 lg:top-8 lg:left-8 z-50">
-          <img 
-            src="/Optero_logo.png" 
-            alt="Optero" 
-            className="h-8 sm:h-10 lg:h-12 object-contain"
-          />
-        </div>
-      )}
-      
+    <main className="min-h-screen bg-white">
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
-        {/* Info button */}
-        <div className="fixed top-4 right-4 sm:top-6 sm:right-6 lg:top-8 lg:right-8 z-50">
-          <button
-            onClick={() => setShowInfo(true)}
-            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white border border-gray-200 hover:border-gray-300 flex items-center justify-center text-gray-600 hover:text-gray-800 transition-all duration-200 shadow-sm hover:shadow-md"
-            aria-label="Information"
-          >
-            <span className="text-lg sm:text-xl font-light">?</span>
-          </button>
-        </div>
-
         {showInfo && <InfoPopup onClose={() => setShowInfo(false)} />}
 
-        {/* Progress indicator */}
+        {/* Minimal Progress indicator */}
         {step !== "profession" && step !== "results" && (
-          <ProgressIndicator 
-            currentStep={STEP_NUMBER[step]} 
-            totalSteps={3} 
-          />
+          <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-40">
+            <div className="flex items-center gap-2">
+              {[1, 2, 3].map((num) => (
+                <div key={num} className="flex items-center">
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
+                      num <= STEP_NUMBER[step]
+                        ? "bg-gray-900 text-white"
+                        : "bg-gray-100 text-gray-400"
+                    }`}
+                  >
+                    {num}
+                  </div>
+                  {num < 3 && (
+                    <div
+                      className={`w-12 h-0.5 transition-all duration-300 ${
+                        num < STEP_NUMBER[step] ? "bg-gray-900" : "bg-gray-200"
+                      }`}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
       {step === "profession" && (
-        <div className="space-y-8">
-          <ProfessionInput onSelect={handleProfessionSelect} />
+        <div className="space-y-12 max-w-2xl mx-auto w-full">
+          {/* Hero section */}
+          <div className="text-center animate-fade-in-up">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 tracking-tight">
+              AI för ditt yrke
+            </h1>
+            <p className="text-xl sm:text-2xl text-gray-600 font-light">
+              Hitta rätt verktyg, spara tid varje dag
+            </p>
+          </div>
           
-          {/* Demo button */}
-          <div className="text-center animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-            <p className="text-gray-500 mb-3">eller</p>
+          <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <ProfessionInput onSelect={handleProfessionSelect} />
+          </div>
+          
+          {/* Quick actions */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
             <a
               href="/demo/ekonomiassistent"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-all duration-200 group"
+              className="btn-secondary group"
             >
-              <span className="text-sm font-medium">Se exempel för Ekonomiassistent</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-4 h-4 group-hover:translate-x-1 transition-transform"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
+              <span>Se demo</span>
+              <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+            <a
+              href="/prompts"
+              className="btn-ghost group"
+            >
+              <span>Upptäck prompts</span>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </a>
           </div>
@@ -119,20 +126,44 @@ export default function Home() {
       )}
 
       {step === "specialization" && (
-        <SpecializationInput
-          profession={profession}
-          onSelect={handleSpecializationSelect}
-          onBack={() => setStep("profession")}
-        />
+        <div className="space-y-6 max-w-2xl mx-auto w-full animate-fade-in-up">
+          <button
+            onClick={() => setStep("profession")}
+            className="btn-ghost mb-8"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Tillbaka
+          </button>
+          
+          <SpecializationInput
+            profession={profession}
+            onSelect={handleSpecializationSelect}
+            onBack={() => setStep("profession")}
+          />
+        </div>
       )}
 
       {step === "tasks" && (
-        <TaskSelection
-          profession={profession}
-          specialization={specialization}
-          onSubmit={handleTasksSubmit}
-          onBack={() => setStep("specialization")}
-        />
+        <div className="max-w-2xl mx-auto w-full animate-fade-in-up">
+          <button
+            onClick={() => setStep("specialization")}
+            className="btn-ghost mb-8"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Tillbaka
+          </button>
+          
+          <TaskSelection
+            profession={profession}
+            specialization={specialization}
+            onSubmit={handleTasksSubmit}
+            onBack={() => setStep("specialization")}
+          />
+        </div>
       )}
 
       {step === "results" && (
@@ -149,4 +180,3 @@ export default function Home() {
     </main>
   );
 }
-

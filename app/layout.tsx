@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Header from "@/components/Header";
 
 export const metadata: Metadata = {
   title: "MyAIGuy - Hitta AI-verktyg för ditt yrke",
@@ -13,15 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="sv">
-      <body className="antialiased">
-        <header className="w-full border-b border-gray-100 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center">
-            <a href="/" className="inline-flex items-center gap-2">
-              <img src="/optero_logo.png" alt="Optero" className="h-8 w-auto" />
-            </a>
-          </div>
-        </header>
-        <main>{children}</main>
+      <body className="antialiased bg-white text-gray-900">
+        <Header />
+        <main className="pt-16">{children}</main>
       </body>
     </html>
   );

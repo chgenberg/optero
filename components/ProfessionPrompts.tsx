@@ -1,234 +1,216 @@
 "use client";
 
-import { useState } from "react";
-import promptTemplates from "@/data/prompt-templates.json";
+import React, { useState, useEffect } from 'react';
+import promptData from '@/data/prompt-templates.json';
+
+interface Prompt {
+  id: string;
+  name: string;
+  description: string;
+  timeSaved: string;
+  difficulty: string;
+  prompt: string;
+  example: string;
+  howToUse: string;
+  tools: string[];
+}
+
+interface Category {
+  [key: string]: Prompt[];
+}
+
+interface ProfessionData {
+  categories: Category;
+  totalPrompts: number;
+  averageTimeSaved: string;
+  difficulty: string;
+}
 
 interface ProfessionPromptsProps {
   profession: string;
 }
 
-type Profession = keyof typeof promptTemplates.professions;
+const allProfessions: { [key: string]: ProfessionData } = promptData.professions;
 
 export default function ProfessionPrompts({ profession }: ProfessionPromptsProps) {
   const [expandedPrompt, setExpandedPrompt] = useState<string | null>(null);
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [currentProfessionData, setCurrentProfessionData] = useState<ProfessionData | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // Check if we have specific prompts for this profession
-  const normalizedProfession = profession as Profession;
-  const professionData = promptTemplates.professions[normalizedProfession];
+  useEffect(() => {
+    if (profession && allProfessions[profession]) {
+      setCurrentProfessionData(allProfessions[profession]);
+      const categories = Object.keys(allProfessions[profession].categories);
+      setSelectedCategory(categories[0]);
+    } else {
+      setCurrentProfessionData(null);
+      setSelectedCategory(null);
+    }
+  }, [profession]);
 
-  if (!professionData) {
-    return null; // No specific prompts for this profession
+  const handleCopy = async (text: string, promptId: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(promptId);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  if (!currentProfessionData) {
+    return null;
   }
 
-  const categories = Object.entries(professionData.categories);
+  const categories = Object.keys(currentProfessionData.categories);
+  const selectedPrompts = selectedCategory ? currentProfessionData.categories[selectedCategory] : [];
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 lg:p-8 border-2 border-blue-200">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
-            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <div>
-            <h3 className="text-2xl font-bold text-gray-900">
-              ⚡ Färdiga AI-Prompts för {profession}
-            </h3>
-            <p className="text-sm text-gray-600">
-              {professionData.totalPrompts} prompts • Spara {professionData.averageTimeSaved}
-            </p>
-          </div>
-        </div>
-        
-        <p className="text-gray-700 text-sm lg:text-base">
-          Kopiera dessa färdiga prompts direkt till ChatGPT och fyll i dina specifika detaljer. 
-          Inga tekniska kunskaper krävs - bara klistra in och börja!
+      <div className="text-center">
+        <h3 className="text-3xl font-bold text-gray-900 mb-2">
+          AI-prompts för {profession}
+        </h3>
+        <p className="text-gray-600">
+          {currentProfessionData.totalPrompts} färdiga prompts som sparar {currentProfessionData.averageTimeSaved}
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
-        <div className="bg-white rounded-xl p-3 lg:p-4 border border-blue-200">
-          <div className="text-xl lg:text-2xl font-bold text-blue-600">
-            {professionData.totalPrompts}
-          </div>
-          <div className="text-xs lg:text-sm text-gray-600">Färdiga prompts</div>
-        </div>
-        <div className="bg-white rounded-xl p-3 lg:p-4 border border-blue-200">
-          <div className="text-xl lg:text-2xl font-bold text-green-600">
-            {professionData.averageTimeSaved}
-          </div>
-          <div className="text-xs lg:text-sm text-gray-600">Tidsbesparing</div>
-        </div>
-        <div className="bg-white rounded-xl p-3 lg:p-4 border border-blue-200 col-span-2 lg:col-span-1">
-          <div className="text-xl lg:text-2xl font-bold text-purple-600">
-            {professionData.difficulty}
-          </div>
-          <div className="text-xs lg:text-sm text-gray-600">Svårighetsgrad</div>
-        </div>
+      {/* Category tabs - minimal design */}
+      <div className="flex flex-wrap justify-center gap-2 pb-6 border-b border-gray-100">
+        {categories.map((category) => (
+          <button
+            key={category}
+            onClick={() => setSelectedCategory(category)}
+            className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+              selectedCategory === category
+                ? "bg-gray-900 text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900"
+            }`}
+          >
+            {category}
+          </button>
+        ))}
       </div>
 
-      {/* Categories */}
-      <div className="space-y-3">
-        {categories.map(([categoryName, prompts], catIndex) => (
-          <div key={categoryName} className="bg-white rounded-xl border-2 border-blue-100 overflow-hidden">
-            {/* Category Header */}
-            <button
-              onClick={() => setExpandedCategory(expandedCategory === categoryName ? null : categoryName)}
-              className="w-full p-4 text-left hover:bg-blue-50 transition-colors flex items-center justify-between"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-bold text-sm">
-                  {prompts.length}
-                </div>
-                <h4 className="font-bold text-gray-900 text-base lg:text-lg">
-                  {categoryName}
+      {/* Prompts grid */}
+      <div className="grid gap-4">
+        {selectedPrompts.map((prompt) => (
+          <div
+            key={prompt.id}
+            className={`card-interactive group ${
+              expandedPrompt === prompt.id ? "ring-2 ring-gray-900" : ""
+            }`}
+            onClick={() => setExpandedPrompt(expandedPrompt === prompt.id ? null : prompt.id)}
+          >
+            {/* Prompt header */}
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1">
+                <h4 className="text-lg font-semibold text-gray-900 mb-1">
+                  {prompt.name}
                 </h4>
+                <p className="text-gray-600 text-sm">
+                  {prompt.description}
+                </p>
               </div>
-              <svg
-                className={`w-5 h-5 text-gray-400 transform transition-transform ${
-                  expandedCategory === categoryName ? "rotate-180" : ""
-                }`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <div className="flex items-center gap-3 ml-4">
+                <span className={`text-xs font-medium px-3 py-1 rounded-full ${
+                  prompt.difficulty === 'Lätt' 
+                    ? 'bg-green-100 text-green-800' 
+                    : prompt.difficulty === 'Medel' 
+                    ? 'bg-yellow-100 text-yellow-800' 
+                    : 'bg-red-100 text-red-800'
+                }`}>
+                  {prompt.difficulty}
+                </span>
+                <svg 
+                  className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+                    expandedPrompt === prompt.id ? "rotate-180" : ""
+                  }`}
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Time saved badge */}
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-            </button>
+              Sparar {prompt.timeSaved}
+            </div>
 
-            {/* Prompts in Category */}
-            {expandedCategory === categoryName && (
-              <div className="border-t border-blue-100 p-4 space-y-3 bg-gray-50">
-                {prompts.map((prompt: any) => (
-                  <div
-                    key={prompt.id}
-                    className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:border-blue-300 transition-all"
-                  >
-                    {/* Prompt Header */}
+            {/* Expanded content */}
+            {expandedPrompt === prompt.id && (
+              <div className="mt-6 pt-6 border-t border-gray-100 space-y-6 animate-fade-in" onClick={(e) => e.stopPropagation()}>
+                {/* Prompt to copy */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <h5 className="font-semibold text-gray-900">Prompt att kopiera:</h5>
                     <button
-                      onClick={() => setExpandedPrompt(expandedPrompt === prompt.id ? null : prompt.id)}
-                      className="w-full p-4 text-left hover:bg-gray-50 transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCopy(prompt.prompt, prompt.id);
+                      }}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        copiedId === prompt.id
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                      }`}
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1">
-                          <h5 className="font-semibold text-gray-900 mb-1 text-sm lg:text-base">
-                            {prompt.name}
-                          </h5>
-                          <p className="text-xs lg:text-sm text-gray-600 mb-2">
-                            {prompt.description}
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                              💾 {prompt.timeSaved}
-                            </span>
-                            <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                              {prompt.difficulty}
-                            </span>
-                          </div>
-                        </div>
-                        <svg
-                          className={`w-5 h-5 text-gray-400 flex-shrink-0 transform transition-transform ${
-                            expandedPrompt === prompt.id ? "rotate-180" : ""
-                          }`}
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </div>
+                      {copiedId === prompt.id ? "✓ Kopierad!" : "Kopiera"}
                     </button>
-
-                    {/* Expanded Prompt Content */}
-                    {expandedPrompt === prompt.id && (
-                      <div className="border-t border-gray-200 p-4 bg-gray-50 space-y-4">
-                        {/* Prompt Text */}
-                        <div>
-                          <div className="flex items-center justify-between mb-2">
-                            <label className="text-xs lg:text-sm font-semibold text-gray-700">
-                              📋 Kopiera denna prompt:
-                            </label>
-                            <button
-                              onClick={() => {
-                                navigator.clipboard.writeText(prompt.prompt);
-                                alert("✅ Prompt kopierad! Klistra in i ChatGPT.");
-                              }}
-                              className="px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                            >
-                              Kopiera
-                            </button>
-                          </div>
-                          <pre className="bg-white p-3 rounded-lg border border-gray-300 text-xs whitespace-pre-wrap font-mono overflow-x-auto max-h-60 overflow-y-auto">
-                            {prompt.prompt}
-                          </pre>
-                        </div>
-
-                        {/* Tools */}
-                        {prompt.tools && prompt.tools.length > 0 && (
-                          <div>
-                            <label className="text-xs lg:text-sm font-semibold text-gray-700 mb-2 block">
-                              🛠️ Fungerar med:
-                            </label>
-                            <div className="flex flex-wrap gap-2">
-                              {prompt.tools.map((tool: string, i: number) => (
-                                <span
-                                  key={i}
-                                  className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full border border-gray-300"
-                                >
-                                  {tool}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Example */}
-                        {prompt.example && (
-                          <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                            <label className="text-xs font-semibold text-blue-900 mb-1 block">
-                              💡 Exempel:
-                            </label>
-                            <p className="text-xs text-blue-800">{prompt.example}</p>
-                          </div>
-                        )}
-
-                        {/* How to Use */}
-                        {prompt.howToUse && (
-                          <div className="bg-green-50 p-3 rounded-lg border border-green-200">
-                            <label className="text-xs font-semibold text-green-900 mb-1 block">
-                              ✅ Så här använder du det:
-                            </label>
-                            <p className="text-xs text-green-800 whitespace-pre-wrap">{prompt.howToUse}</p>
-                          </div>
-                        )}
-                      </div>
-                    )}
                   </div>
-                ))}
+                  <div className="bg-gray-50 rounded-xl p-4 font-mono text-sm text-gray-700 whitespace-pre-wrap break-words">
+                    {prompt.prompt}
+                  </div>
+                </div>
+
+                {/* Example */}
+                <div>
+                  <h5 className="font-semibold text-gray-900 mb-2">Exempel:</h5>
+                  <p className="text-gray-600 text-sm bg-gray-50 rounded-xl p-4">
+                    {prompt.example}
+                  </p>
+                </div>
+
+                {/* How to use */}
+                <div>
+                  <h5 className="font-semibold text-gray-900 mb-2">Så här använder du prompten:</h5>
+                  <div className="text-gray-600 text-sm space-y-2">
+                    {prompt.howToUse.split('\n').map((line, i) => (
+                      <p key={i} className="flex items-start">
+                        {line.includes('→') && <span className="mr-2">•</span>}
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tools */}
+                <div>
+                  <h5 className="font-semibold text-gray-900 mb-3">Fungerar med:</h5>
+                  <div className="flex flex-wrap gap-2">
+                    {prompt.tools.map((tool, i) => (
+                      <span 
+                        key={i} 
+                        className="px-3 py-1 bg-gray-900 text-white text-xs font-medium rounded-full"
+                      >
+                        {tool}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
           </div>
         ))}
-      </div>
-
-      {/* CTA */}
-      <div className="mt-6 p-4 bg-white rounded-xl border-2 border-blue-200 text-center">
-        <p className="text-sm text-gray-700 mb-3">
-          <strong>Tips:</strong> Börja med den första prompten i varje kategori - de är designade för att ge snabbast resultat!
-        </p>
-        <a
-          href="/prompts"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-        >
-          Se alla {professionData.totalPrompts} prompts i fullskärm
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-          </svg>
-        </a>
       </div>
     </div>
   );
