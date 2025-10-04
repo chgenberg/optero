@@ -55,21 +55,26 @@ export default function LoadingAnalysis() {
   const [currentFactIndex, setCurrentFactIndex] = useState(0);
 
   useEffect(() => {
-    // Progress bar animation (0-100% in 2 minutes = 120 seconds)
+    // Smooth progress animation that speeds up over time
     const progressInterval = setInterval(() => {
       setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
+        if (prev >= 95) {
+          // Slow down near the end (waiting for actual data)
+          return prev + 0.1;
+        } else if (prev >= 80) {
+          return prev + 0.5;
+        } else if (prev >= 50) {
+          return prev + 1;
+        } else {
+          return prev + 2;
         }
-        return prev + (100 / 120); // 100% / 120 seconds
       });
-    }, 1000);
+    }, 100);
 
-    // Change fact every 20 seconds
+    // Change fact every 8 seconds (faster rotation)
     const factInterval = setInterval(() => {
       setCurrentFactIndex(prev => (prev + 1) % LOADING_FACTS.length);
-    }, 20000);
+    }, 8000);
 
     return () => {
       clearInterval(progressInterval);
@@ -99,15 +104,15 @@ export default function LoadingAnalysis() {
         <div className="relative">
           <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-gray-900 rounded-full transition-all duration-1000 ease-out relative"
-              style={{ width: `${progress}%` }}
+              className="h-full bg-gray-900 rounded-full transition-all duration-300 ease-out relative"
+              style={{ width: `${Math.min(progress, 100)}%` }}
             >
               {/* Pulsing effect */}
               <div className="absolute inset-0 bg-white opacity-20 animate-pulse" />
             </div>
           </div>
           <div className="absolute -bottom-6 left-0 text-sm text-gray-500">
-            {Math.round(progress)}%
+            {Math.round(Math.min(progress, 100))}%
           </div>
         </div>
 

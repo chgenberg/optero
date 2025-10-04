@@ -42,6 +42,7 @@
     { "name": "Biomedicinsk analytiker", "category": "Vård och omsorg" },
     { "name": "Lastbilsförare", "category": "Transport och logistik" },
     { "name": "Bussförare", "category": "Transport och logistik" },
+    { "name": "Taxiförare", "category": "Transport och logistik" },
     { "name": "Truckförare", "category": "Transport och logistik" },
     { "name": "Lagerarbetare", "category": "Transport och logistik" },
     { "name": "Svetsare", "category": "Tillverkning" },
