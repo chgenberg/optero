@@ -13,7 +13,15 @@ export default function Header() {
               </div>
             </a>
             
-            <LanguageSwitcher />
+            <div className="flex items-center gap-4">
+              <a
+                href="/business"
+                className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors px-4 py-2 rounded-lg hover:bg-gray-100"
+              >
+                För företag
+              </a>
+              <LanguageSwitcher />
+            </div>
           </div>
         </div>
       </header>

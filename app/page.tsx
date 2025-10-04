@@ -151,13 +151,20 @@ export default function Home() {
           <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
             <ProfessionInput onSelect={handleProfessionSelect} />
             
-            {/* Subtle demo link below input */}
-            <div className="text-center mt-6">
+            {/* Subtle links below input */}
+            <div className="text-center mt-6 flex items-center justify-center gap-4">
               <a
                 href="/demo/ekonomiassistent"
                 className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
               >
                 {t('hero.demoLink')}
+              </a>
+              <span className="text-gray-300">•</span>
+              <a
+                href="/business"
+                className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
+              >
+                För företag →
               </a>
             </div>
           </div>
