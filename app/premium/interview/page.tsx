@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Question {
   id: string;
@@ -18,6 +18,7 @@ interface Category {
 
 export default function PremiumInterviewPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -25,8 +26,17 @@ export default function PremiumInterviewPage() {
   const [loading, setLoading] = useState(true);
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   useEffect(() => {
+    // Check if coming from Stripe success
+    const sessionId = searchParams.get("session_id");
+    if (sessionId) {
+      setShowSuccessMessage(true);
+      // Hide success message after 5 seconds
+      setTimeout(() => setShowSuccessMessage(false), 5000);
+    }
+
     // Load prepared questions from session storage
     const questionsData = sessionStorage.getItem("premiumQuestions");
     const contextData = sessionStorage.getItem("premiumContext");
@@ -104,6 +114,21 @@ export default function PremiumInterviewPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Success message */}
+      {showSuccessMessage && (
+        <div className="fixed top-16 right-4 bg-green-50 border border-green-200 rounded-lg p-4 shadow-lg animate-slide-up z-50">
+          <div className="flex items-center gap-3">
+            <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <div>
+              <p className="font-medium text-green-800">Betalning genomförd!</p>
+              <p className="text-sm text-green-600">Nu skapar vi din personliga AI-guide</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Progress bar */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-gray-200 z-50">
         <div 

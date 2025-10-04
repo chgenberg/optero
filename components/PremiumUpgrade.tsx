@@ -59,13 +59,39 @@ export default function PremiumUpgrade({ profession, specialization, onUpgrade }
     }
   };
 
-  const handleUpgrade = () => {
+  const handleUpgrade = async () => {
     // Store current context for premium flow
     sessionStorage.setItem("premiumContext", JSON.stringify({
       profession,
       specialization,
     }));
-    onUpgrade();
+
+    try {
+      // Create Stripe checkout session
+      const response = await fetch("/api/premium/create-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          profession,
+          specialization,
+          discountPrice,
+        }),
+      });
+
+      if (response.ok) {
+        const { url } = await response.json();
+        // Redirect to Stripe checkout
+        window.location.href = url;
+      } else {
+        // Fallback to regular flow if Stripe is not configured
+        console.error("Stripe not configured, using fallback");
+        onUpgrade();
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      // Fallback to regular flow
+      onUpgrade();
+    }
   };
 
   // Format time left
@@ -92,7 +118,7 @@ export default function PremiumUpgrade({ profession, specialization, onUpgrade }
       )}
 
       {/* Premium CTA - Enhanced with ROI */}
-      <div className={`bg-gray-900 text-white ${timeLeft > 0 ? 'rounded-b-2xl' : 'rounded-2xl'} p-6 lg:p-8`}>
+      <div className={`bg-gray-900 text-white ${timeLeft > 0 ? 'rounded-b-xl sm:rounded-b-2xl' : 'rounded-xl sm:rounded-2xl'} p-4 sm:p-6 lg:p-8`}>
         {/* ROI Calculator at top */}
         <div className="bg-white/10 backdrop-blur rounded-xl p-4 mb-6">
           <h4 className="text-sm font-medium text-gray-300 mb-2">Din förväntade avkastning:</h4>

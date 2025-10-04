@@ -9,6 +9,7 @@ import ProfessionPrompts from "@/components/ProfessionPrompts";
 import ShareResults from "@/components/ShareResults";
 import FeedbackButton from "@/components/FeedbackButton";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
+import ShareButtons from "@/components/ShareButtons";
 import { useRouter } from "next/navigation";
 
 interface Scenario {
@@ -470,11 +471,19 @@ export default function AIRecommendations({
             </div>
             
             {!isDemo && (
-              <PremiumUpgrade
-                profession={profession}
-                specialization={specialization}
-                onUpgrade={() => router.push("/premium/interview")}
-              />
+              <>
+                <PremiumUpgrade
+                  profession={profession}
+                  specialization={specialization}
+                  onUpgrade={() => router.push("/premium/interview")}
+                />
+                
+                <ShareButtons
+                  profession={profession}
+                  specialization={specialization}
+                  timeSaved="8-12 timmar per vecka"
+                />
+              </>
             )}
           </div>
         </div>

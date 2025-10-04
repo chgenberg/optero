@@ -1,0 +1,65 @@
+import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+  apiVersion: "2024-11-20.acacia",
+});
+
+export async function POST(request: NextRequest) {
+  try {
+    const { profession, specialization, discountPrice } = await request.json();
+
+    // Create Stripe checkout session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "eur",
+            product_data: {
+              name: `Optero Premium - ${specialization || profession}`,
+              description: "Personlig AI-guide med djupgående analys, 15+ verktyg, 50+ prompts, implementeringsplan och 30 dagars support",
+              images: ["https://optero.se/optero_logo2.png"],
+            },
+            unit_amount: (discountPrice || 10) * 100, // Price in cents
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `${request.nextUrl.origin}/premium/interview?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${request.nextUrl.origin}?cancelled=true`,
+      metadata: {
+        profession,
+        specialization,
+      },
+      locale: "sv",
+      // Swedish payment experience
+      payment_intent_data: {
+        description: `Optero Premium för ${specialization || profession}`,
+      },
+      // Customer info collection
+      billing_address_collection: "required",
+      customer_email: undefined, // Will be filled by customer
+      // Invoice settings for Swedish customers
+      invoice_creation: {
+        enabled: true,
+        invoice_data: {
+          description: `Optero Premium - AI-guide för ${specialization || profession}`,
+          metadata: {
+            profession,
+            specialization,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json({ sessionId: session.id, url: session.url });
+  } catch (error: any) {
+    console.error("Stripe error:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to create checkout session" },
+      { status: 500 }
+    );
+  }
+}

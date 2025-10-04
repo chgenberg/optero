@@ -52,7 +52,7 @@ export default function ProfessionInput({ onSelect }: ProfessionInputProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="T.ex. Lärare, Ekonom, Projektledare..."
-            className="w-full px-6 py-4 text-lg bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-gray-900 focus:outline-none transition-all duration-200 placeholder-gray-400"
+            className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg bg-gray-50 border-2 border-transparent rounded-xl sm:rounded-2xl focus:bg-white focus:border-gray-900 focus:outline-none transition-all duration-200 placeholder-gray-400"
             autoComplete="off"
             autoFocus
           />
@@ -74,8 +74,8 @@ export default function ProfessionInput({ onSelect }: ProfessionInputProps) {
 
         {/* Suggestions with minimal design */}
         {showSuggestions && suggestions.length > 0 && (
-          <div className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-fade-in">
-            <div className="max-h-64 overflow-y-auto scrollbar-minimal">
+          <div className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-fade-in">
+            <div className="max-h-48 sm:max-h-64 overflow-y-auto scrollbar-minimal">
               {suggestions.map((profession, index) => (
                 <button
                   key={index}
