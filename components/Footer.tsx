@@ -27,6 +27,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/prompts" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                  Prompt-bibliotek
+                </Link>
+              </li>
+              <li>
                 <Link href="/kontakt" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
                   Kontakt
                 </Link>
