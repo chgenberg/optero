@@ -2,10 +2,11 @@
 
 export interface Question {
   question: string;
-  type: "text" | "number" | "select" | "scale";
+  type: "text" | "number" | "select" | "scale" | "select-or-text"; // New hybrid type
   options?: string[];
   placeholder?: string;
   tip?: string;
+  allowCustom?: boolean; // For select types that allow custom input
 }
 
 export const DEPARTMENT_QUESTIONS: Record<string, Question[]> = {
@@ -28,8 +29,9 @@ export const DEPARTMENT_QUESTIONS: Record<string, Question[]> = {
     },
     { 
       question: "Vilket CRM-system använder ni?", 
-      type: "select", 
-      options: ["Salesforce", "HubSpot", "Pipedrive", "Microsoft Dynamics", "Lime CRM", "Annat", "Inget CRM"],
+      type: "select-or-text", 
+      options: ["Salesforce", "HubSpot", "Pipedrive", "Microsoft Dynamics", "Lime CRM", "Inget CRM"],
+      placeholder: "Eller skriv ert system...",
       tip: "Vi anpassar AI-lösningar till ert specifika CRM"
     },
     { 
@@ -39,8 +41,9 @@ export const DEPARTMENT_QUESTIONS: Record<string, Question[]> = {
     },
     { 
       question: "Hur genererar ni leads idag?", 
-      type: "select",
-      options: ["Inbound (hemsida, SEO)", "Outbound (cold calling, email)", "Nätverk & events", "Partners & referenser", "Blandning av allt"]
+      type: "select-or-text",
+      options: ["Inbound (hemsida, SEO)", "Outbound (cold calling, email)", "Nätverk & events", "Partners & referenser", "Blandning av allt"],
+      placeholder: "Eller beskriv er metod..."
     },
     { 
       question: "Hur kvalificerar ni leads innan första kontakt?", 
@@ -119,8 +122,9 @@ export const DEPARTMENT_QUESTIONS: Record<string, Question[]> = {
     },
     { 
       question: "Vilka kanaler prioriterar ni?", 
-      type: "select",
-      options: ["Social media", "Email", "SEO/Content", "Paid ads", "Events", "Blandning"]
+      type: "select-or-text",
+      options: ["Social media", "Email", "SEO/Content", "Paid ads", "Events", "Blandning"],
+      placeholder: "Eller beskriv era kanaler..."
     },
     { 
       question: "Hur många innehållspublikationer skapar ni per vecka? (bloggar, posts, videos, etc.)", 
@@ -203,8 +207,9 @@ export const DEPARTMENT_QUESTIONS: Record<string, Question[]> = {
     },
     { 
       question: "Vilket ekonomisystem använder ni?", 
-      type: "select",
-      options: ["Fortnox", "Visma", "Bokio", "PE Accounting", "SAP", "Annat"]
+      type: "select-or-text",
+      options: ["Fortnox", "Visma", "Bokio", "PE Accounting", "SAP"],
+      placeholder: "Eller skriv ert system..."
     },
     { 
       question: "Hur mycket tid spenderar ni på manuell datainmatning per vecka?", 
