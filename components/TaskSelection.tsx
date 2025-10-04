@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import professionsData from "@/data/professions.json";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface TaskSelectionProps {
   profession: string;
@@ -47,6 +48,7 @@ export default function TaskSelection({
   onSubmit,
   onBack,
 }: TaskSelectionProps) {
+  const { t } = useLanguage();
   const [tasks, setTasks] = useState<string[]>([]);
   const [selectedTasks, setSelectedTasks] = useState<{task: string, priority: number}[]>([]);
   const [loading, setLoading] = useState(false);
@@ -99,14 +101,14 @@ export default function TaskSelection({
           onClick={onBack}
           className="mb-4 sm:mb-6 text-gray-500 hover:text-gray-800 transition-colors flex items-center gap-2 text-sm sm:text-base"
         >
-          ← Tillbaka
+          ← {t('buttons.back')}
         </button>
 
         <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 text-center mb-2 sm:mb-3">
-          Vilka arbetsuppgifter har du?
+          {t('tasks.title')}
         </h2>
         <p className="text-center text-gray-500 mb-6 lg:mb-8 font-light text-sm sm:text-base">
-          Välj uppgifter och ange hur mycket tid de tar
+          {t('tasks.subtitle')}
         </p>
 
         {loading ? (
@@ -156,7 +158,7 @@ export default function TaskSelection({
           disabled={selectedTasks.length === 0}
           className="w-full py-3 sm:py-4 text-sm sm:text-base bg-gray-800 text-white rounded-xl lg:rounded-2xl hover:bg-gray-700 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Få AI-rekommendationer ({selectedTasks.length} uppgifter valda)
+          {t('tasks.button')} ({t('tasks.selected', { count: selectedTasks.length.toString() })})
         </button>
       </div>
     </div>
