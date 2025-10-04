@@ -1221,6 +1221,302 @@
       "totalPrompts": 5,
       "averageTimeSaved": "4-6h per vecka",
       "difficulty": "80% Lätt, 20% Medel"
+    },
+    "Redovisningsekonom": {
+      "categories": {
+        "Bokslut & Rapportering": [
+          {
+            "id": "acc_close_1",
+            "name": "Bokslutschecklista - strukturerad",
+            "description": "Skapa komplett checklista för månads-/årsbokslut",
+            "timeSaved": "30-45 min",
+            "difficulty": "Lätt",
+            "prompt": "Skapa en bokslutschecklista för [MÅNADS/ÅRS]bokslut.\n\nFöretag: [BRANSCH, STORLEK]\nSystem: [FORTNOX/VISMA/ANNAT]\n\nInkludera:\n- Alla steg i rätt ordning\n- Tidsestimat per steg\n- Vem som ansvarar\n- Vanliga fallgropar\n- Kontroller innan stängning\n- Rapporter som ska tas fram\n\nFormat: Checklista med checkboxar.",
+            "example": "Komplett bokslutschecklista att följa",
+            "howToUse": "Ange företagsinfo → Få checklista → Bocka av under bokslut",
+            "tools": ["ChatGPT", "Notion AI"]
+          },
+          {
+            "id": "acc_close_2",
+            "name": "Bokslutsbeskrivning - för revisor",
+            "description": "Dokumentera bokslutsjusteringar för revision",
+            "timeSaved": "20-30 min",
+            "difficulty": "Medel",
+            "prompt": "Dokumentera bokslutsjusteringar:\n\nJusteringar gjorda:\n[LISTA JUSTERINGAR]\n\nSkapa en tydlig beskrivning för revisor:\n- Varje justering och varför\n- Underlag som finns\n- Belopp och konton\n- Påverkan på resultat\n- Eventuella bedömningar gjorda\n\nTon: Professionell, transparent, pedagogisk.",
+            "example": "Från justeringar till tydlig revisorsdokumentation",
+            "howToUse": "Lista justeringar → Få dokumentation → Skicka till revisor",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Analys & Rapporter": [
+          {
+            "id": "acc_analysis_1",
+            "name": "Månadsrapport till ledning",
+            "description": "Skapa insiktsfull ekonomisk månadsrapport",
+            "timeSaved": "1-2h per månad",
+            "difficulty": "Medel",
+            "prompt": "Skapa månadsrapport baserat på:\n\nSiffror:\n- Omsättning: [BELOPP] (Budget: [BELOPP])\n- Kostnader: [BELOPP] (Budget: [BELOPP])\n- Resultat: [BELOPP]\n- Likviditet: [BELOPP]\n\nAvvikelser: [BESKRIV STÖRRE AVVIKELSER]\n\nSkapa en ledningsrapport med:\n1. Sammanfattning (3 meningar)\n2. Nyckeltal och avvikelser\n3. Analys av varför (förklaringar)\n4. Prognoser framåt\n5. Rekommendationer\n\nFormat: Executive summary + detaljer.",
+            "example": "Från siffror till insiktsfull rapport",
+            "howToUse": "Mata in siffror → Få färdig rapport → Presentera för ledning",
+            "tools": ["ChatGPT", "Claude"]
+          },
+          {
+            "id": "acc_analysis_2",
+            "name": "Förklara avvikelser - pedagogiskt",
+            "description": "Översätt ekonomiska avvikelser till klartext",
+            "timeSaved": "15-20 min",
+            "difficulty": "Lätt",
+            "prompt": "Förklara denna avvikelse för icke-ekonomer:\n\nAvvikelse: [BESKRIV]\nBelopp: [BELOPP]\nOrsak: [TEKNISK FÖRKLARING]\n\nÖversätt till:\n- Vad som hänt (enkelt språk)\n- Varför det påverkar oss\n- Vad det betyder i praktiken\n- Vad vi gör åt det\n\nTon: Pedagogisk, tydlig, icke-teknisk.",
+            "example": "Från 'Negativ kassaflödesavvikelse' till 'Vi har mindre pengar än planerat'",
+            "howToUse": "Beskriv avvikelse → Få enkel förklaring → Dela med ledning",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Skatter & Deklarationer": [
+          {
+            "id": "acc_tax_1",
+            "name": "Momsdeklaration - kontrollista",
+            "description": "Checklista för korrekt momsdeklaration",
+            "timeSaved": "20-30 min per kvartal",
+            "difficulty": "Medel",
+            "prompt": "Skapa kontrollista för momsdeklaration:\n\nPeriod: [KVARTAL/MÅNAD]\nFöretag: [BRANSCH]\n\nInkludera:\n- Alla steg före inlämning\n- Vanliga fel att undvika\n- Kontroller att göra\n- Underlag som behövs\n- Avstämningar mot bokföring\n- Deadlines\n\nFormat: Checklista med förklaringar.",
+            "example": "Säkerställ korrekt momsdeklaration",
+            "howToUse": "Ange period → Få checklista → Följ steg för steg",
+            "tools": ["ChatGPT"]
+          }
+        ]
+      },
+      "totalPrompts": 5,
+      "averageTimeSaved": "4-6h per vecka",
+      "difficulty": "60% Lätt, 40% Medel"
+    },
+    "Kundtjänstmedarbetare": {
+      "categories": {
+        "Email-svar": [
+          {
+            "id": "cs_email_1",
+            "name": "Standardsvar - personligt och snabbt",
+            "description": "Svara på vanliga frågor personligt",
+            "timeSaved": "2-3 min per email",
+            "difficulty": "Lätt",
+            "prompt": "Kundfråga:\n[KLISTRA IN KUNDENS EMAIL]\n\nSkriv ett personligt svar som:\n- Hälsar kunden vid namn\n- Svarar på frågan tydligt\n- Ger extra värde (tips, länkar)\n- Är vänligt och engagerat\n- Avslutas med öppen dörr för mer hjälp\n\nTon: Vänlig, hjälpsam, personlig.",
+            "example": "Från standardsvar till personligt engagemang",
+            "howToUse": "Klistra in fråga → Få personligt svar → Skicka",
+            "tools": ["ChatGPT", "Notion AI"]
+          },
+          {
+            "id": "cs_email_2",
+            "name": "Komplexa problem - tydlig förklaring",
+            "description": "Förklara tekniska/komplexa saker enkelt",
+            "timeSaved": "10-15 min per komplex fråga",
+            "difficulty": "Medel",
+            "prompt": "Kunden har detta problem:\n[BESKRIV PROBLEM]\n\nTeknisk orsak: [TEKNISK FÖRKLARING]\n\nSkriv ett svar som:\n- Förklarar problemet enkelt (inga tekniska termer)\n- Visar empati för besväret\n- Ger steg-för-steg lösning\n- Inkluderar screenshots/länkar om relevant\n- Följer upp med 'Fungerade det?'\n\nTon: Empatisk, pedagogisk, lösningsorienterad.",
+            "example": "Från teknisk jargong till kundvänlig förklaring",
+            "howToUse": "Beskriv problem → Få enkel förklaring → Skicka till kund",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "Klagomålshantering": [
+          {
+            "id": "cs_complaint_1",
+            "name": "Hantera ilsken kund",
+            "description": "De-eskalera och lös klagomål professionellt",
+            "timeSaved": "15-20 min per klagomål",
+            "difficulty": "Medel",
+            "prompt": "Kund är arg om:\n[BESKRIV KLAGOMÅL]\n\nSkriv ett svar som:\n1. Validerar känslor ('Jag förstår att...')\n2. Ber om ursäkt (äkta, inte robotaktigt)\n3. Tar ansvar (även om det inte är vårt fel)\n4. Förklarar vad som hänt\n5. Erbjuder konkret lösning\n6. Kompensation om relevant\n7. Följer upp\n\nTon: Empatisk, ödmjuk, lösningsorienterad.",
+            "example": "Från ilsken kund till nöjd kund",
+            "howToUse": "Beskriv klagomål → Få de-eskalerande svar → Skicka",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "FAQ & Dokumentation": [
+          {
+            "id": "cs_faq_1",
+            "name": "Skapa FAQ från vanliga frågor",
+            "description": "Bygg FAQ-databas från kundinteraktioner",
+            "timeSaved": "30-45 min",
+            "difficulty": "Lätt",
+            "prompt": "Jag får ofta dessa frågor:\n[LISTA 5-10 VANLIGA FRÅGOR]\n\nSkapa en FAQ-sektion med:\n- Tydlig frågeformulering\n- Koncist svar (2-3 meningar)\n- Länk till mer info om relevant\n- Kategorisering\n\nFormat: FAQ-format, lätt att kopiera till hemsida/help center.",
+            "example": "Från upprepade frågor till färdig FAQ",
+            "howToUse": "Lista vanliga frågor → Få FAQ → Publicera på hemsida",
+            "tools": ["ChatGPT"]
+          }
+        ]
+      },
+      "totalPrompts": 4,
+      "averageTimeSaved": "3-5h per vecka",
+      "difficulty": "50% Lätt, 50% Medel"
+    },
+    "Butikssäljare": {
+      "categories": {
+        "Kundkommunikation": [
+          {
+            "id": "retail_comm_1",
+            "name": "Produktrekommendationer - personliga",
+            "description": "Ge skräddarsydda produktförslag",
+            "timeSaved": "5-10 min per kund",
+            "difficulty": "Lätt",
+            "prompt": "Kund letar efter:\n[BESKRIV KUNDENS BEHOV]\n\nVåra produkter:\n[LISTA RELEVANTA PRODUKTER]\n\nSkapa en personlig rekommendation:\n- Varför just denna produkt passar\n- Fördelar specifikt för kundens behov\n- Jämförelse med alternativ\n- Pris-värde motivering\n- Kompletterande produkter\n\nTon: Hjälpsam, inte säljig, rådgivande.",
+            "example": "Från 'Vad letar du efter?' till skräddarsydd rekommendation",
+            "howToUse": "Beskriv kundbehov → Få rekommendation → Presentera för kund",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Produktkunskap": [
+          {
+            "id": "retail_prod_1",
+            "name": "Lär dig ny produkt snabbt",
+            "description": "Få snabb översikt över ny produkt",
+            "timeSaved": "15-20 min per produkt",
+            "difficulty": "Lätt",
+            "prompt": "Ny produkt i butiken:\n\nProdukt: [NAMN]\nBeskrivning: [FRÅN LEVERANTÖR]\n\nGe mig en säljguide:\n- Nyckelfördelar (3-5 st)\n- Vem passar den för?\n- Vanliga frågor och svar\n- Jämförelse med liknande produkter\n- Säljargument (varför köpa denna?)\n- Pris-motivering\n\nFormat: Snabbguide, lätt att memorera.",
+            "example": "Från produktblad till säljkunskap",
+            "howToUse": "Läs produktinfo → Få säljguide → Lär dig inför kundmöte",
+            "tools": ["ChatGPT", "Perplexity"]
+          }
+        ],
+        "Lagerhantering": [
+          {
+            "id": "retail_inv_1",
+            "name": "Beställningsförslag baserat på försäljning",
+            "description": "Optimera lagerbeställningar",
+            "timeSaved": "20-30 min per beställning",
+            "difficulty": "Medel",
+            "prompt": "Analysera försäljning och föreslå beställning:\n\nFörsäljning senaste månaden:\n[LISTA PRODUKTER OCH ANTAL SÅLDA]\n\nAktuellt lager:\n[LISTA PRODUKTER OCH ANTAL I LAGER]\n\nGe beställningsförslag:\n- Vad som behöver beställas (prioriterat)\n- Rekommenderat antal\n- Motivering (säsong, trend, lager)\n- Budget-påverkan\n- Leveranstid att tänka på\n\nFormat: Beställningslista med motiveringar.",
+            "example": "Från försäljningsdata till smart beställning",
+            "howToUse": "Mata in data → Få beställningsförslag → Justera och beställ",
+            "tools": ["ChatGPT", "Excel Copilot"]
+          }
+        ]
+      },
+      "totalPrompts": 3,
+      "averageTimeSaved": "2-4h per vecka",
+      "difficulty": "70% Lätt, 30% Medel"
+    },
+    "Systemutvecklare": {
+      "categories": {
+        "Kodgranskning": [
+          {
+            "id": "dev_review_1",
+            "name": "Code review - konstruktiv feedback",
+            "description": "Ge användbar feedback på pull requests",
+            "timeSaved": "10-15 min per PR",
+            "difficulty": "Lätt",
+            "prompt": "Granska denna kod:\n\n```\n[KLISTRA IN KOD]\n```\n\nGe konstruktiv feedback på:\n- Kodkvalitet och läsbarhet\n- Potentiella buggar\n- Performance-problem\n- Security issues\n- Best practices\n- Förslag på förbättringar\n\nTon: Konstruktiv, pedagogisk, inte nedlåtande.",
+            "example": "Från kod till användbar feedback",
+            "howToUse": "Klistra in kod → Få review → Kommentera i PR",
+            "tools": ["ChatGPT", "Claude", "GitHub Copilot"]
+          },
+          {
+            "id": "dev_review_2",
+            "name": "Refactoring-förslag",
+            "description": "Få förslag på hur kod kan förbättras",
+            "timeSaved": "20-30 min",
+            "difficulty": "Medel",
+            "prompt": "Denna kod fungerar men kan förbättras:\n\n```\n[KOD]\n```\n\nGe refactoring-förslag:\n- Förbättra läsbarhet\n- Reducera komplexitet\n- Bättre namngivning\n- Design patterns som passar\n- Performance-optimeringar\n\nVisa före/efter exempel.\n\nTon: Pedagogisk, konkret.",
+            "example": "Från fungerande till elegant kod",
+            "howToUse": "Klistra in kod → Få förslag → Implementera förbättringar",
+            "tools": ["ChatGPT", "Claude", "GitHub Copilot"]
+          }
+        ],
+        "Dokumentation": [
+          {
+            "id": "dev_doc_1",
+            "name": "README - komplett och användbar",
+            "description": "Skapa professionell README för projekt",
+            "timeSaved": "30-45 min",
+            "difficulty": "Lätt",
+            "prompt": "Skapa README för mitt projekt:\n\nProjekt: [NAMN]\nBeskrivning: [VAD DET GÖR]\nTeknik: [STACK]\nAnvändare: [UTVECKLARE/SLUTANVÄNDARE]\n\nInkludera:\n- Översikt (vad, varför)\n- Installation (steg-för-steg)\n- Användning (exempel)\n- API-dokumentation (om relevant)\n- Contributing guidelines\n- License\n- Kontakt\n\nFormat: Markdown, välstrukturerat.",
+            "example": "Från tomt projekt till professionell README",
+            "howToUse": "Beskriv projekt → Få README → Kopiera till repo",
+            "tools": ["ChatGPT", "Claude"]
+          },
+          {
+            "id": "dev_doc_2",
+            "name": "Kommentera komplex kod",
+            "description": "Generera tydliga kodkommentarer",
+            "timeSaved": "10-15 min",
+            "difficulty": "Lätt",
+            "prompt": "Kommentera denna kod:\n\n```\n[KOD SOM BEHÖVER KOMMENTARER]\n```\n\nSkapa kommentarer som:\n- Förklarar VAD koden gör\n- Förklarar VARFÖR (business logic)\n- Varnar för edge cases\n- Dokumenterar parametrar\n- Exempel på användning\n\nFormat: JSDoc/Docstring-stil.",
+            "example": "Från okommenterad till välkommenterad kod",
+            "howToUse": "Klistra in kod → Få kommentarer → Lägg till i kod",
+            "tools": ["ChatGPT", "GitHub Copilot"]
+          }
+        ],
+        "Problemlösning": [
+          {
+            "id": "dev_debug_1",
+            "name": "Debugga fel - systematiskt",
+            "description": "Hitta och fixa buggar snabbare",
+            "timeSaved": "15-30 min per bug",
+            "difficulty": "Medel",
+            "prompt": "Jag har en bugg:\n\nFelmeddelande: [KLISTRA IN]\nKod: [RELEVANT KOD]\nVad jag förväntar: [FÖRVÄNTAT BETEENDE]\nVad som händer: [FAKTISKT BETEENDE]\n\nHjälp mig debugga:\n1. Vad är trolig orsak?\n2. Hur verifierar jag det?\n3. Lösningsförslag (minst 3)\n4. Hur förhindrar jag detta framöver?\n\nFormat: Systematisk debug-guide.",
+            "example": "Från frustrerad till lösning",
+            "howToUse": "Beskriv bugg → Få debug-guide → Testa lösningar",
+            "tools": ["ChatGPT", "Claude", "Perplexity"]
+          }
+        ]
+      },
+      "totalPrompts": 5,
+      "averageTimeSaved": "4-6h per vecka",
+      "difficulty": "60% Lätt, 40% Medel"
+    },
+    "Grafisk formgivare": {
+      "categories": {
+        "Kreativa briefs": [
+          {
+            "id": "gd_brief_1",
+            "name": "Tolka klientbriefs - konkretisera",
+            "description": "Översätt vaga önskemål till konkret design-brief",
+            "timeSaved": "20-30 min per projekt",
+            "difficulty": "Medel",
+            "prompt": "Klient sa:\n[KLISTRA IN VAGA ÖNSKEMÅL]\n\nHjälp mig skapa en konkret design-brief:\n- Vad klienten EGENTLIGEN vill ha\n- Målgrupp och användning\n- Stil och känsla (konkreta referenser)\n- Färgpalett-förslag\n- Typografi-riktning\n- Format och specifikationer\n- Frågor att ställa klienten\n\nFormat: Kreativ brief, actionable.",
+            "example": "Från 'Något modernt och fräscht' till konkret design-brief",
+            "howToUse": "Klistra in önskemål → Få konkret brief → Bekräfta med klient",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "Klientkommunikation": [
+          {
+            "id": "gd_client_1",
+            "name": "Presentera designval - pedagogiskt",
+            "description": "Förklara designbeslut för icke-designers",
+            "timeSaved": "15-20 min",
+            "difficulty": "Medel",
+            "prompt": "Jag valde denna design:\n[BESKRIV DESIGN]\n\nDesignbeslut:\n- Färger: [VARFÖR DESSA]\n- Typografi: [VARFÖR DENNA]\n- Layout: [VARFÖR DENNA]\n\nSkriv en presentation som:\n- Förklarar varje val pedagogiskt\n- Kopplar till målgrupp och syfte\n- Visar hur det löser klientens problem\n- Jämför med alternativ\n- Motiverar varför detta är bäst\n\nTon: Professionell, pedagogisk, övertygande.",
+            "example": "Från 'Jag gillar blått' till professionell design-motivering",
+            "howToUse": "Beskriv design → Få presentation → Presentera för klient",
+            "tools": ["ChatGPT"]
+          },
+          {
+            "id": "gd_client_2",
+            "name": "Hantera designfeedback - konstruktivt",
+            "description": "Tolka och agera på klientfeedback",
+            "timeSaved": "10-15 min",
+            "difficulty": "Lätt",
+            "prompt": "Klient sa:\n[FEEDBACK FRÅN KLIENT]\n\nHjälp mig:\n1. Tolka vad klienten EGENTLIGEN menar\n2. Identifiera kärnproblemet\n3. Föreslå 3 lösningar\n4. Formulera svar till klient\n5. Frågor att ställa för klarhet\n\nTon: Professionell, lösningsorienterad.",
+            "example": "Från 'Gör det mer wow' till konkreta åtgärder",
+            "howToUse": "Klistra in feedback → Få tolkning och lösningar → Svara klient",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Copywriting": [
+          {
+            "id": "gd_copy_1",
+            "name": "Skriv designtexter - koncist och kraftfullt",
+            "description": "Skapa texter för grafiska projekt",
+            "timeSaved": "15-20 min",
+            "difficulty": "Lätt",
+            "prompt": "Jag behöver text till:\n\nProjekt: [TYP - affisch, banner, broschyr]\nBudskap: [VAD SOM SKA KOMMUNICERAS]\nMålgrupp: [VEM]\nTon: [PROFESSIONELL/LEKFULL/ELEGANT]\n\nSkriv:\n- Huvudrubrik (max 5 ord, kraftfull)\n- Underrubrik (max 10 ord)\n- Brödtext (max 50 ord)\n- Call-to-action\n\nFormat: Koncist, impactfullt, designvänligt.",
+            "example": "Från idé till färdiga texter",
+            "howToUse": "Beskriv projekt → Få texter → Lägg in i design",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ]
+      },
+      "totalPrompts": 4,
+      "averageTimeSaved": "3-4h per vecka",
+      "difficulty": "50% Lätt, 50% Medel"
     }
   }
 }
