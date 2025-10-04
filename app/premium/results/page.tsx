@@ -2,432 +2,370 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Document, Page, Text, View, StyleSheet, PDFDownloadLink, pdf } from "@react-pdf/renderer";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-type TabType = "overview" | "tools" | "implementation" | "examples" | "pdf";
+// PDF Styles
+const styles = StyleSheet.create({
+  page: {
+    flexDirection: "column",
+    backgroundColor: "#FFFFFF",
+    padding: 40,
+  },
+  header: {
+    marginBottom: 30,
+    borderBottom: 2,
+    borderBottomColor: "#111827",
+    paddingBottom: 20,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#111827",
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#6B7280",
+  },
+  section: {
+    marginBottom: 25,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#111827",
+    marginBottom: 15,
+  },
+  subsectionTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#374151",
+    marginBottom: 10,
+  },
+  text: {
+    fontSize: 12,
+    color: "#4B5563",
+    lineHeight: 1.6,
+    marginBottom: 10,
+  },
+  listItem: {
+    fontSize: 12,
+    color: "#4B5563",
+    marginBottom: 5,
+    paddingLeft: 20,
+  },
+  footer: {
+    position: "absolute",
+    bottom: 30,
+    left: 40,
+    right: 40,
+    textAlign: "center",
+    color: "#9CA3AF",
+    fontSize: 10,
+  },
+});
 
-interface PremiumResult {
-  overview: {
-    summary: string;
-    keyInsights: string[];
-    timeSavings: string;
-    quickWins: string[];
-  };
-  detailedTools: Array<{
-    name: string;
-    description: string;
-    specificUseCase: string;
-    setupGuide: string[];
-    prompts: string[];
-    roi: string;
-  }>;
-  implementation: {
-    week1: string[];
-    week2: string[];
-    week3: string[];
-    week4: string[];
-    longTerm: string[];
-  };
-  examples: Array<{
-    scenario: string;
-    before: string;
-    after: string;
-    timeSaved: string;
-    toolsUsed: string[];
-  }>;
-}
+// PDF Document Component
+const PremiumPDF = ({ data }: { data: any }) => (
+  <Document>
+    <Page size="A4" style={styles.page}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Din Personliga AI-Guide</Text>
+        <Text style={styles.subtitle}>
+          {data.profession} - {data.specialization}
+        </Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Sammanfattning</Text>
+        <Text style={styles.text}>
+          Baserat på din djupgående analys har vi identifierat {data.tools.length} AI-verktyg 
+          som kan spara dig {data.totalTimeSaved} timmar per vecka. Denna guide innehåller 
+          detaljerade instruktioner för implementation och användning.
+        </Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Dina Utmaningar</Text>
+        {data.challenges.map((challenge: string, index: number) => (
+          <Text key={index} style={styles.listItem}>
+            • {challenge}
+          </Text>
+        ))}
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Rekommenderade AI-Verktyg</Text>
+        {data.tools.map((tool: any, index: number) => (
+          <View key={index} style={{ marginBottom: 20 }}>
+            <Text style={styles.subsectionTitle}>{tool.name}</Text>
+            <Text style={styles.text}>{tool.description}</Text>
+            <Text style={styles.text}>Tidsbesparning: {tool.timeSaved}</Text>
+            <Text style={styles.text}>Implementation: {tool.implementation}</Text>
+          </View>
+        ))}
+      </View>
+
+      <Text style={styles.footer}>
+        © 2024 Mendio - Din personliga AI-guide
+      </Text>
+    </Page>
+  </Document>
+);
 
 export default function PremiumResultsPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<TabType>("overview");
-  const [results, setResults] = useState<PremiumResult | null>(null);
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
-  const [generating, setGenerating] = useState(false);
-  const [generatingPdf, setGeneratingPdf] = useState(false);
+  const [premiumData, setPremiumData] = useState<any>(null);
 
   useEffect(() => {
-    generateResults();
+    // Check if user has access
+    const hasPurchased = sessionStorage.getItem("premiumPurchased");
+    const interviewData = sessionStorage.getItem("premiumInterviewData");
+    
+    if (!hasPurchased || !interviewData) {
+      router.push("/");
+      return;
+    }
+
+    // Generate premium results
+    generatePremiumResults(JSON.parse(interviewData));
   }, []);
 
-  const generateResults = async () => {
-    setLoading(true);
-    setGenerating(true);
-
+  const generatePremiumResults = async (interviewData: any) => {
     try {
-      const context = sessionStorage.getItem("premiumContext");
-      const answers = sessionStorage.getItem("premiumAnswers");
-
-      if (!context || !answers) {
-        router.push("/");
-        return;
-      }
-
       const response = await fetch("/api/premium/generate-results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          context: JSON.parse(context),
-          answers: JSON.parse(answers),
-        }),
+        body: JSON.stringify(interviewData),
       });
 
       if (response.ok) {
         const data = await response.json();
-        setResults(data);
+        setPremiumData(data);
       }
     } catch (error) {
       console.error("Failed to generate results:", error);
     } finally {
       setLoading(false);
-      setGenerating(false);
     }
   };
 
-  const downloadPdf = async () => {
-    setGeneratingPdf(true);
-    
-    try {
-      // Open PDF in new window
-      const pdfWindow = window.open('', '_blank');
-      if (pdfWindow) {
-        pdfWindow.document.write('<html><body><p>Genererar PDF...</p></body></html>');
-        
-        const response = await fetch("/api/premium/download-pdf", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            context: { profession: "Ekonom", specialization: "Redovisningskonsult" },
-            results,
-          }),
-        });
-
-        if (response.ok) {
-          const html = await response.text();
-          pdfWindow.document.write(html);
-          pdfWindow.document.close();
-        } else {
-          pdfWindow.close();
-          alert("Kunde inte generera PDF. Försök igen senare.");
-        }
-      } else {
-        alert("Tillåt popup-fönster för att ladda ner PDF.");
-      }
-    } catch (error) {
-      console.error("PDF download failed:", error);
-      alert("Ett fel uppstod. Försök igen.");
-    } finally {
-      setGeneratingPdf(false);
-    }
-  };
-
-  if (loading || !results) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-flex items-center gap-3 mb-4">
-            <div className="w-2 h-2 bg-gray-900 rounded-full animate-pulse" />
-            <div className="w-2 h-2 bg-gray-900 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
-            <div className="w-2 h-2 bg-gray-900 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
-          </div>
-          <p className="text-gray-600">
-            {generating ? "Analyserar dina svar och skapar din personliga guide..." : "Laddar..."}
-          </p>
+          <div className="w-16 h-16 rounded-full border-4 border-gray-200 border-t-gray-900 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Skapar din personliga guide...</p>
         </div>
       </div>
     );
   }
 
-  const tabs = [
-    { id: "overview" as TabType, label: "Översikt", icon: "📊" },
-    { id: "tools" as TabType, label: "AI-verktyg", icon: "🛠️" },
-    { id: "implementation" as TabType, label: "Implementering", icon: "📅" },
-    { id: "examples" as TabType, label: "Exempel", icon: "💡" },
-    { id: "pdf" as TabType, label: "PDF-guide", icon: "📄" },
-  ];
+  if (!premiumData) {
+    return null;
+  }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Premium header */}
-      <div className="bg-gray-900 text-white py-6">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold mb-1">
-                Din personliga AI-guide
-              </h1>
-              <p className="text-gray-300">
-                Skräddarsydd för din roll och dina behov
-              </p>
-            </div>
-            <button
-              onClick={downloadPdf}
-              disabled={generatingPdf}
-              className="btn-secondary bg-white text-gray-900 hover:bg-gray-100"
-            >
-              {generatingPdf ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mr-2" />
-                  Genererar PDF...
-                </>
-              ) : (
-                <>
-                  <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Ladda ner PDF
-                </>
-              )}
-            </button>
+    <main className="min-h-screen bg-gray-50">
+      {/* Success banner */}
+      <div className="bg-green-50 border-b border-green-200">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center gap-3">
+            <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <p className="text-green-800 font-medium">
+              Din personliga AI-guide är klar!
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-8 overflow-x-auto scrollbar-hide">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
-                  activeTab === tab.id
-                    ? "border-gray-900 text-gray-900"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                <span className="mr-2">{tab.icon}</span>
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Overview tab */}
-        {activeTab === "overview" && (
-          <div className="space-y-8 animate-fade-in-up">
-            <div className="card">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Sammanfattning</h2>
-              <p className="text-gray-700 leading-relaxed">{results.overview.summary}</p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="card">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">🎯 Viktiga insikter</h3>
-                <ul className="space-y-3">
-                  {results.overview.keyInsights.map((insight, i) => (
-                    <li key={i} className="flex items-start">
-                      <span className="text-green-500 mr-2">✓</span>
-                      <span className="text-gray-700">{insight}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="card">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">⚡ Quick wins</h3>
-                <ul className="space-y-3">
-                  {results.overview.quickWins.map((win, i) => (
-                    <li key={i} className="flex items-start">
-                      <span className="text-blue-500 mr-2">→</span>
-                      <span className="text-gray-700">{win}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="card bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
-              <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  Beräknad tidsbesparing
-                </h3>
-                <p className="text-4xl font-bold text-green-600">
-                  {results.overview.timeSavings}
-                </p>
-                <p className="text-gray-600 mt-2">per vecka med full implementation</p>
-              </div>
-            </div>
+        {/* Header with PDF download */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Din Kompletta AI-Guide
+            </h1>
+            <p className="text-gray-600">
+              Skräddarsydd för {premiumData.profession} - {premiumData.specialization}
+            </p>
           </div>
-        )}
+          
+          <PDFDownloadLink
+            document={<PremiumPDF data={premiumData} />}
+            fileName={`AI-Guide-${premiumData.profession}.pdf`}
+            className="btn-primary flex items-center gap-2"
+          >
+            {({ loading }) => (
+              <>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                </svg>
+                {loading ? "Förbereder PDF..." : "Ladda ner PDF"}
+              </>
+            )}
+          </PDFDownloadLink>
+        </div>
 
-        {/* Tools tab */}
-        {activeTab === "tools" && (
-          <div className="space-y-6 animate-fade-in-up">
-            {results.detailedTools.map((tool, index) => (
-              <div key={index} className="card">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">{tool.name}</h3>
-                    <p className="text-gray-600 mt-1">{tool.description}</p>
-                  </div>
-                  <span className="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full">
-                    {tool.roi}
-                  </span>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Din specifika användning:</h4>
-                    <p className="text-gray-700 bg-gray-50 p-4 rounded-lg">{tool.specificUseCase}</p>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Steg-för-steg guide:</h4>
-                    <ol className="space-y-2">
-                      {tool.setupGuide.map((step, i) => (
-                        <li key={i} className="flex">
-                          <span className="text-gray-400 mr-3">{i + 1}.</span>
-                          <span className="text-gray-700">{step}</span>
-                        </li>
-                      ))}
-                    </ol>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Färdiga prompts att kopiera:</h4>
-                    <div className="space-y-2">
-                      {tool.prompts.map((prompt, i) => (
-                        <div key={i} className="bg-gray-50 p-3 rounded-lg font-mono text-sm text-gray-700">
-                          {prompt}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+        {/* Key metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-white rounded-xl p-6 border border-gray-100">
+            <p className="text-gray-500 text-sm mb-1">Total tidsbesparing</p>
+            <p className="text-3xl font-bold text-gray-900">{premiumData.totalTimeSaved}h/vecka</p>
           </div>
-        )}
-
-        {/* Implementation tab */}
-        {activeTab === "implementation" && (
-          <div className="space-y-8 animate-fade-in-up">
-            <div className="card">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Din 4-veckors implementeringsplan
-              </h2>
-
-              <div className="space-y-6">
-                {Object.entries(results.implementation).map(([week, tasks]) => (
-                  <div key={week} className="border-l-4 border-gray-900 pl-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                      {week === "longTerm" ? "Långsiktiga mål" : week.replace("week", "Vecka ")}
-                    </h3>
-                    <ul className="space-y-2">
-                      {(tasks as string[]).map((task, i) => (
-                        <li key={i} className="flex items-start">
-                          <input type="checkbox" className="mr-3 mt-1" />
-                          <span className="text-gray-700">{task}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </div>
+          <div className="bg-white rounded-xl p-6 border border-gray-100">
+            <p className="text-gray-500 text-sm mb-1">AI-verktyg</p>
+            <p className="text-3xl font-bold text-gray-900">{premiumData.tools.length} st</p>
           </div>
-        )}
+          <div className="bg-white rounded-xl p-6 border border-gray-100">
+            <p className="text-gray-500 text-sm mb-1">ROI på investering</p>
+            <p className="text-3xl font-bold text-green-600">{premiumData.roi}%</p>
+          </div>
+        </div>
 
-        {/* Examples tab */}
-        {activeTab === "examples" && (
-          <div className="space-y-6 animate-fade-in-up">
-            {results.examples.map((example, index) => (
-              <div key={index} className="card">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">{example.scenario}</h3>
-                
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="bg-red-50 p-4 rounded-lg">
-                    <h4 className="font-semibold text-red-900 mb-2">❌ Före AI</h4>
-                    <p className="text-gray-700">{example.before}</p>
-                  </div>
-                  
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <h4 className="font-semibold text-green-900 mb-2">✅ Efter AI</h4>
-                    <p className="text-gray-700">{example.after}</p>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="flex gap-2">
-                    {example.toolsUsed.map((tool, i) => (
-                      <span key={i} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+        {/* Detailed sections */}
+        <div className="space-y-8">
+          {/* Challenges and solutions */}
+          <section className="bg-white rounded-xl p-8 border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Dina Utmaningar & Lösningar
+            </h2>
+            <div className="space-y-6">
+              {premiumData.challengeSolutions.map((item: any, index: number) => (
+                <div key={index} className="border-l-4 border-gray-900 pl-6">
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    {item.challenge}
+                  </h3>
+                  <p className="text-gray-600 mb-3">{item.solution}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {item.tools.map((tool: string, i: number) => (
+                      <span key={i} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
                         {tool}
                       </span>
                     ))}
                   </div>
-                  <span className="text-green-600 font-semibold">
-                    Sparar {example.timeSaved}
-                  </span>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          </section>
 
-        {/* PDF tab */}
-        {activeTab === "pdf" && (
-          <div className="text-center py-12 animate-fade-in-up">
-            <svg className="w-24 h-24 text-gray-400 mx-auto mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Din kompletta AI-guide som PDF
+          {/* Detailed tool recommendations */}
+          <section className="bg-white rounded-xl p-8 border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              AI-Verktyg i Detalj
             </h2>
-            
-            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-              Få hela din personliga guide som en snygg PDF du kan skriva ut, 
-              spara eller dela med kollegor. Innehåller allt från denna sida plus 
-              extra bonusmaterial.
-            </p>
+            <div className="grid gap-6">
+              {premiumData.tools.map((tool: any, index: number) => (
+                <div key={index} className="border border-gray-200 rounded-lg p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                        {tool.name}
+                      </h3>
+                      <p className="text-gray-600">{tool.description}</p>
+                    </div>
+                    <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                      Sparar {tool.timeSaved}
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <p className="font-medium text-gray-900 mb-1">Så här använder du det:</p>
+                      <p className="text-gray-600">{tool.howToUse}</p>
+                    </div>
+                    
+                    <div>
+                      <p className="font-medium text-gray-900 mb-1">Konkreta exempel:</p>
+                      <ul className="list-disc pl-5 space-y-1">
+                        {tool.examples.map((example: string, i: number) => (
+                          <li key={i} className="text-gray-600">{example}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <p className="font-medium text-gray-900 mb-1">Tips:</p>
+                      <p className="text-gray-600">{tool.tips}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <a
+                      href={tool.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2"
+                    >
+                      Testa verktyget →
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
 
-            <button
-              onClick={downloadPdf}
-              disabled={generatingPdf}
-              className="btn-primary text-lg px-8 py-4"
-            >
-              {generatingPdf ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
-                  Genererar din PDF...
-                </>
-              ) : (
-                <>
-                  <svg className="w-6 h-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Ladda ner PDF (28 sidor)
-                </>
-              )}
-            </button>
+          {/* Implementation plan */}
+          <section className="bg-white rounded-xl p-8 border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Din 4-veckors Implementeringsplan
+            </h2>
+            <div className="space-y-6">
+              {premiumData.implementationPlan.map((week: any, index: number) => (
+                <div key={index} className="flex gap-6">
+                  <div className="flex-shrink-0 w-24">
+                    <div className="bg-gray-900 text-white rounded-lg p-3 text-center">
+                      <p className="text-sm font-medium">Vecka {index + 1}</p>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-2">{week.focus}</h3>
+                    <ul className="space-y-2">
+                      {week.tasks.map((task: string, i: number) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <svg className="w-5 h-5 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                          <span className="text-gray-600">{task}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
 
-            <p className="text-sm text-gray-500 mt-4">
-              PDF:en skickas också till din email
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Footer CTA */}
-      <div className="bg-gray-50 border-t border-gray-200 py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-600 mb-4">
-            Behöver du hjälp att komma igång? Har du frågor om implementeringen?
+        {/* CTA section */}
+        <div className="mt-12 bg-gray-900 text-white rounded-xl p-8 text-center">
+          <h2 className="text-2xl font-bold mb-4">Redo att börja?</h2>
+          <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+            Du har nu all information du behöver för att revolutionera din arbetsdag med AI. 
+            Börja med vecka 1 och följ planen steg för steg.
           </p>
-          <a
-            href="mailto:support@optero.se"
-            className="inline-flex items-center gap-2 text-gray-900 font-medium hover:underline"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            Kontakta oss för support
-          </a>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => router.push("/")}
+              className="px-8 py-3 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition-colors font-medium"
+            >
+              Tillbaka till startsidan
+            </button>
+            <PDFDownloadLink
+              document={<PremiumPDF data={premiumData} />}
+              fileName={`AI-Guide-${premiumData.profession}.pdf`}
+              className="px-8 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium"
+            >
+              Ladda ner PDF igen
+            </PDFDownloadLink>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

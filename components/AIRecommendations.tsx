@@ -9,6 +9,7 @@ import ShareResults from "@/components/ShareResults";
 import FeedbackButton from "@/components/FeedbackButton";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
 import ShareButtons from "@/components/ShareButtons";
+import LoadingAnalysis from "@/components/LoadingAnalysis";
 import { useRouter } from "next/navigation";
 
 interface Scenario {
@@ -209,18 +210,7 @@ export default function AIRecommendations({
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-flex items-center gap-3 mb-4">
-            <div className="w-2 h-2 bg-gray-900 rounded-full animate-pulse" />
-            <div className="w-2 h-2 bg-gray-900 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
-            <div className="w-2 h-2 bg-gray-900 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
-          </div>
-          <p className="text-gray-600">Analyserar dina behov...</p>
-        </div>
-      </div>
-    );
+    return <LoadingAnalysis />;
   }
 
   const tabs = [
@@ -452,10 +442,10 @@ export default function AIRecommendations({
       {!isDemo && (
         <div className="text-center mt-12">
           <button
-            onClick={() => router.push("/premium/interview")}
+            onClick={() => router.push("/premium/purchase")}
             className="btn-primary px-8 py-4 text-lg"
           >
-            Få en djupgående analys
+            Köp en djupgående analys
           </button>
           <p className="text-gray-600 text-sm mt-2">
             Personlig AI-guide med 15-20 frågor om din arbetsdag

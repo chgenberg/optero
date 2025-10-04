@@ -26,7 +26,7 @@ export default function ShareButtons({
     `#AI #Produktivitet #${profession}`
   );
 
-  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://mendio.io')}`;
+  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://mendio.io')}&title=${encodeURIComponent('AI-verktyg för ' + (specialization || profession))}&summary=${linkedInText}&source=Mendio`;
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,15 +59,7 @@ export default function ShareButtons({
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6 lg:p-8">
-      <h3 className="text-xl font-bold text-gray-900 mb-2">
-        🎉 Dela med dina kollegor!
-      </h3>
-      <p className="text-gray-600 mb-6">
-        Hjälp andra {profession.toLowerCase()}s att spara tid med AI
-      </p>
-
-      <div className="space-y-4">
+    <div className="space-y-4">
         {/* LinkedIn Share */}
         <a
           href={linkedInUrl}
