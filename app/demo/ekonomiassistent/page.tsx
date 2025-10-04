@@ -45,13 +45,14 @@ export default function DemoEkonomiassistent() {
       </div>
 
       <div className="container mx-auto px-4 py-8 mt-12">
-        {/* Logo and info button */}
+        {/* Logo */}
         <div className="flex justify-between items-start mb-8">
-          <img
-            src="/Optero_logo.png"
-            alt="Optero"
-            className="h-10 md:h-12 lg:h-16"
-          />
+          <a href="/" className="flex items-center gap-3 group">
+            <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
+              <span className="text-white font-bold text-base">M</span>
+            </div>
+            <span className="font-bold text-gray-900 text-xl">Mendio</span>
+          </a>
         </div>
 
         {/* Demo content */}
