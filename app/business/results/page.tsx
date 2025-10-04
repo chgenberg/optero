@@ -12,17 +12,53 @@ function BusinessResultsContent() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"solutions" | "tools" | "implementation" | "roi">("solutions");
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
+  const [results, setResults] = useState<any>(null);
 
   const dept = searchParams?.get("dept") || "";
   const companySize = searchParams?.get("size") || "";
   const industry = searchParams?.get("industry") || "";
 
-  // Calculate totals based on department
-  const totalTimeSaved = dept === "sales" ? "20-30 timmar per vecka" : "15-25 timmar per vecka";
-  const totalROI = dept === "sales" ? "450,000 - 600,000 SEK" : "300,000 - 450,000 SEK";
+  useEffect(() => {
+    const fetchResults = async () => {
+      try {
+        // Get saved analysis from session
+        const savedAnalysis = sessionStorage.getItem("businessAnalysis");
+        if (!savedAnalysis) {
+          router.push("/business");
+          return;
+        }
 
-  // Mock solutions with more detailed content
-  const solutions = [
+        const analysisData = JSON.parse(savedAnalysis);
+        
+        // Call AI to generate solutions
+        const response = await fetch("/api/business/generate-solutions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(analysisData)
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setResults(data);
+        } else {
+          // Fallback to mock data if API fails
+          setResults(getMockData(dept));
+        }
+      } catch (error) {
+        console.error("Error fetching B2B results:", error);
+        setResults(getMockData(dept));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResults();
+  }, [dept, router]);
+
+  const getMockData = (department: string) => ({
+    totalTimeSaved: department === "sales" ? "20-30 timmar per vecka" : "15-25 timmar per vecka",
+    totalROI: department === "sales" ? "450,000 - 600,000 SEK/år" : "300,000 - 450,000 SEK/år",
+    solutions: [
     {
       title: "Automatiserad leadkvalificering",
       problem: "Säljare spenderar 30% av sin tid på att manuellt granska och kvalificera leads från olika källor",
@@ -143,22 +179,28 @@ function BusinessResultsContent() {
       timeSaved: "10-12 timmar/vecka",
       roi: "250,000 SEK/år"
     }
-  ];
-
-  useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-  }, []);
+  ]
+  });
 
   if (loading) {
     return <LoadingAnalysis />;
   }
 
+  if (!results) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">Kunde inte ladda resultat. Försök igen.</p>
+      </div>
+    );
+  }
+
+  const solutions = results.solutions || [];
+  const totalTimeSaved = results.totalTimeSaved || "15-25 timmar per vecka";
+  const totalROI = results.totalROI || "300,000 - 450,000 SEK/år";
+
   const tabs = [
     { id: "solutions" as const, label: "AI-lösningar", count: solutions.length },
-    { id: "tools" as const, label: "Verktyg", count: 15 },
+    { id: "tools" as const, label: "Verktyg", count: null },
     { id: "implementation" as const, label: "Implementering", count: null },
     { id: "roi" as const, label: "ROI-kalkyl", count: null }
   ];
@@ -169,7 +211,7 @@ function BusinessResultsContent() {
         {/* Header */}
         <div className="mb-12 text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Er AI-strategi för {dept === "sales" ? "säljteamet" : dept}
+            Er AI-strategi för {dept === "sales" ? "säljteamet" : dept === "marketing" ? "marknadsföring" : dept === "finance" ? "ekonomi" : dept}
           </h1>
           <p className="text-xl text-gray-600">
             Konkreta lösningar som frigör tid och ökar effektiviteten
@@ -232,7 +274,7 @@ function BusinessResultsContent() {
         {/* Content */}
         {activeTab === "solutions" && (
           <div className="space-y-6">
-            {solutions.map((solution, index) => (
+            {solutions.map((solution: any, index: number) => (
               <div
                 key={index}
                 className="bg-white rounded-lg border border-gray-200 overflow-hidden"
@@ -297,7 +339,7 @@ function BusinessResultsContent() {
                       <div>
                         <h4 className="font-semibold text-gray-900 mb-3">Fördelar</h4>
                         <div className="grid grid-cols-2 gap-3">
-                          {solution.benefits.map((benefit, i) => (
+                          {solution.benefits?.map((benefit: string, i: number) => (
                             <div key={i} className="flex items-start gap-2">
                               <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -312,7 +354,7 @@ function BusinessResultsContent() {
                       <div>
                         <h4 className="font-semibold text-gray-900 mb-3">Rekommenderade verktyg</h4>
                         <div className="space-y-3">
-                          {solution.tools.map((tool, i) => (
+                          {solution.tools?.map((tool: any, i: number) => (
                             <div key={i} className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
                               <div>
                                 <p className="font-medium text-gray-900">{tool.name}</p>
@@ -328,10 +370,10 @@ function BusinessResultsContent() {
                       <div>
                         <h4 className="font-semibold text-gray-900 mb-3">Implementeringsplan</h4>
                         <div className="space-y-2">
-                          {Object.entries(solution.implementation).map(([week, task]) => (
+                          {solution.implementation && Object.entries(solution.implementation).map(([week, task]: [string, any]) => (
                             <div key={week} className="flex gap-3">
-                              <span className="font-medium text-gray-700 capitalize">{week}:</span>
-                              <span className="text-gray-600">{task}</span>
+                              <span className="font-medium text-gray-700 capitalize">{week.replace('week', 'Vecka ')}:</span>
+                              <span className="text-gray-600">{String(task)}</span>
                             </div>
                           ))}
                         </div>
