@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProfessionInput from "@/components/ProfessionInput";
 import SpecializationInput from "@/components/SpecializationInput";
 import ExperienceLevel from "@/components/ExperienceLevel";
@@ -27,6 +27,39 @@ export default function Home() {
   const [challenges, setChallenges] = useState<string[]>([]);
   const [selectedTasks, setSelectedTasks] = useState<{task: string, priority: number}[]>([]);
   const [showInfo, setShowInfo] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+
+  // Save session data whenever step or data changes
+  useEffect(() => {
+    if (profession) {
+      saveSession();
+    }
+  }, [step, profession, specialization, selectedTasks]);
+
+  const saveSession = async () => {
+    try {
+      const response = await fetch("/api/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          profession,
+          specialization,
+          experience,
+          selectedTasks,
+          challenges,
+          completedSteps: STEP_NUMBER[step],
+        }),
+      });
+
+      const data = await response.json();
+      if (data.sessionId && !sessionId) {
+        setSessionId(data.sessionId);
+      }
+    } catch (error) {
+      console.error("Failed to save session:", error);
+    }
+  };
 
   const handleProfessionSelect = (prof: string) => {
     setProfession(prof);
@@ -50,6 +83,7 @@ export default function Home() {
     setExperience("");
     setChallenges([]);
     setSelectedTasks([]);
+    setSessionId(null);
   };
 
   return (

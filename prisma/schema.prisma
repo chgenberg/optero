@@ -7,14 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Sparar specialiseringar per yrke (AI-genererade)
 model ProfessionSpecialization {
   id              Int      @id @default(autoincrement())
   profession      String   @unique
-  specializations Json
+  specializations Json     // Array of specialization strings
+  hitCount        Int      @default(0) // Hur många gånger detta yrke sökts
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  
+  @@index([profession])
 }
 
+// Sparar vanliga arbetsuppgifter per yrke + specialisering
+model CommonTasks {
+  id              Int      @id @default(autoincrement())
+  profession      String
+  specialization  String
+  tasks           Json     // Array of common tasks
+  hitCount        Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@unique([profession, specialization])
+  @@index([profession])
+  @@index([specialization])
+}
+
+// Sparar kompletta AI-rekommendationer (för snabbare laddning)
 model RecommendationCache {
   id              Int      @id @default(autoincrement())
   cacheKey        String   @unique // Hash of profession+specialization+tasks
@@ -38,4 +58,69 @@ model RecommendationCache {
   // Indexes for faster queries
   @@index([profession, specialization])
   @@index([lastUsed])
+  @@index([hitCount])
+}
+
+// Sparar användarinteraktioner för analytics och förbättringar
+model UserSession {
+  id              String   @id @default(cuid())
+  
+  // User journey
+  profession      String
+  specialization  String?
+  experience      String?
+  selectedTasks   Json?    // Array of tasks user selected
+  challenges      Json?    // Array of challenges
+  
+  // Behavior tracking
+  viewedTools     Json?    // Which tools they clicked on
+  copiedPrompts   Json?    // Which prompts they copied
+  timeSpent       Int?     // Seconds spent on results page
+  completedSteps  Int      @default(0) // How far they got (1-4)
+  
+  // Conversion tracking
+  clickedPremium  Boolean  @default(false)
+  
+  // Metadata
+  userAgent       String?
+  referrer        String?
+  createdAt       DateTime @default(now())
+  
+  @@index([profession])
+  @@index([createdAt])
+}
+
+// Sparar feedback från användare
+model Feedback {
+  id                 Int      @id @default(autoincrement())
+  sessionId          String?
+  
+  // Context
+  profession         String
+  specialization     String?
+  recommendationName String?  // Which tool they gave feedback on
+  
+  // Feedback
+  rating             Int?     // 1-5 stars
+  helpful            Boolean?
+  comment            String?
+  
+  createdAt          DateTime @default(now())
+  
+  @@index([profession])
+  @@index([recommendationName])
+  @@index([rating])
+}
+
+// Sparar populära kombinationer för snabbare suggestions
+model PopularCombinations {
+  id              Int      @id @default(autoincrement())
+  profession      String
+  specialization  String
+  taskCombination Json     // Array of commonly selected tasks together
+  frequency       Int      @default(1)
+  lastSeen        DateTime @default(now())
+  
+  @@unique([profession, specialization])
+  @@index([frequency])
 }
