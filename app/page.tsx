@@ -108,8 +108,8 @@ export default function Home() {
 
         {/* Minimal Progress indicator */}
         {step !== "profession" && step !== "results" && (
-          <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-40">
-            <div className="flex items-center gap-2">
+          <div className="max-w-2xl mx-auto mb-8 pt-4">
+            <div className="flex items-center gap-2 justify-center">
               {[1, 2, 3].map((num) => (
                 <div key={num} className="flex items-center">
                   <div

@@ -81,18 +81,8 @@ export default function TaskSelection({
     });
   };
 
-  const updatePriority = (task: string, priority: number) => {
-    setSelectedTasks((prev) =>
-      prev.map((t) => (t.task === task ? { ...t, priority } : t))
-    );
-  };
-
   const isSelected = (task: string) => {
     return selectedTasks.some((t) => t.task === task);
-  };
-
-  const getPriority = (task: string) => {
-    return selectedTasks.find((t) => t.task === task)?.priority || 3;
   };
 
   const handleSubmit = () => {
@@ -156,37 +146,6 @@ export default function TaskSelection({
                   </span>
                 </div>
               </button>
-              
-              {isSelected(task) && (
-                <div className="pl-7 sm:pl-8 pr-2 sm:pr-4 animate-in fade-in duration-200">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                    <span className="text-xs sm:text-sm text-gray-600 sm:min-w-[120px]">Hur mycket tid:</span>
-                    <div className="flex gap-1 sm:gap-2 flex-1">
-                      {[
-                        { value: 1, label: "Lite" },
-                        { value: 3, label: "Medel" },
-                        { value: 5, label: "Mycket" }
-                      ].map((option) => (
-                        <button
-                          key={option.value}
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            updatePriority(task, option.value);
-                          }}
-                          className={`flex-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm transition-all ${
-                            getPriority(task) === option.value
-                              ? "bg-gray-900 text-white"
-                              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                          }`}
-                        >
-                          {option.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           ))}
         </div>
