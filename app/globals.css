@@ -198,3 +198,48 @@ button, a, input, textarea, select {
   outline-offset: 2px;
 }
 
+/* Additional animations for prompts page */
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 15s ease infinite;
+}
+
+/* Enhanced card styles */
+.card-stats {
+  @apply relative p-8 bg-white border-2 border-gray-100 rounded-2xl text-center overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-gray-300;
+}
+
+.card-prompt {
+  @apply p-6 bg-white border-2 border-gray-100 rounded-2xl transition-all duration-300;
+  animation: fade-in-up 0.5s ease-out forwards;
+  animation-fill-mode: both;
+}
+
+.card-prompt:hover {
+  @apply border-gray-300;
+}
+
+/* Custom dropdown styling */
+.dropdown-modern {
+  @apply relative;
+}
+
+/* Enhanced button animations */
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
+.btn-ghost:active {
+  transform: scale(0.98);
+}
+
