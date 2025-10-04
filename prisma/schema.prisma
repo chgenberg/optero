@@ -124,3 +124,31 @@ model PopularCombinations {
   @@unique([profession, specialization])
   @@index([frequency])
 }
+
+// Sparar delningsresultat
+model SharedResult {
+  id            String   @id @default(cuid())
+  shareId       String   @unique
+  profession    String
+  specialization String?
+  tasks         Json
+  recommendations Json
+  createdAt     DateTime @default(now())
+  expiresAt     DateTime
+}
+
+// Sparar chat-historik för AI-coach
+model ChatHistory {
+  id         String   @id @default(cuid())
+  userType   String   // "consumer" or "business"
+  profession String?
+  department String?
+  message    String
+  response   String   @db.Text
+  createdAt  DateTime @default(now())
+  sessionId  String?  // To group conversations
+  
+  @@index([userType])
+  @@index([sessionId])
+  @@index([createdAt])
+}

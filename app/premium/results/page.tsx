@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Document, Page, Text, View, StyleSheet, PDFDownloadLink, pdf } from "@react-pdf/renderer";
 import { useLanguage } from "@/contexts/LanguageContext";
+import ChatCoach from "@/components/ChatCoach";
 
 // PDF Styles
 const styles = StyleSheet.create({
@@ -118,6 +119,7 @@ export default function PremiumResultsPage() {
   const router = useRouter();
   const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
+  const [showChat, setShowChat] = useState(false);
   const [premiumData, setPremiumData] = useState<any>(null);
 
   useEffect(() => {
@@ -366,6 +368,38 @@ export default function PremiumResultsPage() {
           </div>
         </div>
       </div>
+
+      {/* AI Coach Button */}
+      {!showChat && (
+        <button
+          onClick={() => setShowChat(true)}
+          className="fixed bottom-8 right-8 bg-gray-900 text-white rounded-full p-4 shadow-2xl hover:bg-gray-800 transition-all transform hover:scale-110 group"
+        >
+          <div className="relative">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+          </div>
+          <span className="absolute -top-12 right-0 bg-gray-900 text-white px-3 py-1 rounded-lg text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+            Prata med din AI-Coach
+          </span>
+        </button>
+      )}
+
+      {/* AI Coach Chat */}
+      {showChat && premiumData && (
+        <ChatCoach
+          userContext={{
+            type: "consumer",
+            profession: premiumData.profession,
+            specialization: premiumData.specialization,
+            tasks: premiumData.tasks,
+            challenges: premiumData.challenges
+          }}
+          onClose={() => setShowChat(false)}
+        />
+      )}
     </main>
   );
 }

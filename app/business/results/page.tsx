@@ -309,16 +309,16 @@ export default function BusinessResultsPage() {
 
                 <div className="flex flex-col sm:flex-row gap-6 items-center justify-center">
                   <div className="text-center">
-                    <div className="text-sm text-gray-400 mb-1">Team Premium</div>
-                    <div className="text-5xl font-bold">99€</div>
-                    <div className="text-sm text-gray-400">engångsbetalning</div>
+                    <div className="text-sm text-gray-400 mb-1">Från</div>
+                    <div className="text-5xl font-bold">249€</div>
+                    <div className="text-sm text-gray-400">Välj plan →</div>
                   </div>
                   <button
                     onClick={() => router.push("/business/checkout")}
                     className="group px-10 py-5 bg-white text-gray-900 rounded-2xl hover:bg-gray-100 transition-all font-bold text-xl transform hover:scale-105 hover:shadow-2xl"
                   >
                     <span className="flex items-center gap-3">
-                      Köp Team Premium
+                      Se våra planer
                       <svg className="w-6 h-6 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>

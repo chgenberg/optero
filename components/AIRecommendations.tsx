@@ -441,15 +441,15 @@ export default function AIRecommendations({
       {/* Premium CTA Button */}
       {!isDemo && (
         <div className="text-center mt-12">
-          <button
-            onClick={() => router.push("/premium/purchase")}
-            className="btn-primary px-8 py-4 text-lg"
-          >
-            Köp en djupgående analys
-          </button>
-          <p className="text-gray-600 text-sm mt-2">
-            Personlig AI-guide med 15-20 frågor om din arbetsdag
-          </p>
+            <button
+              onClick={() => router.push("/premium/purchase")}
+              className="btn-primary px-8 py-4 text-lg"
+            >
+              Uppgradera för mer
+            </button>
+            <p className="text-gray-600 text-sm mt-2">
+              Från 19€ - Få personlig AI-guide, PDF och coaching
+            </p>
         </div>
       )}
 

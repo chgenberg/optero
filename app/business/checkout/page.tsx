@@ -7,7 +7,38 @@ import { Elements, CardElement, useStripe, useElements } from "@stripe/react-str
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
 
-function CheckoutForm() {
+const TIERS = {
+  starter: {
+    name: "Starter",
+    price: 249,
+    features: [
+      "✅ AI-analys för 1 avdelning",
+      "✅ 5 konkreta AI-lösningar",
+      "✅ ROI-beräkningar",
+      "✅ Grundläggande implementeringsplan",
+      "❌ Team training material",
+      "❌ Dedikerad support"
+    ],
+    description: "Perfekt för att testa AI i er organisation",
+    popular: false
+  },
+  growth: {
+    name: "Growth",
+    price: 499,
+    features: [
+      "✅ Allt i Starter",
+      "✅ 12-veckors detaljerad plan",
+      "✅ Team training material",
+      "✅ Change management guide",
+      "✅ 30 dagars email-support",
+      "✅ KPI tracking templates"
+    ],
+    description: "För team som vill implementera AI på allvar",
+    popular: true
+  }
+};
+
+function CheckoutForm({ selectedTier }: { selectedTier: "starter" | "growth" }) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -34,8 +65,9 @@ function CheckoutForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: 9900,
+          amount: TIERS[selectedTier].price * 100,
           currency: "eur",
+          tier: selectedTier,
           companyInfo,
         }),
       });
@@ -56,6 +88,7 @@ function CheckoutForm() {
         setError(result.error.message || "Betalningen misslyckades");
       } else {
         sessionStorage.setItem("businessPremiumPurchased", "true");
+        sessionStorage.setItem("businessTier", selectedTier);
         router.push("/business/premium-results");
       }
     } catch (err) {
@@ -154,7 +187,7 @@ function CheckoutForm() {
         disabled={!stripe || processing}
         className="w-full py-4 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
       >
-        {processing ? "Behandlar..." : "Betala 99€"}
+        {processing ? "Behandlar..." : `Betala ${TIERS[selectedTier].price}€`}
       </button>
 
       <p className="text-xs text-gray-500 text-center">
@@ -166,6 +199,7 @@ function CheckoutForm() {
 
 export default function BusinessCheckoutPage() {
   const router = useRouter();
+  const [selectedTier, setSelectedTier] = useState<"starter" | "growth">("growth");
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
@@ -184,6 +218,56 @@ export default function BusinessCheckoutPage() {
           <span>Tillbaka</span>
         </button>
 
+        {/* Tier Selection */}
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Välj er AI-implementeringsplan</h2>
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {(Object.entries(TIERS) as [keyof typeof TIERS, typeof TIERS[keyof typeof TIERS]][]).map(([key, tier]) => (
+              <div
+                key={key}
+                onClick={() => setSelectedTier(key)}
+                className={`relative bg-white rounded-3xl p-8 cursor-pointer transition-all transform hover:scale-105 ${
+                  selectedTier === key
+                    ? "ring-4 ring-gray-900 shadow-2xl"
+                    : "ring-1 ring-gray-200 hover:ring-gray-400 shadow-lg"
+                }`}
+              >
+                {tier.popular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-2 rounded-full text-sm font-bold">
+                      REKOMMENDERAS
+                    </span>
+                  </div>
+                )}
+
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{tier.name}</h3>
+                  <p className="text-gray-600 text-sm">{tier.description}</p>
+                </div>
+
+                <div className="text-center mb-6">
+                  <span className="text-5xl font-bold text-gray-900">{tier.price}€</span>
+                  <span className="text-gray-500 ml-2">engångspris</span>
+                </div>
+
+                <ul className="space-y-3 mb-8">
+                  {tier.features.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm">
+                      <span className={feature.startsWith("❌") ? "opacity-50" : ""}>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className={`text-center font-medium ${
+                  selectedTier === key ? "text-gray-900" : "text-gray-500"
+                }`}>
+                  {selectedTier === key ? "✓ Vald" : "Välj denna"}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="grid lg:grid-cols-5 gap-8">
           {/* Order summary */}
           <div className="lg:col-span-2">
@@ -194,11 +278,11 @@ export default function BusinessCheckoutPage() {
                 <div className="bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-2xl p-6">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <p className="text-lg font-bold">Team Premium</p>
-                      <p className="text-sm opacity-90">Komplett AI-transformation</p>
+                      <p className="text-lg font-bold">{TIERS[selectedTier].name}</p>
+                      <p className="text-sm opacity-90">{TIERS[selectedTier].description}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-3xl font-bold">99€</p>
+                      <p className="text-3xl font-bold">{TIERS[selectedTier].price}€</p>
                       <p className="text-xs opacity-90">engångspris</p>
                     </div>
                   </div>
@@ -210,16 +294,11 @@ export default function BusinessCheckoutPage() {
                   <span className="text-2xl">✨</span>
                   Vad ingår:
                 </p>
-                {[
-                  { icon: "📋", text: "12-veckors implementeringsplan" },
-                  { icon: "🎓", text: "Team training-material" },
-                  { icon: "🔄", text: "Change management-guide" },
-                  { icon: "💬", text: "30 dagars email-support" },
-                  { icon: "📄", text: "Komplett PDF-rapport (30+ sidor)" }
-                ].map((item, i) => (
+                {TIERS[selectedTier].features
+                  .filter(f => f.startsWith("✅"))
+                  .map((feature, i) => (
                   <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
-                    <span className="text-2xl">{item.icon}</span>
-                    <span className="text-gray-700">{item.text}</span>
+                    <span className="text-gray-700">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -241,7 +320,7 @@ export default function BusinessCheckoutPage() {
               </div>
 
               <Elements stripe={stripePromise}>
-                <CheckoutForm />
+                <CheckoutForm selectedTier={selectedTier} />
               </Elements>
 
               <div className="mt-10 pt-8 border-t border-gray-100">

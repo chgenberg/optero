@@ -1,67 +1,94 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-// Initialize Stripe
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-function CheckoutForm() {
+const TIERS = {
+  basic: {
+    name: "Basic",
+    price: 19,
+    features: [
+      "✅ Personlig AI-guide",
+      "✅ 5 utvalda AI-verktyg",
+      "✅ Användningsfall & exempel",
+      "✅ Implementeringstips",
+      "❌ PDF-nedladdning",
+      "❌ AI-Coach support"
+    ],
+    description: "Perfekt för att komma igång med AI",
+    popular: false
+  },
+  pro: {
+    name: "Pro",
+    price: 29,
+    features: [
+      "✅ Allt i Basic",
+      "✅ 15+ AI-verktyg",
+      "✅ Nedladdningsbar PDF-guide",
+      "✅ AI-Coach i 30 dagar",
+      "✅ Detaljerad implementeringsplan",
+      "✅ Prioriterad support"
+    ],
+    description: "För dig som vill maximera AI:s potential",
+    popular: true
+  }
+};
+
+function CheckoutForm({ selectedTier }: { selectedTier: "basic" | "pro" }) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
   const { t } = useLanguage();
   
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [customerInfo, setCustomerInfo] = useState({
-    name: "",
-    email: "",
-  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!stripe || !elements) {
-      return;
-    }
+    if (!stripe || !elements) return;
 
     setProcessing(true);
     setError(null);
 
     try {
-      // Create payment intent
       const response = await fetch("/api/premium/create-payment-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: 1000, // 10 EUR in cents
+          amount: TIERS[selectedTier].price * 100, // Convert to cents
           currency: "eur",
-          customerInfo,
-        }),
+          tier: selectedTier,
+          email: email
+        })
       });
 
       const { clientSecret } = await response.json();
 
-      // Confirm payment
-      const result = await stripe.confirmCardPayment(clientSecret, {
+      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement)!,
           billing_details: {
-            name: customerInfo.name,
-            email: customerInfo.email,
+            name: name,
+            email: email,
           },
         },
       });
 
-      if (result.error) {
-        setError(result.error.message || "Betalningen misslyckades");
-      } else {
-        // Payment successful
-        sessionStorage.setItem("premiumPurchased", "true");
+      if (stripeError) {
+        setError(stripeError.message || "Betalningen misslyckades");
+      } else if (paymentIntent?.status === "succeeded") {
+        // Save tier info and redirect
+        sessionStorage.setItem("purchasedTier", selectedTier);
+        sessionStorage.setItem("purchaseDate", new Date().toISOString());
+        sessionStorage.setItem("premiumEmail", email);
         router.push("/premium/interview");
       }
     } catch (err) {
@@ -74,28 +101,26 @@ function CheckoutForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-          Namn
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Ditt namn
         </label>
         <input
-          id="name"
           type="text"
-          value={customerInfo.name}
-          onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
           required
         />
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-          E-post
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Din e-post
         </label>
         <input
-          id="email"
           type="email"
-          value={customerInfo.email}
-          onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
           required
         />
@@ -112,13 +137,9 @@ function CheckoutForm() {
                 base: {
                   fontSize: "16px",
                   color: "#424770",
-                  "::placeholder": {
-                    color: "#aab7c4",
-                  },
+                  "::placeholder": { color: "#aab7c4" },
                 },
-                invalid: {
-                  color: "#9e2146",
-                },
+                invalid: { color: "#9e2146" },
               },
             }}
           />
@@ -136,126 +157,142 @@ function CheckoutForm() {
         disabled={!stripe || processing}
         className="w-full py-4 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
       >
-        {processing ? "Behandlar..." : "Betala 10€"}
+        {processing ? "Behandlar..." : `Betala ${TIERS[selectedTier].price}€`}
       </button>
+
+      <p className="text-xs text-gray-500 text-center">
+        Säker betalning med Stripe. 30 dagars pengarna-tillbaka-garanti.
+      </p>
     </form>
   );
 }
 
 export default function PremiumPurchasePage() {
+  const [selectedTier, setSelectedTier] = useState<"basic" | "pro">("pro");
   const { t } = useLanguage();
   const router = useRouter();
 
+  // Get context from session
+  const context = typeof window !== "undefined" ? JSON.parse(sessionStorage.getItem("premiumContext") || "{}") : {};
+  const profession = context.profession || "ditt yrke";
+
   return (
-    <main className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+      {/* Background elements */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-200 rounded-full blur-3xl opacity-20 animate-pulse-slow" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-200 rounded-full blur-3xl opacity-20 animate-pulse-slow" style={{ animationDelay: '2s' }} />
+      </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4 py-12">
         <button
           onClick={() => router.back()}
-          className="mb-8 text-gray-600 hover:text-gray-900 transition-colors flex items-center gap-2"
+          className="mb-8 text-gray-600 hover:text-gray-900 transition-all flex items-center gap-2 group"
         >
-          ← Tillbaka
+          <span className="transform group-hover:-translate-x-1 transition-transform">←</span>
+          <span>Tillbaka</span>
         </button>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Left column - What you get */}
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">
-              Djupgående AI-analys för ditt yrke
-            </h1>
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Välj din AI-guide för {profession}
+          </h1>
+          <p className="text-xl text-gray-600">
+            Få tillgång till allt du behöver för att lyckas med AI
+          </p>
+        </div>
 
-            <div className="space-y-6">
-              <div className="bg-white rounded-xl p-6 border border-gray-100">
-                <h2 className="text-xl font-semibold mb-4">Detta ingår:</h2>
-                <ul className="space-y-3">
-                  <li className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <div>
-                      <p className="font-medium">15-20 djupgående frågor</p>
-                      <p className="text-sm text-gray-600">Om din arbetsdag, utmaningar och mål</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <div>
-                      <p className="font-medium">Personlig AI-guide</p>
-                      <p className="text-sm text-gray-600">Skräddarsydd för just dina behov</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <div>
-                      <p className="font-medium">50+ AI-verktyg</p>
-                      <p className="text-sm text-gray-600">Handplockade för ditt yrke och uppgifter</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <div>
-                      <p className="font-medium">Implementeringsplan</p>
-                      <p className="text-sm text-gray-600">Steg-för-steg guide för att komma igång</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <div>
-                      <p className="font-medium">PDF-guide (10-20 sidor)</p>
-                      <p className="text-sm text-gray-600">Ladda ner och ha som referens</p>
-                    </div>
-                  </li>
-                </ul>
+        {/* Tier Selection */}
+        <div className="grid md:grid-cols-2 gap-8 mb-12 max-w-4xl mx-auto">
+          {(Object.entries(TIERS) as [keyof typeof TIERS, typeof TIERS[keyof typeof TIERS]][]).map(([key, tier]) => (
+            <div
+              key={key}
+              onClick={() => setSelectedTier(key)}
+              className={`relative bg-white rounded-3xl p-8 cursor-pointer transition-all transform hover:scale-105 ${
+                selectedTier === key
+                  ? "ring-4 ring-gray-900 shadow-2xl"
+                  : "ring-1 ring-gray-200 hover:ring-gray-400 shadow-lg"
+              }`}
+            >
+              {tier.popular && (
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-2 rounded-full text-sm font-bold">
+                    POPULÄRAST
+                  </span>
+                </div>
+              )}
+
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">{tier.name}</h3>
+                <p className="text-gray-600 text-sm">{tier.description}</p>
               </div>
 
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
-                <h3 className="font-semibold text-amber-900 mb-2">💡 Exempel på vad du får:</h3>
-                <ul className="space-y-2 text-sm text-amber-800">
-                  <li>• Exakt vilka AI-verktyg som passar dina arbetsuppgifter</li>
-                  <li>• Färdiga mallar och prompts du kan använda direkt</li>
-                  <li>• Tidsbesparingar uppdelade per uppgift</li>
-                  <li>• ROI-kalkyl på din investering</li>
-                  <li>• Tips från andra i samma bransch</li>
-                </ul>
+              <div className="text-center mb-6">
+                <span className="text-5xl font-bold text-gray-900">{tier.price}€</span>
+                <span className="text-gray-500 ml-2">engångspris</span>
+              </div>
+
+              <ul className="space-y-3 mb-8">
+                {tier.features.map((feature, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm">
+                    <span className={feature.startsWith("❌") ? "opacity-50" : ""}>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className={`text-center font-medium ${
+                selectedTier === key ? "text-gray-900" : "text-gray-500"
+              }`}>
+                {selectedTier === key ? "✓ Vald" : "Välj detta"}
               </div>
             </div>
+          ))}
+        </div>
+
+        {/* Checkout Form */}
+        <div className="max-w-md mx-auto bg-white rounded-3xl shadow-xl p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            Slutför din beställning
+          </h2>
+          
+          <Elements stripe={stripePromise}>
+            <CheckoutForm selectedTier={selectedTier} />
+          </Elements>
+        </div>
+
+        {/* Trust badges */}
+        <div className="mt-12 flex flex-wrap justify-center gap-8 text-sm text-gray-500">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <span>Säker betalning</span>
           </div>
-
-          {/* Right column - Payment form */}
-          <div>
-            <div className="bg-white rounded-xl p-8 shadow-lg">
-              <h2 className="text-2xl font-bold mb-2">Slutför ditt köp</h2>
-              <p className="text-gray-600 mb-8">Engångsbetalning • Direkt tillgång</p>
-
-              <Elements stripe={stripePromise}>
-                <CheckoutForm />
-              </Elements>
-
-              <div className="mt-8 pt-8 border-t border-gray-200">
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  <span>Säker betalning med Stripe</span>
-                </div>
-                <div className="flex items-center gap-4 text-sm text-gray-500 mt-2">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  <span>100% nöjd-garanti</span>
-                </div>
-              </div>
-            </div>
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <span>30 dagars garanti</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+            </svg>
+            <span>Kvitto via email</span>
           </div>
         </div>
       </div>
-    </main>
+
+      {/* CSS for animations */}
+      <style jsx>{`
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.2; transform: scale(1); }
+          50% { opacity: 0.3; transform: scale(1.1); }
+        }
+        .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+      `}</style>
+    </div>
   );
 }
