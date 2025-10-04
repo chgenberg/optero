@@ -141,12 +141,6 @@ export default function ImplementationPlan({ recommendations, profession, specia
           </div>
         ))}
       </div>
-
-      <div className="mt-8 text-center">
-        <button className="px-6 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors">
-          Ladda ner som PDF
-        </button>
-      </div>
     </div>
   );
 }
