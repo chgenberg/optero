@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 // Department-specific questions (samma som tidigare)
-const DEPARTMENT_QUESTIONS: Record<string, Array<{question: string, type: "text" | "number" | "select" | "scale", options?: string[]}>> = {
+const DEPARTMENT_QUESTIONS: Record<string, Array<{question: string, type: "text" | "number" | "select" | "scale", options?: string[], placeholder?: string}>> = {
   "sales": [
     { question: "Hur många säljare har ni i teamet?", type: "number" },
     { question: "Vad är er genomsnittliga deal-size? (SEK)", type: "number" },
@@ -30,7 +30,7 @@ const DEPARTMENT_QUESTIONS: Record<string, Array<{question: string, type: "text"
   ],
   "marketing": [
     { question: "Hur många personer jobbar med marknadsföring?", type: "number" },
-    { question: "Vad är er månatliga marknadsbudget? (SEK)", type: "number" },
+    { question: "Vad är er månatliga marknadsbudget? (SEK)", type: "number", placeholder: "50000" },
     { question: "Vilka kanaler använder ni mest?", type: "text" },
     { question: "Hur skapar ni innehåll idag?", type: "text" },
     { question: "Hur många innehållspublikationer gör ni per vecka?", type: "number" },
@@ -216,7 +216,7 @@ function AnalysisContent() {
                     value={currentAnswer}
                     onChange={(e) => setCurrentAnswer(e.target.value)}
                     className="w-full px-8 py-6 text-3xl font-bold text-center border-2 border-gray-200 rounded-2xl focus:border-gray-900 focus:outline-none transition-all"
-                    placeholder="0"
+                    placeholder={question.placeholder || "0"}
                     autoFocus
                   />
                   <div className="mt-4 flex justify-center gap-4">
