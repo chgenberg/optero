@@ -3,55 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-// Department-specific questions (samma som tidigare)
-const DEPARTMENT_QUESTIONS: Record<string, Array<{question: string, type: "text" | "number" | "select" | "scale", options?: string[], placeholder?: string}>> = {
-  "sales": [
-    { question: "Hur många säljare har ni i teamet?", type: "number" },
-    { question: "Vad är er genomsnittliga deal-size? (SEK)", type: "number" },
-    { question: "Hur lång är er genomsnittliga säljcykel? (dagar)", type: "number" },
-    { question: "Vilket CRM-system använder ni?", type: "select", options: ["Salesforce", "HubSpot", "Pipedrive", "Microsoft Dynamics", "Annat", "Inget"] },
-    { question: "Hur många timmar per vecka spenderar varje säljare på administration?", type: "scale" },
-    { question: "Hur genererar ni leads idag?", type: "text" },
-    { question: "Hur kvalificerar ni leads innan kontakt?", type: "text" },
-    { question: "Hur många cold outreach-emails skickar ni per vecka?", type: "number" },
-    { question: "Vad är er genomsnittliga konverteringsgrad? (%)", type: "number" },
-    { question: "Hur skapar ni offerter idag?", type: "text" },
-    { question: "Hur lång tid tar det att skapa en anpassad offert? (timmar)", type: "scale" },
-    { question: "Hur följer ni upp kundkontakter?", type: "text" },
-    { question: "Hur ofta har ni säljmöten/uppföljningar?", type: "select", options: ["Dagligen", "Varje vecka", "Varannan vecka", "Månadsvis", "Sällan"] },
-    { question: "Vilka verktyg använder ni för prospecting?", type: "text" },
-    { question: "Hur onboardar ni nya kunder?", type: "text" },
-    { question: "Hur hanterar ni avtalsförhandlingar?", type: "text" },
-    { question: "Hur mäter ni säljprestanda?", type: "text" },
-    { question: "Vilka är era största utmaningar i säljprocessen?", type: "text" },
-    { question: "Hur mycket tid spenderar säljare på att uppdatera CRM?", type: "scale" },
-    { question: "Hur analyserar ni förlorade deals?", type: "text" },
-  ],
-  "marketing": [
-    { question: "Hur många personer jobbar med marknadsföring?", type: "number" },
-    { question: "Vad är er månatliga marknadsbudget? (SEK)", type: "number", placeholder: "50000" },
-    { question: "Vilka kanaler använder ni mest?", type: "text" },
-    { question: "Hur skapar ni innehåll idag?", type: "text" },
-    { question: "Hur många innehållspublikationer gör ni per vecka?", type: "number" },
-    { question: "Hur lång tid tar det att skapa ett blogginlägg?", type: "scale" },
-    { question: "Hur hanterar ni social media?", type: "text" },
-    { question: "Vilka verktyg använder ni för marknadsföring?", type: "text" },
-    { question: "Hur mäter ni marknadsföringens ROI?", type: "text" },
-    { question: "Hur ofta gör ni kampanjer?", type: "select", options: ["Varje vecka", "Varje månad", "Kvartalsvis", "Sällan"] },
-    { question: "Hur skapar ni annonstexter?", type: "text" },
-    { question: "Hur mycket tid spenderar ni på att designa grafik?", type: "scale" },
-    { question: "Hur analyserar ni kampanjresultat?", type: "text" },
-    { question: "Hur segmenterar ni er målgrupp?", type: "text" },
-    { question: "Hur personaliserar ni kommunikation?", type: "text" },
-    { question: "Vilka är era största marknadsföringsutmaningar?", type: "text" },
-    { question: "Hur hanterar ni email-marknadsföring?", type: "text" },
-    { question: "Hur ofta uppdaterar ni er hemsida?", type: "select", options: ["Dagligen", "Varje vecka", "Månadsvis", "Sällan"] },
-    { question: "Hur arbetar ni med SEO?", type: "text" },
-    { question: "Hur skapar ni case studies och kundberättelser?", type: "text" },
-  ],
-  // ... andra avdelningar samma frågor som tidigare
-};
+import { DEPARTMENT_QUESTIONS } from "@/data/business-questions";
 
 // Time scale options
 const TIME_SCALE = [
@@ -325,14 +277,18 @@ function AnalysisContent() {
           </div>
 
           {/* Tips section - contextual */}
-          <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 border-t border-gray-100">
-            <div className="flex items-start gap-3">
-              <span className="text-2xl">💡</span>
-              <p className="text-sm text-gray-600">
-                <strong className="text-gray-900">Tips:</strong> Ju mer detaljerat ni svarar, desto mer specifika och värdefulla blir era AI-rekommendationer.
-              </p>
+          {question.tip && (
+            <div className="bg-blue-50 p-6 border-t border-blue-100">
+              <div className="flex items-start gap-3">
+                <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-sm text-blue-800">
+                  <strong>Tips:</strong> {question.tip}
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Motivational message */}

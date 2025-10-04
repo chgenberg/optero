@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { DEPARTMENT_QUESTIONS } from "@/data/business-questions";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -11,48 +12,91 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
 
-    const systemPrompt = `Du är en AI-expert som hjälper företag att implementera AI-lösningar.
-    Baserat på företagets svar, skapa 5 KONKRETA användningsfall som:
-    - Löser verkliga problem de har
-    - Kan implementeras direkt
-    - Ger mätbar tidsbesparing
-    - Har tydlig ROI
-    - Använder befintliga AI-verktyg
+    const systemPrompt = `Du är en senior AI-konsult med expertis inom ${data.dept} och ${data.industry}.
     
-    Fokusera på PRAKTISKA lösningar, inte teoretiska.
-    Varje lösning ska vara så specifik att de kan börja imorgon.`;
+    Din uppgift är att analysera företagets svar och skapa 5 MYCKET SPECIFIKA AI-lösningar som:
+    
+    1. LÖSER VERKLIGA PROBLEM de beskrivit i sina svar
+    2. ÄR ANPASSADE till deras bransch (${data.industry}) och avdelning (${data.dept})
+    3. TAR HÄNSYN till deras nuvarande verktyg och processer
+    4. KAN IMPLEMENTERAS inom 2-4 veckor
+    5. GER MÄTBAR tidsbesparing och ROI
+    6. ANVÄNDER specifika, namngivna AI-verktyg (inte generiska)
+    
+    VIKTIGT:
+    - Referera till deras specifika svar (t.ex. "Eftersom ni använder Salesforce...")
+    - Beräkna ROI baserat på deras faktiska siffror
+    - Ge konkreta verktygsnamn med priser
+    - Inkludera detaljerad 4-veckors implementeringsplan
+    - Var EXTREMT specifik - inte generiska råd
+    
+    Tänk som en konsult som fakturerar 5,000 SEK/timme - ge premium-kvalitet!`;
+
+    // Format answers with question context for better analysis
+    const formattedAnswers = Object.entries(data.answers).map(([index, answer]) => {
+      const questionIndex = parseInt(index);
+      const questions = DEPARTMENT_QUESTIONS[data.dept] || [];
+      const question = questions[questionIndex];
+      return `Q: ${question?.question || `Fråga ${questionIndex + 1}`}\nA: ${answer}`;
+    }).join('\n\n');
 
     const userPrompt = `
-    Företagsinformation:
-    - Avdelning: ${data.dept}
-    - Storlek: ${data.size}
-    - Bransch: ${data.industry}
-    
-    Svar på frågor:
-    ${JSON.stringify(data.answers, null, 2)}
-    
-    Skapa 5 konkreta AI-lösningar för detta team.
-    
-    Returnera som JSON med denna struktur:
+FÖRETAGSKONTEXT:
+- Avdelning: ${data.dept}
+- Företagsstorlek: ${data.size}
+- Bransch: ${data.industry}
+
+DERAS SVAR PÅ FRÅGORNA:
+${formattedAnswers}
+
+ANALYS-UPPGIFT:
+Baserat på deras specifika svar, skapa 5 AI-lösningar som är EXAKT anpassade för deras situation.
+
+EXEMPEL PÅ SPECIFICITET:
+- Om de sa "50 fakturor/månad" → beräkna ROI baserat på 50 fakturor
+- Om de sa "använder Salesforce" → föreslå Salesforce Einstein eller Einstein GPT
+- Om de sa "3 timmar på offerter" → visa hur AI reducerar till 15 minuter
+- Om de sa "ingen systematisk uppföljning" → fokusera på automatisering
+
+RETURNERA JSON:
+{
+  "solutions": [
     {
-      "solutions": [
+      "title": "Actionable titel (max 60 tecken)",
+      "problem": "Exakt problem från deras svar (2-3 meningar)",
+      "solution": "Detaljerad lösning (4-5 meningar) - hur AI löser detta SPECIFIKT för dem",
+      "benefits": [
+        "Konkret fördel 1 med siffror",
+        "Konkret fördel 2 med siffror",
+        "Konkret fördel 3 med siffror",
+        "Konkret fördel 4 med siffror"
+      ],
+      "tools": [
         {
-          "title": "Kort, actionable titel",
-          "problem": "Specifikt problem de har (baserat på deras svar)",
-          "solution": "Detaljerad lösning med AI (hur det fungerar i praktiken)",
-          "tools": ["Verktyg 1", "Verktyg 2", "Verktyg 3"],
-          "timeSaved": "X-Y timmar per vecka",
-          "implementation": "Steg-för-steg hur de implementerar (2-4 veckor)",
-          "roi": "Konkret ROI-beräkning i SEK per år"
+          "name": "Exakt verktygsnamn",
+          "description": "Vad det gör för just deras use case",
+          "price": "från X SEK/månad eller Custom pricing"
         }
       ],
-      "totalTimeSaved": "Total tid sparad för hela teamet per vecka",
-      "totalROI": "Total ROI per år i SEK"
+      "implementation": {
+        "week1": "Konkreta steg vecka 1",
+        "week2": "Konkreta steg vecka 2",
+        "week3": "Konkreta steg vecka 3",
+        "week4": "Konkreta steg vecka 4"
+      },
+      "timeSaved": "X-Y timmar/vecka för teamet",
+      "roi": "X,000 - Y,000 SEK/år"
     }
-    
-    GÖR LÖSNINGARNA MYCKET SPECIFIKA baserat på deras svar!
-    Om de t.ex. sa att de använder Salesforce, föreslå Salesforce Einstein.
-    Om de sa att de skickar 100 emails/vecka, beräkna ROI baserat på det.`;
+  ],
+  "totalTimeSaved": "XX-YY timmar per vecka",
+  "totalROI": "XXX,000 - YYY,000 SEK/år"
+}
+
+KVALITETSKRAV:
+- Varje lösning måste referera till minst 1 specifikt svar de gav
+- ROI måste vara beräknat baserat på deras faktiska siffror
+- Verktyg måste vara riktiga, namngivna produkter
+- Implementation måste vara konkret och actionable`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-5", // Using GPT-5 for highest quality B2B analysis
