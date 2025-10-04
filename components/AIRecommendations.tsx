@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import FeedbackSystem from "@/components/FeedbackSystem";
 import ImplementationPlan from "@/components/ImplementationPlan";
-import PremiumUpgrade from "@/components/PremiumUpgrade";
 import StructuredData from "@/components/StructuredData";
 import ProfessionPrompts from "@/components/ProfessionPrompts";
 import ShareResults from "@/components/ShareResults";
@@ -281,7 +280,7 @@ export default function AIRecommendations({
         {/* Scenarios tab */}
         {activeTab === "scenarios" && (
           <div className="grid gap-6 animate-fade-in-up">
-            {scenarios.slice(0, 2).map((scenario, index) => (
+            {scenarios.map((scenario, index) => (
               <div
                 key={index}
                 className="card group hover:shadow-xl"
@@ -445,46 +444,60 @@ export default function AIRecommendations({
               profession={profession}
               specialization={specialization}
             />
-            
           </div>
         )}
       </div>
+
+      {/* Premium CTA Button */}
+      {!isDemo && (
+        <div className="text-center mt-12">
+          <button
+            onClick={() => router.push("/premium/interview")}
+            className="btn-primary px-8 py-4 text-lg"
+          >
+            Få en djupgående analys
+          </button>
+          <p className="text-gray-600 text-sm mt-2">
+            Personlig AI-guide med 15-20 frågor om din arbetsdag
+          </p>
+        </div>
+      )}
+
+      {/* Share section - Subtle */}
+      {!isDemo && (
+        <div className="bg-gray-50 rounded-2xl p-6 mt-12">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">🎉 Dela med dina kollegor!</h3>
+          <p className="text-gray-600 text-sm mb-6">
+            Hjälp andra {profession.toLowerCase()}s att spara tid med AI
+          </p>
+          <ShareButtons
+            profession={profession}
+            specialization={specialization}
+            timeSaved="8-12 timmar per vecka"
+          />
+          <p className="text-gray-500 text-xs mt-4">
+            💡 Tips: För varje kollega som testar får du en månad extra support gratis!
+          </p>
+        </div>
+      )}
 
       {/* Footer actions */}
       <div className="border-t border-gray-100 mt-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={onReset}
-                className="btn-secondary"
-              >
-                Gör en ny analys
-              </button>
-              
-              <ShareResults
-                profession={profession}
-                specialization={specialization}
-                recommendations={recommendations}
-                scenarios={scenarios}
-              />
-            </div>
+            <button
+              onClick={onReset}
+              className="btn-secondary"
+            >
+              Gör en ny analys
+            </button>
             
-            {!isDemo && (
-              <>
-                <PremiumUpgrade
-                  profession={profession}
-                  specialization={specialization}
-                  onUpgrade={() => router.push("/premium/interview")}
-                />
-                
-                <ShareButtons
-                  profession={profession}
-                  specialization={specialization}
-                  timeSaved="8-12 timmar per vecka"
-                />
-              </>
-            )}
+            <ShareResults
+              profession={profession}
+              specialization={specialization}
+              recommendations={recommendations}
+              scenarios={scenarios}
+            />
           </div>
         </div>
       </div>

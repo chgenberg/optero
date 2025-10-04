@@ -108,32 +108,9 @@ export default function PremiumUpgrade({ profession, specialization, onUpgrade }
 
   return (
     <div className="relative">
-      {/* Urgency banner if timer is active */}
-      {timeLeft > 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-t-2xl p-3 text-center animate-pulse-scale">
-          <p className="text-sm font-medium text-yellow-800">
-            🔥 Specialerbjudande slutar om <span className="font-mono font-bold">{formatTime(timeLeft)}</span> - Spara {savings}€!
-          </p>
-        </div>
-      )}
 
-      {/* Premium CTA - Enhanced with ROI */}
-      <div className={`bg-gray-900 text-white ${timeLeft > 0 ? 'rounded-b-xl sm:rounded-b-2xl' : 'rounded-xl sm:rounded-2xl'} p-4 sm:p-6 lg:p-8`}>
-        {/* ROI Calculator at top */}
-        <div className="bg-white/10 backdrop-blur rounded-xl p-4 mb-6">
-          <h4 className="text-sm font-medium text-gray-300 mb-2">Din förväntade avkastning:</h4>
-          <div className="grid grid-cols-2 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-green-400">8-12h</div>
-              <div className="text-xs text-gray-400">sparad tid/vecka</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-green-400">9,600kr</div>
-              <div className="text-xs text-gray-400">värde/månad*</div>
-            </div>
-          </div>
-          <p className="text-xs text-gray-400 mt-2">*Baserat på 300kr/h × 10h/vecka × 4 veckor</p>
-        </div>
+      {/* Simple Premium CTA */}
+      <div className="bg-gray-900 text-white rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8">
 
         <div className="flex items-start justify-between mb-4">
           <div>
