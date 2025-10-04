@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import professionsData from "@/data/professions.json";
+import professionsSimple from "@/data/professions-simple.json";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ProfessionInputProps {
   onSelect: (profession: string) => void;
 }
 
-const PROFESSIONS = professionsData.professions.map(p => p.name);
+const PROFESSIONS = professionsSimple.professions.map(p => p.name);
 
 export default function ProfessionInput({ onSelect }: ProfessionInputProps) {
   const { t } = useLanguage();
