@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import CookieBanner from "@/components/CookieBanner";
 
 export const metadata: Metadata = {
   title: "Optero - Gör vardagen lättare med AI",
@@ -39,6 +40,7 @@ export default function RootLayout({
         <Header />
         <main className="pt-16 flex-grow">{children}</main>
         <Footer />
+        <CookieBanner />
       </body>
     </html>
   );

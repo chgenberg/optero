@@ -7,6 +7,7 @@ import PremiumUpgrade from "@/components/PremiumUpgrade";
 import StructuredData from "@/components/StructuredData";
 import ProfessionPrompts from "@/components/ProfessionPrompts";
 import ShareResults from "@/components/ShareResults";
+import FeedbackButton from "@/components/FeedbackButton";
 import { useRouter } from "next/navigation";
 
 interface Scenario {
@@ -438,6 +439,13 @@ export default function AIRecommendations({
           </div>
         </div>
       </div>
+      
+      {/* Feedback button */}
+      {!isDemo && (
+        <FeedbackButton 
+          context={{ profession, specialization }} 
+        />
+      )}
     </div>
   );
 }

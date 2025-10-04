@@ -9,14 +9,17 @@ import TaskSelection from "@/components/TaskSelection";
 import AIRecommendations from "@/components/AIRecommendations";
 import InfoPopup from "@/components/InfoPopup";
 import ProgressIndicator from "@/components/ProgressIndicator";
+import EmailCapture from "@/components/EmailCapture";
+import OnboardingTutorial from "@/components/OnboardingTutorial";
 
-export type Step = "profession" | "specialization" | "tasks" | "results";
+export type Step = "profession" | "specialization" | "tasks" | "email" | "results";
 
 const STEP_NUMBER: Record<Step, number> = {
   profession: 1,
   specialization: 2,
   tasks: 3,
-  results: 4
+  email: 4,
+  results: 5
 };
 
 export default function Home() {
@@ -73,6 +76,15 @@ export default function Home() {
 
   const handleTasksSubmit = (tasks: {task: string, priority: number}[]) => {
     setSelectedTasks(tasks);
+    setStep("email");
+  };
+
+  const [userEmail, setUserEmail] = useState("");
+  const [userConsent, setUserConsent] = useState(false);
+
+  const handleEmailSubmit = (email: string, consent: boolean) => {
+    setUserEmail(email);
+    setUserConsent(consent);
     setStep("results");
   };
 
@@ -90,6 +102,9 @@ export default function Home() {
     <main className="min-h-screen bg-white">
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
         {showInfo && <InfoPopup onClose={() => setShowInfo(false)} />}
+      
+      {/* Onboarding tutorial for first-time users */}
+      {step === "profession" && <OnboardingTutorial />}
 
         {/* Minimal Progress indicator */}
         {step !== "profession" && step !== "results" && (
@@ -189,6 +204,14 @@ export default function Home() {
             onBack={() => setStep("specialization")}
           />
         </div>
+      )}
+
+      {step === "email" && (
+        <EmailCapture
+          profession={profession}
+          specialization={specialization}
+          onSubmit={handleEmailSubmit}
+        />
       )}
 
       {step === "results" && (
