@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Optero - Gör vardagen lättare med AI",
@@ -34,9 +35,10 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Optero" />
       </head>
-      <body className="antialiased bg-white text-gray-900">
+      <body className="antialiased bg-white text-gray-900 min-h-screen flex flex-col">
         <Header />
-        <main className="pt-16">{children}</main>
+        <main className="pt-16 flex-grow">{children}</main>
+        <Footer />
       </body>
     </html>
   );
