@@ -228,10 +228,14 @@ export default function AIRecommendations({
     return <LoadingAnalysis />;
   }
 
+  // Check if profession has prompts
+  const professionsWithPrompts = ["Sjuksköterska", "Lärare", "Advokat", "Projektledare"];
+  const hasPrompts = professionsWithPrompts.includes(profession);
+
   const tabs = [
     { id: "scenarios" as TabType, label: "Användningsfall", count: scenarios.length },
     { id: "tools" as TabType, label: "AI-verktyg", count: recommendations.length },
-    { id: "prompts" as TabType, label: "Färdiga prompts", count: null },
+    ...(hasPrompts ? [{ id: "prompts" as TabType, label: "Färdiga prompts", count: null }] : []),
     { id: "plan" as TabType, label: "Din plan", count: null },
   ];
 
