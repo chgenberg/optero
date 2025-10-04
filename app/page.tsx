@@ -138,44 +138,12 @@ export default function Home() {
         <div className="space-y-12 max-w-2xl mx-auto w-full">
           {/* Hero section */}
           <div className="text-center animate-fade-in-up">
-            {/* Social proof badge */}
-            <div className="inline-flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full mb-6 animate-pulse-scale">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              <span className="text-sm text-gray-700 font-medium">1,247 yrkesverksamma sparar redan 8+ timmar/vecka</span>
-            </div>
-            
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-3 sm:mb-4 tracking-tight uppercase leading-tight">
-              AI SOM FÖRLÄNGER DIN TID
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
+              AI som sparar dig tid, varje vecka
             </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-700 mb-3 sm:mb-4 px-4 sm:px-0">
-              Gör jobbet enklare, så du får mer tid till det som betyder mest.
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light px-4 sm:px-0">
+              Skriv vad du jobbar med och få din personliga AI-guide. Helt gratis!
             </p>
-            <p className="text-lg text-gray-600 flex items-center justify-center gap-2">
-              <span className="text-2xl">🔍</span>
-              <span>Sök efter ditt yrke och upptäck hur AI kan hjälpa dig.</span>
-            </p>
-            
-            {/* Trust badges */}
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-4 sm:mt-6 text-xs sm:text-sm text-gray-500">
-              <span className="flex items-center gap-1">
-                <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                Resultat på under 2 minuter
-              </span>
-              <span className="flex items-center gap-1">
-                <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                100% GDPR-säkert
-              </span>
-              <span className="flex items-center gap-1">
-                <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                Ingen kreditkort krävs
-              </span>
-            </div>
           </div>
           
           <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
@@ -185,12 +153,9 @@ export default function Home() {
             <div className="text-center mt-6">
               <a
                 href="/demo/ekonomiassistent"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 rounded-full transition-all group text-sm font-medium"
+                className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
               >
-                <span>Se hur det funkar</span>
-                <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+                Se exempel →
               </a>
             </div>
           </div>
