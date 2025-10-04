@@ -1517,6 +1517,291 @@
       "totalPrompts": 4,
       "averageTimeSaved": "3-4h per vecka",
       "difficulty": "50% Lätt, 50% Medel"
+    },
+    "Journalist": {
+      "categories": {
+        "Artikelskrivande": [
+          {
+            "id": "journ_write_1",
+            "name": "Artikelstruktur från anteckningar",
+            "description": "Strukturera anteckningar till färdig artikel",
+            "timeSaved": "30-45 min per artikel",
+            "difficulty": "Medel",
+            "prompt": "Mina anteckningar från intervju/research:\n[KLISTRA IN ANTECKNINGAR]\n\nSkapa en artikelstruktur:\n- Ingress (lockande, sammanfattar)\n- Huvudpoänger i logisk ordning\n- Citat att använda (var)\n- Avslutning (stark)\n- Rubrikförslag (3-5 alternativ)\n\nFormat: Outline med förslag.",
+            "example": "Från röriga anteckningar till strukturerad artikel",
+            "howToUse": "Klistra in anteckningar → Få struktur → Skriv artikel",
+            "tools": ["ChatGPT", "Claude"]
+          },
+          {
+            "id": "journ_write_2",
+            "name": "Rubrikförslag - klickbara men seriösa",
+            "description": "Generera engagerande rubriker",
+            "timeSaved": "10-15 min",
+            "difficulty": "Lätt",
+            "prompt": "Min artikel handlar om:\n[SAMMANFATTA ARTIKEL]\n\nSkapa 10 rubrikvarianter som:\n- Är klickbara men inte clickbait\n- Sammanfattar kärnan\n- Väcker nyfikenhet\n- Passar vår publikation\n- Varierar i stil (fråga, påstående, lista)\n\nTon: Engagerande men seriös.",
+            "example": "Från 'Artikel om ekonomi' till 10 starka rubriker",
+            "howToUse": "Beskriv artikel → Få rubrikförslag → Välj bästa",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Research": [
+          {
+            "id": "journ_research_1",
+            "name": "Intervjufrågor - djupgående",
+            "description": "Skapa smarta intervjufrågor",
+            "timeSaved": "20-30 min",
+            "difficulty": "Lätt",
+            "prompt": "Jag ska intervjua:\n\nPerson: [VEM]\nÄmne: [VAD]\nVinkel: [MIN ARTIKELVINKEL]\nMålgrupp: [LÄSARE]\n\nSkapa 15-20 intervjufrågor:\n- Öppningsfrågor (bygga rapport)\n- Kärnfrågor (djupgående)\n- Uppföljningsfrågor\n- Avslutningsfrågor\n- Känsliga frågor (hur ställa dem)\n\nFormat: Numrerad lista med tips.",
+            "example": "Från ämne till komplett intervjuguide",
+            "howToUse": "Beskriv intervju → Få frågor → Förbered intervju",
+            "tools": ["ChatGPT", "Claude"]
+          },
+          {
+            "id": "journ_research_2",
+            "name": "Faktakolla påståenden",
+            "description": "Verifiera fakta snabbt",
+            "timeSaved": "15-20 min",
+            "difficulty": "Medel",
+            "prompt": "Faktakolla detta påstående:\n[PÅSTÅENDE]\n\nKälla: [VAR JAG HITTADE DET]\n\nHjälp mig verifiera:\n- Är påståendet sant?\n- Vilka källor stödjer/motsäger?\n- Kontext som saknas?\n- Hur formulera det korrekt?\n- Vad behöver jag dubbelkolla?\n\nFormat: Faktakoll-rapport.",
+            "example": "Säkerställ korrekt rapportering",
+            "howToUse": "Ange påstående → Få faktakoll → Verifiera källor",
+            "tools": ["Perplexity", "ChatGPT"]
+          }
+        ],
+        "Redigering": [
+          {
+            "id": "journ_edit_1",
+            "name": "Korta ner text - behåll essensen",
+            "description": "Reducera ordantal utan att förlora innehåll",
+            "timeSaved": "15-20 min",
+            "difficulty": "Lätt",
+            "prompt": "Korta ner denna text från [NUVARANDE ANTAL] till [MÅL ANTAL] ord:\n\n[KLISTRA IN TEXT]\n\nBehåll:\n- Alla viktiga fakta\n- Kärnbudskapet\n- Citat (korta om nödvändigt)\n- Flyt och läsbarhet\n\nFormat: Kortare version, redo att publicera.",
+            "example": "Från 800 ord till 400 ord utan att förlora innehåll",
+            "howToUse": "Klistra in text → Ange målantal → Få kortad version",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ]
+      },
+      "totalPrompts": 5,
+      "averageTimeSaved": "4-5h per vecka",
+      "difficulty": "40% Lätt, 60% Medel"
+    },
+    "Arkitekt": {
+      "categories": {
+        "Projektbeskrivningar": [
+          {
+            "id": "arch_desc_1",
+            "name": "Projektbeskrivning för klient",
+            "description": "Översätt tekniska ritningar till kundvänlig beskrivning",
+            "timeSaved": "30-45 min",
+            "difficulty": "Medel",
+            "prompt": "Beskriv detta projekt för klient:\n\nProjekt: [TYP]\nYta: [M²]\nTekniska detaljer: [BESKRIV]\nMaterial: [LISTA]\n\nSkapa en beskrivning som:\n- Förklarar designkoncept (varför dessa val)\n- Översätter tekniska termer\n- Visar hur det löser klientens behov\n- Beskriver upplevelsen (hur det känns att vara där)\n- Hållbarhet och kvalitet\n\nTon: Inspirerande, pedagogisk, professionell.",
+            "example": "Från tekniska ritningar till inspirerande beskrivning",
+            "howToUse": "Beskriv projekt → Få kundvänlig text → Presentera",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "Klientkommunikation": [
+          {
+            "id": "arch_client_1",
+            "name": "Hantera designändringar - diplomatiskt",
+            "description": "Förklara konsekvenser av ändringar",
+            "timeSaved": "20-30 min",
+            "difficulty": "Medel",
+            "prompt": "Klient vill ändra:\n[BESKRIV ÖNSKAD ÄNDRING]\n\nKonsekvenser:\n- Kostnad: [UPPSKATTNING]\n- Tid: [FÖRSENING]\n- Tekniska utmaningar: [BESKRIV]\n\nSkriv ett email som:\n- Bekräftar önskemålet\n- Förklarar konsekvenser pedagogiskt\n- Erbjuder alternativ\n- Ger rekommendation\n- Frågar hur klient vill gå vidare\n\nTon: Professionell, diplomatisk, lösningsorienterad.",
+            "example": "Från 'Det går inte' till konstruktiv dialog",
+            "howToUse": "Beskriv ändring → Få diplomatiskt svar → Skicka till klient",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Dokumentation": [
+          {
+            "id": "arch_doc_1",
+            "name": "Ritningskommentarer - tydliga",
+            "description": "Skapa tydliga kommentarer på ritningar",
+            "timeSaved": "15-20 min",
+            "difficulty": "Lätt",
+            "prompt": "Skapa ritningskommentarer för:\n\nRitning: [TYP]\nÄndringar/Förtydliganden: [BESKRIV]\n\nSkriv kommentarer som:\n- Är koncisa men kompletta\n- Tydligt anger vad som ska göras\n- Refererar till rätt standard/norm\n- Undviker missförstånd\n- Är lätta för byggare att följa\n\nFormat: Numrerade kommentarer.",
+            "example": "Från idé till tydliga byggdirektiv",
+            "howToUse": "Beskriv ändring → Få kommentarer → Lägg till på ritning",
+            "tools": ["ChatGPT"]
+          }
+        ]
+      },
+      "totalPrompts": 3,
+      "averageTimeSaved": "3-4h per vecka",
+      "difficulty": "30% Lätt, 70% Medel"
+    },
+    "Psykolog": {
+      "categories": {
+        "Journalföring": [
+          {
+            "id": "psych_journal_1",
+            "name": "Sessionsdokumentation - strukturerad",
+            "description": "Dokumentera terapisessioner effektivt",
+            "timeSaved": "15-20 min per session",
+            "difficulty": "Medel",
+            "prompt": "Dokumentera session:\n\nPatient: [ID]\nSession: [NUMMER]\nVad som togs upp: [BESKRIV FRITT]\n\nSkapa professionell dokumentation:\n- Patientens presentation\n- Teman som diskuterades\n- Interventioner använda\n- Patientens respons\n- Bedömning av framsteg\n- Plan för nästa session\n\nTon: Professionell, objektiv, respektfull.",
+            "example": "Från anteckningar till strukturerad journal",
+            "howToUse": "Beskriv session → Få dokumentation → Spara i journal",
+            "tools": ["ChatGPT", "Claude"]
+          },
+          {
+            "id": "psych_journal_2",
+            "name": "Bedömning och behandlingsplan",
+            "description": "Skapa strukturerad behandlingsplan",
+            "timeSaved": "30-45 min",
+            "difficulty": "Medel",
+            "prompt": "Skapa behandlingsplan för:\n\nPatient: [PRESENTATION]\nProblematik: [BESKRIV]\nBedömning: [DIN BEDÖMNING]\n\nSkapa en behandlingsplan med:\n- Diagnos/problembeskrivning\n- Behandlingsmål (kortsiktiga/långsiktiga)\n- Metod/inriktning\n- Frekvens och duration\n- Framstegsindikatorer\n- Riskvärdering\n\nFormat: Strukturerad plan.",
+            "example": "Från bedömning till komplett behandlingsplan",
+            "howToUse": "Samla info → Få strukturerad plan → Diskutera med patient",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "Patientkommunikation": [
+          {
+            "id": "psych_comm_1",
+            "name": "Psykoedukation - pedagogisk",
+            "description": "Förklara psykologiska koncept för patienter",
+            "timeSaved": "10-15 min",
+            "difficulty": "Lätt",
+            "prompt": "Förklara detta för patient:\n[PSYKOLOGISKT KONCEPT/DIAGNOS]\n\nSkapa en pedagogisk förklaring:\n- Vad det är (enkelt språk)\n- Varför det händer\n- Hur det påverkar dem\n- Vad som kan hjälpa\n- Normalisera (du är inte ensam)\n\nTon: Empatisk, normaliserande, hoppfull.",
+            "example": "Från 'Generaliserat ångestsyndrom' till begriplig förklaring",
+            "howToUse": "Ange koncept → Få förklaring → Dela med patient",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Rapporter": [
+          {
+            "id": "psych_report_1",
+            "name": "Utlåtande för försäkringskassan",
+            "description": "Skriv medicinska utlåtanden strukturerat",
+            "timeSaved": "45-60 min",
+            "difficulty": "Avancerad",
+            "prompt": "Skriv utlåtande för:\n\nPatient: [INFO]\nProblematik: [BESKRIV]\nBehandling: [VAD SOM GJORTS]\nFunktionsnedsättning: [BESKRIV]\n\nSkapa ett professionellt utlåtande med:\n- Anamnes\n- Status och bedömning\n- Funktionsnedsättning (konkret)\n- Behandling och prognos\n- Rekommendationer\n\nFormat: Medicinskt utlåtande enligt FK:s krav.",
+            "example": "Från patientfall till komplett FK-utlåtande",
+            "howToUse": "Samla info → Få strukturerat utlåtande → Granska och signera",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ]
+      },
+      "totalPrompts": 4,
+      "averageTimeSaved": "4-6h per vecka",
+      "difficulty": "25% Lätt, 50% Medel, 25% Avancerad"
+    },
+    "Jurist": {
+      "categories": {
+        "Avtalsskrivning": [
+          {
+            "id": "lawyer_contract_1",
+            "name": "Avtalsklausul - juridiskt säker",
+            "description": "Formulera avtalsklausuler korrekt",
+            "timeSaved": "20-30 min per klausul",
+            "difficulty": "Medel",
+            "prompt": "Jag behöver en klausul om:\n[BESKRIV VAD SOM SKA REGLERAS]\n\nAvtalstyp: [KÖP/ANSTÄLLNING/SAMARBETE]\nParterna: [BESKRIV]\n\nSkriv en juridiskt säker klausul som:\n- Är tydlig och entydig\n- Täcker alla scenarios\n- Skyddar min klients intressen\n- Följer svensk rätt\n- Undviker tolkningsproblem\n\nFormat: Avtalsklausul med förklaring.",
+            "example": "Från idé till juridiskt säker klausul",
+            "howToUse": "Beskriv behov → Få klausul → Granska och anpassa",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "Klientkommunikation": [
+          {
+            "id": "lawyer_client_1",
+            "name": "Juridisk rådgivning - pedagogisk",
+            "description": "Förklara juridik för icke-jurister",
+            "timeSaved": "15-20 min",
+            "difficulty": "Lätt",
+            "prompt": "Förklara för klient:\n[JURIDISK FRÅGA/SITUATION]\n\nRelevant lag: [PARAGRAF]\n\nSkriv en förklaring som:\n- Översätter juridiken till klartext\n- Förklarar vad det betyder för klienten\n- Ger konkreta exempel\n- Beskriver alternativ och konsekvenser\n- Rekommenderar nästa steg\n\nTon: Pedagogisk, tydlig, professionell.",
+            "example": "Från paragraf till kundvänlig förklaring",
+            "howToUse": "Beskriv juridisk fråga → Få förklaring → Dela med klient",
+            "tools": ["ChatGPT"]
+          },
+          {
+            "id": "lawyer_client_2",
+            "name": "Rådgivningsbrev - strukturerat",
+            "description": "Skriv juridiska rådgivningsbrev",
+            "timeSaved": "30-45 min",
+            "difficulty": "Medel",
+            "prompt": "Skriv rådgivningsbrev om:\n\nKlientens situation: [BESKRIV]\nJuridisk fråga: [FRÅGA]\nMin bedömning: [JURIDISK ANALYS]\n\nSkriv ett brev med:\n1. Sammanfattning av ärendet\n2. Juridisk analys\n3. Alternativa handlingsvägar\n4. Rekommendation\n5. Risker och konsekvenser\n6. Nästa steg\n\nFormat: Formellt brev, tydligt strukturerat.",
+            "example": "Från analys till komplett rådgivningsbrev",
+            "howToUse": "Beskriv ärende → Få brev → Granska och skicka",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ],
+        "Research": [
+          {
+            "id": "lawyer_research_1",
+            "name": "Sammanfatta rättsfall",
+            "description": "Kondensera långa domar till essensen",
+            "timeSaved": "20-30 min per dom",
+            "difficulty": "Medel",
+            "prompt": "Sammanfatta detta rättsfall:\n\n[KLISTRA IN DOM/RÄTTSFALL]\n\nSkapa en sammanfattning med:\n- Bakgrund (kort)\n- Juridisk fråga\n- Domstolens resonemang\n- Slutsats\n- Prejudikatvärde\n- Relevans för mitt ärende\n\nFormat: Koncis sammanfattning, lätt att referera.",
+            "example": "Från 50-sidig dom till 1-sida sammanfattning",
+            "howToUse": "Klistra in dom → Få sammanfattning → Använd i research",
+            "tools": ["ChatGPT", "Claude"]
+          }
+        ]
+      },
+      "totalPrompts": 4,
+      "averageTimeSaved": "4-5h per vecka",
+      "difficulty": "25% Lätt, 75% Medel"
+    },
+    "Revisor": {
+      "categories": {
+        "Granskning": [
+          {
+            "id": "auditor_review_1",
+            "name": "Granskningsplan - strukturerad",
+            "description": "Skapa effektiv revisionsplan",
+            "timeSaved": "1-2h per klient",
+            "difficulty": "Medel",
+            "prompt": "Planera revision för:\n\nFöretag: [NAMN, BRANSCH]\nOmsättning: [BELOPP]\nRiskområden: [IDENTIFIERADE RISKER]\n\nSkapa en granskningsplan:\n- Områden att granska (prioriterat)\n- Tidsallokering per område\n- Underlag som behövs\n- Kontroller att utföra\n- Intervjuer att hålla\n- Deadline-schema\n\nFormat: Detaljerad plan med checklista.",
+            "example": "Från klientinfo till komplett revisionsplan",
+            "howToUse": "Ange klientinfo → Få plan → Följ under revision",
+            "tools": ["ChatGPT", "Notion AI"]
+          }
+        ],
+        "Rapportering": [
+          {
+            "id": "auditor_report_1",
+            "name": "Revisionsberättelse - tydlig",
+            "description": "Skriv revisionsberättelser strukturerat",
+            "timeSaved": "45-60 min",
+            "difficulty": "Medel",
+            "prompt": "Skriv revisionsberättelse:\n\nFöretag: [NAMN]\nGranskningsresultat: [BESKRIV FYND]\nRekommendationer: [BESKRIV]\n\nSkapa en berättelse med:\n- Sammanfattning\n- Granskningsomfattning\n- Iakttagelser (strukturerat)\n- Bedömning\n- Rekommendationer\n- Slutsats\n\nFormat: Formell revisionsberättelse.",
+            "example": "Från fynd till färdig berättelse",
+            "howToUse": "Samla fynd → Få strukturerad berättelse → Granska och signera",
+            "tools": ["ChatGPT", "Claude"]
+          },
+          {
+            "id": "auditor_report_2",
+            "name": "Management letter - konstruktiv",
+            "description": "Kommunicera förbättringsområden konstruktivt",
+            "timeSaved": "30-45 min",
+            "difficulty": "Medel",
+            "prompt": "Skriv management letter om:\n\nFörbättringsområden: [LISTA FYND]\nRisker: [BESKRIV]\n\nSkriv ett brev som:\n- Är konstruktivt (inte anklagande)\n- Förklarar risker tydligt\n- Ger konkreta rekommendationer\n- Prioriterar åtgärder\n- Erbjuder stöd\n\nTon: Professionell, konstruktiv, stödjande.",
+            "example": "Från kritik till konstruktiv feedback",
+            "howToUse": "Lista fynd → Få management letter → Skicka till klient",
+            "tools": ["ChatGPT"]
+          }
+        ],
+        "Klientkommunikation": [
+          {
+            "id": "auditor_client_1",
+            "name": "Förklara revisionsresultat",
+            "description": "Översätt revisionsresultat till klartext",
+            "timeSaved": "20-30 min",
+            "difficulty": "Lätt",
+            "prompt": "Förklara för klient:\n\nRevisionsresultat: [TEKNISKA FYND]\n\nÖversätt till:\n- Vad vi hittat (enkelt språk)\n- Vad det betyder för företaget\n- Vilka risker det innebär\n- Vad som behöver åtgärdas\n- Hur vi kan hjälpa\n\nTon: Pedagogisk, tydlig, stödjande.",
+            "example": "Från revisionsrapport till kundvänlig förklaring",
+            "howToUse": "Beskriv fynd → Få förklaring → Presentera för klient",
+            "tools": ["ChatGPT"]
+          }
+        ]
+      },
+      "totalPrompts": 4,
+      "averageTimeSaved": "4-5h per vecka",
+      "difficulty": "25% Lätt, 75% Medel"
     }
   }
 }
