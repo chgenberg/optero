@@ -12,15 +12,14 @@ import ProgressIndicator from "@/components/ProgressIndicator";
 import EmailCapture from "@/components/EmailCapture";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-export type Step = "profession" | "specialization" | "tasks" | "email" | "loading" | "results";
+export type Step = "profession" | "specialization" | "tasks" | "loading" | "results";
 
 const STEP_NUMBER: Record<Step, number> = {
   profession: 1,
   specialization: 2,
   tasks: 3,
-  email: 4,
-  loading: 5,
-  results: 5
+  loading: 4,
+  results: 4
 };
 
 export default function Home() {
@@ -99,7 +98,7 @@ export default function Home() {
 
   const handleTasksSubmit = (tasks: {task: string, priority: number}[]) => {
     setSelectedTasks(tasks);
-    setStep("email");
+    setStep("loading"); // Skip email, go directly to loading
   };
 
   const [userEmail, setUserEmail] = useState("");
@@ -210,14 +209,6 @@ export default function Home() {
             onBack={() => setStep("specialization")}
           />
         </div>
-      )}
-
-      {step === "email" && (
-        <EmailCapture
-          profession={profession}
-          specialization={specialization}
-          onSubmit={handleEmailSubmit}
-        />
       )}
 
       {step === "loading" && (

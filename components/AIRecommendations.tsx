@@ -12,6 +12,7 @@ import { getIconForContent } from "./Icons";
 import DifficultyBar from "./DifficultyBar";
 import ShareButtons from "@/components/ShareButtons";
 import LoadingAnalysis from "@/components/LoadingAnalysis";
+import SaveResultsPrompt from "@/components/SaveResultsPrompt";
 import { useRouter } from "next/navigation";
 
 interface Prompt {
@@ -790,6 +791,14 @@ export default function AIRecommendations({
             )}
           </div>
         </div>
+      )}
+      
+      {/* Save Results Prompt - shows after user sees results */}
+      {!isDemo && !showLoadingState && (
+        <SaveResultsPrompt
+          profession={profession}
+          specialization={specialization}
+        />
       )}
     </div>
   );
