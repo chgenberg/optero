@@ -160,34 +160,42 @@ export default function Home() {
 
       {step === "profession" && (
         <div className="space-y-12 max-w-2xl mx-auto w-full">
-          {/* Hero section */}
-          <div className="text-center animate-fade-in-up">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-wider uppercase">
-              {t('hero.title')}
-            </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light px-4 sm:px-0 tracking-wide">
-              {t('hero.subtitle')}
-            </p>
-          </div>
-          
-          <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-            <ProfessionInput onSelect={handleProfessionSelect} />
+          {/* Hero section with interactive border */}
+          <div className="relative group">
+            {/* Animated border container */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-2xl opacity-75 group-hover:opacity-100 blur-sm transition duration-1000 group-hover:duration-200 animate-gradient-x"></div>
             
-            {/* Subtle links below input */}
-            <div className="text-center mt-6 flex items-center justify-center gap-4">
-              <a
-                href="/demo/ekonomiassistent"
-                className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
-              >
-                {t('hero.demoLink')}
-              </a>
-              <span className="text-gray-300">•</span>
-              <a
-                href="/business"
-                className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
-              >
-                För företag →
-              </a>
+            {/* Content */}
+            <div className="relative bg-white rounded-2xl p-8 sm:p-12">
+              <div className="text-center animate-fade-in-up">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-wider uppercase">
+                  {t('hero.title')}
+                </h1>
+                <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light px-4 sm:px-0 tracking-wide">
+                  {t('hero.subtitle')}
+                </p>
+              </div>
+              
+              <div className="mt-12">
+                <ProfessionInput onSelect={handleProfessionSelect} />
+                
+                {/* Subtle links below input */}
+                <div className="text-center mt-6 flex items-center justify-center gap-4">
+                  <a
+                    href="/demo/ekonomiassistent"
+                    className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
+                  >
+                    {t('hero.demoLink')}
+                  </a>
+                  <span className="text-gray-300">•</span>
+                  <a
+                    href="/business"
+                    className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
+                  >
+                    För företag →
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>

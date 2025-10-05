@@ -21,12 +21,25 @@ function CheckoutForm() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [promoCode, setPromoCode] = useState("");
+  const [promoApplied, setPromoApplied] = useState(false);
+  const [showPromoInput, setShowPromoInput] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!stripe || !elements) return;
+
+    // Check if promo code is valid
+    if (promoCode === "LOVE" && !promoApplied) {
+      // Save premium access without payment
+      sessionStorage.setItem("purchasedTier", "pro");
+      sessionStorage.setItem("premiumEmail", email);
+      sessionStorage.setItem("promoCodeUsed", "LOVE");
+      router.push("/premium/interview");
+      return;
+    }
 
     setProcessing(true);
     setError(null);
@@ -119,6 +132,49 @@ function CheckoutForm() {
         </div>
       </div>
 
+      {/* Promo code section */}
+      {!showPromoInput ? (
+        <button
+          type="button"
+          onClick={() => setShowPromoInput(true)}
+          className="text-gray-500 hover:text-gray-900 text-sm underline"
+        >
+          Har du en kampanjkod?
+        </button>
+      ) : (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Kampanjkod
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+              placeholder="ANGE KOD"
+              className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-gray-900 focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                if (promoCode === "LOVE") {
+                  setPromoApplied(true);
+                  setError(null);
+                } else {
+                  setError("Ogiltig kampanjkod");
+                }
+              }}
+              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              Använd
+            </button>
+          </div>
+          {promoApplied && (
+            <p className="text-green-600 text-sm mt-2">✓ Kampanjkod aktiverad - 100% rabatt!</p>
+          )}
+        </div>
+      )}
+
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-red-600 text-sm">{error}</p>
@@ -130,7 +186,7 @@ function CheckoutForm() {
         disabled={!stripe || processing}
         className="w-full py-4 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
       >
-        {processing ? "Behandlar..." : `Betala ${PREMIUM_PRICE_EUR}€ (${PREMIUM_PRICE_SEK} SEK)`}
+        {processing ? "Behandlar..." : promoApplied ? "Aktivera Pro-version" : `Betala ${PREMIUM_PRICE_EUR}€ (${PREMIUM_PRICE_SEK} SEK)`}
       </button>
 
       <p className="text-xs text-gray-500 text-center">

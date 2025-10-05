@@ -77,33 +77,41 @@ export default function BusinessPage() {
         {/* Industry input step - same layout as consumer */}
         {step === "industry" && (
           <div className="space-y-12 max-w-2xl mx-auto w-full">
-            <div className="text-center animate-fade-in-up">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-wider uppercase">
-                AI SOM GER DITT TEAM TID ATT FOKUSERA PÅ DET SOM RÄKNAS
-              </h1>
-              <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light px-4 sm:px-0 tracking-wide">
-                Få en plan som frigör timmar varje vecka – skräddarsydd för ert företag.
-              </p>
-            </div>
-
-            <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-              <IndustryInput onSelect={handleIndustrySelect} />
+            <div className="relative group">
+              {/* Animated border container */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-2xl opacity-75 group-hover:opacity-100 blur-sm transition duration-1000 group-hover:duration-200 animate-gradient-x"></div>
               
-              {/* Subtle links below input */}
-              <div className="text-center mt-6 flex items-center justify-center gap-4">
-                <a
-                  href="/business/demo"
-                  className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
-                >
-                  Se exempel →
-                </a>
-                <span className="text-gray-300">•</span>
-                <a
-                  href="/"
-                  className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
-                >
-                  För privatpersoner →
-                </a>
+              {/* Content */}
+              <div className="relative bg-white rounded-2xl p-8 sm:p-12">
+                <div className="text-center animate-fade-in-up">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-wider uppercase">
+                    AI SOM GER DITT TEAM TID ATT FOKUSERA PÅ DET SOM RÄKNAS
+                  </h1>
+                  <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light px-4 sm:px-0 tracking-wide">
+                    Få en plan som frigör timmar varje vecka – skräddarsydd för ert företag.
+                  </p>
+                </div>
+
+                <div className="mt-12">
+                  <IndustryInput onSelect={handleIndustrySelect} />
+                  
+                  {/* Subtle links below input */}
+                  <div className="text-center mt-6 flex items-center justify-center gap-4">
+                    <a
+                      href="/business/demo"
+                      className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
+                    >
+                      Se exempel →
+                    </a>
+                    <span className="text-gray-300">•</span>
+                    <a
+                      href="/"
+                      className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
+                    >
+                      För privatpersoner →
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
