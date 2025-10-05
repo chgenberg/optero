@@ -197,7 +197,7 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
             }
           ],
           temperature: 0.8,
-          max_tokens: 16000, // GPT-5 supports up to 128k output
+          max_completion_tokens: 16000, // GPT-5 uses max_completion_tokens
         });
         const content = response.choices[0]?.message?.content || "";
         if (content) {

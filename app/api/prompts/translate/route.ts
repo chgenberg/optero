@@ -73,7 +73,7 @@ Return ONLY valid JSON with the translated content in the same structure.`;
             { role: "user", content: translationPrompt }
           ],
           temperature: 0.3, // Lower temperature for more accurate translations
-          max_tokens: 8000,
+          max_completion_tokens: 8000,
         });
 
         const translatedContent = JSON.parse(response.choices[0]?.message?.content || "{}");

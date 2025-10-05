@@ -37,7 +37,7 @@ Regler:
         { role: "user", content: prompt }
       ],
       temperature: 0.7,
-      max_tokens: 4000,
+      max_completion_tokens: 4000,
     });
     const content = response.choices[0]?.message?.content || "";
     let items: string[] = [];

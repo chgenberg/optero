@@ -103,7 +103,7 @@ Format som JSON:
         { role: "user", content: prompt }
       ],
       temperature: 0.8,
-      max_tokens: 16000,
+      max_completion_tokens: 16000,
     });
 
     const data = JSON.parse(response.choices[0].message.content || "{}");
