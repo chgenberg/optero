@@ -302,7 +302,17 @@ export default function AIRecommendations({
                 ))}
                 {!isDemo && (
                   <button
-                    onClick={() => router.push("/premium/purchase")}
+                    onClick={() => {
+                      // Save context for premium question generation
+                      sessionStorage.setItem("premiumContext", JSON.stringify({
+                        profession,
+                        specialization,
+                        tasks,
+                        experience,
+                        challenges
+                      }));
+                      router.push("/premium/purchase");
+                    }}
                     className="ml-2 px-4 py-2 bg-blue-900 text-white rounded-lg font-medium text-sm whitespace-nowrap hover:bg-blue-800 transition-all duration-200 animate-pulse-slow shadow-md"
                   >
                     Köp fullständig analys
@@ -331,7 +341,17 @@ export default function AIRecommendations({
               ))}
               {!isDemo && (
                 <button
-                  onClick={() => router.push("/premium/purchase")}
+                  onClick={() => {
+                    // Save context for premium question generation
+                    sessionStorage.setItem("premiumContext", JSON.stringify({
+                      profession,
+                      specialization,
+                      tasks,
+                      experience,
+                      challenges
+                    }));
+                    router.push("/premium/purchase");
+                  }}
                   className="ml-4 min-w-[200px] px-6 py-3 bg-blue-900 text-white rounded-xl font-medium hover:bg-blue-800 transition-all duration-200 animate-pulse-slow shadow-md"
                 >
                   Köp fullständig analys

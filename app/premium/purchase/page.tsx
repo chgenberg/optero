@@ -223,6 +223,36 @@ export default function PremiumPurchasePage() {
   // Show SEK for Swedish users, EUR for others
   const displayPrice = locale === "sv" ? `${PREMIUM_PRICE_SEK} SEK` : `${PREMIUM_PRICE_EUR}€`;
 
+  // Generate questions in background when page loads
+  useEffect(() => {
+    const prepareQuestions = async () => {
+      if (!context.profession) return;
+      
+      try {
+        const response = await fetch("/api/premium/prepare-questions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            profession: context.profession,
+            specialization: context.specialization,
+            tasks: context.tasks || [],
+            experience: context.experience,
+            challenges: context.challenges || []
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          sessionStorage.setItem("premiumQuestions", JSON.stringify(data));
+        }
+      } catch (error) {
+        console.error("Failed to prepare questions:", error);
+      }
+    };
+
+    prepareQuestions();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-12">

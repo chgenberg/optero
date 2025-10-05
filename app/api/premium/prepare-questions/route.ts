@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
     const prompt = `Du är en expert på att förstå arbetsprocesser och identifiera var AI kan göra störst nytta.
 
-Skapa 15-20 djupgående frågor för att förstå en ${role}s dagliga arbete och utmaningar.
+Skapa 15-20 djupgående, BRANSCHSPECIFIKA frågor för att förstå en ${role}s dagliga arbete och utmaningar.
 
 Kontext:
 - Yrke: ${profession}
@@ -34,19 +34,32 @@ Kontext:
 ${experience ? `- Erfarenhet: ${experience}` : ""}
 ${challenges?.length > 0 ? `- Utmaningar: ${challenges.join(", ")}` : ""}
 
+VIKTIGT - Anpassa frågorna till yrket:
+- För LÄRARE: Fråga om elever, lektionsplanering, bedömning, föräldrakontakt
+- För SÄLJARE: Fråga om leads, CRM, kundmöten, offerter, uppföljning
+- För EKONOM: Fråga om bokföring, rapporter, avstämningar, budgetar
+- För SJUKSKÖTERSKA: Fråga om patienter, journalföring, medicinering, vårdplanering
+- För PROJEKTLEDARE: Fråga om projektplan, resurser, stakeholders, leveranser
+- Etc. - använd RÄTT terminologi för varje yrke!
+
+UNDVIK generiska frågor som:
+❌ "Hur mycket tid spenderar du på kundinteraktioner?" (för en lärare)
+❌ "Hur hanterar du försäljningsprocessen?" (för en ekonom)
+✅ Använd istället yrkesspecifika termer och situationer
+
 Skapa frågor som:
-1. Kartlägger EXAKT vad personen gör varje dag
-2. Identifierar tidstjuvar och ineffektiviteter
-3. Förstår nuvarande verktyg och arbetssätt
-4. Avslöjar dolda möjligheter för AI-automatisering
-5. Fångar branschspecifika utmaningar
+1. Kartlägger EXAKT vad personen gör varje dag (med rätt terminologi)
+2. Identifierar tidstjuvar och ineffektiviteter (specifika för yrket)
+3. Förstår nuvarande verktyg och arbetssätt (branschspecifika system)
+4. Avslöjar dolda möjligheter för AI-automatisering (relevanta för yrket)
+5. Fångar branschspecifika utmaningar (unika för denna profession)
 
 Kategorisera frågorna i:
-- Dagliga rutiner (4-5 frågor)
-- Tidskrävande uppgifter (3-4 frågor)
-- Verktyg & system (3-4 frågor)
-- Kommunikation & samarbete (3-4 frågor)
-- Branschspecifika utmaningar (2-3 frågor)
+- Dagliga rutiner (4-5 frågor) - använd yrkesspecifika exempel
+- Tidskrävande uppgifter (3-4 frågor) - fokusera på typiska uppgifter för yrket
+- Verktyg & system (3-4 frågor) - nämn relevanta branschsystem
+- Kommunikation & samarbete (3-4 frågor) - anpassa till yrkeskontexten
+- Branschspecifika utmaningar (2-3 frågor) - djupdyk i yrkesspecifika problem
 
 Format som JSON:
 {
