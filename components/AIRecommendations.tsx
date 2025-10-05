@@ -217,6 +217,9 @@ export default function AIRecommendations({
         priority: t.priority,
       }));
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes timeout
+      
       const response = await fetch("/api/recommendations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -227,7 +230,10 @@ export default function AIRecommendations({
           challenges,
           tasks: normalizedTasks,
         }),
+        signal: controller.signal,
       });
+      
+      clearTimeout(timeoutId);
 
       if (!response.ok) throw new Error("Failed to fetch recommendations");
 
