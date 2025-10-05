@@ -177,8 +177,8 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
     const openai = process.env.OPENAI_API_KEY
       ? new OpenAI({ 
           apiKey: process.env.OPENAI_API_KEY,
-          maxRetries: 1,
-          timeout: 180000 // 3 minutes for GPT-5 quality analysis
+          maxRetries: 2,
+          timeout: 300000 // 5 minutes for GPT-5 quality analysis
         })
       : null;
 

@@ -10,7 +10,6 @@ export const metadata: Metadata = {
   description: "Hitta AI-verktyg anpassade för ditt yrke. Spara 5-15 timmar varje vecka med smarta lösningar för din arbetsdag.",
   keywords: ["AI-verktyg", "produktivitet", "automation", "arbetsverktyg", "AI för yrken"],
   authors: [{ name: "Mendio" }],
-  manifest: "/manifest.json",
   openGraph: {
     title: "Mendio - Gör vardagen lättare med AI",
     description: "Hitta AI-verktyg anpassade för ditt yrke",
