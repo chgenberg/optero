@@ -315,7 +315,7 @@ export default function AIRecommendations({
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+                  className={`min-w-[160px] px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
                     activeTab === tab.id
                       ? "bg-gray-900 text-white"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -330,7 +330,7 @@ export default function AIRecommendations({
               {!isDemo && (
                 <button
                   onClick={() => router.push("/premium/purchase")}
-                  className="ml-4 px-6 py-3 bg-blue-900 text-white rounded-xl font-medium hover:bg-blue-800 transition-all duration-200 animate-pulse-slow shadow-md"
+                  className="ml-4 min-w-[200px] px-6 py-3 bg-blue-900 text-white rounded-xl font-medium hover:bg-blue-800 transition-all duration-200 animate-pulse-slow shadow-md"
                 >
                   Köp fullständig analys
                 </button>
