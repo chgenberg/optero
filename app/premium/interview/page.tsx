@@ -82,12 +82,42 @@ function PremiumInterviewContent() {
     }
   };
 
-  const proceedToPayment = () => {
-    // Save answers
-    sessionStorage.setItem("premiumAnswers", JSON.stringify(answers));
+  const proceedToPayment = async () => {
+    // Save all answers including the last one
+    const finalAnswers = {
+      ...answers,
+      [currentQuestion.id]: currentQuestion.type === "multiselect" ? selectedOptions : currentAnswer
+    };
     
-    // In real app, this would go to Stripe checkout
-    // For now, simulate payment success and go to results
+    sessionStorage.setItem("premiumAnswers", JSON.stringify(finalAnswers));
+    
+    // Get context
+    const context = JSON.parse(sessionStorage.getItem("premiumContext") || "{}");
+    
+    // Generate premium results
+    try {
+      const response = await fetch("/api/premium/generate-results", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          profession: context.profession,
+          specialization: context.specialization,
+          tasks: context.tasks,
+          answers: finalAnswers,
+          experience: context.experience,
+          challenges: context.challenges
+        })
+      });
+
+      if (response.ok) {
+        const results = await response.json();
+        sessionStorage.setItem("premiumResults", JSON.stringify(results));
+      }
+    } catch (error) {
+      console.error("Failed to generate results:", error);
+    }
+    
+    // Go to premium results page
     router.push("/premium/results");
   };
 

@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     Yrke: ${data.profession}
     Specialisering: ${data.specialization}
     Uppgifter: ${JSON.stringify(data.tasks)}
-    Intervjusvar: ${JSON.stringify(data.interviewAnswers)}
+    Intervjusvar: ${JSON.stringify(data.answers || data.interviewAnswers)}
     
     Skapa en komplett premium-analys med alla delar som beskrivs i systempromten.
     Returnera som JSON med denna struktur:

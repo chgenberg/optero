@@ -124,16 +124,39 @@ export default function PremiumResultsPage() {
 
   useEffect(() => {
     // Check if user has access
-    const hasPurchased = sessionStorage.getItem("premiumPurchased");
-    const interviewData = sessionStorage.getItem("premiumInterviewData");
+    const hasPurchased = sessionStorage.getItem("purchasedTier") === "pro";
+    const answers = sessionStorage.getItem("premiumAnswers");
+    const context = sessionStorage.getItem("premiumContext");
+    const cachedResults = sessionStorage.getItem("premiumResults");
     
-    if (!hasPurchased || !interviewData) {
+    if (!hasPurchased) {
       router.push("/");
       return;
     }
 
-    // Generate premium results
-    generatePremiumResults(JSON.parse(interviewData));
+    // Use cached results if available
+    if (cachedResults) {
+      setPremiumData(JSON.parse(cachedResults));
+      setLoading(false);
+      return;
+    }
+
+    // Generate premium results if we have answers
+    if (answers && context) {
+      const parsedContext = JSON.parse(context);
+      const parsedAnswers = JSON.parse(answers);
+      
+      generatePremiumResults({
+        profession: parsedContext.profession,
+        specialization: parsedContext.specialization,
+        tasks: parsedContext.tasks,
+        answers: parsedAnswers,
+        experience: parsedContext.experience,
+        challenges: parsedContext.challenges
+      });
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   const generatePremiumResults = async (interviewData: any) => {

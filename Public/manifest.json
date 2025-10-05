@@ -1,26 +1,16 @@
 {
-  "name": "Mendio - Gör vardagen lättare med AI",
+  "name": "Mendio",
   "short_name": "Mendio",
-  "description": "Hitta AI-verktyg anpassade för ditt yrke",
+  "description": "AI som sparar dig tid varje vecka",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#000000",
-  "orientation": "portrait-primary",
+  "theme_color": "#111827",
   "icons": [
     {
-      "src": "/mendio_logo.png?v=2",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/mendio_logo.png?v=2",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
     }
-  ],
-  "categories": ["productivity", "business", "utilities"],
-  "lang": "sv-SE"
+  ]
 }
