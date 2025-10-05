@@ -156,3 +156,29 @@ model ChatHistory {
   @@index([sessionId])
   @@index([createdAt])
 }
+
+// Sparar AI-genererade prompts per yrke
+model PromptLibrary {
+  id              String   @id @default(cuid())
+  profession      String
+  specialization  String?
+  category        String   // e.g., "Dokumentation", "Kommunikation"
+  name            String
+  description     String
+  prompt          String   @db.Text
+  timeSaved       String   // e.g., "2-3h/vecka"
+  difficulty      String   // "Lätt", "Medel", "Avancerat"
+  example         String?  @db.Text
+  howToUse        String?  @db.Text
+  tools           Json     // Array of tool names
+  tags            Json?    // Array of tags for search
+  usageCount      Int      @default(0)
+  rating          Float?   // Average user rating
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([profession, specialization])
+  @@index([category])
+  @@index([usageCount])
+  @@index([profession, category])
+}

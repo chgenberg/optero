@@ -37,8 +37,34 @@ export default function ProfessionPrompts({ profession }: ProfessionPromptsProps
   const [currentProfessionData, setCurrentProfessionData] = useState<ProfessionData | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [dbPrompts, setDbPrompts] = useState<Prompt[]>([]);
+  const [loadingDbPrompts, setLoadingDbPrompts] = useState(false);
 
   useEffect(() => {
+    // Try to fetch from database first
+    const fetchDbPrompts = async () => {
+      if (!profession) return;
+      
+      setLoadingDbPrompts(true);
+      try {
+        const response = await fetch(`/api/prompts/get?profession=${encodeURIComponent(profession)}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.prompts && data.prompts.length > 0) {
+            // Convert DB prompts to component format
+            setDbPrompts(data.prompts);
+          }
+        }
+      } catch (error) {
+        console.log('Could not fetch DB prompts, using JSON fallback');
+      } finally {
+        setLoadingDbPrompts(false);
+      }
+    };
+
+    fetchDbPrompts();
+
+    // Fallback to JSON data
     if (profession && allProfessions[profession]) {
       setCurrentProfessionData(allProfessions[profession]);
       const categories = Object.keys(allProfessions[profession].categories);

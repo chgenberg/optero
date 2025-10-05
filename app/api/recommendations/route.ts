@@ -177,6 +177,9 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
                   }
                 });
                 console.log(`Cached new results for ${profession}/${specialization}`);
+                
+                // Generate 10 new prompts in background (non-blocking)
+                generatePromptsInBackground(profession, specialization, safeTasks).catch(console.error);
               } catch (cacheError) {
                 console.error("Failed to cache results:", cacheError);
                 // Continue anyway
@@ -215,4 +218,14 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
     
     return NextResponse.json(errorDetails, { status: 500 });
   }
+}
+
+// Helper function to trigger prompt generation in background
+async function generatePromptsInBackground(profession: string, specialization: string, tasks: any[]) {
+  // Don't await - run in background
+  fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/prompts/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ profession, specialization, tasks })
+  }).catch(err => console.log('Background prompt generation failed:', err));
 }
