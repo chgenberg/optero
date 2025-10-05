@@ -124,7 +124,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-white">
-      <div className="flex flex-col items-center justify-center min-h-screen p-4 pt-24 sm:pt-32">
+      <div className="flex flex-col items-center justify-start min-h-screen p-4 pt-20 sm:pt-24">
         {showInfo && <InfoPopup onClose={() => setShowInfo(false)} />}
       
       {/* Onboarding tutorial for first-time users */}
