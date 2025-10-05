@@ -12,22 +12,35 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>('sv');
-  const [translations, setTranslations] = useState(getTranslations('sv'));
+  const [locale, setLocaleState] = useState<Locale>('en'); // Default to English
+  const [translations, setTranslations] = useState(getTranslations('en'));
 
-  // Load saved language from localStorage
+  // Load saved language from localStorage or detect from URL
   useEffect(() => {
+    // Check URL path for language
+    const path = window.location.pathname;
+    const urlLang = path.split('/')[1] as Locale;
+    
+    if (['sv', 'es', 'fr', 'de'].includes(urlLang)) {
+      setLocaleState(urlLang);
+      setTranslations(getTranslations(urlLang));
+      localStorage.setItem('mendio-language', urlLang);
+      return;
+    }
+    
+    // Check localStorage
     const saved = localStorage.getItem('mendio-language') as Locale;
-    if (saved && ['sv', 'en', 'es', 'fr'].includes(saved)) {
+    if (saved && ['sv', 'en', 'es', 'fr', 'de'].includes(saved)) {
       setLocaleState(saved);
       setTranslations(getTranslations(saved));
     } else {
       // Try to detect browser language
       const browserLang = navigator.language.split('-')[0] as Locale;
-      if (['sv', 'en', 'es', 'fr'].includes(browserLang)) {
+      if (['sv', 'es', 'fr', 'de'].includes(browserLang)) {
         setLocaleState(browserLang);
         setTranslations(getTranslations(browserLang));
       }
+      // Otherwise stay with English default
     }
   }, []);
 

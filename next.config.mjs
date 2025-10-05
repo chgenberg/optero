@@ -1,14 +1,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Multi-language support via middleware and LanguageContext
-  // Supported languages: sv, en, es, fr, de
-  async redirects() {
+  // Default language: English (/)
+  // Other languages: /sv, /es, /fr, /de
+  async rewrites() {
     return [
-      // Redirect /en, /es, /fr, /de to root with language detection
+      // Language-specific routes
       {
-        source: '/:lang(en|es|fr|de)',
-        destination: '/',
-        permanent: false,
+        source: '/sv/:path*',
+        destination: '/:path*',
+      },
+      {
+        source: '/es/:path*',
+        destination: '/:path*',
+      },
+      {
+        source: '/fr/:path*',
+        destination: '/:path*',
+      },
+      {
+        source: '/de/:path*',
+        destination: '/:path*',
       },
     ];
   },
