@@ -58,10 +58,14 @@ export default function PremiumLoading() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
       <div className="max-w-2xl w-full">
-        {/* Main card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8 sm:p-12 border border-gray-100">
+        {/* Animated border container - same as hero */}
+        <div className="relative group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-3xl opacity-75 group-hover:opacity-100 blur-sm transition duration-1000 group-hover:duration-200 animate-gradient-x overflow-hidden"></div>
+          
+          {/* Main card */}
+          <div className="relative bg-white rounded-3xl shadow-2xl p-8 sm:p-12 border border-gray-100">
           {/* Header */}
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -184,8 +188,9 @@ export default function PremiumLoading() {
               Beräknad tid kvar: {Math.max(0, Math.ceil((100 - progress) * 1.8 / 60))} minuter
             </p>
           </div>
+          </div>
         </div>
-
+        
         {/* Bottom note */}
         <p className="text-center text-sm text-gray-500 mt-6">
           Stäng inte denna sida. Din analys genereras just nu...

@@ -82,8 +82,14 @@ export default function LoadingAnalysis() {
   const currentFact = LOADING_FACTS[currentFactIndex];
 
   return (
-    <div className="min-h-[400px] flex flex-col items-center justify-center p-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-[400px] flex flex-col items-center justify-center p-4 sm:p-8">
+      <div className="max-w-md w-full">
+        {/* Animated border container - same as hero */}
+        <div className="relative group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-2xl opacity-75 group-hover:opacity-100 blur-sm transition duration-1000 group-hover:duration-200 animate-gradient-x overflow-hidden"></div>
+          
+          {/* Content */}
+          <div className="relative bg-white rounded-2xl p-6 sm:p-8 space-y-8">
         {/* Loading text */}
         <div className="text-center space-y-2">
           <h3 className="text-2xl font-bold text-gray-900">
@@ -133,6 +139,8 @@ export default function LoadingAnalysis() {
                 style={{ animationDelay: `${i * 0.2}s` }}
               />
             ))}
+          </div>
+        </div>
           </div>
         </div>
       </div>
