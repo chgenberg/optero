@@ -77,19 +77,19 @@ export default function ImplementationPlan({ recommendations, profession, specia
         </p>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="space-y-6 max-w-4xl mx-auto">
         {weeklyPlan.map((week) => (
           <div
             key={week.week}
-            className={`bg-white rounded-2xl border transition-all duration-300 ${
+            className={`bg-white rounded-2xl lg:rounded-3xl border border-gray-100 shadow-xl transition-all duration-300 ${
               expandedWeek === week.week 
-                ? 'border-gray-900 shadow-xl lg:col-span-2' 
-                : 'border-gray-200 hover:border-gray-400 hover:shadow-lg'
+                ? 'shadow-2xl' 
+                : 'hover:shadow-2xl'
             }`}
           >
             <button
               onClick={() => setExpandedWeek(expandedWeek === week.week ? null : week.week)}
-              className="w-full p-6 sm:p-8 text-left"
+              className="w-full p-6 sm:p-8 lg:p-10 text-left"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4 sm:gap-5">
@@ -123,7 +123,7 @@ export default function ImplementationPlan({ recommendations, profession, specia
 
             {expandedWeek === week.week && (
               <div className="px-6 sm:px-8 pb-6 sm:pb-8 animate-fade-in-up">
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-6 sm:grid-cols-2">
                   {week.tasks.map((task, index) => (
                     <div key={index} className="bg-gray-50 rounded-xl p-5 hover:bg-gray-100 transition-colors">
                       <div className="flex items-start gap-3">
