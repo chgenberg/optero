@@ -221,7 +221,8 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
                 });
                 console.log(`Cached new results for ${profession}/${specialization}`);
                 
-                // Generate 10 new prompts in background (non-blocking)
+                // ALWAYS generate 10 new prompts based on specific tasks (non-blocking)
+                // This ensures we build a diverse library even for same profession/specialization
                 generatePromptsInBackground(profession, specialization, safeTasks).catch(console.error);
                 
                 // Get any existing prompts while we wait for new ones

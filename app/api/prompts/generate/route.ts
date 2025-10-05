@@ -16,29 +16,38 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Profession required" }, { status: 400 });
     }
 
-    // Check if we already have prompts for this profession
+    // Check existing prompts to avoid duplicates
     const existingPrompts = await prisma.promptLibrary.findMany({
       where: {
         profession,
         specialization: specialization || null,
       },
-      take: 20,
+      select: {
+        name: true,
+        prompt: true,
+      },
     });
 
-    // If we have enough prompts, return them
-    if (existingPrompts.length >= 10) {
-      return NextResponse.json({ prompts: existingPrompts, source: "cached" });
-    }
+    // We ALWAYS generate new prompts based on specific tasks
+    // This builds a diverse library even for same profession/specialization
 
     // Generate new prompts
     const taskList = tasks?.map((t: any) => t.task || t).join(", ") || "";
     const role = specialization || profession;
 
+    const existingPromptNames = existingPrompts.map(p => p.name).join(", ");
+    
     const prompt = `Skapa 10 högkvalitativa, värdefulla AI-prompts för: ${role}
 
-${taskList ? `Fokusera på dessa arbetsuppgifter: ${taskList}` : ''}
+${taskList ? `Fokusera SPECIFIKT på dessa arbetsuppgifter: ${taskList}` : ''}
 
-VIKTIGT: Tänk på framtidssäkring! Prompterna ska fungera med både dagens AI och framtidens AI-agenter.
+${existingPromptNames ? `VIKTIGT: Vi har redan dessa prompts - skapa HELT NYA och OLIKA prompts:\n${existingPromptNames}\n` : ''}
+
+KRAV:
+1. Prompterna MÅSTE vara unika och fokusera på de specifika arbetsuppgifterna
+2. Variera perspektiv och användningsfall
+3. Tänk på framtidssäkring - fungerar med både dagens AI och framtidens AI-agenter
+4. Skapa prompts som löser OLIKA delar av arbetsuppgifterna
 
 Varje prompt ska inkludera:
 1. UTMANING - Vilken specifik smärtpunkt löser denna prompt?
