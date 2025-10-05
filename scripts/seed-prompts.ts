@@ -6,27 +6,13 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
+// Phase 1: Most popular professions (start small for testing)
 const PROFESSIONS_TO_SEED = [
-  { name: "Fastighetsmäklare", specializations: ["Bostadsmäklare", "Kommersiella fastigheter"] },
-  { name: "Personlig tränare", specializations: ["PT på gym", "Online-coach"] },
-  { name: "Restaurangchef", specializations: ["Fine dining", "Snabbmat"] },
-  { name: "Apotekare", specializations: ["Öppenvårdsapotek", "Sjukhusapotek"] },
-  { name: "Bibliotekarie", specializations: ["Folkbibliotek", "Universitetsbibliotek"] },
-  { name: "Socialarbetare", specializations: ["Barn och unga", "Missbruksvård"] },
-  { name: "Försäkringsrådgivare", specializations: ["Liv och pension", "Skadeförsäkring"] },
-  { name: "Redaktör", specializations: ["Nyhetsmedia", "Förlagsredaktör"] },
-  { name: "Produktchef", specializations: ["Tech/SaaS", "E-handel"] },
-  { name: "UX Designer", specializations: ["Web/App", "Enterprise"] },
-  { name: "Receptionist", specializations: ["Hotell", "Vårdcentral"] },
-  { name: "Elektriker", specializations: ["Installation", "Service"] },
-  { name: "VVS-montör", specializations: ["Installation", "Jour"] },
-  { name: "Snickare", specializations: ["Möbelsnickare", "Byggsnickare"] },
-  { name: "Frisör", specializations: ["Herrfrisör", "Damfrisör"] },
-  { name: "Florist", specializations: ["Butiksflorist", "Event"] },
-  { name: "Fotograf", specializations: ["Porträtt", "Event"] },
-  { name: "Researrangör", specializations: ["Företagsresor", "Privatresor"] },
-  { name: "Eventplanerare", specializations: ["Företagsevent", "Bröllop"] },
-  { name: "Översättare", specializations: ["Teknisk", "Litterär"] },
+  "Fastighetsmäklare",
+  "Personlig tränare",
+  "Restaurangchef",
+  "Receptionist",
+  "Elektriker",
 ];
 
 const CATEGORIES = [
@@ -95,17 +81,17 @@ async function seedPrompts() {
   console.log("🌱 Starting prompt seeding...\n");
   let totalCreated = 0;
 
-  for (const prof of PROFESSIONS_TO_SEED) {
-    console.log(`📝 Generating prompts for ${prof.name}...`);
+  for (const professionName of PROFESSIONS_TO_SEED) {
+    console.log(`📝 Generating prompts for ${professionName}...`);
     
     // Generate for main profession
-    const mainPrompts = await generatePromptsForProfession(prof.name);
+    const mainPrompts = await generatePromptsForProfession(professionName);
     
     for (const promptData of mainPrompts) {
       try {
         await prisma.promptLibrary.create({
           data: {
-            profession: prof.name,
+            profession: professionName,
             category: promptData.category,
             name: promptData.name,
             description: promptData.description,
@@ -119,15 +105,16 @@ async function seedPrompts() {
           },
         });
         totalCreated++;
+        process.stdout.write('.');
       } catch (error) {
-        console.error(`Failed to create prompt: ${promptData.name}`, error);
+        console.error(`\nFailed to create prompt: ${promptData.name}`, error);
       }
     }
 
-    console.log(`✅ Created ${mainPrompts.length} prompts for ${prof.name}`);
+    console.log(`\n✅ Created ${mainPrompts.length} prompts for ${professionName}`);
     
     // Small delay to avoid rate limiting
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
   }
 
   console.log(`\n🎉 Seeding complete! Created ${totalCreated} prompts total.`);
