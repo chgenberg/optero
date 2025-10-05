@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { sendMagicLinkEmail } from "@/lib/emails";
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,8 +37,23 @@ export async function POST(request: NextRequest) {
     // Use existing token
     const magicLink = `${request.nextUrl.origin}/results/${latestResult.shareId}`;
 
-    // TODO: Send email via SendGrid/Resend
-    console.log(`Magic link for ${email}: ${magicLink}`);
+    // Send email via Resend
+    const emailResult = await sendMagicLinkEmail(
+      email,
+      magicLink,
+      latestResult.profession
+    );
+
+    if (!emailResult.success) {
+      console.error("Failed to send email:", emailResult.error);
+      return NextResponse.json({ 
+        success: true,
+        found: true,
+        magicLink,
+        count: results.length,
+        message: "Resultat hittat! Kunde inte skicka email, men här är din länk."
+      });
+    }
 
     return NextResponse.json({ 
       success: true,

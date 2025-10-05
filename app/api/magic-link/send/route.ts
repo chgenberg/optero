@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { randomBytes } from "crypto";
+import { sendMagicLinkEmail } from "@/lib/emails";
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,17 +31,30 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // In production: Send email with magic link
-    // For now: Return the link
+    // Send email with magic link
     const magicLink = `${request.nextUrl.origin}/results/${token}`;
 
-    // TODO: Send email via SendGrid/Resend
-    console.log(`Magic link for ${email}: ${magicLink}`);
+    // Send email via Resend
+    const emailResult = await sendMagicLinkEmail(
+      email, 
+      magicLink, 
+      resultData.profession || "ditt yrke"
+    );
+
+    if (!emailResult.success) {
+      console.error("Failed to send email:", emailResult.error);
+      // Still return success with link for fallback
+      return NextResponse.json({ 
+        success: true, 
+        magicLink,
+        message: "Resultat sparat! Kunde inte skicka email, men här är din länk."
+      });
+    }
 
     return NextResponse.json({ 
       success: true, 
       magicLink,
-      message: "Magic link skapad! (Email-funktionalitet kommer snart)"
+      message: "Magic link skickad till din email!"
     });
   } catch (error) {
     console.error("Error creating magic link:", error);
