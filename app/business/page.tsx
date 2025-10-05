@@ -71,7 +71,7 @@ export default function BusinessPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4 pt-24 sm:pt-32">
       <div className="max-w-6xl mx-auto w-full">
         
         {/* Industry input step - same layout as consumer */}
