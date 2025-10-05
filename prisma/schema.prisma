@@ -133,8 +133,12 @@ model SharedResult {
   specialization String?
   tasks         Json
   recommendations Json
+  scenarios     Json?
+  email         String?  // For magic link retrieval
   createdAt     DateTime @default(now())
   expiresAt     DateTime
+  
+  @@index([email])
 }
 
 // Sparar chat-historik för AI-coach

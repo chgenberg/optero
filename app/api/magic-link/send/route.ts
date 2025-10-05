@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const token = randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
-    // Save to database
+    // Save to database with email
     await prisma.sharedResult.create({
       data: {
         id: token,
@@ -23,6 +23,8 @@ export async function POST(request: NextRequest) {
         specialization: resultData.specialization,
         tasks: resultData.tasks,
         recommendations: resultData.recommendations,
+        scenarios: resultData.scenarios || [],
+        email: email, // Save email for later retrieval
         createdAt: new Date(),
         expiresAt
       }
