@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import InterviewHelp from "./InterviewHelp";
 
 interface Message {
   role: "assistant" | "user";
@@ -31,6 +32,8 @@ export default function PremiumInterview({
   const [sessionId, setSessionId] = useState("");
   const [isComplete, setIsComplete] = useState(false);
   const [answerQuality, setAnswerQuality] = useState<"short" | "good" | "excellent">("good");
+  const [showHelp, setShowHelp] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const totalQuestions = 12;
 
@@ -54,6 +57,7 @@ export default function PremiumInterview({
       const data = await response.json();
       setSessionId(data.sessionId);
       setMessages([{ role: "assistant", content: data.firstQuestion }]);
+      setCurrentQuestion(data.firstQuestion);
       setQuestionCount(1);
     } catch (error) {
       console.error("Error starting interview:", error);
@@ -113,6 +117,7 @@ export default function PremiumInterview({
           ...prev,
           { role: "assistant", content: data.nextQuestion },
         ]);
+        setCurrentQuestion(data.nextQuestion);
         setQuestionCount(data.questionNumber);
       }
     } catch (error) {
@@ -175,13 +180,23 @@ export default function PremiumInterview({
                 }`}
               >
                 {message.role === "assistant" && (
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 rounded-full bg-gray-900 text-white flex items-center justify-center text-xs font-bold">
-                      AI
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-gray-900 text-white flex items-center justify-center text-xs font-bold">
+                        AI
+                      </div>
+                      <span className="text-xs font-semibold text-gray-600">
+                        Mendio Analys
+                      </span>
                     </div>
-                    <span className="text-xs font-semibold text-gray-600">
-                      Optero Analys
-                    </span>
+                    {index === messages.length - 1 && !isLoading && !isComplete && (
+                      <button
+                        onClick={() => setShowHelp(true)}
+                        className="w-6 h-6 rounded-full border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors flex items-center justify-center text-sm"
+                      >
+                        ?
+                      </button>
+                    )}
                   </div>
                 )}
                 <p className="text-sm lg:text-base whitespace-pre-wrap">
@@ -279,6 +294,12 @@ export default function PremiumInterview({
           </p>
         </div>
       </div>
+      
+      <InterviewHelp 
+        question={currentQuestion}
+        isOpen={showHelp}
+        onClose={() => setShowHelp(false)}
+      />
     </div>
   );
 }

@@ -54,6 +54,7 @@ export default function TaskSelection({
   const [loading, setLoading] = useState(false);
   const [customTasks, setCustomTasks] = useState<string[]>([]);
   const [customTaskInput, setCustomTaskInput] = useState("");
+  const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
     // Hämta uppgifter från API med GPT-4o-mini
@@ -118,9 +119,32 @@ export default function TaskSelection({
           ← {t('buttons.back')}
         </button>
 
-        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 text-center mb-2 sm:mb-3">
-          {t('tasks.title')}
-        </h2>
+        <div className="relative">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 text-center mb-2 sm:mb-3">
+            {t('tasks.title')}
+            <button
+              onClick={() => setShowHelp(!showHelp)}
+              className="ml-2 inline-flex items-center justify-center w-6 h-6 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <span className="text-lg">?</span>
+            </button>
+          </h2>
+        </div>
+        
+        {showHelp && (
+          <div className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200 animate-fade-in">
+            <p className="text-sm text-gray-700 mb-2">
+              <strong>Tips för bra val:</strong>
+            </p>
+            <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
+              <li>Välj 3-5 uppgifter som tar mest tid</li>
+              <li>Prioritera uppgifter du gör ofta</li>
+              <li>Tänk på både enkla och komplexa uppgifter</li>
+              <li>Du kan lägga till egna uppgifter längst ner</li>
+            </ul>
+          </div>
+        )}
+        
         <p className="text-center text-gray-500 mb-6 lg:mb-8 font-light text-sm sm:text-base">
           {t('tasks.subtitle')}
         </p>
