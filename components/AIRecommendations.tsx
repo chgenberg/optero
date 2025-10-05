@@ -298,6 +298,14 @@ export default function AIRecommendations({
                     )}
                   </button>
                 ))}
+                {!isDemo && (
+                  <button
+                    onClick={() => router.push("/premium/purchase")}
+                    className="ml-2 px-4 py-2 bg-blue-900 text-white rounded-lg font-medium text-sm whitespace-nowrap hover:bg-blue-800 transition-all duration-200 animate-pulse-slow shadow-md"
+                  >
+                    Köp fullständig analys
+                  </button>
+                )}
               </div>
             </div>
             
@@ -319,6 +327,14 @@ export default function AIRecommendations({
                   )}
                 </button>
               ))}
+              {!isDemo && (
+                <button
+                  onClick={() => router.push("/premium/purchase")}
+                  className="ml-4 px-6 py-3 bg-blue-900 text-white rounded-xl font-medium hover:bg-blue-800 transition-all duration-200 animate-pulse-slow shadow-md"
+                >
+                  Köp fullständig analys
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -497,19 +513,9 @@ export default function AIRecommendations({
         )}
       </div>
 
-      {/* Premium CTA Button */}
+      {/* Save results link */}
       {!isDemo && (
-        <div className="text-center mt-12 space-y-4">
-            <button
-              onClick={() => router.push("/premium/purchase")}
-              className="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 animate-pulse-scale shadow-lg hover:shadow-xl"
-            >
-              <span className="relative z-10">Få din kompletta guide</span>
-              <div className="absolute inset-0 bg-blue-400 rounded-xl opacity-50 animate-ping"></div>
-            </button>
-            <p className="text-gray-600 text-sm">
-              19€ (197 SEK) - PDF, AI-Coach i 30 dagar & mer
-            </p>
+        <div className="text-center mt-12">
             <button
               onClick={() => setShowMagicLinkModal(true)}
               className="text-gray-500 hover:text-gray-900 text-sm underline"
