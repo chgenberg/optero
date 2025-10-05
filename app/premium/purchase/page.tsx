@@ -29,17 +29,23 @@ function CheckoutForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!stripe || !elements) return;
-
-    // Check if promo code is valid
-    if (promoCode === "LOVE" && !promoApplied) {
+    // Check if promo code is valid and applied - skip Stripe
+    if (promoApplied && promoCode === "LOVE") {
+      if (!email || !name) {
+        setError("Vänligen fyll i namn och email");
+        return;
+      }
+      
       // Save premium access without payment
       sessionStorage.setItem("purchasedTier", "pro");
       sessionStorage.setItem("premiumEmail", email);
       sessionStorage.setItem("promoCodeUsed", "LOVE");
+      sessionStorage.setItem("purchaseDate", new Date().toISOString());
       router.push("/premium/interview");
       return;
     }
+
+    if (!stripe || !elements) return;
 
     setProcessing(true);
     setError(null);
@@ -112,25 +118,27 @@ function CheckoutForm() {
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Kortuppgifter
-        </label>
-        <div className="p-4 border border-gray-300 rounded-lg">
-          <CardElement
-            options={{
-              style: {
-                base: {
-                  fontSize: "16px",
-                  color: "#424770",
-                  "::placeholder": { color: "#aab7c4" },
+      {!promoApplied && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Kortuppgifter
+          </label>
+          <div className="p-4 border border-gray-300 rounded-lg">
+            <CardElement
+              options={{
+                style: {
+                  base: {
+                    fontSize: "16px",
+                    color: "#424770",
+                    "::placeholder": { color: "#aab7c4" },
+                  },
+                  invalid: { color: "#9e2146" },
                 },
-                invalid: { color: "#9e2146" },
-              },
-            }}
-          />
+              }}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Promo code section */}
       {!showPromoInput ? (
@@ -170,7 +178,14 @@ function CheckoutForm() {
             </button>
           </div>
           {promoApplied && (
-            <p className="text-green-600 text-sm mt-2">✓ Kampanjkod aktiverad - 100% rabatt!</p>
+            <div className="mt-3 p-4 bg-green-50 border-2 border-green-500 rounded-lg">
+              <p className="text-green-800 font-semibold text-sm">
+                ✓ Kampanjkod aktiverad - 100% rabatt!
+              </p>
+              <p className="text-green-700 text-xs mt-1">
+                Du behöver inte ange kortuppgifter. Klicka bara på "Aktivera Pro-version" nedan.
+              </p>
+            </div>
           )}
         </div>
       )}
@@ -183,10 +198,10 @@ function CheckoutForm() {
 
       <button
         type="submit"
-        disabled={!stripe || processing}
+        disabled={promoApplied ? processing : (!stripe || processing)}
         className="w-full py-4 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
       >
-        {processing ? "Behandlar..." : promoApplied ? "Aktivera Pro-version" : `Betala ${PREMIUM_PRICE_EUR}€ (${PREMIUM_PRICE_SEK} SEK)`}
+        {processing ? "Behandlar..." : promoApplied ? "Aktivera Pro-version (100% gratis)" : `Betala ${PREMIUM_PRICE_EUR}€ (${PREMIUM_PRICE_SEK} SEK)`}
       </button>
 
       <p className="text-xs text-gray-500 text-center">
@@ -199,6 +214,7 @@ function CheckoutForm() {
 export default function PremiumPurchasePage() {
   const { t, locale } = useLanguage();
   const router = useRouter();
+  const [promoApplied, setPromoApplied] = useState(false);
 
   // Get context from session
   const context = typeof window !== "undefined" ? JSON.parse(sessionStorage.getItem("premiumContext") || "{}") : {};
