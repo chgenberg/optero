@@ -36,7 +36,6 @@ Regler:
         { role: "system", content: "You are a helpful assistant that responds in JSON format." },
         { role: "user", content: prompt }
       ],
-      temperature: 0.7,
       max_completion_tokens: 4000,
     });
     const content = response.choices[0]?.message?.content || "";

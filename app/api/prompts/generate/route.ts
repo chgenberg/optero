@@ -102,7 +102,6 @@ Format som JSON:
         { role: "system", content: "You are a helpful assistant that responds in JSON format." },
         { role: "user", content: prompt }
       ],
-      temperature: 0.8,
       max_completion_tokens: 16000,
     });
 

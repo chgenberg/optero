@@ -78,7 +78,6 @@ Anpassa material för elever med särskilda behov`;
             { role: "system", content: "You are a helpful assistant that responds in JSON format." },
             { role: "user", content: prompt }
           ],
-          temperature: 0.7,
           max_completion_tokens: 2000,
         });
 

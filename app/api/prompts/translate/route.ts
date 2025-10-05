@@ -72,7 +72,6 @@ Return ONLY valid JSON with the translated content in the same structure.`;
             { role: "system", content: "You are a professional translator that responds in JSON format." },
             { role: "user", content: translationPrompt }
           ],
-          temperature: 0.3, // Lower temperature for more accurate translations
           max_completion_tokens: 8000,
         });
 
