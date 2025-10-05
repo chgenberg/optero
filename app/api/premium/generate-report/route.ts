@@ -126,8 +126,12 @@ Var EXTREMT detaljerad och personlig. Referera till specifika svar från intervj
     if (apiKey) {
       const openai = new OpenAI({ apiKey });
       try {
-        const response = await openai.responses.create({ model: "gpt-5", input: reportPrompt });
-        const text = (response as any).output_text || "";
+        const response = await openai.chat.completions.create({
+          model: "gpt-4o",
+          messages: [{ role: "user", content: reportPrompt }],
+          temperature: 0.8,
+        });
+        const text = response.choices[0]?.message?.content || "";
         if (text) reportContent = text;
       } catch (e) {
         console.warn("Report generation failed, using placeholder");

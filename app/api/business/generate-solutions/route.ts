@@ -99,7 +99,7 @@ KVALITETSKRAV:
 - Implementation måste vara konkret och actionable`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-5", // Using GPT-5 for highest quality B2B analysis
+      model: "gpt-4o", // Using GPT-4o for highest quality B2B analysis
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },

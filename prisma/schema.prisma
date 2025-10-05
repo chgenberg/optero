@@ -174,11 +174,99 @@ model PromptLibrary {
   tags            Json?    // Array of tags for search
   usageCount      Int      @default(0)
   rating          Float?   // Average user rating
+  isPremium       Boolean  @default(false)
+  aiModel         String   @default("gpt-4")
+  industry        String?
+  companySize     String?
+  experienceLevel String?
+  language        String   @default("sv")
+  version         Int      @default(1)
+  parentId        String?  // For tracking prompt iterations
+  createdBy       String?  // User who created it
+  verifiedBy      String?  // Admin who verified it
+  isVerified      Boolean  @default(false)
+  lastUsed        DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  
+  // Relations
+  ratings         PromptRating[]
+  usageLogs       PromptUsageLog[]
   
   @@index([profession, specialization])
   @@index([category])
   @@index([usageCount])
   @@index([profession, category])
+  @@index([isPremium])
+  @@index([rating])
+}
+
+model PromptRating {
+  id         String   @id @default(cuid())
+  promptId   String
+  userId     String
+  rating     Int      // 1-5
+  comment    String?
+  createdAt  DateTime @default(now())
+  
+  prompt     PromptLibrary @relation(fields: [promptId], references: [id])
+  
+  @@unique([promptId, userId])
+  @@index([promptId])
+}
+
+model PromptUsageLog {
+  id         String   @id @default(cuid())
+  promptId   String
+  userId     String?
+  sessionId  String?
+  copied     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  
+  prompt     PromptLibrary @relation(fields: [promptId], references: [id])
+  
+  @@index([promptId])
+  @@index([userId])
+}
+
+model Subscription {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  email         String
+  tier          String   // "free", "professional", "business"
+  status        String   // "active", "cancelled", "expired", "trial"
+  stripeCustomerId    String?
+  stripeSubscriptionId String?
+  currentPeriodStart  DateTime
+  currentPeriodEnd    DateTime
+  cancelAtPeriodEnd   Boolean @default(false)
+  
+  // Access levels
+  promptAccess  String   @default("limited") // "limited", "profession", "unlimited"
+  monthlyPromptLimit Int? // null = unlimited
+  usedPrompts   Int      @default(0)
+  
+  // Premium features
+  hasAICoach    Boolean  @default(false)
+  hasPDFReports Boolean  @default(false)
+  hasAPIAccess  Boolean  @default(false)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([email])
+  @@index([status])
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  profession    String?
+  company       String?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([email])
 }

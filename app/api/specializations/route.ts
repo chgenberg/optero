@@ -30,12 +30,13 @@ Regler:
 - Om yrket är brett: inkludera arbetsmiljöer (offentlig/privat/klinisk/produktion) där relevant.
 - Ingen text utanför JSON.`;
 
-    // Prefer Responses API for o1-mini
-    const response = await openai.responses.create({
-      model: "gpt-5-mini",
-      input: prompt,
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
+      response_format: { type: "json_object" },
     });
-    const content = typeof response.output_text === "string" ? response.output_text : "";
+    const content = response.choices[0]?.message?.content || "";
     let items: string[] = [];
     try {
       const data = JSON.parse(content);

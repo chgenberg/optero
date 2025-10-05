@@ -14,11 +14,22 @@ import ShareButtons from "@/components/ShareButtons";
 import LoadingAnalysis from "@/components/LoadingAnalysis";
 import { useRouter } from "next/navigation";
 
+interface Prompt {
+  id: string;
+  name: string;
+  description: string;
+  prompt: string;
+  category: string;
+  timeSaved: string;
+  difficulty: string;
+}
+
 interface Scenario {
   title: string;
   situation: string;
   solution: string;
   tools: string[];
+  prompts?: Prompt[];
 }
 
 interface Recommendation {
@@ -405,6 +416,44 @@ export default function AIRecommendations({
                       ))}
                     </div>
                   </div>
+                  
+                  {/* Prompts Section */}
+                  {scenario.prompts && scenario.prompts.length > 0 && (
+                    <div className="pt-4 border-t border-gray-100">
+                      <p className="text-sm font-semibold text-gray-700 mb-3">Färdiga AI-prompts:</p>
+                      <div className="space-y-3">
+                        {scenario.prompts.map((prompt, i) => (
+                          <div key={prompt.id || i} className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+                            <div className="flex justify-between items-start mb-2">
+                              <h4 className="font-medium text-gray-900 text-sm">{prompt.name}</h4>
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                prompt.difficulty === 'Lätt' ? 'bg-green-100 text-green-700' :
+                                prompt.difficulty === 'Medel' ? 'bg-yellow-100 text-yellow-700' :
+                                'bg-red-100 text-red-700'
+                              }`}>
+                                {prompt.difficulty}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-600 mb-2">{prompt.description}</p>
+                            <div className="bg-white rounded border border-gray-200 p-3 text-xs font-mono text-gray-700 cursor-pointer hover:bg-gray-50"
+                              onClick={() => navigator.clipboard.writeText(prompt.prompt)}
+                              title="Klicka för att kopiera">
+                              {prompt.prompt}
+                            </div>
+                            <div className="flex items-center justify-between mt-2">
+                              <span className="text-xs text-gray-500">Sparar {prompt.timeSaved}</span>
+                              <button 
+                                onClick={() => navigator.clipboard.writeText(prompt.prompt)}
+                                className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                              >
+                                Kopiera prompt →
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

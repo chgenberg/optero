@@ -25,12 +25,6 @@ export default function Header() {
               >
                 Se tidigare resultat
               </button>
-              <a
-                href="/business"
-                className="text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors px-2 sm:px-4 py-2 rounded-lg hover:bg-gray-100"
-              >
-                För företag
-              </a>
               <LanguageSwitcher />
             </div>
           </div>

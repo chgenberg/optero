@@ -10,7 +10,6 @@ import AIRecommendations from "@/components/AIRecommendations";
 import InfoPopup from "@/components/InfoPopup";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import EmailCapture from "@/components/EmailCapture";
-import OnboardingTutorial from "@/components/OnboardingTutorial";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export type Step = "profession" | "specialization" | "tasks" | "email" | "loading" | "results";
@@ -127,8 +126,6 @@ export default function Home() {
       <div className="flex flex-col items-center justify-start min-h-screen p-4 pt-20 sm:pt-24">
         {showInfo && <InfoPopup onClose={() => setShowInfo(false)} />}
       
-      {/* Onboarding tutorial for first-time users */}
-      {step === "profession" && <OnboardingTutorial />}
 
         {/* Minimal Progress indicator */}
         {step !== "profession" && step !== "results" && (
@@ -180,19 +177,12 @@ export default function Home() {
                 <ProfessionInput onSelect={handleProfessionSelect} />
                 
                 {/* Subtle links below input */}
-                <div className="text-center mt-6 flex items-center justify-center gap-4">
+                <div className="text-center mt-6">
                   <a
                     href="/demo/ekonomiassistent"
                     className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
                   >
                     {t('hero.demoLink')}
-                  </a>
-                  <span className="text-gray-300">•</span>
-                  <a
-                    href="/business"
-                    className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
-                  >
-                    För företag →
                   </a>
                 </div>
               </div>

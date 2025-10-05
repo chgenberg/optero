@@ -49,10 +49,51 @@ export async function POST(request: NextRequest) {
 
           console.log(`Cache hit for ${profession}/${specialization}`);
           
+          // Get related prompts for this profession/specialization
+          const prompts = await prisma.promptLibrary.findMany({
+            where: {
+              profession,
+              specialization: specialization || null,
+            },
+            orderBy: [
+              { usageCount: 'desc' },
+              { createdAt: 'desc' }
+            ],
+            take: 30 // Get more to distribute among scenarios
+          });
+          
+          // Enhance scenarios with relevant prompts
+          const enhancedScenarios = cached.scenarios.map((scenario: any) => {
+            // Find 3 most relevant prompts for this scenario
+            const relevantPrompts = prompts
+              .filter(p => 
+                p.tags.some(tag => 
+                  scenario.title.toLowerCase().includes(tag.toLowerCase()) ||
+                  scenario.solution.toLowerCase().includes(tag.toLowerCase())
+                ) ||
+                p.category.toLowerCase().includes(scenario.title.split(' ')[0].toLowerCase())
+              )
+              .slice(0, 3);
+            
+            // If not enough relevant prompts, add some general ones
+            if (relevantPrompts.length < 3) {
+              const additionalPrompts = prompts
+                .filter(p => !relevantPrompts.includes(p))
+                .slice(0, 3 - relevantPrompts.length);
+              relevantPrompts.push(...additionalPrompts);
+            }
+            
+            return {
+              ...scenario,
+              prompts: relevantPrompts
+            };
+          });
+          
           return NextResponse.json({
-            scenarios: cached.scenarios,
+            scenarios: enhancedScenarios,
             inferredTasks: cached.inferredTasks || [],
             recommendations: cached.recommendations,
+            prompts: prompts.slice(0, 10), // Also include top 10 general prompts
             cached: true
           });
         }
@@ -141,11 +182,13 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
 
     if (openai) {
       try {
-        const response = await openai.responses.create({
-          model: "gpt-5",
-          input: prompt,
+        const response = await openai.chat.completions.create({
+          model: "gpt-4o",
+          messages: [{ role: "user", content: prompt }],
+          temperature: 0.8,
+          response_format: { type: "json_object" },
         });
-        const content = typeof (response as any).output_text === "string" ? (response as any).output_text : "";
+        const content = response.choices[0]?.message?.content || "";
         if (content) {
           let parsed: any = null;
           try {
@@ -180,6 +223,46 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
                 
                 // Generate 10 new prompts in background (non-blocking)
                 generatePromptsInBackground(profession, specialization, safeTasks).catch(console.error);
+                
+                // Get any existing prompts while we wait for new ones
+                const existingPrompts = await prisma.promptLibrary.findMany({
+                  where: {
+                    profession,
+                    specialization: specialization || null,
+                  },
+                  orderBy: [
+                    { usageCount: 'desc' },
+                    { createdAt: 'desc' }
+                  ],
+                  take: 30
+                });
+                
+                // Enhance scenarios with prompts
+                result.scenarios = result.scenarios.map((scenario: any) => {
+                  const relevantPrompts = existingPrompts
+                    .filter(p => 
+                      p.tags.some(tag => 
+                        scenario.title.toLowerCase().includes(tag.toLowerCase()) ||
+                        scenario.solution.toLowerCase().includes(tag.toLowerCase())
+                      ) ||
+                      p.category.toLowerCase().includes(scenario.title.split(' ')[0].toLowerCase())
+                    )
+                    .slice(0, 3);
+                  
+                  if (relevantPrompts.length < 3) {
+                    const additionalPrompts = existingPrompts
+                      .filter(p => !relevantPrompts.includes(p))
+                      .slice(0, 3 - relevantPrompts.length);
+                    relevantPrompts.push(...additionalPrompts);
+                  }
+                  
+                  return {
+                    ...scenario,
+                    prompts: relevantPrompts
+                  };
+                });
+                
+                result.prompts = existingPrompts.slice(0, 10);
               } catch (cacheError) {
                 console.error("Failed to cache results:", cacheError);
                 // Continue anyway

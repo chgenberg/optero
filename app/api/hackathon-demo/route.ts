@@ -86,11 +86,13 @@ Gör lösningen så värdefull och konkret som möjligt!`;
     }
 
     const openai = new OpenAI({ apiKey });
-    const response = await openai.responses.create({
-      model: "gpt-5-mini",
-      input: prompt,
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
+      response_format: { type: "json_object" },
     });
-    const content = (response as any).output_text || "";
+    const content = response.choices[0]?.message?.content || "";
     if (!content) throw new Error("Tomt AI-svar");
     let result: any;
     try {

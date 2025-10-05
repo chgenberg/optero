@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { Shield } from "lucide-react";
 
 export default function CookieBanner() {
   const [showBanner, setShowBanner] = useState(false);
@@ -37,49 +38,32 @@ export default function CookieBanner() {
 
   return (
     <div 
-      className={`fixed bottom-0 left-0 right-0 z-50 p-4 sm:p-6 transition-transform duration-300 ${
-        isAnimating ? 'translate-y-0' : 'translate-y-full'
+      className={`fixed bottom-4 right-4 z-50 transition-all duration-300 ${
+        isAnimating ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
       }`}
     >
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 sm:p-8">
-          <div className="flex flex-col lg:flex-row gap-6 lg:items-center">
-            {/* Cookie icon and text */}
-            <div className="flex-1">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0 animate-bounce">
-                  <span className="text-2xl">🍪</span>
-                </div>
-                <div>
-                  <h3 className="font-bold text-gray-900 text-lg mb-2">Vi använder cookies</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    För att ge dig bästa möjliga upplevelse använder vi cookies. 
-                    Dessa hjälper oss att förstå hur du använder tjänsten så att vi kan göra den ännu bättre. 
-                    Vi respekterar din integritet och delar aldrig dina uppgifter med tredje part för marknadsföring.
-                  </p>
-                  <Link 
-                    href="/integritetspolicy" 
-                    className="text-sm text-gray-900 underline mt-2 inline-block hover:no-underline"
-                  >
-                    Läs mer i vår integritetspolicy
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 lg:flex-shrink-0">
+      <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-4 max-w-sm">
+        <div className="flex items-start gap-3">
+          <Shield className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm text-gray-700 mb-3">
+              Vi använder cookies för att förbättra din upplevelse. 
+              <Link href="/integritetspolicy" className="underline hover:no-underline ml-1">
+                Läs mer
+              </Link>
+            </p>
+            <div className="flex gap-2">
               <button
                 onClick={acceptCookies}
-                className="btn-primary px-6 py-3 text-sm font-medium whitespace-nowrap"
+                className="text-xs bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors"
               >
-                Acceptera alla
+                Acceptera
               </button>
               <button
                 onClick={rejectCookies}
-                className="btn-secondary px-6 py-3 text-sm font-medium whitespace-nowrap"
+                className="text-xs text-gray-600 hover:text-gray-900 px-3 py-2"
               >
-                Endast nödvändiga
+                Avböj
               </button>
             </div>
           </div>

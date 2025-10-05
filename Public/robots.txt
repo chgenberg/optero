@@ -13,6 +13,8 @@ Crawl-delay: 1
 # Disallow admin pages
 Disallow: /admin/
 Disallow: /api/
+Disallow: /business/
+Disallow: /business/*
 
 # Allow important pages
 Allow: /
