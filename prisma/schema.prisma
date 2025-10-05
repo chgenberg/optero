@@ -198,6 +198,18 @@ model PromptLibrary {
   companySize     String?
   experienceLevel String?
   language        String   @default("sv")
+  
+  // Multi-language support
+  translations    Json?    // Översättningar för alla fält
+  // Structure: {
+  //   "en": { name, description, challenge, solution, bestPractice, expectedOutcome, prompt },
+  //   "es": { ... },
+  //   "fr": { ... },
+  //   "de": { ... }
+  // }
+  translatedAt    DateTime?
+  autoTranslated  Boolean  @default(false)
+  
   version         Int      @default(1)
   parentId        String?  // For tracking prompt iterations
   createdBy       String?  // User who created it

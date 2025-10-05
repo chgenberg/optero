@@ -1,7 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Removed i18n config as we're using App Router which doesn't support it
-  // i18n is handled via custom LanguageContext instead
+  // Multi-language support via middleware and LanguageContext
+  // Supported languages: sv, en, es, fr, de
+  async redirects() {
+    return [
+      // Redirect /en, /es, /fr, /de to root with language detection
+      {
+        source: '/:lang(en|es|fr|de)',
+        destination: '/',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
