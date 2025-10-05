@@ -8,6 +8,8 @@ import ProfessionPrompts from "@/components/ProfessionPrompts";
 import ShareResults from "@/components/ShareResults";
 import FeedbackButton from "@/components/FeedbackButton";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
+import { getIconForContent } from "./Icons";
+import DifficultyBar from "./DifficultyBar";
 import ShareButtons from "@/components/ShareButtons";
 import LoadingAnalysis from "@/components/LoadingAnalysis";
 import { useRouter } from "next/navigation";
@@ -350,9 +352,14 @@ export default function AIRecommendations({
                 key={index}
                 className="bg-white rounded-2xl lg:rounded-3xl p-6 sm:p-8 lg:p-10 border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300"
               >
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">
-                  {scenario.title}
-                </h3>
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-12 h-12 bg-gray-900 text-white rounded-xl flex items-center justify-center flex-shrink-0">
+                    {getIconForContent(scenario.title, scenario.situation)}
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
+                    {scenario.title}
+                  </h3>
+                </div>
                 
                 <div className="space-y-6">
                   <div>
@@ -394,23 +401,28 @@ export default function AIRecommendations({
                 onClick={() => setExpandedCard(expandedCard === index ? null : index)}
               >
                 <div className="mb-6">
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4">
-                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
-                      {rec.name}
-                    </h3>
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm font-medium px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700">
-                        {rec.difficulty}
-                      </span>
-                      <span className="text-sm font-medium px-3 py-1.5 bg-gray-900 text-white rounded-lg">
-                        {rec.timeSaved}
-                      </span>
+                  <div className="flex items-start gap-4 mb-6">
+                    <div className="w-12 h-12 bg-gray-900 text-white rounded-xl flex items-center justify-center flex-shrink-0">
+                      {getIconForContent(rec.name, rec.description)}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4">
+                        <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
+                          {rec.name}
+                        </h3>
+                        <span className="text-sm font-medium px-3 py-1.5 bg-gray-900 text-white rounded-lg mt-2 sm:mt-0">
+                          {rec.timeSaved}
+                        </span>
+                      </div>
+                      <p className="text-gray-600 text-base sm:text-lg leading-relaxed">{rec.description}</p>
                     </div>
                   </div>
-                  <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-4">{rec.description}</p>
-                  <div className="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                  
+                  <div className="bg-gray-50 rounded-xl p-5 border border-gray-100 mb-4">
                     <p className="text-gray-700 text-base leading-relaxed">{rec.useCase}</p>
                   </div>
+                  
+                  <DifficultyBar level={rec.difficulty} />
                 </div>
 
                 {expandedCard === index && (
