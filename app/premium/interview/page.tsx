@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import InterviewHelp from "@/components/InterviewHelp";
+import PremiumLoading from "@/components/PremiumLoading";
 
 interface Question {
   id: string;
@@ -29,6 +30,7 @@ function PremiumInterviewContent() {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     // Check if coming from Stripe success
@@ -91,6 +93,9 @@ function PremiumInterviewContent() {
     
     sessionStorage.setItem("premiumAnswers", JSON.stringify(finalAnswers));
     
+    // Show loading screen
+    setIsGenerating(true);
+    
     // Get context
     const context = JSON.parse(sessionStorage.getItem("premiumContext") || "{}");
     
@@ -112,13 +117,19 @@ function PremiumInterviewContent() {
       if (response.ok) {
         const results = await response.json();
         sessionStorage.setItem("premiumResults", JSON.stringify(results));
+        
+        // Wait a bit to ensure loading screen shows properly
+        setTimeout(() => {
+          router.push("/premium/results");
+        }, 1000);
+      } else {
+        console.error("Failed to generate results");
+        setIsGenerating(false);
       }
     } catch (error) {
       console.error("Failed to generate results:", error);
+      setIsGenerating(false);
     }
-    
-    // Go to premium results page
-    router.push("/premium/results");
   };
 
   const toggleOption = (option: string) => {
@@ -142,6 +153,10 @@ function PremiumInterviewContent() {
         </div>
       </div>
     );
+  }
+
+  if (isGenerating) {
+    return <PremiumLoading />;
   }
 
   return (

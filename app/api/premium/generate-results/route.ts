@@ -4,7 +4,7 @@ import OpenAI from "openai";
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
   maxRetries: 1,
-  timeout: 180000 // 3 minutes for premium analysis
+  timeout: 300000 // 5 minutes for premium analysis with o1
 });
 
 export async function POST(request: NextRequest) {
@@ -61,13 +61,15 @@ export async function POST(request: NextRequest) {
     }`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "o1",
       messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
+        { 
+          role: "user", 
+          content: systemPrompt + "\n\n" + userPrompt 
+        },
       ],
-      temperature: 0.7,
-      response_format: { type: "json_object" },
+      // o1 doesn't support temperature or response_format
+      // It will naturally produce structured output
     });
 
     const result = JSON.parse(completion.choices[0].message.content || "{}");
