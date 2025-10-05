@@ -73,10 +73,13 @@ Skapa presentationer för lektioner
 Anpassa material för elever med särskilda behov`;
 
         const response = await openai.chat.completions.create({
-          model: "gpt-4o-mini",
-          messages: [{ role: "user", content: prompt }],
+          model: "gpt-5-mini",
+          messages: [
+            { role: "system", content: "You are a helpful assistant that responds in JSON format." },
+            { role: "user", content: prompt }
+          ],
           temperature: 0.7,
-          max_tokens: 500,
+          max_tokens: 2000,
         });
 
         const content = response.choices[0]?.message?.content?.trim();
