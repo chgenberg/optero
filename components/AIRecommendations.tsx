@@ -355,13 +355,13 @@ export default function AIRecommendations({
                 </h3>
                 
                 <div className="space-y-4 flex-grow">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <p className="text-xs sm:text-sm font-medium text-gray-600 mb-2 uppercase tracking-wide">Situation</p>
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                    <p className="text-xs sm:text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">Situation</p>
                     <p className="text-gray-800 text-sm sm:text-base leading-relaxed">{scenario.situation}</p>
                   </div>
                   
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <p className="text-xs sm:text-sm font-medium text-blue-700 mb-2 uppercase tracking-wide">Lösning</p>
+                  <div className="bg-white rounded-lg p-4 border-2 border-gray-900">
+                    <p className="text-xs sm:text-sm font-medium text-gray-900 mb-2 uppercase tracking-wide">Lösning</p>
                     <p className="text-gray-800 text-sm sm:text-base leading-relaxed">{scenario.solution}</p>
                   </div>
                   
@@ -401,13 +401,7 @@ export default function AIRecommendations({
                     <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{rec.description}</p>
                   </div>
                   <div className="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap sm:ml-4">
-                    <span className={`text-xs font-medium px-3 py-1.5 rounded-full ${
-                      rec.difficulty === 'Lätt' 
-                        ? 'bg-green-100 text-green-800' 
-                        : rec.difficulty === 'Medel' 
-                        ? 'bg-yellow-100 text-yellow-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
+                    <span className="text-xs font-medium px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 border border-gray-200">
                       {rec.difficulty}
                     </span>
                     <span className="text-xs sm:text-sm font-medium px-3 py-1.5 bg-gray-900 text-white rounded-full">
@@ -416,7 +410,7 @@ export default function AIRecommendations({
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                <div className="bg-gray-50 rounded-lg p-4 mb-4 border border-gray-100">
                   <p className="text-gray-700 text-sm sm:text-base leading-relaxed">{rec.useCase}</p>
                 </div>
 

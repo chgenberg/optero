@@ -93,7 +93,7 @@ export default function ImplementationPlan({ recommendations, profession, specia
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4 sm:gap-5">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-gray-800 to-gray-900 text-white rounded-xl sm:rounded-2xl flex items-center justify-center font-bold text-base sm:text-lg shadow-lg">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-900 text-white rounded-xl sm:rounded-2xl flex items-center justify-center font-bold text-base sm:text-lg">
                     V{week.week}
                   </div>
                   <div>
@@ -104,7 +104,7 @@ export default function ImplementationPlan({ recommendations, profession, specia
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="hidden sm:inline-flex px-3 py-1.5 bg-green-100 text-green-800 text-sm font-medium rounded-full">
+                  <span className="hidden sm:inline-flex px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-full">
                     Sparar 2-3 timmar
                   </span>
                   <svg
@@ -144,8 +144,8 @@ export default function ImplementationPlan({ recommendations, profession, specia
                 </div>
 
                 {week.week === 1 && (
-                  <div className="mt-6 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                    <p className="text-sm sm:text-base text-blue-900">
+                  <div className="mt-6 p-5 bg-gray-50 rounded-xl border border-gray-200">
+                    <p className="text-sm sm:text-base text-gray-800">
                       <span className="text-2xl mr-2">💡</span>
                       <strong>Tips för veckan:</strong> Börja smått! Dedikera bara 15-20 minuter per dag för att bygga vanan. Fokusera på en uppgift i taget.
                     </p>
@@ -153,8 +153,8 @@ export default function ImplementationPlan({ recommendations, profession, specia
                 )}
 
                 {week.week === 2 && (
-                  <div className="mt-6 p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
-                    <p className="text-sm sm:text-base text-green-900">
+                  <div className="mt-6 p-5 bg-gray-50 rounded-xl border border-gray-200">
+                    <p className="text-sm sm:text-base text-gray-800">
                       <span className="text-2xl mr-2">🚀</span>
                       <strong>Nu ökar vi tempot:</strong> Du har grunderna på plats. Denna vecka automatiserar vi fler arbetsflöden.
                     </p>
@@ -162,8 +162,8 @@ export default function ImplementationPlan({ recommendations, profession, specia
                 )}
 
                 {week.week === 3 && (
-                  <div className="mt-6 p-5 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100">
-                    <p className="text-sm sm:text-base text-purple-900">
+                  <div className="mt-6 p-5 bg-gray-50 rounded-xl border border-gray-200">
+                    <p className="text-sm sm:text-base text-gray-800">
                       <span className="text-2xl mr-2">✨</span>
                       <strong>Avancerade tekniker:</strong> Dags att ta din AI-användning till nästa nivå med kraftfulla arbetsflöden.
                     </p>
@@ -171,8 +171,8 @@ export default function ImplementationPlan({ recommendations, profession, specia
                 )}
 
                 {week.week === 4 && (
-                  <div className="mt-6 p-5 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-100">
-                    <p className="text-sm sm:text-base text-yellow-900">
+                  <div className="mt-6 p-5 bg-gray-50 rounded-xl border border-gray-200">
+                    <p className="text-sm sm:text-base text-gray-800">
                       <span className="text-2xl mr-2">🎯</span>
                       <strong>Sista pushen:</strong> Optimera och finjustera dina AI-rutiner för maximal effektivitet.
                     </p>
