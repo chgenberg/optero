@@ -113,10 +113,7 @@ export async function PUT(request: NextRequest) {
     const prompts = await prisma.promptLibrary.findMany({
       where: {
         profession,
-        OR: [
-          { translations: null },
-          { autoTranslated: false },
-        ],
+        autoTranslated: false,
       },
       take: 50, // Limit to avoid timeouts
     });
