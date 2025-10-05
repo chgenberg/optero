@@ -231,7 +231,7 @@ export default function ProfessionPrompts({ profession, scenarios = [] }: Profes
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleCopy(prompt.prompt, prompt.id);
+                        handleCopy(prompt.prompt || prompt.description, prompt.id);
                       }}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                         copiedId === prompt.id
