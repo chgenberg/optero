@@ -83,10 +83,22 @@ Anpassa material för elever med särskilda behov`;
 
         const content = response.choices[0]?.message?.content?.trim();
         if (content) {
-          tasks = content
-            .split("\n")
-            .map((line) => line.trim())
-            .filter((line) => line.length > 0 && !line.match(/^\d+\./));
+          try {
+            // Try to parse as JSON first
+            const parsed = JSON.parse(content);
+            if (Array.isArray(parsed.tasks)) {
+              tasks = parsed.tasks;
+            } else if (Array.isArray(parsed)) {
+              tasks = parsed;
+            }
+          } catch {
+            // Fallback to line-by-line parsing
+            tasks = content
+              .split("\n")
+              .map((line) => line.trim())
+              .filter((line) => line.length > 0 && !line.match(/^\d+\./))
+              .map((line) => line.replace(/^["'\-\*]\s*/, '').replace(/["',;}\]]+$/, ''));
+          }
         }
       } catch (aiError) {
         console.error("AI task generation failed:", aiError);
