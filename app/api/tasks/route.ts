@@ -8,7 +8,7 @@ const openai = process.env.OPENAI_API_KEY
 
 export async function POST(request: NextRequest) {
   try {
-    const { profession, specialization } = await request.json();
+    const { profession, specialization, language = 'en' } = await request.json();
 
     if (!profession) {
       return NextResponse.json(
@@ -53,24 +53,16 @@ export async function POST(request: NextRequest) {
     if (openai) {
       try {
         const role = specialization || profession;
-        const prompt = `Lista 8-12 vanliga arbetsuppgifter för en ${role}.
-
-Fokusera på:
-- Konkreta, specifika uppgifter (inte vaga beskrivningar)
-- Uppgifter som tar tid och kan automatiseras/förbättras med AI
-- Varierande svårighetsgrad och typ av arbete
-
-Format: En uppgift per rad, utan numrering eller punkter.
-
-Exempel för en lärare:
-Planera lektioner och skapa material
-Rätta prov och bedöma elevarbeten
-Skriva individuella utvecklingsplaner
-Kommunicera med föräldrar via mejl
-Dokumentera frånvaro och betyg
-Förbereda föräldramöten
-Skapa presentationer för lektioner
-Anpassa material för elever med särskilda behov`;
+        
+        const languagePrompts: Record<string, string> = {
+          en: `List 8-12 common work tasks for a ${role}. Focus on: concrete tasks that take time and can be automated/improved with AI. Return as JSON: {"tasks": ["task1", "task2", ...]}. Use English.`,
+          sv: `Lista 8-12 vanliga arbetsuppgifter för en ${role}. Fokusera på: konkreta uppgifter som tar tid och kan automatiseras/förbättras med AI. Returnera som JSON: {"tasks": ["uppgift1", "uppgift2", ...]}. Använd svenska.`,
+          es: `Lista 8-12 tareas laborales comunes para un ${role}. Enfócate en: tareas concretas que toman tiempo y pueden automatizarse/mejorarse con IA. Devuelve como JSON: {"tasks": ["tarea1", "tarea2", ...]}. Usa español.`,
+          fr: `Listez 8-12 tâches professionnelles courantes pour un ${role}. Concentrez-vous sur: tâches concrètes qui prennent du temps et peuvent être automatisées/améliorées avec l'IA. Retournez en JSON: {"tasks": ["tâche1", "tâche2", ...]}. Utilisez le français.`,
+          de: `Listen Sie 8-12 häufige Arbeitsaufgaben für einen ${role} auf. Fokus auf: konkrete Aufgaben, die Zeit benötigen und mit KI automatisiert/verbessert werden können. Geben Sie als JSON zurück: {"tasks": ["aufgabe1", "aufgabe2", ...]}. Verwenden Sie Deutsch.`,
+        };
+        
+        const prompt = languagePrompts[language] || languagePrompts.en;
 
         const response = await openai.chat.completions.create({
           model: "gpt-5-mini",

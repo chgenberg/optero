@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
-    const { profession, specialization, experience, challenges, tasks } = await request.json();
+    const { profession, specialization, experience, challenges, tasks, language = 'en' } = await request.json();
 
     if (!profession || !specialization) {
       return NextResponse.json(
@@ -110,17 +110,25 @@ export async function POST(request: NextRequest) {
       .sort((a, b) => (b?.priority ?? 0) - (a?.priority ?? 0))
       .map((t) => `${t.task} (prioritet: ${t.priority === 5 ? 'HÖG' : t.priority === 3 ? 'MEDEL' : t.priority === 1 ? 'LÅG' : 'OKÄND'})`);
 
-    const prompt = `Du är en expert på AI-verktyg och hur de kan användas i svenska yrken.
+    const languageContext: Record<string, string> = {
+      en: `You are an expert on AI tools and how they can be used in professional work. Create a deep, valuable analysis for this professional.`,
+      sv: `Du är en expert på AI-verktyg och hur de kan användas i svenska yrken. Skapa en djupgående, värdefull analys för denna yrkesperson i Sverige.`,
+      es: `Eres un experto en herramientas de IA y cómo se pueden usar en trabajos profesionales. Crea un análisis profundo y valioso para este profesional.`,
+      fr: `Vous êtes un expert des outils IA et de leur utilisation dans le travail professionnel. Créez une analyse approfondie et précieuse pour ce professionnel.`,
+      de: `Sie sind ein Experte für KI-Tools und deren Einsatz in der Berufswelt. Erstellen Sie eine tiefgehende, wertvolle Analyse für diesen Fachmann.`,
+    };
+    
+    const prompt = `${languageContext[language] || languageContext.en}
 
-Användarprofil:
-- Yrke: ${profession}
-- Specialisering: ${specialization}
-${experience ? `- Erfarenhetsnivå: ${experience}` : ''}
-${safeChallenges.length > 0 ? `- Största utmaningar: ${safeChallenges.join(", ")}` : ''}
-${prioritizedTasks.length > 0 ? `- Arbetsuppgifter (sorterade efter tid/prioritet):\n${prioritizedTasks.map((task) => `  * ${task}`).join('\n')}` : ''}
+User Profile:
+- Profession: ${profession}
+- Specialization: ${specialization}
+${experience ? `- Experience level: ${experience}` : ''}
+${safeChallenges.length > 0 ? `- Main challenges: ${safeChallenges.join(", ")}` : ''}
+${prioritizedTasks.length > 0 ? `- Work tasks (sorted by priority):\n${prioritizedTasks.map((task) => `  * ${task}`).join('\n')}` : ''}
 
-UPPDRAG:
-Skapa en djupgående, värdefull analys för denna yrkesperson i Sverige.
+MISSION:
+Create a deep, valuable analysis for this professional.
 
 Steg 1 – VERKLIGA SCENARION: Skapa EXAKT 3 realistiska, konkreta situationer från vardagen i detta yrke som kan lösas med AI. För varje scenario:
 - title: Kort, slagkraftig rubrik

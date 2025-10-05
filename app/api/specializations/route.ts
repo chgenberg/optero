@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: NextRequest) {
-  const { profession } = await req.json().catch(() => ({ profession: "" }));
+  const { profession, language = 'en' } = await req.json().catch(() => ({ profession: "", language: 'en' }));
   try {
     if (!profession) {
       return NextResponse.json({ error: "Saknar yrke" }, { status: 400 });
@@ -22,13 +22,15 @@ export async function POST(req: NextRequest) {
     } catch {}
 
     // 2) Generera via OpenAI
-    const prompt = `Du är karriärrådgivare i Sverige. Lista 6–12 vanliga inriktningar/specialiseringar för yrket \"${profession}\" i Sverige.
-Regler:
-- Returnera ENDAST giltig JSON: { "specializations": ["..."] }
-- Använd etablerade svenska benämningar (kortfattade, inga emojis).
-- Var branschspecifik. Ex: Trafiklärare → B, BE, A, C, D, Riskutbildning etc.
-- Om yrket är brett: inkludera arbetsmiljöer (offentlig/privat/klinisk/produktion) där relevant.
-- Ingen text utanför JSON.`;
+    const languagePrompts: Record<string, string> = {
+      en: `You are a career advisor. List 6-12 common specializations for the profession "${profession}". Return ONLY valid JSON: {"specializations": ["..."]}. Use professional English terminology. Be industry-specific. No text outside JSON.`,
+      sv: `Du är karriärrådgivare i Sverige. Lista 6–12 vanliga inriktningar för yrket "${profession}". Returnera ENDAST JSON: {"specializations": ["..."]}. Använd svenska benämningar. Var branschspecifik. Ingen text utanför JSON.`,
+      es: `Eres un asesor profesional. Lista 6-12 especializaciones comunes para la profesión "${profession}". Devuelve SOLO JSON válido: {"specializations": ["..."]}. Usa terminología profesional en español. Sé específico de la industria. Sin texto fuera de JSON.`,
+      fr: `Vous êtes conseiller en carrière. Listez 6-12 spécialisations courantes pour la profession "${profession}". Retournez UNIQUEMENT du JSON valide: {"specializations": ["..."]}. Utilisez la terminologie professionnelle française. Soyez spécifique à l'industrie. Pas de texte en dehors du JSON.`,
+      de: `Sie sind Karriereberater. Listen Sie 6-12 gängige Spezialisierungen für den Beruf "${profession}" auf. Geben Sie NUR gültiges JSON zurück: {"specializations": ["..."]}. Verwenden Sie deutsche Fachterminologie. Seien Sie branchenspezifisch. Kein Text außerhalb von JSON.`,
+    };
+    
+    const prompt = languagePrompts[language] || languagePrompts.en;
 
     const response = await openai.chat.completions.create({
       model: "gpt-5-mini",
