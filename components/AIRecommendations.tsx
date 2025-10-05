@@ -277,30 +277,55 @@ export default function AIRecommendations({
             </p>
           </div>
 
-          {/* Tabs - minimal design */}
-          <div className="flex flex-wrap justify-center gap-2 mt-8">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
-                  activeTab === tab.id
-                    ? "bg-gray-900 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                {tab.label}
-                {tab.count && (
-                  <span className="ml-2 text-sm opacity-80">({tab.count})</span>
-                )}
-              </button>
-            ))}
+          {/* Tabs - mobile optimized */}
+          <div className="mt-8">
+            {/* Mobile: Horizontal scroll */}
+            <div className="sm:hidden overflow-x-auto -mx-4 px-4">
+              <div className="flex gap-2 pb-2">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm whitespace-nowrap ${
+                      activeTab === tab.id
+                        ? "bg-gray-900 text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    {tab.label}
+                    {tab.count && (
+                      <span className="ml-1 text-xs opacity-80">({tab.count})</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Desktop: Normal flex */}
+            <div className="hidden sm:flex flex-wrap justify-center gap-2">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+                    activeTab === tab.id
+                      ? "bg-gray-900 text-white"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  {tab.label}
+                  {tab.count && (
+                    <span className="ml-2 text-sm opacity-80">({tab.count})</span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Main content - Mobile optimized */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
         {/* Scenarios tab */}
         {activeTab === "scenarios" && (
           <div className="grid gap-6 animate-fade-in-up">
@@ -309,28 +334,28 @@ export default function AIRecommendations({
                 key={index}
                 className="card group hover:shadow-xl"
               >
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
                   {scenario.title}
                 </h3>
                 
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   <div>
-                    <p className="text-sm font-medium text-gray-500 mb-1">Situation:</p>
-                    <p className="text-gray-700">{scenario.situation}</p>
+                    <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1">Situation:</p>
+                    <p className="text-gray-700 text-sm sm:text-base">{scenario.situation}</p>
                   </div>
                   
                   <div>
-                    <p className="text-sm font-medium text-gray-500 mb-1">Lösning:</p>
-                    <p className="text-gray-700">{scenario.solution}</p>
+                    <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1">Lösning:</p>
+                    <p className="text-gray-700 text-sm sm:text-base">{scenario.solution}</p>
                   </div>
                   
                   <div>
-                    <p className="text-sm font-medium text-gray-500 mb-2">Rekommenderade verktyg:</p>
+                    <p className="text-xs sm:text-sm font-medium text-gray-500 mb-2">Rekommenderade verktyg:</p>
                     <div className="flex flex-wrap gap-2">
                       {scenario.tools.map((tool, i) => (
                         <span
                           key={i}
-                          className="px-3 py-1 bg-gray-900 text-white text-sm rounded-full"
+                          className="px-2 sm:px-3 py-1 bg-gray-900 text-white text-xs sm:text-sm rounded-full"
                         >
                           {tool}
                         </span>
@@ -352,15 +377,15 @@ export default function AIRecommendations({
                 className="card-interactive"
                 onClick={() => setExpandedCard(expandedCard === index ? null : index)}
               >
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4">
+                  <div className="mb-3 sm:mb-0">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1">
                       {rec.name}
                     </h3>
-                    <p className="text-gray-600">{rec.description}</p>
+                    <p className="text-gray-600 text-sm sm:text-base">{rec.description}</p>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className={`text-xs font-medium px-3 py-1 rounded-full ${
+                  <div className="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
+                    <span className={`text-xs font-medium px-2 sm:px-3 py-1 rounded-full ${
                       rec.difficulty === 'Lätt' 
                         ? 'bg-green-100 text-green-800' 
                         : rec.difficulty === 'Medel' 
@@ -369,13 +394,13 @@ export default function AIRecommendations({
                     }`}>
                       {rec.difficulty}
                     </span>
-                    <span className="text-sm font-medium px-3 py-1 bg-gray-100 text-gray-700 rounded-full">
+                    <span className="text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 bg-gray-100 text-gray-700 rounded-full">
                       {rec.timeSaved}
                     </span>
                   </div>
                 </div>
 
-                <p className="text-gray-700 mb-4">{rec.useCase}</p>
+                <p className="text-gray-700 mb-4 text-sm sm:text-base">{rec.useCase}</p>
 
                 {expandedCard === index && (
                   <div className="pt-4 border-t border-gray-100 space-y-4 animate-fade-in">
@@ -477,9 +502,10 @@ export default function AIRecommendations({
         <div className="text-center mt-12 space-y-4">
             <button
               onClick={() => router.push("/premium/purchase")}
-              className="btn-primary px-8 py-4 text-lg"
+              className="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 animate-pulse-scale shadow-lg hover:shadow-xl"
             >
-              Få din kompletta guide
+              <span className="relative z-10">Få din kompletta guide</span>
+              <div className="absolute inset-0 bg-blue-400 rounded-xl opacity-50 animate-ping"></div>
             </button>
             <p className="text-gray-600 text-sm">
               19€ (197 SEK) - PDF, AI-Coach i 30 dagar & mer
@@ -493,11 +519,11 @@ export default function AIRecommendations({
         </div>
       )}
 
-      {/* Share section - Subtle */}
+      {/* Share section - Mobile optimized */}
       {!isDemo && (
-        <div className="bg-gray-50 rounded-2xl p-6 mt-12">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">🎉 Dela med dina kollegor!</h3>
-          <p className="text-gray-600 text-sm mb-6">
+        <div className="bg-gray-50 rounded-2xl p-4 sm:p-6 mt-8 sm:mt-12">
+          <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">🎉 Dela med dina kollegor!</h3>
+          <p className="text-gray-600 text-xs sm:text-sm mb-4 sm:mb-6">
             Hjälp andra {profession.toLowerCase()}s att spara tid med AI
           </p>
           <ShareButtons
@@ -505,7 +531,7 @@ export default function AIRecommendations({
             specialization={specialization}
             timeSaved="8-12 timmar per vecka"
           />
-          <p className="text-gray-500 text-xs mt-4">
+          <p className="text-gray-500 text-xs mt-3 sm:mt-4">
             💡 Tips: För varje kollega som testar får du en månad extra support gratis!
           </p>
         </div>

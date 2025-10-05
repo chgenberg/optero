@@ -67,12 +67,12 @@ export default function ImplementationPlan({ recommendations, profession, specia
   ];
 
   return (
-    <div className="mt-8 p-8 bg-gray-50 rounded-3xl">
-      <div className="text-center mb-8">
-        <h3 className="text-2xl font-light text-gray-900 mb-2">
+    <div className="mt-8 p-4 sm:p-8 bg-gray-50 rounded-2xl sm:rounded-3xl">
+      <div className="text-center mb-6 sm:mb-8">
+        <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-2">
           Din 30-dagars implementeringsplan
         </h3>
-        <p className="text-gray-600">
+        <p className="text-gray-600 text-sm sm:text-base">
           Steg för steg mot ett mer effektivt arbetssätt
         </p>
       </div>
@@ -92,13 +92,13 @@ export default function ImplementationPlan({ recommendations, profession, specia
               className="w-full p-6 text-left"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-900 text-white rounded-xl flex items-center justify-center font-medium">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-900 text-white rounded-lg sm:rounded-xl flex items-center justify-center font-medium text-sm sm:text-base">
                     V{week.week}
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-gray-900">{week.title}</h4>
-                    <p className="text-sm text-gray-600">Fokus: {week.focus}</p>
+                    <h4 className="text-base sm:text-lg font-medium text-gray-900">{week.title}</h4>
+                    <p className="text-xs sm:text-sm text-gray-600">Fokus: {week.focus}</p>
                   </div>
                 </div>
                 <svg
