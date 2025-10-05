@@ -2,14 +2,16 @@ import sv from '../locales/sv/common.json';
 import en from '../locales/en/common.json';
 import es from '../locales/es/common.json';
 import fr from '../locales/fr/common.json';
+import de from '../locales/de/common.json';
 
-export type Locale = 'sv' | 'en' | 'es' | 'fr';
+export type Locale = 'sv' | 'en' | 'es' | 'fr' | 'de';
 
 const translations = {
   sv,
   en,
   es,
   fr,
+  de,
 };
 
 export function getTranslations(locale: Locale = 'sv') {
@@ -39,8 +41,9 @@ export function getNestedTranslation(obj: any, path: string, params?: Record<str
 }
 
 export const languages = [
-  { code: 'sv' as Locale, name: 'Svenska', flag: '🇸🇪' },
   { code: 'en' as Locale, name: 'English', flag: '🇬🇧' },
+  { code: 'sv' as Locale, name: 'Svenska', flag: '🇸🇪' },
+  { code: 'de' as Locale, name: 'Deutsch', flag: '🇩🇪' },
   { code: 'es' as Locale, name: 'Español', flag: '🇪🇸' },
   { code: 'fr' as Locale, name: 'Français', flag: '🇫🇷' },
 ];

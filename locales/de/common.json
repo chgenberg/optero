@@ -1,0 +1,31 @@
+{
+  "hero": {
+    "title": "HOLEN SIE SICH IHRE ZEIT ZURÜCK",
+    "subtitle": "Entdecken Sie KI-Tools für Ihren Beruf. Sparen Sie 5-15 Stunden pro Woche.",
+    "cta": "Jetzt starten",
+    "demoLink": "Beispiel ansehen →"
+  },
+  "profession": {
+    "label": "Was ist Ihr Beruf?",
+    "placeholder": "Z.B. Lehrer, Buchhalter, Projektmanager...",
+    "button": "Weiter",
+    "customLabel": "Oder schreiben Sie Ihren eigenen:",
+    "customPlaceholder": "Geben Sie hier Ihren Beruf ein...",
+    "customHint": "Beschreiben Sie Ihren Beruf so spezifisch wie möglich"
+  },
+  "specialization": {
+    "title": "Was ist Ihre Spezialisierung innerhalb {profession}?",
+    "button": "Weiter",
+    "customLabel": "Können Sie Ihre Spezialisierung nicht finden?",
+    "customHint": "Geben Sie unten Ihre eigene Spezialisierung ein",
+    "customPlaceholder": "Z.B. B2B-Vertrieb, Immobilienverkauf...",
+    "loading": "Spezialisierungen werden geladen..."
+  },
+  "tasks": {
+    "title": "Was sind Ihre Arbeitsaufgaben?",
+    "subtitle": "Wählen Sie die Aufgaben aus, die Sie mit KI vereinfachen möchten",
+    "button": "Meinen KI-Leitfaden erstellen",
+    "selected": "{count} Aufgaben ausgewählt",
+    "loading": "Arbeitsaufgaben werden geladen..."
+  }
+}
