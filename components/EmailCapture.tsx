@@ -99,12 +99,14 @@ export default function EmailCapture({ onSubmit, profession, specialization }: E
                   className="w-5 h-5 mt-0.5 rounded border-gray-300 text-gray-900 focus:ring-gray-500"
                 />
                 <span className="text-sm text-gray-700 leading-relaxed">
-                  Jag godkänner att Optero sparar mina uppgifter enligt{" "}
-                  <Link href="/integritetspolicy" target="_blank" className="underline hover:no-underline">
+                  Jag godkänner att Mendio sparar mina uppgifter enligt{" "}
+                  <Link href="/integritetspolicy" target="_blank" className="underline hover:no-underline font-medium">
                     integritetspolicyn
                   </Link>
-                  . Vi använder din data för att förbättra tjänsten och skicka relevanta uppdateringar. 
-                  Du kan när som helst avregistrera dig.
+                  {" "}för att förbättra tjänsten.{" "}
+                  <Link href="/integritetspolicy" target="_blank" className="text-gray-500 hover:text-gray-700 text-xs">
+                    Läs mer →
+                  </Link>
                 </span>
               </label>
             </div>
