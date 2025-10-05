@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import InterviewHelp from "@/components/InterviewHelp";
 
 interface Question {
   id: string;
@@ -27,6 +28,7 @@ function PremiumInterviewContent() {
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
     // Check if coming from Stripe success
@@ -150,9 +152,17 @@ function PremiumInterviewContent() {
 
         {/* Question card */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
-          <h3 className="text-xl sm:text-2xl font-medium text-gray-900 mb-6">
-            {currentQuestion?.question}
-          </h3>
+          <div className="flex items-start justify-between mb-6">
+            <h3 className="text-xl sm:text-2xl font-medium text-gray-900 flex-1">
+              {currentQuestion?.question}
+            </h3>
+            <button
+              onClick={() => setShowHelp(true)}
+              className="ml-4 w-8 h-8 rounded-full border-2 border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors flex items-center justify-center text-lg font-medium flex-shrink-0"
+            >
+              ?
+            </button>
+          </div>
 
           {/* Answer input based on type */}
           {currentQuestion?.type === "text" && (
@@ -236,6 +246,12 @@ function PremiumInterviewContent() {
           Dina svar används endast för att skapa din personliga AI-guide och sparas inte.
         </p>
       </div>
+      
+      <InterviewHelp 
+        question={currentQuestion?.question || ""}
+        isOpen={showHelp}
+        onClose={() => setShowHelp(false)}
+      />
     </div>
   );
 }
