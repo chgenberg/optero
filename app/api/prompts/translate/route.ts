@@ -68,9 +68,12 @@ Return ONLY valid JSON with the translated content in the same structure.`;
       try {
         const response = await openai.chat.completions.create({
           model: "gpt-5",
-          messages: [{ role: "user", content: translationPrompt }],
+          messages: [
+            { role: "system", content: "You are a professional translator that responds in JSON format." },
+            { role: "user", content: translationPrompt }
+          ],
           temperature: 0.3, // Lower temperature for more accurate translations
-          response_format: { type: "json_object" },
+          max_tokens: 8000,
         });
 
         const translatedContent = JSON.parse(response.choices[0]?.message?.content || "{}");

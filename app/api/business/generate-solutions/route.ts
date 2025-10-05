@@ -105,7 +105,7 @@ KVALITETSKRAV:
         { role: "user", content: userPrompt },
       ],
       temperature: 0.7,
-      response_format: { type: "json_object" },
+      max_tokens: 16000,
     });
 
     const result = JSON.parse(completion.choices[0].message.content || "{}");
