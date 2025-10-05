@@ -61,10 +61,10 @@
 
 @keyframes gradient-x {
   0%, 100% {
-    transform: translateX(0%);
+    background-position: 0% 50%;
   }
   50% {
-    transform: translateX(100%);
+    background-position: 100% 50%;
   }
 }
 

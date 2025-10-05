@@ -79,7 +79,7 @@ export default function BusinessPage() {
           <div className="space-y-12 max-w-2xl mx-auto w-full">
             <div className="relative group">
               {/* Animated border container */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-2xl opacity-75 group-hover:opacity-100 blur-sm transition duration-1000 group-hover:duration-200 animate-gradient-x"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-2xl opacity-75 group-hover:opacity-100 blur-sm transition duration-1000 group-hover:duration-200 animate-gradient-x overflow-hidden"></div>
               
               {/* Content */}
               <div className="relative bg-white rounded-2xl p-8 sm:p-12">
