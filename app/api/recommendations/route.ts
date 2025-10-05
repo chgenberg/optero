@@ -47,9 +47,10 @@ export async function POST(request: NextRequest) {
             }
           });
 
-          console.log(`Cache hit for ${profession}/${specialization}`);
+          console.log(`💾 Cache hit for ${profession}/${specialization}`);
           
           // Get related prompts for this profession/specialization
+          console.log(`📚 Fetching prompts for cached result...`);
           const prompts = await prisma.promptLibrary.findMany({
             where: {
               profession,
@@ -221,20 +222,10 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
             result.inferredTasks = Array.isArray(parsed.inferredTasks) ? parsed.inferredTasks : [];
             result.recommendations = Array.isArray(parsed.recommendations) ? parsed.recommendations : [];
 
-            // Generate prompts FIRST (outside cache try-catch for better error visibility)
+            // Get existing prompts FIRST (fast)
             if (process.env.DATABASE_URL && result.recommendations.length > 0) {
-              console.log('🎯 Starting prompt generation...');
               try {
-                const newPrompts = await generatePrompts(profession, specialization, safeTasks);
-                console.log(`✅ Generated ${newPrompts.length} new prompts`);
-              } catch (promptError) {
-                console.error("❌ Failed to generate prompts:", promptError);
-                console.error("Prompt error details:", promptError instanceof Error ? promptError.message : promptError);
-              }
-              
-              // Get all prompts (existing + new)
-              try {
-                const allPrompts = await prisma.promptLibrary.findMany({
+                const existingPrompts = await prisma.promptLibrary.findMany({
                   where: {
                     profession,
                     specialization: specialization || null,
@@ -246,11 +237,11 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
                   take: 30
                 });
                 
-                console.log(`📚 Found ${allPrompts.length} total prompts for ${profession}`);
+                console.log(`📚 Found ${existingPrompts.length} existing prompts for ${profession}`);
                 
-                // Enhance scenarios with prompts
+                // Enhance scenarios with existing prompts
                 result.scenarios = result.scenarios.map((scenario: any) => {
-                  const relevantPrompts = allPrompts
+                  const relevantPrompts = existingPrompts
                     .filter(p => {
                       const tags = Array.isArray(p.tags) ? p.tags : [];
                       return tags.some((tag: any) => 
@@ -262,7 +253,7 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
                     .slice(0, 3);
                   
                   if (relevantPrompts.length < 3) {
-                    const additionalPrompts = allPrompts
+                    const additionalPrompts = existingPrompts
                       .filter(p => !relevantPrompts.includes(p))
                       .slice(0, 3 - relevantPrompts.length);
                     relevantPrompts.push(...additionalPrompts);
@@ -274,12 +265,12 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
                   };
                 });
                 
-                result.prompts = allPrompts.slice(0, 10);
+                result.prompts = existingPrompts.slice(0, 10);
               } catch (promptFetchError) {
                 console.error("Failed to fetch prompts from DB:", promptFetchError);
               }
               
-              // Save to cache AFTER prompts are generated
+              // Save to cache
               try {
                 await prisma.recommendationCache.create({
                   data: {
@@ -297,8 +288,11 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
                 console.log(`💾 Cached new results for ${profession}/${specialization}`);
               } catch (cacheError) {
                 console.error("Failed to cache results:", cacheError);
-                // Continue anyway - prompts are already saved
               }
+              
+              // Generate NEW prompts in background (non-blocking)
+              console.log('🎯 Triggering background prompt generation...');
+              generatePromptsInBackground(profession, specialization, safeTasks);
             }
           }
         }
@@ -335,7 +329,19 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
   }
 }
 
-// Helper function to generate prompts synchronously
+// Helper function to trigger background prompt generation (non-blocking)
+function generatePromptsInBackground(profession: string, specialization: string, tasks: any[]) {
+  // Fire and forget - don't await
+  generatePrompts(profession, specialization, tasks)
+    .then(prompts => {
+      console.log(`🎉 Background generation complete: ${prompts.length} prompts saved`);
+    })
+    .catch(err => {
+      console.error('❌ Background prompt generation failed:', err);
+    });
+}
+
+// Helper function to generate prompts
 async function generatePrompts(profession: string, specialization: string, tasks: any[]) {
   console.log(`🔧 generatePrompts called for: ${profession} / ${specialization}`);
   
@@ -412,7 +418,7 @@ Format som JSON:
     const openai = new OpenAI({ 
       apiKey: process.env.OPENAI_API_KEY!,
       maxRetries: 1,
-      timeout: 60000,
+      timeout: 180000, // 3 minutes for prompt generation
     });
 
     const response = await openai.chat.completions.create({
