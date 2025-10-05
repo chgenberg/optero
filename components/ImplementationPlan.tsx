@@ -77,65 +77,107 @@ export default function ImplementationPlan({ recommendations, profession, specia
         </p>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-4 lg:grid-cols-2">
         {weeklyPlan.map((week) => (
           <div
             key={week.week}
             className={`bg-white rounded-2xl border transition-all duration-300 ${
               expandedWeek === week.week 
-                ? 'border-gray-300 shadow-md' 
-                : 'border-gray-100 hover:border-gray-200'
+                ? 'border-gray-900 shadow-xl lg:col-span-2' 
+                : 'border-gray-200 hover:border-gray-400 hover:shadow-lg'
             }`}
           >
             <button
               onClick={() => setExpandedWeek(expandedWeek === week.week ? null : week.week)}
-              className="w-full p-6 text-left"
+              className="w-full p-6 sm:p-8 text-left"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-900 text-white rounded-lg sm:rounded-xl flex items-center justify-center font-medium text-sm sm:text-base">
+                <div className="flex items-center gap-4 sm:gap-5">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-gray-800 to-gray-900 text-white rounded-xl sm:rounded-2xl flex items-center justify-center font-bold text-base sm:text-lg shadow-lg">
                     V{week.week}
                   </div>
                   <div>
-                    <h4 className="text-base sm:text-lg font-medium text-gray-900">{week.title}</h4>
-                    <p className="text-xs sm:text-sm text-gray-600">Fokus: {week.focus}</p>
+                    <h4 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1">{week.title}</h4>
+                    <p className="text-sm sm:text-base text-gray-600">
+                      <span className="font-medium">Fokus:</span> {week.focus}
+                    </p>
                   </div>
                 </div>
-                <svg
-                  className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
-                    expandedWeek === week.week ? 'rotate-180' : ''
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                <div className="flex items-center gap-3">
+                  <span className="hidden sm:inline-flex px-3 py-1.5 bg-green-100 text-green-800 text-sm font-medium rounded-full">
+                    Sparar 2-3 timmar
+                  </span>
+                  <svg
+                    className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+                      expandedWeek === week.week ? 'rotate-180' : ''
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </div>
             </button>
 
             {expandedWeek === week.week && (
-              <div className="px-6 pb-6 animate-fade-in-up">
-                <div className="pl-16">
-                  <ul className="space-y-3">
-                    {week.tasks.map((task, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <span className="text-xs text-gray-600">{index + 1}</span>
+              <div className="px-6 sm:px-8 pb-6 sm:pb-8 animate-fade-in-up">
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {week.tasks.map((task, index) => (
+                    <div key={index} className="bg-gray-50 rounded-xl p-5 hover:bg-gray-100 transition-colors">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-gray-900 text-white rounded-lg flex items-center justify-center flex-shrink-0 font-semibold text-sm">
+                          {index + 1}
                         </div>
-                        <span className="text-gray-700">{task}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {week.week === 1 && (
-                    <div className="mt-4 p-4 bg-blue-50 rounded-xl">
-                      <p className="text-sm text-blue-800">
-                        💡 <strong>Tips:</strong> Börja smått! 15 minuter om dagen räcker för att komma igång.
-                      </p>
+                        <div className="flex-1">
+                          <p className="text-gray-800 font-medium mb-1">{task}</p>
+                          <p className="text-xs text-gray-500">
+                            {index === 0 && "Börja här"}
+                            {index === 1 && "Bygg vidare"}
+                            {index === 2 && "Fördjupa"}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                  )}
+                  ))}
                 </div>
+
+                {week.week === 1 && (
+                  <div className="mt-6 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                    <p className="text-sm sm:text-base text-blue-900">
+                      <span className="text-2xl mr-2">💡</span>
+                      <strong>Tips för veckan:</strong> Börja smått! Dedikera bara 15-20 minuter per dag för att bygga vanan. Fokusera på en uppgift i taget.
+                    </p>
+                  </div>
+                )}
+
+                {week.week === 2 && (
+                  <div className="mt-6 p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
+                    <p className="text-sm sm:text-base text-green-900">
+                      <span className="text-2xl mr-2">🚀</span>
+                      <strong>Nu ökar vi tempot:</strong> Du har grunderna på plats. Denna vecka automatiserar vi fler arbetsflöden.
+                    </p>
+                  </div>
+                )}
+
+                {week.week === 3 && (
+                  <div className="mt-6 p-5 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100">
+                    <p className="text-sm sm:text-base text-purple-900">
+                      <span className="text-2xl mr-2">✨</span>
+                      <strong>Avancerade tekniker:</strong> Dags att ta din AI-användning till nästa nivå med kraftfulla arbetsflöden.
+                    </p>
+                  </div>
+                )}
+
+                {week.week === 4 && (
+                  <div className="mt-6 p-5 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-100">
+                    <p className="text-sm sm:text-base text-yellow-900">
+                      <span className="text-2xl mr-2">🎯</span>
+                      <strong>Sista pushen:</strong> Optimera och finjustera dina AI-rutiner för maximal effektivitet.
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>

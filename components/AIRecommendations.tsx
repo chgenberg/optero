@@ -341,37 +341,37 @@ export default function AIRecommendations({
       </div>
 
       {/* Main content - Mobile optimized */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
         {/* Scenarios tab */}
         {activeTab === "scenarios" && (
-          <div className="grid gap-6 animate-fade-in-up">
+          <div className="grid gap-6 lg:grid-cols-2 animate-fade-in-up">
             {scenarios.map((scenario, index) => (
               <div
                 key={index}
-                className="card group hover:shadow-xl"
+                className="card group hover:shadow-xl flex flex-col"
               >
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 lg:min-h-[3rem]">
                   {scenario.title}
                 </h3>
                 
-                <div className="space-y-3 sm:space-y-4">
-                  <div>
-                    <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1">Situation:</p>
-                    <p className="text-gray-700 text-sm sm:text-base">{scenario.situation}</p>
+                <div className="space-y-4 flex-grow">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 mb-2 uppercase tracking-wide">Situation</p>
+                    <p className="text-gray-800 text-sm sm:text-base leading-relaxed">{scenario.situation}</p>
+                  </div>
+                  
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <p className="text-xs sm:text-sm font-medium text-blue-700 mb-2 uppercase tracking-wide">Lösning</p>
+                    <p className="text-gray-800 text-sm sm:text-base leading-relaxed">{scenario.solution}</p>
                   </div>
                   
                   <div>
-                    <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1">Lösning:</p>
-                    <p className="text-gray-700 text-sm sm:text-base">{scenario.solution}</p>
-                  </div>
-                  
-                  <div>
-                    <p className="text-xs sm:text-sm font-medium text-gray-500 mb-2">Rekommenderade verktyg:</p>
+                    <p className="text-xs sm:text-sm font-medium text-gray-500 mb-3">Rekommenderade verktyg:</p>
                     <div className="flex flex-wrap gap-2">
                       {scenario.tools.map((tool, i) => (
                         <span
                           key={i}
-                          className="px-2 sm:px-3 py-1 bg-gray-900 text-white text-xs sm:text-sm rounded-full"
+                          className="px-3 py-1.5 bg-gray-900 text-white text-xs sm:text-sm rounded-full hover:bg-gray-800 transition-colors cursor-pointer"
                         >
                           {tool}
                         </span>
@@ -386,22 +386,22 @@ export default function AIRecommendations({
 
         {/* Tools tab */}
         {activeTab === "tools" && (
-          <div className="grid gap-6 animate-fade-in-up">
+          <div className="grid gap-6 lg:grid-cols-2 animate-fade-in-up">
             {recommendations.slice(0, 5).map((rec, index) => (
               <div
                 key={index}
-                className="card-interactive"
+                className="card-interactive flex flex-col"
                 onClick={() => setExpandedCard(expandedCard === index ? null : index)}
               >
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4">
-                  <div className="mb-3 sm:mb-0">
-                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1">
+                  <div className="mb-3 sm:mb-0 flex-grow">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
                       {rec.name}
                     </h3>
-                    <p className="text-gray-600 text-sm sm:text-base">{rec.description}</p>
+                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{rec.description}</p>
                   </div>
-                  <div className="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
-                    <span className={`text-xs font-medium px-2 sm:px-3 py-1 rounded-full ${
+                  <div className="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap sm:ml-4">
+                    <span className={`text-xs font-medium px-3 py-1.5 rounded-full ${
                       rec.difficulty === 'Lätt' 
                         ? 'bg-green-100 text-green-800' 
                         : rec.difficulty === 'Medel' 
@@ -410,13 +410,15 @@ export default function AIRecommendations({
                     }`}>
                       {rec.difficulty}
                     </span>
-                    <span className="text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 bg-gray-100 text-gray-700 rounded-full">
+                    <span className="text-xs sm:text-sm font-medium px-3 py-1.5 bg-gray-900 text-white rounded-full">
                       {rec.timeSaved}
                     </span>
                   </div>
                 </div>
 
-                <p className="text-gray-700 mb-4 text-sm sm:text-base">{rec.useCase}</p>
+                <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                  <p className="text-gray-700 text-sm sm:text-base leading-relaxed">{rec.useCase}</p>
+                </div>
 
                 {expandedCard === index && (
                   <div className="pt-4 border-t border-gray-100 space-y-4 animate-fade-in">
