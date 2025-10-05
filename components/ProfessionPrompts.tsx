@@ -9,10 +9,17 @@ interface Prompt {
   description: string;
   timeSaved: string;
   difficulty: string;
-  prompt: string;
-  example: string;
-  howToUse: string;
-  tools: string[];
+  prompt?: string;
+  example?: string;
+  howToUse?: string;
+  tools?: string[];
+  challenge?: string;
+  solution?: string;
+  bestPractice?: string;
+  expectedOutcome?: string;
+  category?: string;
+  agentReady?: boolean;
+  multiModal?: boolean;
 }
 
 interface Category {
