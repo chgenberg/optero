@@ -221,30 +221,19 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
             result.inferredTasks = Array.isArray(parsed.inferredTasks) ? parsed.inferredTasks : [];
             result.recommendations = Array.isArray(parsed.recommendations) ? parsed.recommendations : [];
 
-            // Save to cache if we have valid results
+            // Generate prompts FIRST (outside cache try-catch for better error visibility)
             if (process.env.DATABASE_URL && result.recommendations.length > 0) {
+              console.log('🎯 Starting prompt generation...');
               try {
-                await prisma.recommendationCache.create({
-                  data: {
-                    cacheKey,
-                    profession,
-                    specialization,
-                    tasks: safeTasks,
-                    experience,
-                    challenges: safeChallenges,
-                    recommendations: result.recommendations,
-                    scenarios: result.scenarios,
-                    inferredTasks: result.inferredTasks
-                  }
-                });
-                console.log(`Cached new results for ${profession}/${specialization}`);
-                
-                // Generate prompts SYNCHRONOUSLY so they're included in the response
-                console.log('Generating prompts for scenarios...');
                 const newPrompts = await generatePrompts(profession, specialization, safeTasks);
-                console.log(`Generated ${newPrompts.length} new prompts`);
-                
-                // Get all prompts (existing + new)
+                console.log(`✅ Generated ${newPrompts.length} new prompts`);
+              } catch (promptError) {
+                console.error("❌ Failed to generate prompts:", promptError);
+                console.error("Prompt error details:", promptError instanceof Error ? promptError.message : promptError);
+              }
+              
+              // Get all prompts (existing + new)
+              try {
                 const allPrompts = await prisma.promptLibrary.findMany({
                   where: {
                     profession,
@@ -256,6 +245,8 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
                   ],
                   take: 30
                 });
+                
+                console.log(`📚 Found ${allPrompts.length} total prompts for ${profession}`);
                 
                 // Enhance scenarios with prompts
                 result.scenarios = result.scenarios.map((scenario: any) => {
@@ -284,9 +275,29 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
                 });
                 
                 result.prompts = allPrompts.slice(0, 10);
+              } catch (promptFetchError) {
+                console.error("Failed to fetch prompts from DB:", promptFetchError);
+              }
+              
+              // Save to cache AFTER prompts are generated
+              try {
+                await prisma.recommendationCache.create({
+                  data: {
+                    cacheKey,
+                    profession,
+                    specialization,
+                    tasks: safeTasks,
+                    experience,
+                    challenges: safeChallenges,
+                    recommendations: result.recommendations,
+                    scenarios: result.scenarios,
+                    inferredTasks: result.inferredTasks
+                  }
+                });
+                console.log(`💾 Cached new results for ${profession}/${specialization}`);
               } catch (cacheError) {
                 console.error("Failed to cache results:", cacheError);
-                // Continue anyway
+                // Continue anyway - prompts are already saved
               }
             }
           }
@@ -326,8 +337,11 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
 
 // Helper function to generate prompts synchronously
 async function generatePrompts(profession: string, specialization: string, tasks: any[]) {
+  console.log(`🔧 generatePrompts called for: ${profession} / ${specialization}`);
+  
   try {
     // Check existing prompts to avoid duplicates
+    console.log('📖 Checking existing prompts...');
     const existingPrompts = await prisma.promptLibrary.findMany({
       where: {
         profession,
@@ -338,11 +352,14 @@ async function generatePrompts(profession: string, specialization: string, tasks
         prompt: true,
       },
     });
+    console.log(`Found ${existingPrompts.length} existing prompts`);
 
     // Generate new prompts
     const taskList = tasks?.map((t: any) => t.task || t).join(", ") || "";
     const role = specialization || profession;
     const existingPromptNames = existingPrompts.map(p => p.name).join(", ");
+    
+    console.log(`🤖 Calling GPT-5 to generate prompts for ${role}...`);
     
     const prompt = `Skapa 10 högkvalitativa, värdefulla AI-prompts för: ${role}
 
@@ -407,13 +424,18 @@ Format som JSON:
       max_completion_tokens: 16000,
     });
 
+    console.log('✅ GPT-5 response received');
+    
     const data = JSON.parse(response.choices[0].message.content || "{}");
     const generatedPrompts = data.prompts || [];
+    
+    console.log(`📝 Parsed ${generatedPrompts.length} prompts from GPT-5 response`);
 
     // Save to database
     const savedPrompts = [];
     for (const promptData of generatedPrompts) {
       try {
+        console.log(`💾 Saving prompt: ${promptData.name}`);
         const saved = await prisma.promptLibrary.create({
           data: {
             profession,
@@ -441,14 +463,18 @@ Format som JSON:
           },
         });
         savedPrompts.push(saved);
+        console.log(`✅ Saved prompt: ${saved.name}`);
       } catch (error) {
-        console.error("Failed to save prompt:", error);
+        console.error(`❌ Failed to save prompt ${promptData.name}:`, error);
+        console.error("Error details:", error instanceof Error ? error.message : error);
       }
     }
 
+    console.log(`🎉 Successfully saved ${savedPrompts.length}/${generatedPrompts.length} prompts`);
     return savedPrompts;
   } catch (error) {
-    console.error("Error generating prompts:", error);
+    console.error("❌ Error generating prompts:", error);
+    console.error("Error stack:", error instanceof Error ? error.stack : error);
     return [];
   }
 }
