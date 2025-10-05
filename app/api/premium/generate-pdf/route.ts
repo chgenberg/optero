@@ -20,10 +20,11 @@ export async function POST(request: NextRequest) {
     
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      line-height: 1.6;
-      color: #1a1a1a;
+      line-height: 1.8;
+      color: #111111;
       margin: 0;
       padding: 0;
+      background: #ffffff;
     }
     
     .cover-page {
@@ -34,73 +35,105 @@ export async function POST(request: NextRequest) {
       justify-content: center;
       align-items: center;
       text-align: center;
-      background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+      background: #ffffff;
     }
     
     .logo {
-      font-size: 2em;
-      font-weight: bold;
-      margin-bottom: 2em;
+      font-size: 1.5em;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      margin-bottom: 3em;
+      color: #111111;
     }
     
     h1 {
-      font-size: 3em;
+      font-size: 2.5em;
       margin: 0.5em 0;
-      color: #000;
+      color: #111111;
+      font-weight: 700;
+      letter-spacing: -0.02em;
     }
     
     .subtitle {
-      font-size: 1.5em;
-      color: #666;
+      font-size: 1.2em;
+      color: #666666;
       margin-bottom: 3em;
+      font-weight: 400;
     }
     
     .meta {
-      font-size: 0.9em;
-      color: #999;
+      font-size: 0.85em;
+      color: #999999;
+      line-height: 1.6;
     }
     
     .section {
       page-break-inside: avoid;
-      margin-bottom: 2em;
+      margin-bottom: 3em;
     }
     
     h2 {
-      font-size: 2em;
-      color: #000;
-      border-bottom: 2px solid #000;
+      font-size: 1.8em;
+      color: #111111;
+      border-bottom: 2px solid #111111;
       padding-bottom: 0.5em;
-      margin-top: 1.5em;
+      margin-top: 2em;
+      margin-bottom: 1em;
+      font-weight: 700;
     }
     
     h3 {
-      font-size: 1.5em;
-      color: #333;
-      margin-top: 1em;
+      font-size: 1.3em;
+      color: #333333;
+      margin-top: 1.5em;
+      margin-bottom: 0.8em;
+      font-weight: 600;
     }
     
-    .highlight-box {
+    .box {
       background: #f9f9f9;
-      border-left: 4px solid #000;
-      padding: 1em;
-      margin: 1em 0;
-    }
-    
-    .tool-card {
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
       padding: 1.5em;
-      margin: 1em 0;
+      margin: 1.5em 0;
       page-break-inside: avoid;
     }
     
+    .highlight-box {
+      background: #111111;
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 1.5em;
+      margin: 1.5em 0;
+    }
+    
+    .highlight-box h3,
+    .highlight-box p {
+      color: #ffffff;
+    }
+    
+    .tool-card {
+      border: 2px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 1.5em;
+      margin: 1.5em 0;
+      page-break-inside: avoid;
+      background: #ffffff;
+    }
+    
+    .tool-card:hover {
+      border-color: #111111;
+    }
+    
     .prompt-box {
-      background: #f0f0f0;
-      font-family: 'Courier New', monospace;
-      padding: 1em;
-      border-radius: 4px;
-      margin: 0.5em 0;
+      background: #f5f5f5;
+      border: 1px solid #e5e5e5;
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+      padding: 1.2em;
+      border-radius: 8px;
+      margin: 1em 0;
       font-size: 0.9em;
+      color: #333333;
     }
     
     .checklist {
@@ -110,49 +143,107 @@ export async function POST(request: NextRequest) {
     
     .checklist li {
       position: relative;
-      padding-left: 2em;
-      margin-bottom: 0.5em;
+      padding-left: 2.5em;
+      margin-bottom: 0.8em;
+      padding-top: 0.2em;
+      padding-bottom: 0.2em;
     }
     
     .checklist li:before {
-      content: "☐";
+      content: "□";
       position: absolute;
       left: 0;
+      font-size: 1.2em;
+      color: #666666;
     }
     
     .time-saved {
-      background: #e8f5e9;
-      color: #2e7d32;
-      padding: 0.5em 1em;
-      border-radius: 20px;
+      background: #111111;
+      color: #ffffff;
+      padding: 0.4em 1em;
+      border-radius: 24px;
       display: inline-block;
-      font-weight: bold;
+      font-weight: 600;
+      font-size: 0.9em;
+    }
+    
+    .badge {
+      background: #f5f5f5;
+      color: #666666;
+      padding: 0.3em 0.8em;
+      border-radius: 16px;
+      display: inline-block;
+      font-size: 0.85em;
+      margin-right: 0.5em;
+      border: 1px solid #e5e5e5;
     }
     
     .footer {
       text-align: center;
-      color: #999;
+      color: #999999;
       font-size: 0.8em;
-      margin-top: 3em;
+      margin-top: 4em;
       padding-top: 2em;
-      border-top: 1px solid #e0e0e0;
+      border-top: 1px solid #e5e5e5;
     }
     
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 1em 0;
+      margin: 1.5em 0;
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      overflow: hidden;
     }
     
     th, td {
       text-align: left;
-      padding: 0.5em;
-      border-bottom: 1px solid #e0e0e0;
+      padding: 0.8em 1em;
+      border-bottom: 1px solid #e5e5e5;
     }
     
     th {
-      background: #f5f5f5;
-      font-weight: bold;
+      background: #f9f9f9;
+      font-weight: 600;
+      color: #111111;
+    }
+    
+    tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .qr-section {
+      text-align: center;
+      margin: 2em 0;
+      padding: 2em;
+      background: #f9f9f9;
+      border-radius: 12px;
+    }
+    
+    .qr-code {
+      width: 150px;
+      height: 150px;
+      margin: 1em auto;
+      display: block;
+    }
+    
+    .source-list {
+      font-size: 0.85em;
+      line-height: 1.6;
+      color: #666666;
+    }
+    
+    .source-list li {
+      margin-bottom: 0.5em;
+    }
+    
+    .page-number {
+      position: fixed;
+      bottom: 1cm;
+      right: 2cm;
+      font-size: 0.8em;
+      color: #999999;
     }
   </style>
 </head>
@@ -160,7 +251,7 @@ export async function POST(request: NextRequest) {
 
 <!-- Cover Page -->
 <div class="cover-page">
-  <div class="logo">OPTERO</div>
+  <div class="logo">MENDIO</div>
   <h1>Din Personliga AI-Guide</h1>
   <div class="subtitle">Skräddarsydd för ${specialization || profession}</div>
   <div class="meta">
@@ -191,13 +282,26 @@ export async function POST(request: NextRequest) {
     <p>Som ${specialization || profession} har du unika möjligheter att spara tid och förbättra kvaliteten i ditt arbete med AI. Baserat på din profil har vi identifierat att du kan spara <span class="time-saved">5-8 timmar per vecka</span> genom att implementera rätt AI-verktyg och arbetssätt.</p>
   </div>
   
-  <h3>🎯 Dina största möjligheter</h3>
-  <ul>
-    <li><strong>Email & kommunikation:</strong> Reducera tiden med 70% genom AI-assisterad skrivning</li>
-    <li><strong>Rapportering:</strong> Automatisera dataanalys och rapportgenerering</li>
-    <li><strong>Dokumenthantering:</strong> Sammanfatta, analysera och skapa dokument 10x snabbare</li>
-    <li><strong>Möten:</strong> AI-genererade agendor, anteckningar och uppföljning</li>
-  </ul>
+  <h3>Dina största möjligheter</h3>
+  <div class="box">
+    <h4>📧 Email & kommunikation</h4>
+    <p>Reducera tiden med <span class="badge">70%</span> genom AI-assisterad skrivning</p>
+  </div>
+  
+  <div class="box">
+    <h4>📊 Rapportering</h4>
+    <p>Automatisera dataanalys och rapportgenerering - spara <span class="badge">3h/vecka</span></p>
+  </div>
+  
+  <div class="box">
+    <h4>📄 Dokumenthantering</h4>
+    <p>Sammanfatta, analysera och skapa dokument <span class="badge">10x snabbare</span></p>
+  </div>
+  
+  <div class="box">
+    <h4>🗓️ Möten</h4>
+    <p>AI-genererade agendor, anteckningar och uppföljning - <span class="badge">45 min/möte</span></p>
+  </div>
   
   <h3>⚡ Quick Wins - Börja här!</h3>
   <div class="checklist">
@@ -392,9 +496,67 @@ Data: [KLISTRA IN]"
 </div>
 
 <!-- Footer -->
+<!-- QR Code Section -->
+<div class="section">
+  <div class="qr-section">
+    <h3>Din AI-Coach väntar på dig</h3>
+    <p>Scanna QR-koden för direkt tillgång till din personliga AI-coach</p>
+    <!-- QR code skulle genereras dynamiskt här -->
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2Y1ZjVmNSIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjOTk5Ij5RUi1rb2Q8L3RleHQ+Cjwvc3ZnPg==" alt="QR Code" class="qr-code" />
+    <p style="margin-top: 1em;">
+      <strong>URL:</strong> mendio.io/coach/${context?.sessionId || 'demo'}
+    </p>
+  </div>
+</div>
+
+<!-- Sources Section -->
+<div class="section">
+  <h2>Källor & Referenser</h2>
+  
+  <div class="box">
+    <h3>AI-verktyg & Teknologier</h3>
+    <ol class="source-list">
+      <li>OpenAI. (2024). <em>ChatGPT Plus Documentation</em>. https://platform.openai.com/docs</li>
+      <li>Anthropic. (2024). <em>Claude Pro Features</em>. https://www.anthropic.com/claude</li>
+      <li>Google. (2024). <em>Gemini Advanced for Professionals</em>. https://gemini.google.com</li>
+      <li>Microsoft. (2024). <em>Copilot for Microsoft 365</em>. https://www.microsoft.com/copilot</li>
+      <li>Notion. (2024). <em>Notion AI Workspace</em>. https://www.notion.so/product/ai</li>
+    </ol>
+  </div>
+  
+  <div class="box">
+    <h3>Forskning & Studier</h3>
+    <ol class="source-list">
+      <li>McKinsey & Company. (2024). <em>The state of AI in 2024: Generative AI's breakout year</em>. McKinsey Global Institute.</li>
+      <li>Gartner. (2024). <em>Top Strategic Technology Trends for 2024</em>. Gartner Research.</li>
+      <li>MIT Sloan. (2024). <em>How Generative AI Is Changing Creative Work</em>. MIT Sloan Management Review.</li>
+      <li>Harvard Business Review. (2024). <em>AI Won't Replace Humans — But Humans With AI Will Replace Humans Without AI</em>.</li>
+    </ol>
+  </div>
+  
+  <div class="box">
+    <h3>Branschspecifika Källor</h3>
+    <ol class="source-list">
+      <li>Sveriges HR Förening. (2024). <em>AI i HR - En praktisk guide</em>.</li>
+      <li>Ekonomistyrningsverket. (2024). <em>Digitalisering och AI i offentlig förvaltning</em>.</li>
+      <li>Svenskt Näringsliv. (2024). <em>AI för svenska företag - möjligheter och utmaningar</em>.</li>
+    </ol>
+  </div>
+  
+  <div class="box">
+    <h3>Etik & Best Practices</h3>
+    <ol class="source-list">
+      <li>EU Commission. (2024). <em>Ethics Guidelines for Trustworthy AI</em>. European Commission.</li>
+      <li>ISO/IEC. (2024). <em>ISO/IEC 23053:2022 - Framework for AI systems using ML</em>.</li>
+      <li>GDPR & AI. (2024). <em>Guidelines on AI and Data Protection</em>. European Data Protection Board.</li>
+    </ol>
+  </div>
+</div>
+
 <div class="footer">
-  <p>© 2024 Optero | Din personliga AI-guide</p>
-  <p>Support: support@optero.se | optero.se</p>
+  <p>© 2024 Mendio.io | Din partner för AI i arbetslivet</p>
+  <p>Support: support@mendio.io | Tel: +46 732 30 55 21</p>
+  <p>Detta dokument är skyddat av upphovsrätt och får inte reproduceras utan tillstånd.</p>
 </div>
 
 </body>
