@@ -102,7 +102,8 @@ export const PRICING_TIERS = {
 };
 
 export const getSubscriptionLimits = (tier: string) => {
-  const tierData = Object.values(PRICING_TIERS).find(t => t.id === tier);
+  const allTiers = [PRICING_TIERS.FREE, PRICING_TIERS.PROFESSIONAL, PRICING_TIERS.BUSINESS];
+  const tierData = allTiers.find(t => t.id === tier);
   return tierData?.features || PRICING_TIERS.FREE.features;
 };
 

@@ -62,18 +62,19 @@ export async function POST(request: NextRequest) {
             take: 30 // Get more to distribute among scenarios
           });
           
-          // Enhance scenarios with relevant prompts
-          const scenariosArray = Array.isArray(cached.scenarios) ? cached.scenarios : [];
+          // Enhance scenarios with relevant prompts (type-safe)
+          const scenariosArray: any[] = Array.isArray(cached.scenarios) ? cached.scenarios : [];
           const enhancedScenarios = scenariosArray.map((scenario: any) => {
             // Find 3 most relevant prompts for this scenario
             const relevantPrompts = prompts
-              .filter(p => 
-                p.tags.some(tag => 
-                  scenario.title.toLowerCase().includes(tag.toLowerCase()) ||
-                  scenario.solution.toLowerCase().includes(tag.toLowerCase())
+              .filter(p => {
+                const tags = Array.isArray(p.tags) ? p.tags : [];
+                return tags.some((tag: any) => 
+                  scenario.title.toLowerCase().includes(String(tag).toLowerCase()) ||
+                  scenario.solution.toLowerCase().includes(String(tag).toLowerCase())
                 ) ||
-                p.category.toLowerCase().includes(scenario.title.split(' ')[0].toLowerCase())
-              )
+                p.category.toLowerCase().includes(scenario.title.split(' ')[0].toLowerCase());
+              })
               .slice(0, 3);
             
             // If not enough relevant prompts, add some general ones
@@ -242,13 +243,14 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
                 // Enhance scenarios with prompts
                 result.scenarios = result.scenarios.map((scenario: any) => {
                   const relevantPrompts = existingPrompts
-                    .filter(p => 
-                      p.tags.some(tag => 
-                        scenario.title.toLowerCase().includes(tag.toLowerCase()) ||
-                        scenario.solution.toLowerCase().includes(tag.toLowerCase())
+                    .filter(p => {
+                      const tags = Array.isArray(p.tags) ? p.tags : [];
+                      return tags.some((tag: any) => 
+                        scenario.title.toLowerCase().includes(String(tag).toLowerCase()) ||
+                        scenario.solution.toLowerCase().includes(String(tag).toLowerCase())
                       ) ||
-                      p.category.toLowerCase().includes(scenario.title.split(' ')[0].toLowerCase())
-                    )
+                      p.category.toLowerCase().includes(scenario.title.split(' ')[0].toLowerCase());
+                    })
                     .slice(0, 3);
                   
                   if (relevantPrompts.length < 3) {
