@@ -63,7 +63,8 @@ export async function POST(request: NextRequest) {
           });
           
           // Enhance scenarios with relevant prompts
-          const enhancedScenarios = (cached.scenarios || []).map((scenario: any) => {
+          const scenariosArray = Array.isArray(cached.scenarios) ? cached.scenarios : [];
+          const enhancedScenarios = scenariosArray.map((scenario: any) => {
             // Find 3 most relevant prompts for this scenario
             const relevantPrompts = prompts
               .filter(p => 
