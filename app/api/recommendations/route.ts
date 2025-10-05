@@ -239,12 +239,13 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
                 });
                 console.log(`Cached new results for ${profession}/${specialization}`);
                 
-                // ALWAYS generate 10 new prompts based on specific tasks (non-blocking)
-                // This ensures we build a diverse library even for same profession/specialization
-                generatePromptsInBackground(profession, specialization, safeTasks).catch(console.error);
+                // Generate prompts SYNCHRONOUSLY so they're included in the response
+                console.log('Generating prompts for scenarios...');
+                const newPrompts = await generatePrompts(profession, specialization, safeTasks);
+                console.log(`Generated ${newPrompts.length} new prompts`);
                 
-                // Get any existing prompts while we wait for new ones
-                const existingPrompts = await prisma.promptLibrary.findMany({
+                // Get all prompts (existing + new)
+                const allPrompts = await prisma.promptLibrary.findMany({
                   where: {
                     profession,
                     specialization: specialization || null,
@@ -258,7 +259,7 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
                 
                 // Enhance scenarios with prompts
                 result.scenarios = result.scenarios.map((scenario: any) => {
-                  const relevantPrompts = existingPrompts
+                  const relevantPrompts = allPrompts
                     .filter(p => {
                       const tags = Array.isArray(p.tags) ? p.tags : [];
                       return tags.some((tag: any) => 
@@ -270,7 +271,7 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
                     .slice(0, 3);
                   
                   if (relevantPrompts.length < 3) {
-                    const additionalPrompts = existingPrompts
+                    const additionalPrompts = allPrompts
                       .filter(p => !relevantPrompts.includes(p))
                       .slice(0, 3 - relevantPrompts.length);
                     relevantPrompts.push(...additionalPrompts);
@@ -282,7 +283,7 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
                   };
                 });
                 
-                result.prompts = existingPrompts.slice(0, 10);
+                result.prompts = allPrompts.slice(0, 10);
               } catch (cacheError) {
                 console.error("Failed to cache results:", cacheError);
                 // Continue anyway
@@ -323,12 +324,131 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
   }
 }
 
-// Helper function to trigger prompt generation in background
-async function generatePromptsInBackground(profession: string, specialization: string, tasks: any[]) {
-  // Don't await - run in background
-  fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/prompts/generate`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ profession, specialization, tasks })
-  }).catch(err => console.log('Background prompt generation failed:', err));
+// Helper function to generate prompts synchronously
+async function generatePrompts(profession: string, specialization: string, tasks: any[]) {
+  try {
+    // Check existing prompts to avoid duplicates
+    const existingPrompts = await prisma.promptLibrary.findMany({
+      where: {
+        profession,
+        specialization: specialization || null,
+      },
+      select: {
+        name: true,
+        prompt: true,
+      },
+    });
+
+    // Generate new prompts
+    const taskList = tasks?.map((t: any) => t.task || t).join(", ") || "";
+    const role = specialization || profession;
+    const existingPromptNames = existingPrompts.map(p => p.name).join(", ");
+    
+    const prompt = `Skapa 10 högkvalitativa, värdefulla AI-prompts för: ${role}
+
+${taskList ? `Fokusera SPECIFIKT på dessa arbetsuppgifter: ${taskList}` : ''}
+
+${existingPromptNames ? `VIKTIGT: Vi har redan dessa prompts - skapa HELT NYA och OLIKA prompts:\n${existingPromptNames}\n` : ''}
+
+KRAV:
+1. Prompterna MÅSTE vara unika och fokusera på de specifika arbetsuppgifterna
+2. Variera perspektiv och användningsfall
+3. Tänk på framtidssäkring - fungerar med både dagens AI och framtidens AI-agenter
+4. Skapa prompts som löser OLIKA delar av arbetsuppgifterna
+
+Varje prompt ska inkludera:
+1. UTMANING - Vilken specifik smärtpunkt löser denna prompt?
+2. LÖSNING - Hur exakt löser prompten problemet?
+3. BEST PRACTICE - Bästa sättet att använda prompten
+4. FÖRVÄNTAT RESULTAT - Vad får användaren ut av detta?
+5. FRAMTIDSSÄKER - Fungerar med agenter och automation
+
+Kategorier (fördela jämnt):
+- Dokumentation & Rapportering
+- Kommunikation & Mail  
+- Planering & Organisering
+- Analys & Beslutsfattande
+- Kundbemötande
+
+Format som JSON:
+{
+  "prompts": [
+    {
+      "category": "Kategori",
+      "name": "Kort namn (max 60 tecken)",
+      "description": "En mening om vad prompten gör",
+      "challenge": "Detaljerad beskrivning av utmaningen/problemet som ${profession} möter dagligen",
+      "solution": "Hur denna prompt löser utmaningen på ett smart sätt",
+      "bestPractice": "Steg-för-steg guide för bästa resultat",
+      "expectedOutcome": "Konkret beskrivning av vad användaren kan förvänta sig",
+      "prompt": "Den fullständiga prompten att kopiera (optimerad för GPT-5)",
+      "timeSaved": "X-Y tim/vecka",
+      "difficulty": "Lätt|Medel|Avancerat",
+      "example": "Verkligt exempel från en ${profession}",
+      "howToUse": "1. Förberedelse\\n2. Kör prompten\\n3. Anpassa resultatet",
+      "tools": ["ChatGPT", "Claude", "Gemini"],
+      "tags": ["relevant", "sökord", "framtidssäker"]
+    }
+  ]
+}`;
+
+    const openai = new OpenAI({ 
+      apiKey: process.env.OPENAI_API_KEY!,
+      maxRetries: 1,
+      timeout: 60000,
+    });
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-5",
+      messages: [
+        { role: "system", content: "You are a helpful assistant that responds in JSON format." },
+        { role: "user", content: prompt }
+      ],
+      max_completion_tokens: 16000,
+    });
+
+    const data = JSON.parse(response.choices[0].message.content || "{}");
+    const generatedPrompts = data.prompts || [];
+
+    // Save to database
+    const savedPrompts = [];
+    for (const promptData of generatedPrompts) {
+      try {
+        const saved = await prisma.promptLibrary.create({
+          data: {
+            profession,
+            specialization,
+            category: promptData.category,
+            name: promptData.name,
+            description: promptData.description,
+            challenge: promptData.challenge,
+            solution: promptData.solution,
+            bestPractice: promptData.bestPractice,
+            expectedOutcome: promptData.expectedOutcome,
+            prompt: promptData.prompt,
+            promptVariants: promptData.promptVariants || {},
+            agentReady: promptData.agentReady || false,
+            multiModal: promptData.multiModal || false,
+            automation: promptData.automation || null,
+            timeSaved: promptData.timeSaved,
+            difficulty: promptData.difficulty,
+            example: promptData.example,
+            howToUse: promptData.howToUse,
+            tools: promptData.tools || [],
+            tags: promptData.tags || [],
+            aiModel: "gpt-5",
+            supportedModels: ["gpt-4", "gpt-5", "claude-3", "gemini"],
+          },
+        });
+        savedPrompts.push(saved);
+      } catch (error) {
+        console.error("Failed to save prompt:", error);
+      }
+    }
+
+    return savedPrompts;
+  } catch (error) {
+    console.error("Error generating prompts:", error);
+    return [];
+  }
 }
