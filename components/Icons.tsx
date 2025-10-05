@@ -65,27 +65,27 @@ export const getIconForContent = (title: string, description: string): React.Rea
   const content = (title + " " + description).toLowerCase();
   
   if (content.includes("dokument") || content.includes("rapport") || content.includes("specifikation")) {
-    return <DocumentIcon className="w-8 h-8" />;
+    return <DocumentIcon className="w-5 h-5 sm:w-6 sm:h-6" />;
   }
   if (content.includes("ai") || content.includes("automat") || content.includes("generer")) {
-    return <AIIcon className="w-8 h-8" />;
+    return <AIIcon className="w-5 h-5 sm:w-6 sm:h-6" />;
   }
   if (content.includes("kommunik") || content.includes("chat") || content.includes("mail")) {
-    return <ChatIcon className="w-8 h-8" />;
+    return <ChatIcon className="w-5 h-5 sm:w-6 sm:h-6" />;
   }
   if (content.includes("analys") || content.includes("data") || content.includes("statistik")) {
-    return <ChartIcon className="w-8 h-8" />;
+    return <ChartIcon className="w-5 h-5 sm:w-6 sm:h-6" />;
   }
   if (content.includes("snabb") || content.includes("effektiv") || content.includes("tid")) {
-    return <LightningIcon className="w-8 h-8" />;
+    return <LightningIcon className="w-5 h-5 sm:w-6 sm:h-6" />;
   }
   if (content.includes("projekt") || content.includes("planering") || content.includes("mål")) {
-    return <TargetIcon className="w-8 h-8" />;
+    return <TargetIcon className="w-5 h-5 sm:w-6 sm:h-6" />;
   }
   if (content.includes("kod") || content.includes("program") || content.includes("utveckl")) {
-    return <CodeIcon className="w-8 h-8" />;
+    return <CodeIcon className="w-5 h-5 sm:w-6 sm:h-6" />;
   }
   
   // Default icon
-  return <BrainIcon className="w-8 h-8" />;
+  return <BrainIcon className="w-5 h-5 sm:w-6 sm:h-6" />;
 };
