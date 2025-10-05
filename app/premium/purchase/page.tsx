@@ -172,8 +172,9 @@ export default function PremiumPurchasePage() {
           </p>
         </div>
 
-        {/* Single premium offering */}
-        <div className="max-w-2xl mx-auto mb-12">
+        {/* Two column layout */}
+        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12">
+          {/* Left: Premium offering */}
           <div className="bg-white rounded-2xl p-8 border-2 border-gray-900 shadow-xl">
             <div className="text-center mb-8">
               <div className="text-5xl font-bold text-gray-900 mb-2">
@@ -203,23 +204,23 @@ export default function PremiumPurchasePage() {
               ))}
             </div>
 
-            <div className="bg-blue-50 rounded-lg p-4 mb-6">
+            <div className="bg-blue-50 rounded-lg p-4">
               <p className="text-sm text-blue-800">
                 💡 <strong>Värde:</strong> Spara 5-15 timmar/vecka = 2,000-6,000 SEK/månad i tidsvärde
               </p>
             </div>
           </div>
-        </div>
 
-        {/* Checkout Form */}
-        <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Slutför din beställning
-          </h2>
-          
-          <Elements stripe={stripePromise}>
-            <CheckoutForm />
-          </Elements>
+          {/* Right: Checkout Form */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+              Slutför din beställning
+            </h2>
+            
+            <Elements stripe={stripePromise}>
+              <CheckoutForm />
+            </Elements>
+          </div>
         </div>
 
         {/* Trust badges */}

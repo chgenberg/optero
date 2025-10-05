@@ -32,6 +32,27 @@ export default function Home() {
   const [experience, setExperience] = useState("");
   const [challenges, setChallenges] = useState<string[]>([]);
   const [selectedTasks, setSelectedTasks] = useState<{task: string, priority: number}[]>([]);
+
+  // Check if user is returning from purchase page
+  useEffect(() => {
+    const lastResults = sessionStorage.getItem("lastResults");
+    if (lastResults) {
+      try {
+        const data = JSON.parse(lastResults);
+        // If results are less than 1 hour old, restore them
+        if (Date.now() - data.timestamp < 3600000) {
+          setProfession(data.profession);
+          setSpecialization(data.specialization);
+          setExperience(data.experience);
+          setChallenges(data.challenges);
+          setSelectedTasks(data.tasks);
+          setStep("results");
+        }
+      } catch (e) {
+        console.error("Failed to restore results:", e);
+      }
+    }
+  }, []);
   const [showInfo, setShowInfo] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
 

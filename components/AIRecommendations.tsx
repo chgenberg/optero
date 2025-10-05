@@ -61,6 +61,9 @@ export default function AIRecommendations({
   const [activeTab, setActiveTab] = useState<TabType>("scenarios");
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [showExitIntent, setShowExitIntent] = useState(false);
+  const [showMagicLinkModal, setShowMagicLinkModal] = useState(false);
+  const [magicLinkEmail, setMagicLinkEmail] = useState("");
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -212,6 +215,18 @@ export default function AIRecommendations({
       setScenarios(data.scenarios || []);
       setRecommendations(data.recommendations || []);
       
+      // Save results to sessionStorage for back navigation
+      sessionStorage.setItem("lastResults", JSON.stringify({
+        profession,
+        specialization,
+        experience,
+        challenges,
+        tasks,
+        scenarios: data.scenarios || [],
+        recommendations: data.recommendations || [],
+        timestamp: Date.now()
+      }));
+      
       // Notify parent that data is loaded
       if (onDataLoaded) {
         onDataLoaded();
@@ -331,7 +346,7 @@ export default function AIRecommendations({
         {/* Tools tab */}
         {activeTab === "tools" && (
           <div className="grid gap-6 animate-fade-in-up">
-            {recommendations.slice(0, 3).map((rec, index) => (
+            {recommendations.slice(0, 5).map((rec, index) => (
               <div
                 key={index}
                 className="card-interactive"
@@ -459,16 +474,22 @@ export default function AIRecommendations({
 
       {/* Premium CTA Button */}
       {!isDemo && (
-        <div className="text-center mt-12">
+        <div className="text-center mt-12 space-y-4">
             <button
               onClick={() => router.push("/premium/purchase")}
               className="btn-primary px-8 py-4 text-lg"
             >
               Få din kompletta guide
             </button>
-            <p className="text-gray-600 text-sm mt-2">
+            <p className="text-gray-600 text-sm">
               19€ (197 SEK) - PDF, AI-Coach i 30 dagar & mer
             </p>
+            <button
+              onClick={() => setShowMagicLinkModal(true)}
+              className="text-gray-500 hover:text-gray-900 text-sm underline"
+            >
+              Spara resultat och få länk via email
+            </button>
         </div>
       )}
 
@@ -529,6 +550,96 @@ export default function AIRecommendations({
             router.push("/premium/interview");
           }}
         />
+      )}
+
+      {/* Magic Link Modal */}
+      {showMagicLinkModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              Spara ditt resultat
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Få en länk via email så du kan komma tillbaka när som helst (giltig i 7 dagar)
+            </p>
+            
+            {!magicLinkSent ? (
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  const response = await fetch("/api/magic-link/send", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      email: magicLinkEmail,
+                      resultData: {
+                        profession,
+                        specialization,
+                        experience,
+                        challenges,
+                        tasks,
+                        scenarios,
+                        recommendations
+                      }
+                    })
+                  });
+                  
+                  if (response.ok) {
+                    setMagicLinkSent(true);
+                  }
+                } catch (error) {
+                  console.error("Failed to send magic link:", error);
+                }
+              }}>
+                <input
+                  type="email"
+                  value={magicLinkEmail}
+                  onChange={(e) => setMagicLinkEmail(e.target.value)}
+                  placeholder="din@email.se"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-gray-900 focus:outline-none mb-4"
+                  required
+                />
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowMagicLinkModal(false)}
+                    className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Avbryt
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 btn-primary py-3"
+                  >
+                    Skicka länk
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <p className="text-gray-900 font-medium mb-2">Länk skickad!</p>
+                <p className="text-gray-600 text-sm mb-6">
+                  Kolla din email ({magicLinkEmail}) för att komma tillbaka
+                </p>
+                <button
+                  onClick={() => {
+                    setShowMagicLinkModal(false);
+                    setMagicLinkSent(false);
+                    setMagicLinkEmail("");
+                  }}
+                  className="btn-primary px-6 py-2"
+                >
+                  Stäng
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
