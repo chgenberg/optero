@@ -165,7 +165,24 @@ model PromptLibrary {
   category        String   // e.g., "Dokumentation", "Kommunikation"
   name            String
   description     String
+  
+  // Värdeförklaring
+  challenge       String   @db.Text  // Vilken utmaning löser denna prompt?
+  solution        String   @db.Text  // Hur löser prompten utmaningen?
+  bestPractice    String   @db.Text  // Bästa sättet att använda prompten
+  realWorldExample String? @db.Text  // Verkligt exempel på användning
+  expectedOutcome String   @db.Text  // Vad kan användaren förvänta sig?
+  
+  // Själva prompten och variationer
   prompt          String   @db.Text
+  promptVariants  Json?    // Alternativa versioner för olika AI-modeller
+  
+  // Framtidssäkring
+  agentReady      Boolean  @default(false)  // Fungerar med AI-agenter
+  multiModal      Boolean  @default(false)  // Stödjer bild/ljud/video
+  apiIntegration  Json?    // Info om API-integrationer
+  automation      Json?    // Automationsworkflows
+  
   timeSaved       String   // e.g., "2-3h/vecka"
   difficulty      String   // "Lätt", "Medel", "Avancerat"
   example         String?  @db.Text
@@ -175,7 +192,8 @@ model PromptLibrary {
   usageCount      Int      @default(0)
   rating          Float?   // Average user rating
   isPremium       Boolean  @default(false)
-  aiModel         String   @default("gpt-4")
+  aiModel         String   @default("gpt-5")
+  supportedModels Json     @default("[]") // ["gpt-4", "gpt-5", "claude-3", "gemini"]
   industry        String?
   companySize     String?
   experienceLevel String?
@@ -199,6 +217,7 @@ model PromptLibrary {
   @@index([profession, category])
   @@index([isPremium])
   @@index([rating])
+  @@index([agentReady])
 }
 
 model PromptRating {

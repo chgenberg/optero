@@ -18,10 +18,16 @@ interface Prompt {
   id: string;
   name: string;
   description: string;
+  challenge?: string;
+  solution?: string;
+  bestPractice?: string;
+  expectedOutcome?: string;
   prompt: string;
   category: string;
   timeSaved: string;
   difficulty: string;
+  agentReady?: boolean;
+  multiModal?: boolean;
 }
 
 interface Scenario {
@@ -426,21 +432,57 @@ export default function AIRecommendations({
                           <div key={prompt.id || i} className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
                             <div className="flex justify-between items-start mb-2">
                               <h4 className="font-medium text-gray-900 text-sm">{prompt.name}</h4>
-                              <span className={`text-xs px-2 py-1 rounded-full ${
-                                prompt.difficulty === 'Lätt' ? 'bg-green-100 text-green-700' :
-                                prompt.difficulty === 'Medel' ? 'bg-yellow-100 text-yellow-700' :
-                                'bg-red-100 text-red-700'
-                              }`}>
-                                {prompt.difficulty}
-                              </span>
+                              <div className="flex gap-2">
+                                {prompt.agentReady && (
+                                  <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full" title="Fungerar med AI-agenter">
+                                    🤖 Agent-ready
+                                  </span>
+                                )}
+                                <span className={`text-xs px-2 py-1 rounded-full ${
+                                  prompt.difficulty === 'Lätt' ? 'bg-green-100 text-green-700' :
+                                  prompt.difficulty === 'Medel' ? 'bg-yellow-100 text-yellow-700' :
+                                  'bg-red-100 text-red-700'
+                                }`}>
+                                  {prompt.difficulty}
+                                </span>
+                              </div>
                             </div>
-                            <p className="text-xs text-gray-600 mb-2">{prompt.description}</p>
+                            
+                            {/* Värdeförklaring */}
+                            {prompt.challenge && (
+                              <div className="mb-3 space-y-2">
+                                <div className="text-xs">
+                                  <span className="font-semibold text-gray-700">Utmaning:</span>
+                                  <p className="text-gray-600 mt-1">{prompt.challenge}</p>
+                                </div>
+                                {prompt.solution && (
+                                  <div className="text-xs">
+                                    <span className="font-semibold text-gray-700">Lösning:</span>
+                                    <p className="text-gray-600 mt-1">{prompt.solution}</p>
+                                  </div>
+                                )}
+                                {prompt.expectedOutcome && (
+                                  <div className="text-xs">
+                                    <span className="font-semibold text-gray-700">Förväntat resultat:</span>
+                                    <p className="text-gray-600 mt-1">{prompt.expectedOutcome}</p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                            
                             <div className="bg-white rounded border border-gray-200 p-3 text-xs font-mono text-gray-700 cursor-pointer hover:bg-gray-50"
                               onClick={() => navigator.clipboard.writeText(prompt.prompt)}
                               title="Klicka för att kopiera">
-                              {prompt.prompt}
+                              {prompt.prompt.substring(0, 200)}...
                             </div>
-                            <div className="flex items-center justify-between mt-2">
+                            
+                            {prompt.bestPractice && (
+                              <div className="mt-2 text-xs text-gray-600">
+                                <span className="font-semibold">💡 Tips:</span> {prompt.bestPractice}
+                              </div>
+                            )}
+                            
+                            <div className="flex items-center justify-between mt-3">
                               <span className="text-xs text-gray-500">Sparar {prompt.timeSaved}</span>
                               <button 
                                 onClick={() => navigator.clipboard.writeText(prompt.prompt)}
