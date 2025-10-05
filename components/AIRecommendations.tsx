@@ -269,14 +269,14 @@ export default function AIRecommendations({
     return <LoadingAnalysis />;
   }
 
-  // Check if profession has prompts
-  const professionsWithPrompts = ["Sjuksköterska", "Lärare", "Advokat", "Projektledare"];
-  const hasPrompts = professionsWithPrompts.includes(profession);
+  // Check if any scenario has prompts
+  const hasPrompts = scenarios.some(scenario => scenario.prompts && scenario.prompts.length > 0);
+  const totalPrompts = scenarios.reduce((sum, scenario) => sum + (scenario.prompts?.length || 0), 0);
 
   const tabs = [
     { id: "scenarios" as TabType, label: "Användningsfall", count: scenarios.length },
     { id: "tools" as TabType, label: "AI-verktyg", count: recommendations.length },
-    ...(hasPrompts ? [{ id: "prompts" as TabType, label: "Färdiga prompts", count: null }] : []),
+    ...(hasPrompts ? [{ id: "prompts" as TabType, label: "Färdiga prompts", count: totalPrompts }] : []),
     { id: "plan" as TabType, label: "Din plan", count: null },
   ];
 
@@ -622,7 +622,7 @@ export default function AIRecommendations({
         {/* Prompts tab */}
         {activeTab === "prompts" && (
           <div className="animate-fade-in-up">
-            <ProfessionPrompts profession={profession} />
+            <ProfessionPrompts profession={profession} scenarios={scenarios} />
           </div>
         )}
 

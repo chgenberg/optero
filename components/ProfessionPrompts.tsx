@@ -26,13 +26,22 @@ interface ProfessionData {
   difficulty: string;
 }
 
+interface Scenario {
+  title: string;
+  situation: string;
+  solution: string;
+  tools: string[];
+  prompts?: Prompt[];
+}
+
 interface ProfessionPromptsProps {
   profession: string;
+  scenarios?: Scenario[];
 }
 
 const allProfessions: { [key: string]: ProfessionData } = promptData.professions;
 
-export default function ProfessionPrompts({ profession }: ProfessionPromptsProps) {
+export default function ProfessionPrompts({ profession, scenarios = [] }: ProfessionPromptsProps) {
   const [expandedPrompt, setExpandedPrompt] = useState<string | null>(null);
   const [currentProfessionData, setCurrentProfessionData] = useState<ProfessionData | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -41,6 +50,39 @@ export default function ProfessionPrompts({ profession }: ProfessionPromptsProps
   const [loadingDbPrompts, setLoadingDbPrompts] = useState(false);
 
   useEffect(() => {
+    // Collect prompts from scenarios
+    const scenarioPrompts: Prompt[] = [];
+    scenarios.forEach(scenario => {
+      if (scenario.prompts && scenario.prompts.length > 0) {
+        scenarioPrompts.push(...scenario.prompts);
+      }
+    });
+    
+    // If we have prompts from scenarios, use them
+    if (scenarioPrompts.length > 0) {
+      setDbPrompts(scenarioPrompts);
+      // Create a dummy profession data structure
+      const categories: Category = {};
+      scenarioPrompts.forEach(prompt => {
+        const category = prompt.category || 'Generellt';
+        if (!categories[category]) {
+          categories[category] = [];
+        }
+        categories[category].push(prompt);
+      });
+      
+      setCurrentProfessionData({
+        categories,
+        totalPrompts: scenarioPrompts.length,
+        averageTimeSaved: "2-4 timmar per vecka",
+        difficulty: "Medel"
+      });
+      
+      const categoryKeys = Object.keys(categories);
+      setSelectedCategory(categoryKeys[0]);
+      return;
+    }
+    
     // Try to fetch from database first
     const fetchDbPrompts = async () => {
       if (!profession) return;
@@ -73,7 +115,7 @@ export default function ProfessionPrompts({ profession }: ProfessionPromptsProps
       setCurrentProfessionData(null);
       setSelectedCategory(null);
     }
-  }, [profession]);
+  }, [profession, scenarios]);
 
   const handleCopy = async (text: string, promptId: string) => {
     try {
@@ -194,45 +236,51 @@ export default function ProfessionPrompts({ profession }: ProfessionPromptsProps
                     </button>
                   </div>
                   <div className="bg-gray-50 rounded-xl p-4 font-mono text-sm text-gray-700 whitespace-pre-wrap break-words">
-                    {prompt.prompt}
+                    {prompt.prompt || prompt.description}
                   </div>
                 </div>
 
                 {/* Example */}
-                <div>
-                  <h5 className="font-semibold text-gray-900 mb-2">Exempel:</h5>
-                  <p className="text-gray-600 text-sm bg-gray-50 rounded-xl p-4">
-                    {prompt.example}
-                  </p>
-                </div>
+                {prompt.example && (
+                  <div>
+                    <h5 className="font-semibold text-gray-900 mb-2">Exempel:</h5>
+                    <p className="text-gray-600 text-sm bg-gray-50 rounded-xl p-4">
+                      {prompt.example}
+                    </p>
+                  </div>
+                )}
 
                 {/* How to use */}
-                <div>
-                  <h5 className="font-semibold text-gray-900 mb-2">Så här använder du prompten:</h5>
-                  <div className="text-gray-600 text-sm space-y-2">
-                    {prompt.howToUse.split('\n').map((line, i) => (
-                      <p key={i} className="flex items-start">
-                        {line.includes('→') && <span className="mr-2">•</span>}
-                        {line}
-                      </p>
-                    ))}
+                {prompt.howToUse && (
+                  <div>
+                    <h5 className="font-semibold text-gray-900 mb-2">Så här använder du prompten:</h5>
+                    <div className="text-gray-600 text-sm space-y-2">
+                      {prompt.howToUse.split('\n').map((line, i) => (
+                        <p key={i} className="flex items-start">
+                          {line.includes('→') && <span className="mr-2">•</span>}
+                          {line}
+                        </p>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Tools */}
-                <div>
-                  <h5 className="font-semibold text-gray-900 mb-3">Fungerar med:</h5>
-                  <div className="flex flex-wrap gap-2">
-                    {prompt.tools.map((tool, i) => (
-                      <span 
-                        key={i} 
-                        className="px-3 py-1 bg-gray-900 text-white text-xs font-medium rounded-full"
-                      >
-                        {tool}
-                      </span>
-                    ))}
+                {prompt.tools && prompt.tools.length > 0 && (
+                  <div>
+                    <h5 className="font-semibold text-gray-900 mb-3">Fungerar med:</h5>
+                    <div className="flex flex-wrap gap-2">
+                      {prompt.tools.map((tool, i) => (
+                        <span 
+                          key={i} 
+                          className="px-3 py-1 bg-gray-900 text-white text-xs font-medium rounded-full"
+                        >
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
           </div>
