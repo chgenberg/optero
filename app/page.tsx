@@ -170,11 +170,6 @@ export default function Home() {
                 <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light px-4 sm:px-0 tracking-wide">
                   {t('hero.subtitle')}
                 </p>
-                <div className="mt-4">
-                  <span className="inline-block bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium">
-                    ✓ {t('hero.free')}
-                  </span>
-                </div>
               </div>
               
               <div className="mt-12">
