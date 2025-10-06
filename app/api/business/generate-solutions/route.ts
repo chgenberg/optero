@@ -22,16 +22,25 @@ export async function POST(request: NextRequest) {
     // Language-specific prompts
     const prompts = {
       sv: {
-        system: `Du är världens främsta prompt-ingenjör och AI-expert specialiserad på att hjälpa ${profession}.
+        system: `Du är världens främsta prompt-ingenjör och pedagog specialiserad på att hjälpa ${profession}.
         
-DU MÅSTE SKAPA VÄRLDSKLASS-PROMPTS SOM:
-- Är MINST 8-12 rader långa
-- Innehåller [PLATSHÅLLARE] för personlig anpassning
-- Specificerar EXAKT output-format
-- Inkluderar kvalitetskriterier och exempel
-- Definierar ton, stil och branschkrav
-- Sparar minst 30 minuter per användning
-- Är så detaljerade att INGEN följdfråga behövs`,
+SKAPA PEDAGOGISKT STRUKTURERADE PROMPTS MED:
+
+1. **Tydlig sektionsindelning** (använd **fet text** för rubriker)
+2. **[PLATSHÅLLARE]** i hakparenteser för allt användaren ska fylla i
+3. **Steg-för-steg instruktioner** så det är omöjligt att missförstå
+4. **Konkreta exempel** på input OCH output
+5. **Kvalitetskriterier** så användaren vet vad som är ett bra resultat
+
+STRUKTUR SOM SKA FÖLJAS:
+- ROLL & KONTEXT (vem är AI:n?)
+- UPPGIFT (vad ska göras?)
+- INPUT - Fyll i detta (alla parametrar med [hakparenteser])
+- OUTPUT-FORMAT (exakt hur resultatet ska se ut)
+- KVALITETSKRITERIER (vad gör det bra?)
+- EXEMPEL (konkret input → output)
+
+VARJE prompt ska spara minst 30 minuter och vara så pedagogisk att även en nybörjare kan använda den.`,
         
         user: `Skapa AVANCERADE lösningar för dessa arbetsuppgifter:
 ${tasks.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
@@ -42,7 +51,7 @@ För VARJE uppgift, returnera EXAKT detta JSON-format:
     {
       "task": "Exakt uppgiftsnamn",
       "solution": "Konkret lösning i 2-3 meningar. Förklara specifikt HUR AI revolutionerar denna uppgift och EXAKT vilken tidsbesparing (i minuter/timmar) det ger.",
-      "prompt": "En EXTREMT DETALJERAD prompt (8-12 rader) med:\n- Tydlig kontext och roll\n- ALLTID [PLATSHÅLLARE] i hakparenteser för alla delar användaren ska fylla i själv\n- Specifikt output-format\n- Kvalitetskriterier\n- Branschspecifika krav\n- Ton och stil\n- Konkreta exempel\nVIKTIGT: Sätt ALLA platshållare inom [HAKPARENTESER] så de blir tydliga!"
+      "prompt": "En VÄLSTRUKTURERAD prompt uppdelad i tydliga sektioner:\n\n**ROLL & KONTEXT:**\n[Beskriv vilken roll AI ska ha]\n\n**UPPGIFT:**\n[Vad ska AI göra?]\n\n**INPUT - Fyll i detta:**\n[PARAMETER1]: [beskrivning]\n[PARAMETER2]: [beskrivning]\n\n**OUTPUT-FORMAT:**\n[Exakt hur resultatet ska se ut]\n\n**KVALITETSKRITERIER:**\n[Vad gör resultatet bra?]\n\n**EXEMPEL:**\nInput: [exempel]\nOutput: [exempel på resultat]\n\nVIKTIGT:\n- Använd [HAKPARENTESER] för ALLa platshållare\n- Tydliga rubriker med **fet text**\n- Pedagogisk och lättläst struktur"
     }
   ]
 }`

@@ -246,7 +246,8 @@ export default function SimpleResults({
                     className="text-gray-800 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-mono break-words"
                     dangerouslySetInnerHTML={{
                       __html: solutions[currentStep].prompt
-                        .replace(/\[([^\]]+)\]/g, '<strong class="bg-yellow-200 px-1 rounded">[$1]</strong>')
+                        .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-gray-900 font-bold">$1</strong>')
+                        .replace(/\[([^\]]+)\]/g, '<strong class="bg-yellow-200 px-1 rounded text-gray-900">[$1]</strong>')
                     }}
                   />
                 </div>
