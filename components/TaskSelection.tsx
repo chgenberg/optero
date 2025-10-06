@@ -82,6 +82,10 @@ export default function TaskSelection({
       if (exists) {
         return prev.filter((t) => t.task !== task);
       } else {
+        // Limit to max 3 selections
+        if (prev.length >= 3) {
+          return prev;
+        }
         return [...prev, { task, priority: 3 }]; // Default priority medium
       }
     });
@@ -130,6 +134,11 @@ export default function TaskSelection({
               <span className="text-lg">?</span>
             </button>
           </h2>
+          <div className="text-center mt-2">
+            <span className={`text-sm font-medium ${selectedTasks.length === 3 ? 'text-green-600' : 'text-gray-600'}`}>
+              {selectedTasks.length} av 3 valda
+            </span>
+          </div>
         </div>
         
         {showHelp && (
@@ -138,7 +147,7 @@ export default function TaskSelection({
               <strong>Tips för bra val:</strong>
             </p>
             <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
-              <li>Välj 3-5 uppgifter som tar mest tid</li>
+              <li>Välj exakt 3 uppgifter som tar mest tid</li>
               <li>Prioritera uppgifter du gör ofta</li>
               <li>Tänk på både enkla och komplexa uppgifter</li>
               <li>Du kan lägga till egna uppgifter längst ner</li>
@@ -278,10 +287,10 @@ export default function TaskSelection({
 
         <button
           onClick={handleSubmit}
-          disabled={selectedTasks.length === 0}
+          disabled={selectedTasks.length !== 3}
           className="w-full py-3 sm:py-4 text-sm sm:text-base bg-gray-800 text-white rounded-xl lg:rounded-2xl hover:bg-gray-700 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {t('tasks.button')} ({t('tasks.selected', { count: selectedTasks.length.toString() })})
+          {selectedTasks.length === 3 ? t('tasks.button') : `Välj ${3 - selectedTasks.length} uppgift${3 - selectedTasks.length > 1 ? 'er' : ''} till`}
         </button>
       </div>
     </div>
