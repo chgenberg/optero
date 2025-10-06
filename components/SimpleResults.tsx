@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import FeedbackButton from "@/components/FeedbackButton";
-import { ChevronRight, ChevronDown, Copy, Check, Mail, Sparkles, Share2, Bot, Calendar } from "lucide-react";
+import { ChevronRight, ChevronDown, ChevronLeft, Copy, Check, Mail, Sparkles, Share2, Bot, Calendar } from "lucide-react";
 import EmailCaptureModal from "./EmailCaptureModal";
 import LoadingAnalysis from "./LoadingAnalysis";
 
@@ -202,6 +202,32 @@ Visa mig ett praktiskt exempel på hur jag kan använda detta direkt.`
       {currentStep < solutions.length ? (
         <>
           {/* Task cards (steps 1-3) */}
+          {/* Top navigation - desktop only */}
+          <div className="hidden sm:flex justify-between items-center mb-6">
+            {currentStep > 0 ? (
+              <button
+                onClick={handlePrevious}
+                className="group flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+                <span>Tillbaka</span>
+              </button>
+            ) : (
+              <div className="w-20" />
+            )}
+            
+            <button
+              onClick={handleNext}
+              className="group flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-all duration-200"
+            >
+              <span className="text-sm font-medium">Nästa uppgift</span>
+              <div className="relative">
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                <div className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"></div>
+              </div>
+            </button>
+          </div>
+
           <div 
             className="relative"
             onTouchStart={onTouchStart}
@@ -210,15 +236,15 @@ Visa mig ett praktiskt exempel på hur jag kan använda detta direkt.`
           >
             <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_48px_rgba(0,0,0,0.12)] transition-shadow duration-300">
               {/* Progress indicator */}
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-sm font-medium text-gray-500">
+              <div className="flex items-center justify-between mb-6 sm:mb-8">
+                <h2 className="text-xs sm:text-sm font-medium text-gray-500">
                   Arbetsuppgift {currentStep + 1} av {solutions.length}
                 </h2>
                 <div className="flex gap-1">
                   {solutions.map((_, idx) => (
                     <div
                       key={idx}
-                      className={`h-1.5 w-8 rounded-full transition-all duration-300 ${
+                      className={`h-1.5 w-6 sm:w-8 rounded-full transition-all duration-300 ${
                         idx <= currentStep ? 'bg-gray-900' : 'bg-gray-200'
                       }`}
                     />
@@ -227,34 +253,31 @@ Visa mig ett praktiskt exempel på hur jag kan använda detta direkt.`
               </div>
 
               {/* Task */}
-              <div className="mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-2xl">📋</span>
+              <div className="mb-6 sm:mb-8">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                   {solutions[currentStep].task}
                 </h3>
               </div>
 
               {/* Solution */}
-              <div className="mb-8">
-                <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  <span className="text-xl">💡</span>
+              <div className="mb-6 sm:mb-8">
+                <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">
                   Lösning:
                 </h4>
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                   {solutions[currentStep].solution}
                 </p>
               </div>
 
               {/* Prompt */}
-              <div className="mb-8">
-                <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  <span className="text-xl">✨</span>
+              <div className="mb-6 sm:mb-8">
+                <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">
                   Prova denna prompt:
                 </h4>
-              <div className="relative bg-gray-50 rounded-lg p-4 border border-gray-100">
-                <div className="pr-10 overflow-x-auto">
-                  <pre 
-                    className="text-gray-800 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-mono break-words"
+                <div className="relative bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-100">
+                  <div className="pr-10 overflow-x-auto">
+                    <pre 
+                      className="text-gray-800 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-mono break-words"
                     dangerouslySetInnerHTML={{
                       __html: solutions[currentStep].prompt
                         .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-gray-900 font-bold">$1</strong>')
@@ -273,65 +296,62 @@ Visa mig ett praktiskt exempel på hur jag kan använda detta direkt.`
                     <Copy className="w-4 h-4" />
                   )}
                 </button>
+                  </div>
+                </div>
               </div>
-              </div>
-
-              {/* Navigation */}
-              <div className="flex items-center justify-between mt-6">
-                {currentStep > 0 && (
-                  <button
-                    onClick={handlePrevious}
-                    className="flex items-center gap-2 text-gray-400 hover:text-gray-600 transition-colors text-sm"
-                  >
-                    <ChevronRight className="w-4 h-4 rotate-180" />
-                    <span className="hidden sm:inline">Föregående</span>
-                  </button>
-                )}
-              </div>
-
-              {/* Mobile swipe hint */}
-              <p className="text-xs text-gray-500 text-center mt-6 sm:hidden">
-                Svep för att navigera mellan uppgifter
-              </p>
             </div>
           </div>
           
-          {/* Next button outside box - Desktop */}
-          <div className="hidden sm:flex justify-center mt-8">
+          {/* Bottom navigation - both desktop and mobile */}
+          <div className="flex justify-between items-center mt-6">
+            {currentStep > 0 ? (
+              <button
+                onClick={handlePrevious}
+                className="group flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+                <span className="hidden sm:inline">Tillbaka</span>
+              </button>
+            ) : (
+              <div className="w-20" />
+            )}
+            
             <button
               onClick={handleNext}
-              className="group relative flex items-center gap-3 px-8 py-4 bg-white border-2 border-gray-200 rounded-full hover:border-gray-300 hover:shadow-lg transition-all duration-300"
+              className="group flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-all duration-200"
             >
-              <span className="text-base font-medium text-gray-700">Nästa uppgift</span>
+              <span className="text-sm font-medium">Nästa</span>
               <div className="relative">
-                <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-700 transition-all duration-200 group-hover:translate-x-1" />
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                <div className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"></div>
               </div>
             </button>
           </div>
           
-          {/* Next button outside box - Mobile */}
-          <div className="sm:hidden flex justify-center mt-8">
-            <button
-              onClick={handleNext}
-              className="relative px-8 py-4 bg-white border-2 border-gray-200 rounded-full shadow-md active:shadow-sm transition-all duration-200"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-base font-medium text-gray-700">Nästa</span>
-                <ChevronDown className="w-5 h-5 text-gray-400" />
-              </div>
-              <div className="absolute top-2 right-6 w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            </button>
-          </div>
+          {/* Mobile swipe hint */}
+          <p className="text-xs text-gray-500 text-center mt-4 sm:hidden">
+            Svep för att navigera mellan uppgifter
+          </p>
         </>
       ) : (
         // Choice card (step 4)
         <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
+          {/* Back button at top of choice card */}
+          <div className="flex justify-start mb-6">
+            <button
+              onClick={() => setCurrentStep(solutions.length - 1)}
+              className="group flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+              <span>Tillbaka till sista prompten</span>
+            </button>
+          </div>
+          
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Vad vill du göra nu? 🎯
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
+              Vad vill du göra nu?
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-base sm:text-lg text-gray-600">
               Välj hur du vill fortsätta din AI-resa
             </p>
           </div>
@@ -342,13 +362,13 @@ Visa mig ett praktiskt exempel på hur jag kan använda detta direkt.`
               onClick={() => handleChoice('email')}
               className="w-full group/choice flex items-center justify-between p-5 bg-white hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-100 hover:border-gray-200"
             >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Mail className="w-6 h-6 text-blue-600" />
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-gray-900">Få alla prompts via email</h3>
-                  <p className="text-sm text-gray-600">Skicka 10-15 prompts + implementationsguide</p>
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900">Få alla prompts via email</h3>
+                  <p className="text-xs sm:text-sm text-gray-600">Skicka 10-15 prompts + implementationsguide</p>
                 </div>
               </div>
               <ChevronRight className="w-6 h-6 text-gray-400 group-hover/choice:translate-x-1 transition-transform" />
@@ -357,15 +377,15 @@ Visa mig ett praktiskt exempel på hur jag kan använda detta direkt.`
             {/* Premium option */}
             <button
               onClick={() => handleChoice('premium')}
-              className="w-full group/choice flex items-center justify-between p-5 bg-gradient-to-r from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 rounded-lg transition-all duration-200 border border-purple-200 hover:border-purple-300"
+              className="w-full group/choice flex items-center justify-between p-4 sm:p-5 bg-gradient-to-r from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 rounded-lg transition-all duration-200 border border-purple-200 hover:border-purple-300"
             >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-purple-600" />
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-gray-900">Köp fullständig analys</h3>
-                  <p className="text-sm text-gray-600">8-12 sidor + 20 prompts + 30 dagars support</p>
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900">Köp fullständig analys</h3>
+                  <p className="text-xs sm:text-sm text-gray-600">8-12 sidor + 20 prompts + 30 dagars support</p>
                   <p className="text-xs font-semibold text-purple-700 mt-1">299 kr</p>
                 </div>
               </div>
