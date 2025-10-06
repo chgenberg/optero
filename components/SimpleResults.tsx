@@ -240,22 +240,28 @@ export default function SimpleResults({
                   <span className="text-xl">✨</span>
                   Prova denna prompt:
                 </h4>
-                <div className="relative bg-gray-50 rounded-lg p-4 border border-gray-100">
-                  <pre className="text-gray-800 pr-12 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-mono">
-{solutions[currentStep].prompt}
-                  </pre>
-                  <button
-                    onClick={() => handleCopy(solutions[currentStep].prompt, currentStep)}
-                    className="absolute top-3 right-3 p-1.5 text-gray-500 hover:text-gray-700 transition-colors"
-                    title="Kopiera prompt"
-                  >
-                    {copiedIndex === currentStep ? (
-                      <Check className="w-4 h-4 text-green-600" />
-                    ) : (
-                      <Copy className="w-4 h-4" />
-                    )}
-                  </button>
+              <div className="relative bg-gray-50 rounded-lg p-4 border border-gray-100">
+                <div className="pr-10 overflow-x-auto">
+                  <pre 
+                    className="text-gray-800 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-mono break-words"
+                    dangerouslySetInnerHTML={{
+                      __html: solutions[currentStep].prompt
+                        .replace(/\[([^\]]+)\]/g, '<strong class="bg-yellow-200 px-1 rounded">[$1]</strong>')
+                    }}
+                  />
                 </div>
+                <button
+                  onClick={() => handleCopy(solutions[currentStep].prompt, currentStep)}
+                  className="absolute top-3 right-3 p-1.5 text-gray-500 hover:text-gray-700 transition-colors"
+                  title="Kopiera prompt"
+                >
+                  {copiedIndex === currentStep ? (
+                    <Check className="w-4 h-4 text-green-600" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
               </div>
 
               {/* Navigation */}
@@ -279,16 +285,16 @@ export default function SimpleResults({
           </div>
           
           {/* Next button outside box - Desktop */}
-          <div className="hidden sm:flex justify-end mt-6">
+          <div className="hidden sm:flex justify-center mt-8">
             <button
               onClick={handleNext}
-              className="group flex items-center gap-3 text-gray-700 hover:text-gray-900 transition-colors"
+              className="group relative flex items-center gap-3 px-8 py-4 bg-white border-2 border-gray-200 rounded-full hover:border-gray-300 hover:shadow-lg transition-all duration-300"
             >
-              <ChevronRight className="w-8 h-8 text-gray-400 group-hover:text-gray-700 transition-all duration-200 group-hover:translate-x-1" />
-              <span className="text-lg font-medium relative">
-                Nästa
-                <span className="absolute -right-2 -top-2 w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-              </span>
+              <span className="text-base font-medium text-gray-700">Nästa uppgift</span>
+              <div className="relative">
+                <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-700 transition-all duration-200 group-hover:translate-x-1" />
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+              </div>
             </button>
           </div>
           
@@ -296,13 +302,13 @@ export default function SimpleResults({
           <div className="sm:hidden flex justify-center mt-8">
             <button
               onClick={handleNext}
-              className="group flex flex-col items-center gap-2"
+              className="relative px-8 py-4 bg-white border-2 border-gray-200 rounded-full shadow-md active:shadow-sm transition-all duration-200"
             >
-              <div className="relative">
-                <ChevronDown className="w-10 h-10 text-gray-600 animate-bounce" />
-                <span className="absolute top-0 right-0 w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+              <div className="flex items-center gap-3">
+                <span className="text-base font-medium text-gray-700">Nästa</span>
+                <ChevronDown className="w-5 h-5 text-gray-400" />
               </div>
-              <span className="text-base font-medium text-gray-700">Nästa</span>
+              <div className="absolute top-2 right-6 w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
             </button>
           </div>
         </>

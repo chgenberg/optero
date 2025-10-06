@@ -42,7 +42,7 @@ För VARJE uppgift, returnera EXAKT detta JSON-format:
     {
       "task": "Exakt uppgiftsnamn",
       "solution": "Konkret lösning i 2-3 meningar. Förklara specifikt HUR AI revolutionerar denna uppgift och EXAKT vilken tidsbesparing (i minuter/timmar) det ger.",
-      "prompt": "En EXTREMT DETALJERAD prompt (8-12 rader) med:\n- Tydlig kontext och roll\n- [PLATSHÅLLARE] för anpassning\n- Specifikt output-format\n- Kvalitetskriterier\n- Branschspecifika krav\n- Ton och stil\n- Konkreta exempel"
+      "prompt": "En EXTREMT DETALJERAD prompt (8-12 rader) med:\n- Tydlig kontext och roll\n- ALLTID [PLATSHÅLLARE] i hakparenteser för alla delar användaren ska fylla i själv\n- Specifikt output-format\n- Kvalitetskriterier\n- Branschspecifika krav\n- Ton och stil\n- Konkreta exempel\nVIKTIGT: Sätt ALLA platshållare inom [HAKPARENTESER] så de blir tydliga!"
     }
   ]
 }`
