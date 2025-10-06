@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: NextRequest) {
-  const { profession, language = 'en' } = await req.json().catch(() => ({ profession: "", language: 'en' }));
+  const { profession, language = 'sv' } = await req.json().catch(() => ({ profession: "", language: 'sv' }));
   try {
     if (!profession) {
       return NextResponse.json({ error: "Saknar yrke" }, { status: 400 });

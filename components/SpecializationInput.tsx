@@ -30,11 +30,12 @@ export default function SpecializationInput({
     async function load() {
       // 1) Försök AI först (som tidigare beteende)
       setLoading(true);
+      const currentLanguage = t('language.code'); // Get language code (sv, en, etc)
       try {
         const ai = await fetch("/api/specializations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ profession }),
+          body: JSON.stringify({ profession, language: currentLanguage }),
         }).then((r) => r.json());
 
         if (Array.isArray(ai?.specializations) && ai.specializations.length > 0) {
@@ -62,7 +63,7 @@ export default function SpecializationInput({
     }
 
     load().finally(() => setLoading(false));
-  }, [profession]);
+  }, [profession, t]);
 
   const handleSelect = (spec: string) => {
     onSelect(spec);
