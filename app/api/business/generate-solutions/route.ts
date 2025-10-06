@@ -1,117 +1,162 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-import { DEPARTMENT_QUESTIONS } from "@/data/business-questions";
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-  maxRetries: 1,
-  timeout: 180000 // 3 minutes for thorough B2B analysis
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json();
+    const { profession, specialization, tasks, language = 'sv' } = await request.json();
 
-    const systemPrompt = `Du är en senior AI-konsult med expertis inom ${data.dept} och ${data.industry}.
-    
-    Din uppgift är att analysera företagets svar och skapa 5 MYCKET SPECIFIKA AI-lösningar som:
-    
-    1. LÖSER VERKLIGA PROBLEM de beskrivit i sina svar
-    2. ÄR ANPASSADE till deras bransch (${data.industry}) och avdelning (${data.dept})
-    3. TAR HÄNSYN till deras nuvarande verktyg och processer
-    4. KAN IMPLEMENTERAS inom 2-4 veckor
-    5. GER MÄTBAR tidsbesparing och ROI
-    6. ANVÄNDER specifika, namngivna AI-verktyg (inte generiska)
-    
-    VIKTIGT:
-    - Referera till deras specifika svar (t.ex. "Eftersom ni använder Salesforce...")
-    - Beräkna ROI baserat på deras faktiska siffror
-    - Ge konkreta verktygsnamn med priser
-    - Inkludera detaljerad 4-veckors implementeringsplan
-    - Var EXTREMT specifik - inte generiska råd
-    
-    Tänk som en konsult som fakturerar 5,000 SEK/timme - ge premium-kvalitet!`;
+    if (!profession || !tasks || tasks.length === 0) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
 
-    // Format answers with question context for better analysis
-    const formattedAnswers = Object.entries(data.answers).map(([index, answer]) => {
-      const questionIndex = parseInt(index);
-      const questions = DEPARTMENT_QUESTIONS[data.dept] || [];
-      const question = questions[questionIndex];
-      return `Q: ${question?.question || `Fråga ${questionIndex + 1}`}\nA: ${answer}`;
-    }).join('\n\n');
+    // Language-specific prompts
+    const prompts = {
+      sv: {
+        system: `Du är en AI-expert som hjälper ${profession} med praktiska lösningar.
+        
+INSTRUKTIONER:
+- Ge KONKRETA, HANDS-ON lösningar
+- Förklara ENKELT utan teknisk jargong  
+- Prompts ska vara KOPIERINGSBARA och fungera direkt
+- Max 2-3 meningar per lösning
+- Fokusera på VÄRDE och TIDSBESPARING`,
+        
+        user: `Skapa lösningar för dessa arbetsuppgifter:
+${tasks.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
 
-    const userPrompt = `
-FÖRETAGSKONTEXT:
-- Avdelning: ${data.dept}
-- Företagsstorlek: ${data.size}
-- Bransch: ${data.industry}
-
-DERAS SVAR PÅ FRÅGORNA:
-${formattedAnswers}
-
-ANALYS-UPPGIFT:
-Baserat på deras specifika svar, skapa 5 AI-lösningar som är EXAKT anpassade för deras situation.
-
-EXEMPEL PÅ SPECIFICITET:
-- Om de sa "50 fakturor/månad" → beräkna ROI baserat på 50 fakturor
-- Om de sa "använder Salesforce" → föreslå Salesforce Einstein eller Einstein GPT
-- Om de sa "3 timmar på offerter" → visa hur AI reducerar till 15 minuter
-- Om de sa "ingen systematisk uppföljning" → fokusera på automatisering
-
-RETURNERA JSON:
+För VARJE uppgift, returnera EXAKT detta JSON-format:
 {
   "solutions": [
     {
-      "title": "Actionable titel (max 60 tecken)",
-      "problem": "Exakt problem från deras svar (2-3 meningar)",
-      "solution": "Detaljerad lösning (4-5 meningar) - hur AI löser detta SPECIFIKT för dem",
-      "benefits": [
-        "Konkret fördel 1 med siffror",
-        "Konkret fördel 2 med siffror",
-        "Konkret fördel 3 med siffror",
-        "Konkret fördel 4 med siffror"
-      ],
-      "tools": [
-        {
-          "name": "Exakt verktygsnamn",
-          "description": "Vad det gör för just deras use case",
-          "price": "från X SEK/månad eller Custom pricing"
-        }
-      ],
-      "implementation": {
-        "week1": "Konkreta steg vecka 1",
-        "week2": "Konkreta steg vecka 2",
-        "week3": "Konkreta steg vecka 3",
-        "week4": "Konkreta steg vecka 4"
-      },
-      "timeSaved": "X-Y timmar/vecka för teamet",
-      "roi": "X,000 - Y,000 SEK/år"
+      "task": "Exakt uppgiftsnamn",
+      "solution": "Konkret lösning i 2-3 meningar. Förklara HUR AI hjälper och VAD resultatet blir.",
+      "prompt": "En färdig prompt som användaren kan kopiera och använda direkt i ChatGPT/Claude"
     }
-  ],
-  "totalTimeSaved": "XX-YY timmar per vecka",
-  "totalROI": "XXX,000 - YYY,000 SEK/år"
-}
+  ]
+}`
+      },
+      en: {
+        system: `You are an AI expert helping ${profession} with practical solutions.
+        
+INSTRUCTIONS:
+- Give CONCRETE, HANDS-ON solutions
+- Explain SIMPLY without technical jargon
+- Prompts should be COPY-READY and work immediately
+- Max 2-3 sentences per solution
+- Focus on VALUE and TIME SAVINGS`,
+        
+        user: `Create solutions for these tasks:
+${tasks.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
 
-KVALITETSKRAV:
-- Varje lösning måste referera till minst 1 specifikt svar de gav
-- ROI måste vara beräknat baserat på deras faktiska siffror
-- Verktyg måste vara riktiga, namngivna produkter
-- Implementation måste vara konkret och actionable`;
+For EACH task, return EXACTLY this JSON format:
+{
+  "solutions": [
+    {
+      "task": "Exact task name",
+      "solution": "Concrete solution in 2-3 sentences. Explain HOW AI helps and WHAT the result is.",
+      "prompt": "A ready prompt that the user can copy and use directly in ChatGPT/Claude"
+    }
+  ]
+}`
+      },
+      es: {
+        system: `Eres un experto en IA que ayuda a ${profession} con soluciones prácticas.
+        
+INSTRUCCIONES:
+- Da soluciones CONCRETAS y PRÁCTICAS
+- Explica de forma SIMPLE sin jerga técnica
+- Los prompts deben estar LISTOS PARA COPIAR y funcionar inmediatamente
+- Máximo 2-3 frases por solución
+- Enfócate en el VALOR y AHORRO DE TIEMPO`,
+        
+        user: `Crea soluciones para estas tareas:
+${tasks.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
+
+Para CADA tarea, devuelve EXACTAMENTE este formato JSON:
+{
+  "solutions": [
+    {
+      "task": "Nombre exacto de la tarea",
+      "solution": "Solución concreta en 2-3 frases. Explica CÓMO ayuda la IA y CUÁL es el resultado.",
+      "prompt": "Un prompt listo que el usuario puede copiar y usar directamente en ChatGPT/Claude"
+    }
+  ]
+}`
+      },
+      fr: {
+        system: `Vous êtes un expert IA qui aide ${profession} avec des solutions pratiques.
+        
+INSTRUCTIONS:
+- Donnez des solutions CONCRÈTES et PRATIQUES
+- Expliquez SIMPLEMENT sans jargon technique
+- Les prompts doivent être PRÊTS À COPIER et fonctionner immédiatement
+- Max 2-3 phrases par solution
+- Concentrez-vous sur la VALEUR et le GAIN DE TEMPS`,
+        
+        user: `Créez des solutions pour ces tâches:
+${tasks.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
+
+Pour CHAQUE tâche, retournez EXACTEMENT ce format JSON:
+{
+  "solutions": [
+    {
+      "task": "Nom exact de la tâche",
+      "solution": "Solution concrète en 2-3 phrases. Expliquez COMMENT l'IA aide et QUEL est le résultat.",
+      "prompt": "Un prompt prêt que l'utilisateur peut copier et utiliser directement dans ChatGPT/Claude"
+    }
+  ]
+}`
+      },
+      de: {
+        system: `Sie sind ein KI-Experte, der ${profession} mit praktischen Lösungen hilft.
+        
+ANWEISUNGEN:
+- Geben Sie KONKRETE, PRAKTISCHE Lösungen
+- Erklären Sie EINFACH ohne technischen Jargon
+- Prompts sollten KOPIERBEREIT sein und sofort funktionieren
+- Max. 2-3 Sätze pro Lösung
+- Fokus auf WERT und ZEITERSPARNIS`,
+        
+        user: `Erstellen Sie Lösungen für diese Aufgaben:
+${tasks.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
+
+Für JEDE Aufgabe, geben Sie GENAU dieses JSON-Format zurück:
+{
+  "solutions": [
+    {
+      "task": "Exakter Aufgabenname",
+      "solution": "Konkrete Lösung in 2-3 Sätzen. Erklären Sie WIE KI hilft und WAS das Ergebnis ist.",
+      "prompt": "Ein fertiger Prompt, den der Benutzer direkt in ChatGPT/Claude kopieren und verwenden kann"
+    }
+  ]
+}`
+      }
+    };
+
+    const selectedPrompts = prompts[language as keyof typeof prompts] || prompts.sv;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-5", // Using GPT-5 for highest quality B2B analysis
+      model: "o1-mini", // Using GPT-5-mini for speed
       messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
+        { role: "system", content: selectedPrompts.system },
+        { role: "user", content: selectedPrompts.user }
       ],
-      max_completion_tokens: 16000,
+      response_format: { type: "json_object" },
     });
 
     const result = JSON.parse(completion.choices[0].message.content || "{}");
 
     return NextResponse.json(result);
+
   } catch (error) {
-    console.error("Generate solutions error:", error);
+    console.error("Error generating solutions:", error);
     return NextResponse.json(
       { error: "Failed to generate solutions" },
       { status: 500 }

@@ -7,6 +7,7 @@ import ExperienceLevel from "@/components/ExperienceLevel";
 import ChallengesInput from "@/components/ChallengesInput";
 import TaskSelection from "@/components/TaskSelection";
 import AIRecommendations from "@/components/AIRecommendations";
+import SimpleResults from "@/components/SimpleResults";
 import InfoPopup from "@/components/InfoPopup";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import EmailCapture from "@/components/EmailCapture";
@@ -211,30 +212,12 @@ export default function Home() {
         </div>
       )}
 
-      {step === "loading" && (
-        <div className="w-full animate-fade-in-up">
-          <AIRecommendations
-            profession={profession}
-            specialization={specialization}
-            experience={experience}
-            challenges={challenges}
-            tasks={selectedTasks}
-            onReset={handleReset}
-            onDataLoaded={() => setStep("results")}
-            showLoadingState={true}
-          />
-        </div>
-      )}
-
-      {step === "results" && (
-        <AIRecommendations
+      {(step === "loading" || step === "results") && (
+        <SimpleResults
           profession={profession}
           specialization={specialization}
-          experience={experience}
-          challenges={challenges}
           tasks={selectedTasks}
           onReset={handleReset}
-          showLoadingState={false}
         />
       )}
       </div>
