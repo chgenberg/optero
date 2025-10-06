@@ -5,6 +5,9 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Set longer timeout for GPT-5-mini
+export const maxDuration = 180; // 3 minutes
+
 export async function POST(request: NextRequest) {
   try {
     const { profession, specialization, tasks, language = 'sv' } = await request.json();

@@ -72,6 +72,12 @@ export default function SimpleResults({
       if (!response.ok) throw new Error("Failed to generate solutions");
 
       const data = await response.json();
+      
+      // Validate that we got solutions array
+      if (!data.solutions || !Array.isArray(data.solutions) || data.solutions.length === 0) {
+        throw new Error("Invalid solutions data received");
+      }
+      
       setSolutions(data.solutions);
     } catch (error) {
       console.error("Error generating solutions:", error);
