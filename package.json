@@ -10,7 +10,8 @@
     "postinstall": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
-    "seed:specializations": "node --loader ts-node/esm scripts/seed-specializations.ts"
+    "seed:specializations": "node --loader ts-node/esm scripts/seed-specializations.ts",
+    "import:prompts": "tsx scripts/import-prompts-from-json.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
