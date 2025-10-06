@@ -67,7 +67,7 @@ Format som JSON:
     console.log('🤖 Calling GPT-5...');
     
     const response = await openai.chat.completions.create({
-      model: "gpt-5",
+      model: "gpt-5-mini", // Using mini for faster generation in tests
       messages: [
         { role: "system", content: "You are a helpful assistant that responds in JSON format." },
         { role: "user", content: prompt }
