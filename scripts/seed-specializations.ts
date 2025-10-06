@@ -15,7 +15,10 @@ async function readProfessions(): Promise<string[]> {
 }
 
 async function getExistingSet(): Promise<Set<string>> {
-  const rows = await prisma.professionSpecialization.findMany({ select: { profession: true } });
+  const rows = await prisma.professionSpecialization.findMany({ 
+    where: { language: 'sv' },
+    select: { profession: true } 
+  });
   return new Set(rows.map(r => r.profession));
 }
 
@@ -49,9 +52,14 @@ async function generateFor(profession: string): Promise<string[]> {
 
 async function upsert(profession: string, items: string[]) {
   await prisma.professionSpecialization.upsert({
-    where: { profession },
+    where: { 
+      profession_language: {
+        profession,
+        language: 'sv'
+      }
+    },
     update: { specializations: JSON.stringify(items) },
-    create: { profession, specializations: JSON.stringify(items) },
+    create: { profession, language: 'sv', specializations: JSON.stringify(items) },
   });
 }
 
