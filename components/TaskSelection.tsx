@@ -59,10 +59,11 @@ export default function TaskSelection({
   useEffect(() => {
     // Hämta uppgifter från API med GPT-4o-mini
     setLoading(true);
+    const currentLanguage = t('language.code'); // Get language code (sv, en, etc)
     fetch("/api/tasks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ profession, specialization }),
+      body: JSON.stringify({ profession, specialization, language: currentLanguage }),
     })
       .then((r) => r.json())
       .then((data) => {
@@ -73,7 +74,7 @@ export default function TaskSelection({
       })
       .catch(() => setTasks(TASKS.default))
       .finally(() => setLoading(false));
-  }, [specialization, profession]);
+  }, [specialization, profession, t]);
 
   const toggleTask = (task: string) => {
     setSelectedTasks((prev) => {

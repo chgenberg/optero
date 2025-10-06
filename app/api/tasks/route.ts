@@ -8,7 +8,7 @@ const openai = process.env.OPENAI_API_KEY
 
 export async function POST(request: NextRequest) {
   try {
-    const { profession, specialization, language = 'en' } = await request.json();
+    const { profession, specialization, language = 'sv' } = await request.json();
 
     if (!profession) {
       return NextResponse.json(

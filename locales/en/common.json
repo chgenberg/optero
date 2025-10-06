@@ -98,5 +98,8 @@
     "submit": "Submit",
     "reset": "Do a new analysis",
     "close": "Close"
+  },
+  "language": {
+    "code": "en"
   }
 }

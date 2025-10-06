@@ -98,5 +98,8 @@
     "submit": "Skicka",
     "reset": "Gör en ny analys",
     "close": "Stäng"
+  },
+  "language": {
+    "code": "sv"
   }
 }

@@ -27,5 +27,15 @@
     "button": "Meinen KI-Leitfaden erstellen",
     "selected": "{count} Aufgaben ausgewählt",
     "loading": "Arbeitsaufgaben werden geladen..."
+  },
+  "buttons": {
+    "back": "Zurück",
+    "continue": "Weiter",
+    "submit": "Absenden",
+    "reset": "Neue Analyse",
+    "close": "Schließen"
+  },
+  "language": {
+    "code": "de"
   }
 }
