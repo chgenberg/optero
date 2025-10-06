@@ -146,13 +146,20 @@ Für JEDE Aufgabe, geben Sie GENAU dieses JSON-Format zurück:
 
     const selectedPrompts = prompts[language as keyof typeof prompts] || prompts.sv;
 
+    // GPT-5-mini doesn't support system messages, so we combine them
+    const combinedPrompt = `${selectedPrompts.system}
+
+${selectedPrompts.user}
+
+VIKTIGT: Returnera ENDAST ett giltigt JSON-objekt utan någon extra text eller förklaring.`;
+
     const completion = await openai.chat.completions.create({
-      model: "o1-mini", // Using GPT-5-mini for speed
+      model: "gpt-5-mini", // Using GPT-5-mini for fast, quality prompts
       messages: [
-        { role: "system", content: selectedPrompts.system },
-        { role: "user", content: selectedPrompts.user }
+        { role: "user", content: combinedPrompt }
       ],
-      response_format: { type: "json_object" },
+      max_completion_tokens: 4000,
+      // GPT-5 doesn't support temperature or response_format
     });
 
     const result = JSON.parse(completion.choices[0].message.content || "{}");
@@ -161,6 +168,22 @@ Für JEDE Aufgabe, geben Sie GENAU dieses JSON-Format zurück:
 
   } catch (error) {
     console.error("Error generating solutions:", error);
+    
+    // More detailed error handling
+    if (error instanceof Error) {
+      if (error.message.includes('API key')) {
+        return NextResponse.json(
+          { error: "API configuration error" },
+          { status: 500 }
+        );
+      }
+      
+      return NextResponse.json(
+        { error: "Failed to generate solutions", details: error.message },
+        { status: 500 }
+      );
+    }
+    
     return NextResponse.json(
       { error: "Failed to generate solutions" },
       { status: 500 }
