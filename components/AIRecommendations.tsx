@@ -276,7 +276,7 @@ export default function AIRecommendations({
   const tabs = [
     { id: "scenarios" as TabType, label: "Användningsfall", count: scenarios.length },
     { id: "tools" as TabType, label: "AI-verktyg", count: recommendations.length },
-    ...(hasPrompts ? [{ id: "prompts" as TabType, label: "Färdiga prompts", count: totalPrompts }] : []),
+    { id: "prompts" as TabType, label: "Färdiga prompts", count: null }, // Always show, ProfessionPrompts will fetch from DB
     { id: "plan" as TabType, label: "Din plan", count: null },
   ];
 
