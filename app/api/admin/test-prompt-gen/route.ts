@@ -61,7 +61,7 @@ Format som JSON:
     const openai = new OpenAI({ 
       apiKey: process.env.OPENAI_API_KEY,
       maxRetries: 1,
-      timeout: 60000,
+      timeout: 180000, // 3 minutes for GPT-5
     });
 
     console.log('🤖 Calling GPT-5...');
