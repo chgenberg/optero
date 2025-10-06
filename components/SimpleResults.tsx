@@ -160,14 +160,11 @@ export default function SimpleResults({
   if (loading) {
     return (
       <div className="w-full max-w-2xl mx-auto animate-fade-in-up">
-        <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-2xl opacity-75 blur-sm animate-gradient-x"></div>
-          <div className="relative bg-white rounded-2xl p-8 sm:p-12">
-            <div className="flex flex-col items-center justify-center space-y-4">
-              <div className="w-16 h-16 rounded-full border-4 border-gray-200 border-t-gray-900 animate-spin"></div>
-              <p className="text-lg font-medium text-gray-900">Genererar dina AI-lösningar...</p>
-              <p className="text-sm text-gray-600">Detta tar bara några sekunder</p>
-            </div>
+        <div className="bg-white rounded-2xl p-8 sm:p-12 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <div className="w-16 h-16 rounded-full border-4 border-gray-200 border-t-gray-900 animate-spin"></div>
+            <p className="text-lg font-medium text-gray-900">Genererar dina AI-lösningar...</p>
+            <p className="text-sm text-gray-600">Detta tar bara några sekunder</p>
           </div>
         </div>
       </div>
@@ -188,14 +185,12 @@ export default function SimpleResults({
       {currentStep < solutions.length ? (
         // Task cards (steps 1-3)
         <div 
-          className="relative group"
+          className="relative"
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
         >
-          <div className="absolute -inset-1 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-2xl opacity-75 group-hover:opacity-100 blur-sm transition duration-1000 group-hover:duration-200 animate-gradient-x"></div>
-          
-          <div className="relative bg-white rounded-2xl p-8 sm:p-12">
+          <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_48px_rgba(0,0,0,0.12)] transition-shadow duration-300">
             {/* Progress indicator */}
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-sm font-medium text-gray-500">
@@ -238,19 +233,19 @@ export default function SimpleResults({
                 <span className="text-xl">✨</span>
                 Prova denna prompt:
               </h4>
-              <div className="relative bg-gray-50 rounded-xl p-4 border border-gray-200">
-                <p className="text-gray-800 pr-12 font-mono text-sm leading-relaxed">
-                  {solutions[currentStep].prompt}
-                </p>
+              <div className="relative bg-gray-50 rounded-lg p-4 border border-gray-100">
+                <pre className="text-gray-800 pr-12 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-mono">
+{solutions[currentStep].prompt}
+                </pre>
                 <button
                   onClick={() => handleCopy(solutions[currentStep].prompt, currentStep)}
-                  className="absolute top-4 right-4 p-2 text-gray-600 hover:text-gray-900 transition-colors"
+                  className="absolute top-3 right-3 p-1.5 text-gray-500 hover:text-gray-700 transition-colors"
                   title="Kopiera prompt"
                 >
                   {copiedIndex === currentStep ? (
-                    <Check className="w-5 h-5 text-green-600" />
+                    <Check className="w-4 h-4 text-green-600" />
                   ) : (
-                    <Copy className="w-5 h-5" />
+                    <Copy className="w-4 h-4" />
                   )}
                 </button>
               </div>
@@ -261,23 +256,37 @@ export default function SimpleResults({
               {currentStep > 0 && (
                 <button
                   onClick={handlePrevious}
-                  className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                  className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors text-sm"
                 >
-                  <ChevronRight className="w-5 h-5 rotate-180" />
+                  <ChevronRight className="w-4 h-4 rotate-180" />
                   <span className="hidden sm:inline">Föregående</span>
                 </button>
               )}
               
               <div className="ml-auto">
+                {/* Desktop navigation */}
                 <button
                   onClick={handleNext}
-                  className="group/btn relative flex items-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="hidden sm:flex group/btn relative items-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   <span className="font-medium">Nästa</span>
                   <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform duration-200" />
                   <span className="absolute -right-1 -top-1 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></span>
-                  <span className="absolute -right-1 -top-1 w-3 h-3 bg-blue-400 rounded-full animate-ping"></span>
                 </button>
+                
+                {/* Mobile navigation */}
+                <div className="sm:hidden flex flex-col items-center">
+                  <button
+                    onClick={handleNext}
+                    className="flex flex-col items-center gap-1"
+                  >
+                    <div className="relative">
+                      <ChevronDown className="w-8 h-8 text-gray-900 animate-bounce" />
+                      <ChevronDown className="w-8 h-8 text-gray-400 absolute top-0 animate-ping" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-900">Nästa</span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -289,10 +298,7 @@ export default function SimpleResults({
         </div>
       ) : (
         // Choice card (step 4)
-        <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-blue-200 via-purple-200 to-blue-200 rounded-2xl opacity-75 group-hover:opacity-100 blur-sm transition duration-1000 group-hover:duration-200 animate-gradient-x"></div>
-          
-          <div className="relative bg-white rounded-2xl p-8 sm:p-12">
+        <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
                 Vad vill du göra nu? 🎯
@@ -306,7 +312,7 @@ export default function SimpleResults({
               {/* Email option */}
               <button
                 onClick={() => handleChoice('email')}
-                className="w-full group/choice flex items-center justify-between p-6 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200 border border-gray-200 hover:border-gray-300"
+                className="w-full group/choice flex items-center justify-between p-5 bg-white hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-100 hover:border-gray-200"
               >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
@@ -323,7 +329,7 @@ export default function SimpleResults({
               {/* Premium option */}
               <button
                 onClick={() => handleChoice('premium')}
-                className="w-full group/choice flex items-center justify-between p-6 bg-gradient-to-r from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 rounded-xl transition-all duration-200 border border-purple-200 hover:border-purple-300 shadow-sm hover:shadow-md"
+                className="w-full group/choice flex items-center justify-between p-5 bg-gradient-to-r from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 rounded-lg transition-all duration-200 border border-purple-200 hover:border-purple-300"
               >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
@@ -341,7 +347,7 @@ export default function SimpleResults({
               {/* Tools option */}
               <button
                 onClick={() => handleChoice('tools')}
-                className="w-full group/choice flex items-center justify-between p-6 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200 border border-gray-200 hover:border-gray-300"
+                className="w-full group/choice flex items-center justify-between p-5 bg-white hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-100 hover:border-gray-200"
               >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -358,7 +364,7 @@ export default function SimpleResults({
               {/* Share option */}
               <button
                 onClick={() => handleChoice('share')}
-                className="w-full group/choice flex items-center justify-between p-6 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200 border border-gray-200 hover:border-gray-300"
+                className="w-full group/choice flex items-center justify-between p-5 bg-white hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-100 hover:border-gray-200"
               >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
@@ -375,7 +381,7 @@ export default function SimpleResults({
               {/* Consultation option */}
               <button
                 onClick={() => handleChoice('consultation')}
-                className="w-full group/choice flex items-center justify-between p-6 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200 border border-gray-200 hover:border-gray-300"
+                className="w-full group/choice flex items-center justify-between p-5 bg-white hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-100 hover:border-gray-200"
               >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
@@ -399,7 +405,6 @@ export default function SimpleResults({
                 Börja om med nytt yrke
               </button>
             </div>
-          </div>
         </div>
       )}
     </div>

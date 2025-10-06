@@ -19,16 +19,18 @@ export async function POST(request: NextRequest) {
     // Language-specific prompts
     const prompts = {
       sv: {
-        system: `Du är en AI-expert som hjälper ${profession} med praktiska lösningar.
+        system: `Du är världens främsta prompt-ingenjör och AI-expert specialiserad på att hjälpa ${profession}.
         
-INSTRUKTIONER:
-- Ge KONKRETA, HANDS-ON lösningar
-- Förklara ENKELT utan teknisk jargong  
-- Prompts ska vara KOPIERINGSBARA och fungera direkt
-- Max 2-3 meningar per lösning
-- Fokusera på VÄRDE och TIDSBESPARING`,
+DU MÅSTE SKAPA VÄRLDSKLASS-PROMPTS SOM:
+- Är MINST 8-12 rader långa
+- Innehåller [PLATSHÅLLARE] för personlig anpassning
+- Specificerar EXAKT output-format
+- Inkluderar kvalitetskriterier och exempel
+- Definierar ton, stil och branschkrav
+- Sparar minst 30 minuter per användning
+- Är så detaljerade att INGEN följdfråga behövs`,
         
-        user: `Skapa lösningar för dessa arbetsuppgifter:
+        user: `Skapa AVANCERADE lösningar för dessa arbetsuppgifter:
 ${tasks.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
 
 För VARJE uppgift, returnera EXAKT detta JSON-format:
@@ -36,23 +38,25 @@ För VARJE uppgift, returnera EXAKT detta JSON-format:
   "solutions": [
     {
       "task": "Exakt uppgiftsnamn",
-      "solution": "Konkret lösning i 2-3 meningar. Förklara HUR AI hjälper och VAD resultatet blir.",
-      "prompt": "En färdig prompt som användaren kan kopiera och använda direkt i ChatGPT/Claude"
+      "solution": "Konkret lösning i 2-3 meningar. Förklara specifikt HUR AI revolutionerar denna uppgift och EXAKT vilken tidsbesparing (i minuter/timmar) det ger.",
+      "prompt": "En EXTREMT DETALJERAD prompt (8-12 rader) med:\n- Tydlig kontext och roll\n- [PLATSHÅLLARE] för anpassning\n- Specifikt output-format\n- Kvalitetskriterier\n- Branschspecifika krav\n- Ton och stil\n- Konkreta exempel"
     }
   ]
 }`
       },
       en: {
-        system: `You are an AI expert helping ${profession} with practical solutions.
+        system: `You are the world's leading prompt engineer and AI expert specialized in helping ${profession}.
         
-INSTRUCTIONS:
-- Give CONCRETE, HANDS-ON solutions
-- Explain SIMPLY without technical jargon
-- Prompts should be COPY-READY and work immediately
-- Max 2-3 sentences per solution
-- Focus on VALUE and TIME SAVINGS`,
+YOU MUST CREATE WORLD-CLASS PROMPTS THAT:
+- Are AT LEAST 8-12 lines long
+- Include [PLACEHOLDERS] for personalization
+- Specify EXACT output format
+- Include quality criteria and examples
+- Define tone, style, and industry requirements
+- Save at least 30 minutes per use
+- Are so detailed that NO follow-up is needed`,
         
-        user: `Create solutions for these tasks:
+        user: `Create ADVANCED solutions for these tasks:
 ${tasks.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
 
 For EACH task, return EXACTLY this JSON format:
@@ -60,8 +64,8 @@ For EACH task, return EXACTLY this JSON format:
   "solutions": [
     {
       "task": "Exact task name",
-      "solution": "Concrete solution in 2-3 sentences. Explain HOW AI helps and WHAT the result is.",
-      "prompt": "A ready prompt that the user can copy and use directly in ChatGPT/Claude"
+      "solution": "Concrete solution in 2-3 sentences. Explain specifically HOW AI revolutionizes this task and EXACT time saved (in minutes/hours).",
+      "prompt": "An EXTREMELY DETAILED prompt (8-12 lines) with:\n- Clear context and role\n- [PLACEHOLDERS] for customization\n- Specific output format\n- Quality criteria\n- Industry-specific requirements\n- Tone and style\n- Concrete examples"
     }
   ]
 }`
