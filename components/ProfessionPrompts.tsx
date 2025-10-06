@@ -134,6 +134,46 @@ export default function ProfessionPrompts({ profession, scenarios = [] }: Profes
     }
   };
 
+  // Show loading state while fetching prompts from database
+  if (loadingDbPrompts) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 space-y-4">
+        <div className="w-12 h-12 rounded-full border-4 border-gray-200 border-t-gray-900 animate-spin"></div>
+        <div className="text-center">
+          <p className="text-lg font-medium text-gray-900">Prompts genereras...</p>
+          <p className="text-sm text-gray-600 mt-2">
+            AI:n skapar skräddarsydda prompts för dig. Detta tar vanligtvis 30-60 sekunder.
+          </p>
+          <p className="text-xs text-gray-500 mt-3">
+            💡 Tip: Prompts sparas permanent och blir snabbare nästa gång!
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show message if no prompts found yet
+  if (dbPrompts.length === 0 && !currentProfessionData) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 space-y-4 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300">
+        <div className="text-center max-w-md">
+          <p className="text-lg font-medium text-gray-900 mb-2">⏳ Prompts genereras i bakgrunden</p>
+          <p className="text-sm text-gray-600 mb-4">
+            AI-genererade prompts för {profession} skapas just nu. Detta tar vanligtvis 30-60 sekunder.
+          </p>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
+            <p className="text-sm text-blue-900 font-medium mb-2">🔄 Vad kan jag göra?</p>
+            <ul className="text-xs text-blue-800 space-y-1">
+              <li>• Vänta 30-60 sekunder och uppdatera sidan (Cmd/Ctrl + R)</li>
+              <li>• Kolla andra tabbar medan du väntar</li>
+              <li>• Nästa gång du besöker samma yrke ser du promptsen direkt!</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!currentProfessionData) {
     return null;
   }
