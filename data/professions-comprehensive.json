@@ -1,392 +1,3981 @@
 {
+  "version": "2.0",
+  "totalProfessions": 795,
   "professions": [
-    { "name": "Accountant", "category": "Finance" },
-    { "name": "Account Manager", "category": "Sales" },
-    { "name": "Actor", "category": "Arts & Entertainment" },
-    { "name": "Actuary", "category": "Finance" },
-    { "name": "Administratör", "category": "Administration" },
-    { "name": "Advokat", "category": "Juridik" },
-    { "name": "Agile Coach", "category": "IT & Tech" },
-    { "name": "Air Traffic Controller", "category": "Transport" },
-    { "name": "Ambulanssjuksköterska", "category": "Vård" },
-    { "name": "Ambulanssjukvårdare", "category": "Vård" },
-    { "name": "Animator", "category": "Design" },
-    { "name": "Apotekare", "category": "Vård" },
-    { "name": "Architect", "category": "Construction" },
-    { "name": "Arkitekt", "category": "Bygg" },
-    { "name": "Art Director", "category": "Marketing" },
-    { "name": "Arbetsterapeut", "category": "Vård" },
-    { "name": "Asset Manager", "category": "Finance" },
-    { "name": "Audiolog", "category": "Vård" },
-    { "name": "Auditor", "category": "Finance" },
-    { "name": "Automation Engineer", "category": "Engineering" },
-    { "name": "Backend Developer", "category": "IT & Tech" },
-    { "name": "Bagare", "category": "Livsmedel" },
-    { "name": "Baker", "category": "Food" },
-    { "name": "Bank Manager", "category": "Finance" },
-    { "name": "Bankrådgivare", "category": "Ekonomi" },
-    { "name": "Barista", "category": "Food & Beverage" },
-    { "name": "Barnskötare", "category": "Pedagogik" },
-    { "name": "Bartender", "category": "Hospitality" },
-    { "name": "Bibliotekarie", "category": "Kultur" },
-    { "name": "Biomedical Engineer", "category": "Healthcare" },
-    { "name": "Biomedicinsk analytiker", "category": "Vård" },
-    { "name": "Biologist", "category": "Science" },
-    { "name": "Biståndsbedömare", "category": "Social" },
-    { "name": "Brand Manager", "category": "Marketing" },
-    { "name": "Brandman", "category": "Säkerhet" },
-    { "name": "Brevbärare", "category": "Logistik" },
-    { "name": "Broadcast Engineer", "category": "Media" },
-    { "name": "Building Inspector", "category": "Construction" },
-    { "name": "Business Analyst", "category": "Business" },
-    { "name": "Business Consultant", "category": "Consulting" },
-    { "name": "Business Developer", "category": "Business" },
-    { "name": "Bussförare", "category": "Transport" },
-    { "name": "Butikschef", "category": "Retail" },
-    { "name": "Butikssäljare", "category": "Försäljning" },
-    { "name": "Buyer", "category": "Procurement" },
-    { "name": "CAD Designer", "category": "Design" },
-    { "name": "Caregiver", "category": "Healthcare" },
-    { "name": "Carpenter", "category": "Construction" },
-    { "name": "Cashier", "category": "Retail" },
-    { "name": "Caterer", "category": "Food Service" },
-    { "name": "CEO", "category": "Executive" },
-    { "name": "CFO", "category": "Executive" },
-    { "name": "Change Manager", "category": "Management" },
-    { "name": "Chef", "category": "Culinary" },
-    { "name": "Chemical Engineer", "category": "Engineering" },
-    { "name": "Chemist", "category": "Science" },
-    { "name": "Chief Technology Officer", "category": "Executive" },
-    { "name": "Chiropractor", "category": "Healthcare" },
-    { "name": "Civil Engineer", "category": "Engineering" },
-    { "name": "Claims Adjuster", "category": "Insurance" },
-    { "name": "Cleaner", "category": "Service" },
-    { "name": "Clinical Psychologist", "category": "Healthcare" },
-    { "name": "CNC Operator", "category": "Manufacturing" },
-    { "name": "Coach", "category": "Sports & Wellness" },
-    { "name": "Commercial Pilot", "category": "Aviation" },
-    { "name": "Community Manager", "category": "Marketing" },
-    { "name": "Compliance Officer", "category": "Legal" },
-    { "name": "Construction Manager", "category": "Construction" },
-    { "name": "Construction Worker", "category": "Construction" },
-    { "name": "Content Creator", "category": "Media" },
-    { "name": "Content Manager", "category": "Marketing" },
-    { "name": "Content Writer", "category": "Writing" },
-    { "name": "Controller", "category": "Finance" },
-    { "name": "Copywriter", "category": "Marketing" },
-    { "name": "Corporate Trainer", "category": "Training" },
-    { "name": "Counselor", "category": "Social Services" },
-    { "name": "Crane Operator", "category": "Construction" },
-    { "name": "Creative Director", "category": "Marketing" },
-    { "name": "Credit Analyst", "category": "Finance" },
-    { "name": "Customer Service Representative", "category": "Service" },
-    { "name": "Customer Success Manager", "category": "Sales" },
-    { "name": "Cybersecurity Analyst", "category": "IT & Tech" },
-    { "name": "Data Analyst", "category": "IT & Tech" },
-    { "name": "Data Engineer", "category": "IT & Tech" },
-    { "name": "Data Scientist", "category": "IT & Tech" },
-    { "name": "Database Administrator", "category": "IT & Tech" },
-    { "name": "Dataanalytiker", "category": "IT" },
-    { "name": "Delivery Driver", "category": "Logistics" },
-    { "name": "Dental Assistant", "category": "Healthcare" },
-    { "name": "Dentist", "category": "Healthcare" },
-    { "name": "Designer", "category": "Design" },
-    { "name": "DevOps Engineer", "category": "IT & Tech" },
-    { "name": "Dietist", "category": "Vård" },
-    { "name": "Digital Marketing Specialist", "category": "Marketing" },
-    { "name": "Director", "category": "Executive" },
-    { "name": "Dispatcher", "category": "Logistics" },
-    { "name": "Drifttekniker", "category": "Teknik" },
-    { "name": "E-commerce Manager", "category": "Retail" },
-    { "name": "Economist", "category": "Finance" },
-    { "name": "Editor", "category": "Media" },
-    { "name": "Ekonom", "category": "Ekonomi" },
-    { "name": "Ekonomiassistent", "category": "Ekonomi" },
-    { "name": "Electrical Engineer", "category": "Engineering" },
-    { "name": "Electrician", "category": "Trades" },
-    { "name": "Elektriker", "category": "El" },
-    { "name": "Emergency Medical Technician", "category": "Healthcare" },
-    { "name": "Environmental Engineer", "category": "Engineering" },
-    { "name": "Environmental Scientist", "category": "Science" },
-    { "name": "Event Coordinator", "category": "Events" },
-    { "name": "Event Manager", "category": "Events" },
-    { "name": "Eventkoordinator", "category": "Event" },
-    { "name": "Executive Assistant", "category": "Administration" },
-    { "name": "Facility Manager", "category": "Management" },
-    { "name": "Factory Worker", "category": "Manufacturing" },
-    { "name": "Fashion Designer", "category": "Design" },
-    { "name": "Film Producer", "category": "Media" },
-    { "name": "Financial Advisor", "category": "Finance" },
-    { "name": "Financial Analyst", "category": "Finance" },
-    { "name": "Financial Controller", "category": "Finance" },
-    { "name": "Financial Planner", "category": "Finance" },
-    { "name": "Firefighter", "category": "Safety" },
-    { "name": "Fitness Instructor", "category": "Sports & Wellness" },
-    { "name": "Flight Attendant", "category": "Aviation" },
-    { "name": "Florist", "category": "Retail" },
-    { "name": "Fondförvaltare", "category": "Ekonomi" },
-    { "name": "Food Scientist", "category": "Science" },
-    { "name": "Forklift Operator", "category": "Logistics" },
-    { "name": "Fotograf", "category": "Kultur" },
-    { "name": "Frontend Developer", "category": "IT & Tech" },
-    { "name": "Frisör", "category": "Service" },
-    { "name": "Fullstack Developer", "category": "IT & Tech" },
-    { "name": "Fundraiser", "category": "Non-profit" },
-    { "name": "Furniture Designer", "category": "Design" },
-    { "name": "Fysioterapeut", "category": "Vård" },
-    { "name": "Förskollärare", "category": "Pedagogik" },
-    { "name": "Game Designer", "category": "IT & Tech" },
-    { "name": "General Manager", "category": "Management" },
-    { "name": "Geologist", "category": "Science" },
-    { "name": "Grafisk formgivare", "category": "Design" },
-    { "name": "Graphic Designer", "category": "Design" },
-    { "name": "Groundskeeper", "category": "Maintenance" },
-    { "name": "Growth Hacker", "category": "Marketing" },
-    { "name": "Hairdresser", "category": "Personal Services" },
-    { "name": "Health & Safety Officer", "category": "Safety" },
-    { "name": "Healthcare Administrator", "category": "Healthcare" },
-    { "name": "Historian", "category": "Education" },
-    { "name": "Hotel Manager", "category": "Hospitality" },
-    { "name": "Hotellreceptionist", "category": "Hotell" },
-    { "name": "House Cleaner", "category": "Service" },
-    { "name": "HR Business Partner", "category": "HR" },
-    { "name": "HR Generalist", "category": "HR" },
-    { "name": "HR Manager", "category": "HR" },
-    { "name": "HVAC Technician", "category": "Trades" },
-    { "name": "Illustrator", "category": "Design" },
-    { "name": "Industrial Designer", "category": "Design" },
-    { "name": "Industrial Engineer", "category": "Engineering" },
-    { "name": "Information Security Analyst", "category": "IT & Tech" },
-    { "name": "Inköpare", "category": "Ekonomi" },
-    { "name": "Inredningsarkitekt", "category": "Design" },
-    { "name": "Insurance Agent", "category": "Insurance" },
-    { "name": "Insurance Broker", "category": "Insurance" },
-    { "name": "Interior Designer", "category": "Design" },
-    { "name": "Interpreter", "category": "Language Services" },
-    { "name": "Investment Banker", "category": "Finance" },
-    { "name": "IT Consultant", "category": "IT & Tech" },
-    { "name": "IT Manager", "category": "IT & Tech" },
-    { "name": "IT Project Manager", "category": "IT & Tech" },
-    { "name": "IT-säkerhetsspecialist", "category": "IT" },
-    { "name": "Janitor", "category": "Maintenance" },
-    { "name": "Journalist", "category": "Media" },
-    { "name": "Judge", "category": "Legal" },
-    { "name": "Jurist", "category": "Juridik" },
-    { "name": "Key Account Manager", "category": "Sales" },
-    { "name": "Kindergarten Teacher", "category": "Education" },
-    { "name": "Kitchen Assistant", "category": "Food Service" },
-    { "name": "Kock", "category": "Mat" },
-    { "name": "Kommunikatör", "category": "Kommunikation" },
-    { "name": "Kurator", "category": "Social" },
-    { "name": "Kundtjänstmedarbetare", "category": "Service" },
-    { "name": "Laboratory Technician", "category": "Science" },
-    { "name": "Lagerarbetare", "category": "Logistik" },
-    { "name": "Landscape Architect", "category": "Design" },
-    { "name": "Lastbilsförare", "category": "Transport" },
-    { "name": "Lawyer", "category": "Legal" },
-    { "name": "Lecturer", "category": "Education" },
-    { "name": "Legal Assistant", "category": "Legal" },
-    { "name": "Librarian", "category": "Education" },
-    { "name": "Lifeguard", "category": "Safety" },
-    { "name": "Loan Officer", "category": "Finance" },
-    { "name": "Logistics Coordinator", "category": "Logistics" },
-    { "name": "Logistics Manager", "category": "Logistics" },
-    { "name": "Logistiker", "category": "Logistik" },
-    { "name": "Logoped", "category": "Vård" },
-    { "name": "Löneadministratör", "category": "Administration" },
-    { "name": "Läkare", "category": "Vård" },
-    { "name": "Lärare", "category": "Pedagogik" },
-    { "name": "Machine Learning Engineer", "category": "IT & Tech" },
-    { "name": "Machine Operator", "category": "Manufacturing" },
-    { "name": "Maintenance Technician", "category": "Maintenance" },
-    { "name": "Makeup Artist", "category": "Beauty" },
-    { "name": "Management Consultant", "category": "Consulting" },
-    { "name": "Manufacturing Engineer", "category": "Engineering" },
-    { "name": "Marine Biologist", "category": "Science" },
-    { "name": "Market Research Analyst", "category": "Marketing" },
-    { "name": "Marketing Coordinator", "category": "Marketing" },
-    { "name": "Marketing Director", "category": "Marketing" },
-    { "name": "Marketing Manager", "category": "Marketing" },
-    { "name": "Marknadsförare", "category": "Marknadsföring" },
-    { "name": "Massage Therapist", "category": "Wellness" },
-    { "name": "Maskinoperatör", "category": "Tillverkning" },
-    { "name": "Mechanical Engineer", "category": "Engineering" },
-    { "name": "Mechanic", "category": "Automotive" },
-    { "name": "Media Buyer", "category": "Marketing" },
-    { "name": "Medical Assistant", "category": "Healthcare" },
-    { "name": "Medical Doctor", "category": "Healthcare" },
-    { "name": "Medical Laboratory Scientist", "category": "Healthcare" },
-    { "name": "Midwife", "category": "Healthcare" },
-    { "name": "Mobile Developer", "category": "IT & Tech" },
-    { "name": "Murare", "category": "Bygg" },
-    { "name": "Museum Curator", "category": "Culture" },
-    { "name": "Music Producer", "category": "Music" },
-    { "name": "Music Teacher", "category": "Education" },
-    { "name": "Musician", "category": "Arts" },
-    { "name": "Målare", "category": "Bygg" },
-    { "name": "Nail Technician", "category": "Beauty" },
-    { "name": "Network Administrator", "category": "IT & Tech" },
-    { "name": "Network Engineer", "category": "IT & Tech" },
-    { "name": "Nätverkstekniker", "category": "IT" },
-    { "name": "Nurse", "category": "Healthcare" },
-    { "name": "Nurse Practitioner", "category": "Healthcare" },
-    { "name": "Nutritionist", "category": "Health" },
-    { "name": "Occupational Therapist", "category": "Healthcare" },
-    { "name": "Office Manager", "category": "Administration" },
-    { "name": "Operations Manager", "category": "Operations" },
-    { "name": "Optician", "category": "Healthcare" },
-    { "name": "Optometrist", "category": "Healthcare" },
-    { "name": "Painter", "category": "Construction" },
-    { "name": "Paralegal", "category": "Legal" },
-    { "name": "Paramedic", "category": "Healthcare" },
-    { "name": "Pastry Chef", "category": "Culinary" },
-    { "name": "Payroll Specialist", "category": "HR" },
-    { "name": "Personal Trainer", "category": "Fitness" },
-    { "name": "Personalspecialist", "category": "HR" },
-    { "name": "Pharmacist", "category": "Healthcare" },
-    { "name": "Pharmacy Technician", "category": "Healthcare" },
-    { "name": "Photographer", "category": "Arts" },
-    { "name": "Physical Therapist", "category": "Healthcare" },
-    { "name": "Physician", "category": "Healthcare" },
-    { "name": "Pilot", "category": "Aviation" },
-    { "name": "Plattsättare", "category": "Bygg" },
-    { "name": "Plumber", "category": "Trades" },
-    { "name": "Podcast Producer", "category": "Media" },
-    { "name": "Police Officer", "category": "Law Enforcement" },
-    { "name": "Polis", "category": "Säkerhet" },
-    { "name": "Portfolio Manager", "category": "Finance" },
-    { "name": "Preschool Teacher", "category": "Education" },
-    { "name": "Principal", "category": "Education" },
-    { "name": "Private Investigator", "category": "Security" },
-    { "name": "Procurement Manager", "category": "Procurement" },
-    { "name": "Product Designer", "category": "Design" },
-    { "name": "Product Manager", "category": "Product" },
-    { "name": "Product Owner", "category": "Product" },
-    { "name": "Production Manager", "category": "Manufacturing" },
-    { "name": "Production Planner", "category": "Manufacturing" },
-    { "name": "Professor", "category": "Education" },
-    { "name": "Program Manager", "category": "Management" },
-    { "name": "Programmer", "category": "IT & Tech" },
-    { "name": "Project Coordinator", "category": "Management" },
-    { "name": "Project Manager", "category": "Management" },
-    { "name": "Projektledare", "category": "Management" },
-    { "name": "Property Manager", "category": "Real Estate" },
-    { "name": "Prosecutor", "category": "Legal" },
-    { "name": "Psychiatrist", "category": "Healthcare" },
-    { "name": "Psychologist", "category": "Healthcare" },
-    { "name": "Psykolog", "category": "Vård" },
-    { "name": "Public Relations Specialist", "category": "Communications" },
-    { "name": "Purchasing Agent", "category": "Procurement" },
-    { "name": "QA Engineer", "category": "IT & Tech" },
-    { "name": "Quality Assurance Manager", "category": "Quality" },
-    { "name": "Quality Control Inspector", "category": "Quality" },
-    { "name": "Quantity Surveyor", "category": "Construction" },
-    { "name": "Radiographer", "category": "Healthcare" },
-    { "name": "Real Estate Agent", "category": "Real Estate" },
-    { "name": "Receptionist", "category": "Administration" },
-    { "name": "Recruiter", "category": "HR" },
-    { "name": "Redovisningsekonom", "category": "Ekonomi" },
-    { "name": "Registered Nurse", "category": "Healthcare" },
-    { "name": "Regissör", "category": "Media" },
-    { "name": "Rekryterare", "category": "HR" },
-    { "name": "Research Scientist", "category": "Science" },
-    { "name": "Researcher", "category": "Research" },
-    { "name": "Restaurant Manager", "category": "Hospitality" },
-    { "name": "Retail Manager", "category": "Retail" },
-    { "name": "Revisor", "category": "Ekonomi" },
-    { "name": "Risk Manager", "category": "Finance" },
-    { "name": "Roofer", "category": "Construction" },
-    { "name": "Sales Assistant", "category": "Sales" },
-    { "name": "Sales Director", "category": "Sales" },
-    { "name": "Sales Engineer", "category": "Sales" },
-    { "name": "Sales Manager", "category": "Sales" },
-    { "name": "Sales Representative", "category": "Sales" },
-    { "name": "School Counselor", "category": "Education" },
-    { "name": "Scrum Master", "category": "IT & Tech" },
-    { "name": "Secretary", "category": "Administration" },
-    { "name": "Security Guard", "category": "Security" },
-    { "name": "Security Manager", "category": "Security" },
-    { "name": "SEO Specialist", "category": "Marketing" },
-    { "name": "Servitör", "category": "Restaurang" },
-    { "name": "Service Technician", "category": "Maintenance" },
-    { "name": "Sjuksköterska", "category": "Vård" },
-    { "name": "Skådespelare", "category": "Kultur" },
-    { "name": "Snickare", "category": "Bygg" },
-    { "name": "Social Media Manager", "category": "Marketing" },
-    { "name": "Social Worker", "category": "Social Services" },
-    { "name": "Socialsekreterare", "category": "Social" },
-    { "name": "Socionom", "category": "Social" },
-    { "name": "Software Architect", "category": "IT & Tech" },
-    { "name": "Software Developer", "category": "IT & Tech" },
-    { "name": "Software Engineer", "category": "IT & Tech" },
-    { "name": "Software Tester", "category": "IT & Tech" },
-    { "name": "Sound Engineer", "category": "Media" },
-    { "name": "Special Education Teacher", "category": "Education" },
-    { "name": "Speech Therapist", "category": "Healthcare" },
-    { "name": "Spelutvecklare", "category": "IT" },
-    { "name": "Statistician", "category": "Science" },
-    { "name": "Store Manager", "category": "Retail" },
-    { "name": "Strategic Planner", "category": "Strategy" },
-    { "name": "Structural Engineer", "category": "Engineering" },
-    { "name": "Städare", "category": "Service" },
-    { "name": "Surgeon", "category": "Healthcare" },
-    { "name": "Supply Chain Manager", "category": "Logistics" },
-    { "name": "Surveyor", "category": "Construction" },
-    { "name": "Sustainability Consultant", "category": "Consulting" },
-    { "name": "Svetsare", "category": "Tillverkning" },
-    { "name": "Systems Administrator", "category": "IT & Tech" },
-    { "name": "Systems Analyst", "category": "IT & Tech" },
-    { "name": "Systemutvecklare", "category": "IT" },
-    { "name": "Säljare", "category": "Försäljning" },
-    { "name": "Tandläkare", "category": "Vård" },
-    { "name": "Tandhygienist", "category": "Vård" },
-    { "name": "Tandsköterska", "category": "Vård" },
-    { "name": "Tax Accountant", "category": "Finance" },
-    { "name": "Tax Advisor", "category": "Finance" },
-    { "name": "Taxi Driver", "category": "Transport" },
-    { "name": "Teacher", "category": "Education" },
-    { "name": "Technical Support Specialist", "category": "IT & Tech" },
-    { "name": "Technical Writer", "category": "Writing" },
-    { "name": "Telecommunications Specialist", "category": "IT & Tech" },
-    { "name": "Telemarketer", "category": "Sales" },
-    { "name": "Tester", "category": "IT" },
-    { "name": "Therapist", "category": "Healthcare" },
-    { "name": "Tolk", "category": "Service" },
-    { "name": "Tour Guide", "category": "Tourism" },
-    { "name": "Trader", "category": "Finance" },
-    { "name": "Training Coordinator", "category": "Training" },
-    { "name": "Translator", "category": "Language Services" },
-    { "name": "Transportation Manager", "category": "Logistics" },
-    { "name": "Travel Agent", "category": "Tourism" },
-    { "name": "Treasurer", "category": "Finance" },
-    { "name": "Truck Driver", "category": "Transport" },
-    { "name": "Truckförare", "category": "Transport" },
-    { "name": "Tutor", "category": "Education" },
-    { "name": "UI Designer", "category": "Design" },
-    { "name": "Undersköterska", "category": "Vård" },
-    { "name": "Underwriter", "category": "Insurance" },
-    { "name": "Urban Planner", "category": "Planning" },
-    { "name": "UX Designer", "category": "Design" },
-    { "name": "UX Researcher", "category": "Research" },
-    { "name": "Vaktmästare", "category": "Service" },
-    { "name": "Veterinarian", "category": "Animal Care" },
-    { "name": "Veterinär", "category": "Djurvård" },
-    { "name": "Video Editor", "category": "Media" },
-    { "name": "Video Producer", "category": "Media" },
-    { "name": "Videographer", "category": "Media" },
-    { "name": "Visual Merchandiser", "category": "Retail" },
-    { "name": "Vårdbiträde", "category": "Vård" },
-    { "name": "Waiter", "category": "Hospitality" },
-    { "name": "Warehouse Manager", "category": "Logistics" },
-    { "name": "Warehouse Worker", "category": "Logistics" },
-    { "name": "Web Developer", "category": "IT & Tech" },
-    { "name": "Webbdesigner", "category": "IT" },
-    { "name": "Welder", "category": "Manufacturing" },
-    { "name": "Writer", "category": "Writing" },
-    { "name": "Yoga Instructor", "category": "Wellness" },
-    { "name": "Zoologist", "category": "Science" },
-    { "name": "Återvinningsarbetare", "category": "Miljö" },
-    { "name": "Översättare", "category": "Service" },
-    { "name": "Åklagare", "category": "Juridik" }
+    {
+      "name": "Sjuksköterska",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Läkare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Undersköterska",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Specialistläkare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Barnmorska",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Tandläkare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Tandhygienist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fysioterapeut",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Arbetsterapeut",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Psykolog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Biomedicinsk analytiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Röntgensjuksköterska",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Operationssjuksköterska",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Intensivvårdssjuksköterska",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Distriktssköterska",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Specialistsjuksköterska",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Apotekare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Farmaceut",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Läkemedelsrådgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Dietist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Nutritionist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Sjukgymnast",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Naprapat",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kiropraktor",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Logoped",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Audionom",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Optiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Ortopedingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Laboratorieassistent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Medicintekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Ambulanssjukvårdare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Paramedicinare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kurator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Socionom",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Veterinär",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Djursjukskötare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hudterapeut",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Massageterapeut",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Akupunktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lärare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Förskollärare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Gymnasielärare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Högstadielärare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Grundskolelärare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Specialpedagog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Speciallärare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Studie- och yrkesvägledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Universitetslektor",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Professor",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Forskare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Adjunkt",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fritidspedagog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Barnskötare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Elevassistent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lärresurspedagog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Utbildningskonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Företagsutbildare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Yrkeslärare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Musikpedagog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Idrottslärare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Slöjdlärare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Heminstruktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Vuxenutbildare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Ekonom",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Redovisningsekonom",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Ekonomiassistent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Controller",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Revisor",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Auktoriserad revisor",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skatterådgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Finansanalytiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Investeringsrådgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Aktuarie",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bank- och finansrådgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kredithandläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fondförvaltare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Private banker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Företagsekonom",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Affärscontroller",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Business analyst",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Management consultant",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Affärsutvecklare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Strateg",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "CFO",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Ekonomichef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Redovisningskonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bokförare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lönekonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Faktureringsansvarig",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Inkassohandläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Riskanalytiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Compliance officer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Internal auditor",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Säljare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Säljchef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Key Account Manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Säljkoordinator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Business developer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Marknadsförare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Digital marknadschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Content manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "SEO-specialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "SEM-specialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Social media manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Community manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Brand manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Produktchef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Marknadsanalytiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Copywriter",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Innehållsproducent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Marknadskoordinator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Eventmarknadsförare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Trade marketing manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "E-handelsansvarig",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "CRM-specialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Marketing automation specialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Growth hacker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Performance marketer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Affiliate manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Butikssäljare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Butikschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Visual merchandiser",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kategoriansvarig",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Systemutvecklare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Frontend-utvecklare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Backend-utvecklare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Full stack-utvecklare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "DevOps-ingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Cloud-arkitekt",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Databasadministratör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "IT-säkerhetsspecialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Cybersäkerhetsanalytiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Nätverkstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Systemadministratör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "IT-support",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Helpdesk-tekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Data scientist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Data analyst",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Machine learning engineer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "AI-specialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Business intelligence analyst",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "UX-designer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "UI-designer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Produktdesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Interaktionsdesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Grafisk designer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Webbdesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Mjukvarutestare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "QA-engineer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Scrum master",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Product owner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Agil coach",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "IT-projektledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Teknisk projektledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "CTO",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "IT-chef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Teknisk arkitekt",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lösningsarkitekt",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Advokat",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Jurist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bolagsjurist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Arbetsrättsjurist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Immaterialrättsjurist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skaderegleringsjurist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Legal counsel",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Paralegal",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Rättssekreterare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Domstolshandläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kronofogde",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Åklagare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Domare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Notarius publicus",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Konkursförvaltare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Boutredningsman",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "God man",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Förmyndare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "HR-specialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "HR-chef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Rekryterare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Talent acquisition specialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "HR-business partner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Löneadministratör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Personaladministratör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Organisationsutvecklare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kompetensutvecklare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "HR-analytiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Employer branding specialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Onboarding specialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Arbetsrättskonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Rehabiliteringskoordinator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Arbetsmiljöspecialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Arbetsmiljöingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skyddsombud",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "HR-konsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Administratör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kontorsassistent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Receptionist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "VD-assistent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Sekreterare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Administrativ chef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Officemanager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Koordinator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Registrator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Arkivarie",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Dokumenthanterare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kundtjänstmedarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kundsupport",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kundservicemedarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Callcenteragent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Teknisk support",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Backoffice-medarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Orderadministratör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Transportkoordinator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Civilingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Maskiningenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Elektroingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Processingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Produktionsingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kvalitetsingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Utvecklingsingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Projektingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Konstruktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "CAD-konstruktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Mekanikkonstruktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Produktdesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Teknisk designer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Teknisk säljare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Applikationsingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Servicetekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Underhållsingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Driftsingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Automationsingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Elektronikkonstruktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hårdvaruingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Elektriker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Installatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Automationstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Instrumenttekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kyltekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "VVS-montör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Rörmokare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Arkitekt",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Byggnadsingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Anläggningsingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Konstruktionsingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Byggprojektledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Platschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Arbetsledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kalkylerare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Byggnadskalkylator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Inköpare bygg",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fastighetsutvecklare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bygg- och anläggningsarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Snickare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Murare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Betongarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fasadsättare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Takläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Golvläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Målare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Puts- och stuckatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kranförare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Maskinförare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Anläggningsarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Mark- och anläggningsarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Schaktmaskinförare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Journalist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Reporter",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Nyhetsreporter",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Redaktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Chefredaktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Webbproducent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Producent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Innehållsproducent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fotojournalist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Filmfotograf",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Videograf",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fotograf",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bildredaktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Grafisk formgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Art director",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Creative director",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Copywriter",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Textförfattare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "PR-konsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kommunikationsstrateg",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kommunikatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Informatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Pressekreterare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Eventkoordinator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Evenemangsproducent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Mediaköpare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Mediaplanner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Logistiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Logistikchef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Supply chain manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Inköpare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Inköpschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lagerarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lagerchef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lagerkoordinator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Godshanterare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Transportplanerare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Transportkoordinator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Speditör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Tulldeklarant",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Import-/exportspecialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kategorichef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Demand planner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Supply planner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Materialplanerare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Produktionsplanerare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Förrådsansvarig",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Terminalpersonal",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lastbilsförare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Distributionsförare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bud",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kundtjänstmedarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kundservicechef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Customer success manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Account manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Teknisk support",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hotellreceptionist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hotellchef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Revenue manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Konferensvärd",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Servitör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kock",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Köksmästare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Souschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Konditor",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bagare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bartender",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Barista",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Restaurangchef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hovmästare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Sommelier",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Catering-ansvarig",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Eventvärd",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Resekonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Reseledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Flygvärdinna",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kabinpersonal",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kundvärdsansvarig",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Produktionsledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Produktionstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Processoperatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Maskinoperatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "CNC-operatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Produktionsingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lean-specialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Produktionsutvecklare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Industrioperatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Monteringsarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Svetsar",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Plåtslagare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Verktygsmakare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Underhållstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Driftsoperatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kvalitetskontrollant",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kvalitetsansvarig",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Produktionschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fabrikschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skiftledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fastighetsmäklare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bostadsmäklare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fastighetsskötare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fastighetstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fastighetsförvaltare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Property manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Facility manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Vaktmästare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lokalvårdare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Städare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fönsterputsare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fastighetsutvecklare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Byggprojektledare fastighet",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fastighetsekonom",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Värderare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fastighetsjurist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Butikssäljare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Butikschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Butiksbiträde",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kassapersonal",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Butikskommunikatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Category manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Inköpsansvarig retail",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Visual merchandiser",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Store manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Regionchef retail",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lagermedarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Butikskonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "E-handelskoordinator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kundrådgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lastbilsförare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bussförare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Taxiförare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lokförare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Spårvagnsförare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Trafikledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Tågtrafikledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Trafikplanerare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Godshanterare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Trucförare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Terminalarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kurir",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Distributionschaufför",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Handläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Socialsekreterare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Arbetsförmedlare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Försäkringshandläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skattejurist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skattehandläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Inspektör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Tjänsteman",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Förvaltningschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kommundirektör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Enhetschef offentlig sektor",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Samordnare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Projektledare offentlig sektor",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Biståndshandläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "LSS-handläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Studie- och yrkesvägledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Arbetsmarknadsrådgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Migrationsverkshandläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Plan- och bygglovhandläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Miljöinspektör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Livsmedelsinsektör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skatterevisor",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Polis",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kriminalinspektör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kriminalvårdare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Häktespersonal",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Tulltjänsteman",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Brandman",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Räddningsledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Managementkonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Organisationskonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Strategikonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "IT-konsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Affärskonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "HR-konsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Ekonomikonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Redovisningskonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skattekonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hållbarhetskonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Miljökonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Energikonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Processledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Change manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Interim manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Senior advisor",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Partner (konsultfirma)",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Principal consultant",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "VD",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "CEO",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Verkställande direktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "CFO",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "COO",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "CTO",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "CMO",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "CHRO",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Divisionschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Regionchef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Avdelningschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Enhetschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Teamledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Gruppchef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Chef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Förvaltningschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Produktionschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Driftschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Teknisk chef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kvalitetschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Säkerhetschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Inköpschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Marknadschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Försäljningschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Personalchef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Ekonomichef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Grafisk designer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Art director",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Creative director",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Illustratör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Animatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "3D-artist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Motion graphics designer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Webbdesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "UX-designer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "UI/UX-designer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Produktdesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Industridesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Möbeldesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Inredningsarkitekt",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Inredningsdesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Stylist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Modedesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Textildesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Smyckesdesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fotograf",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bildbehandlare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Retuschör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Videoredigerare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Filmredigerare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Ljudtekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Musikproducent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Forskare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Forskningsingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Laboratorieforskare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Klinisk forskare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Postdoc",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Doktorand",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Laboratorieassistent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Labtekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kemist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Biolog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Mikrobiolog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Molekylärbiolog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Genetiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Farmakolog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Toxikolog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Miljövetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Ekolog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Agronom",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Växtförädlare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Geolog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hydrologist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Meteorolog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fysiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Matematiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Statistiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Socionom",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Socialarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kurator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Behandlingsassistent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Stödpedagog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Familjehemssekreterare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Familjerådgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Terapeut",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Beteendevetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kriminalvårdare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Frivårdsinspektör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Ungdomskonsulent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Missbrukskonsulent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Behandlingspedagog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Boendestödjare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Personlig assistent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "LSS-assistent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Funktionsassistent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Vårdbiträde",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lantbrukare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lantbrukskonsulent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Djurskötare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Agronom",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Trädgårdsmästare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hortonom",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skogsarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skogvaktare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Jägmästare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fiskare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fiskodlare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Djuruppfödare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lantbrukstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Maskinförare lantbruk",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Biolog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Miljöinspektör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Naturvårdare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Parkvaktare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Trädgårdsanläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Musiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Sångare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skådespelare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Regissör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Producent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Manusförfattare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Dramaturg",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Scenograf",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kostymdesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Makeup artist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Frisör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Stylist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Koreograf",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Dansare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Konstnär",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skulptör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Curator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Museichef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Gallerist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Evenemangstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Ljustekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Ljudtekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Scentekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Personlig tränare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Gruppträningsinstruktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Yogainstruktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Pilatesinstruktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Träningskoordinator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Gym manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Idrottslärare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Idrottstränare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Atletiktränare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fotbollstränare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hockeytränare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Simtränare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Tennistränare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Golfpro",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Idrottspsykolog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Idrottsmedicinare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fysioterapeut idrott",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Massör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Sportagent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fritidskoordinator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Snickare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Möbelsnickare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Byggsnickare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hantverkare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Murare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Elektriker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "VVS-montör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Rörmokare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Plåtslagare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Svetsare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Målare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Tapetserare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Golvläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Plattsättare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Glasmästare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Billackerare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bilmekaniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bilskadeingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Däckspecialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Industrimekaniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Verkstadsmaskinist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Verktygsmakare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Smed",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Gjutare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Frisör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Barberare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hårstylist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Makeup artist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skönhetsterapeut",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hudterapeut",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Nageltekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Massör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Massageterapeut",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Spa-terapeut",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Salongmanager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kosmetolog",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Permanent makeup artist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hårtransplantationsspecialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Väktare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Säkerhetschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Security manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Personskyddare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Dörrvakt",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Ordningsvakt",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Säkerhetsrådgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Brandskyddstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Säkerhetsinspektör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Arbetsmiljöingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skyddsvakt",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Polis",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kriminalvårdare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Tullare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Energirådgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Energianalytiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Energiingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Elinstallatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Elnätstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kraftverkstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Vindkraftstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Solcellsinstallatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Processingenjör energi",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Drifttekniker energi",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "VA-ingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Vattentekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Avfallshanterare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Återvinningskoordinator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Miljötekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Försäkringsrådgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Försäkringshandläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skadereglerare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Försäkringsutredare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Aktuarie",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Risk manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Pensionsrådgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Privatrådgivare bank",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Företagsrådgivare bank",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bolånerådgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Investeringsrådgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Värdepappersanalytiker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fondförvaltare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Asset manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Compliance officer finans",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bilmekaniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fordonsmekaniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bilskadetekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Billackerare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bilsäljare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Reservdelssäljare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Servicekoordinator bil",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Diagnos tekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fordonselektriker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Däcktekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Verkmästare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Servicechef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Plåt- och lacktekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Apotekare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Farmaceut",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Receptarie",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Apotekstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Läkemedelsrådgivare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Klinisk farmaceut",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Produktspecialist läkemedel",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Medical science liaison",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Regulatory affairs specialist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kvalitetsansvarig pharma",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Telekommunikationstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Nätverkstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fibertekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Mobiltelefonitekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Supporttekniker telekom",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "NOC-tekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Radioplanner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Transmissionstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Livsmedelstekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kvalitetskontrollant livsmedel",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Produktutvecklare livsmedel",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bagare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Konditor",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Slaktare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Charkuterist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Mejerioperatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bryggeriarbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Vinsakkunnig",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Sommelier",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Resekonsult",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Researrangör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Turistguide",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Reseledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Destinationschef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Turistinformatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hotellreceptionist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Revenue manager hotell",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Förlagsredaktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bokförläggare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Förlagskoordinator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Trycktekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Prepress-tekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Tryckeritekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Bokbindare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Grafisk produktionsledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lokalvårdare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Städare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Städchef",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Facility coordinator",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Servicetekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Vindstädare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Sanitetsvakt",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kemist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kemitekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Processoperatör kemi",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Laborant",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Materialingenjör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Polymertekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Modedesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Textildesigner",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Mönsterkonstruktör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Textiltekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Inköpare mode",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Fashion buyer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Modeproducent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Textiloperatör",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Sömmerska",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Skräddare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Sjökapten",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Styrman",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Maskinist fartyg",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Matros",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Lots",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Hamn arbetare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Pilot",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Flygtekniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Flygmekaniker",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Flygtrafikledare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Kabinpersonal",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Flygvärdinna",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Spelutvecklare",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Game designer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Level designer",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Spelartist",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Spelproducent",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Esports manager",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "Community manager gaming",
+      "description": "",
+      "category": ""
+    },
+    {
+      "name": "QA-testare spel",
+      "description": "",
+      "category": ""
+    }
   ]
 }
