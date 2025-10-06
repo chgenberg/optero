@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import FeedbackButton from "@/components/FeedbackButton";
-import { ChevronRight, ChevronDown, ChevronLeft, Copy, Check, Mail, Sparkles, Share2, Bot, Calendar } from "lucide-react";
+import { ChevronRight, ChevronDown, ChevronLeft, Copy, Check, Mail, Sparkles, Share2, Bot, Calendar, HelpCircle, X } from "lucide-react";
 import EmailCaptureModal from "./EmailCaptureModal";
 import LoadingAnalysis from "./LoadingAnalysis";
 
@@ -41,6 +41,7 @@ export default function SimpleResults({
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
@@ -199,6 +200,99 @@ Visa mig ett praktiskt exempel på hur jag kan använda detta direkt.`
         solutions={solutions}
       />
       
+      {/* Help Modal */}
+      {showHelpModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 animate-fade-in">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl animate-fade-in-up">
+            <div className="sticky top-0 bg-white border-b border-gray-100 p-4 sm:p-6">
+              <div className="flex items-start justify-between gap-4">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Så här använder du prompten</h2>
+                <button
+                  onClick={() => setShowHelpModal(false)}
+                  className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+              {/* Step 1 */}
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <span className="font-bold text-blue-700">1</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Öppna ChatGPT</h3>
+                  <p className="text-gray-700">Gå till <a href="https://chat.openai.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">chat.openai.com</a> och logga in med ditt konto (eller skapa ett gratis konto om du inte har ett).</p>
+                </div>
+              </div>
+              
+              {/* Step 2 */}
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <span className="font-bold text-blue-700">2</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Kopiera prompten</h3>
+                  <p className="text-gray-700">Klicka på kopiera-ikonen (📋) bredvid prompten för att kopiera hela texten till ditt urklipp.</p>
+                </div>
+              </div>
+              
+              {/* Step 3 */}
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <span className="font-bold text-blue-700">3</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Fyll i dina uppgifter</h3>
+                  <p className="text-gray-700">Klistra in prompten i ChatGPT. Ersätt alla gula markeringar <span className="bg-yellow-200 px-1 rounded">[som denna]</span> med din egen information. Till exempel:</p>
+                  <ul className="mt-2 space-y-1 text-sm text-gray-600">
+                    <li>• <span className="bg-yellow-200 px-1 rounded">[ditt företag]</span> → "Café Solsken"</li>
+                    <li>• <span className="bg-yellow-200 px-1 rounded">[målgrupp]</span> → "småbarnsföräldrar i Stockholm"</li>
+                    <li>• <span className="bg-yellow-200 px-1 rounded">[budget]</span> → "5000 kr per månad"</li>
+                  </ul>
+                </div>
+              </div>
+              
+              {/* Step 4 */}
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <span className="font-bold text-blue-700">4</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Skicka och få resultat</h3>
+                  <p className="text-gray-700">Tryck Enter för att skicka prompten. ChatGPT kommer nu generera ett skräddarsytt svar baserat på dina specifika behov.</p>
+                </div>
+              </div>
+              
+              {/* Tips */}
+              <div className="bg-blue-50 rounded-lg p-4 mt-6">
+                <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-blue-600" />
+                  Pro-tips
+                </h4>
+                <ul className="space-y-2 text-sm text-gray-700">
+                  <li>• Var så specifik som möjligt när du fyller i platshållarna</li>
+                  <li>• Du kan alltid be ChatGPT att justera eller förbättra svaret</li>
+                  <li>• Spara bra prompts för framtida användning</li>
+                  <li>• Experimentera med olika värden för att se vad som fungerar bäst</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-100 p-4 sm:p-6">
+              <button
+                onClick={() => setShowHelpModal(false)}
+                className="w-full px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                Förstått, stäng guiden
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {currentStep < solutions.length ? (
         <>
           {/* Task cards (steps 1-3) */}
@@ -271,9 +365,18 @@ Visa mig ett praktiskt exempel på hur jag kan använda detta direkt.`
 
               {/* Prompt */}
               <div className="mb-6 sm:mb-8">
-                <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">
-                  Prova denna prompt:
-                </h4>
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-base sm:text-lg font-semibold text-gray-900">
+                    Prova denna prompt:
+                  </h4>
+                  <button
+                    onClick={() => setShowHelpModal(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
+                  >
+                    <HelpCircle className="w-4 h-4" />
+                    <span>Så här gör du</span>
+                  </button>
+                </div>
                 <div className="relative bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-100">
                   <div className="pr-10 overflow-x-auto">
                     <pre 
