@@ -166,8 +166,7 @@ Für JEDE Aufgabe, geben Sie GENAU dieses JSON-Format zurück:
         { role: "system", content: selectedPrompts.system },
         { role: "user", content: selectedPrompts.user }
       ],
-      max_completion_tokens: 4000,
-      // GPT-5 doesn't support temperature or response_format
+      // GPT-5 supports system messages unlike o1
     });
 
     const content = completion.choices[0].message.content || "{}";
