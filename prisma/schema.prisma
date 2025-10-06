@@ -10,13 +10,16 @@ datasource db {
 // Sparar specialiseringar per yrke (AI-genererade)
 model ProfessionSpecialization {
   id              Int      @id @default(autoincrement())
-  profession      String   @unique
+  profession      String
+  language        String   @default("sv") // Language code: sv, en, es, fr, de
   specializations Json     // Array of specialization strings
   hitCount        Int      @default(0) // Hur många gånger detta yrke sökts
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   
+  @@unique([profession, language])
   @@index([profession])
+  @@index([language])
 }
 
 // Sparar vanliga arbetsuppgifter per yrke + specialisering
@@ -24,14 +27,16 @@ model CommonTasks {
   id              Int      @id @default(autoincrement())
   profession      String
   specialization  String
+  language        String   @default("sv") // Language code: sv, en, es, fr, de
   tasks           Json     // Array of common tasks
   hitCount        Int      @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   
-  @@unique([profession, specialization])
+  @@unique([profession, specialization, language])
   @@index([profession])
   @@index([specialization])
+  @@index([language])
 }
 
 // Sparar kompletta AI-rekommendationer (för snabbare laddning)

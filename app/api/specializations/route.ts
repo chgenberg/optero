@@ -11,12 +11,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Saknar yrke" }, { status: 400 });
     }
 
-    // 1) DB cache
+    // 1) DB cache (language-specific)
     try {
       const existing = await prisma.professionSpecialization.findUnique({
-        where: { profession },
+        where: { 
+          profession_language: {
+            profession,
+            language
+          }
+        },
       });
       if (existing && Array.isArray(existing.specializations)) {
+        await prisma.professionSpecialization.update({
+          where: { id: existing.id },
+          data: { hitCount: { increment: 1 } }
+        });
         return NextResponse.json({ specializations: existing.specializations, cached: true });
       }
     } catch {}
@@ -55,16 +64,23 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 3) Persist to DB for future
+    // 3) Persist to DB for future (language-specific)
     try {
       if (items.length > 0) {
         await prisma.professionSpecialization.upsert({
-          where: { profession },
-          update: { specializations: items as unknown as any },
-          create: { profession, specializations: items as unknown as any },
+          where: { 
+            profession_language: {
+              profession,
+              language
+            }
+          },
+          update: { specializations: items as unknown as any, hitCount: { increment: 1 } },
+          create: { profession, language, specializations: items as unknown as any, hitCount: 1 },
         });
       }
-    } catch {}
+    } catch (dbErr) {
+      console.error("Failed to save specializations:", dbErr);
+    }
 
     return NextResponse.json({ specializations: items, cached: false });
   } catch (err) {

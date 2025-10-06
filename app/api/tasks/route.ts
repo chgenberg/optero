@@ -17,13 +17,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 1. Check if we have cached common tasks for this combination
+    // 1. Check if we have cached common tasks for this combination (language-specific)
     try {
       const cachedTasks = await prisma.commonTasks.findUnique({
         where: {
-          profession_specialization: {
+          profession_specialization_language: {
             profession,
             specialization: specialization || profession,
+            language,
           },
         },
       });
@@ -111,13 +112,14 @@ export async function POST(request: NextRequest) {
       ];
     }
 
-    // 4. Save to database for future use
+    // 4. Save to database for future use (language-specific)
     if (tasks.length > 0) {
       try {
         await prisma.commonTasks.create({
           data: {
             profession,
             specialization: specialization || profession,
+            language,
             tasks: tasks,
             hitCount: 1,
           },
