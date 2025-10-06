@@ -12,40 +12,52 @@ interface LoadingFact {
 
 const LOADING_FACTS: LoadingFact[] = [
   {
-    sv: "Visste du att 65% av alla kontorsarbetare kan spara minst 5 timmar per vecka med AI?",
-    en: "Did you know that 65% of office workers can save at least 5 hours per week with AI?",
-    es: "¿Sabías que el 65% de los trabajadores de oficina pueden ahorrar al menos 5 horas por semana con IA?",
-    fr: "Saviez-vous que 65% des employés de bureau peuvent économiser au moins 5 heures par semaine avec l'IA?"
+    sv: "💡 GPT-5 kan skriva en 10-sidig rapport på 30 sekunder som annars tar 3 timmar manuellt.",
+    en: "💡 GPT-5 can write a 10-page report in 30 seconds that would take 3 hours manually.",
+    es: "💡 GPT-5 puede escribir un informe de 10 páginas en 30 segundos que tardaría 3 horas manualmente.",
+    fr: "💡 GPT-5 peut rédiger un rapport de 10 pages en 30 secondes qui prendrait 3 heures manuellement."
   },
   {
-    sv: "ChatGPT har över 180 miljoner användare världen över och växer varje dag.",
-    en: "ChatGPT has over 180 million users worldwide and growing every day.",
-    es: "ChatGPT tiene más de 180 millones de usuarios en todo el mundo y crece cada día.",
-    fr: "ChatGPT compte plus de 180 millions d'utilisateurs dans le monde et croît chaque jour."
+    sv: "🚀 AI-assistenter kan svara på kundfrågor 24/7 och löser 80% av ärenden utan mänsklig hjälp.",
+    en: "🚀 AI assistants can answer customer queries 24/7 and resolve 80% of cases without human help.",
+    es: "🚀 Los asistentes de IA pueden responder consultas 24/7 y resolver el 80% de los casos sin ayuda humana.",
+    fr: "🚀 Les assistants IA peuvent répondre aux demandes 24/7 et résoudre 80% des cas sans aide humaine."
   },
   {
-    sv: "AI kan automatisera upp till 40% av repetitiva arbetsuppgifter inom de flesta yrken.",
-    en: "AI can automate up to 40% of repetitive tasks in most professions.",
-    es: "La IA puede automatizar hasta el 40% de las tareas repetitivas en la mayoría de las profesiones.",
-    fr: "L'IA peut automatiser jusqu'à 40% des tâches répétitives dans la plupart des professions."
+    sv: "📊 Claude kan analysera 100,000 ord text (en hel bok!) på bara några sekunder.",
+    en: "📊 Claude can analyze 100,000 words of text (an entire book!) in just seconds.",
+    es: "📊 Claude puede analizar 100,000 palabras de texto (¡un libro entero!) en solo segundos.",
+    fr: "📊 Claude peut analyser 100 000 mots de texte (un livre entier!) en quelques secondes."
   },
   {
-    sv: "Företag som använder AI-verktyg rapporterar 30% högre produktivitet i genomsnitt.",
-    en: "Companies using AI tools report 30% higher productivity on average.",
-    es: "Las empresas que usan herramientas de IA reportan un 30% más de productividad en promedio.",
-    fr: "Les entreprises utilisant des outils IA rapportent une productivité 30% plus élevée en moyenne."
+    sv: "⏰ Företag som använder AI för dokumenthantering sparar i snitt 8 timmar per anställd varje vecka.",
+    en: "⏰ Companies using AI for document processing save an average of 8 hours per employee each week.",
+    es: "⏰ Las empresas que usan IA para procesar documentos ahorran un promedio de 8 horas por empleado cada semana.",
+    fr: "⏰ Les entreprises utilisant l'IA pour le traitement des documents économisent en moyenne 8 heures par employé chaque semaine."
   },
   {
-    sv: "94% av företagsledare säger att AI kommer vara kritiskt för deras framgång inom 5 år.",
-    en: "94% of business leaders say AI will be critical to their success within 5 years.",
-    es: "El 94% de los líderes empresariales dicen que la IA será crítica para su éxito en 5 años.",
-    fr: "94% des dirigeants d'entreprise affirment que l'IA sera essentielle à leur succès d'ici 5 ans."
+    sv: "🎯 AI kan lära sig din skrivstil och skapa texter som låter exakt som du på sekunder.",
+    en: "🎯 AI can learn your writing style and create texts that sound exactly like you in seconds.",
+    es: "🎯 La IA puede aprender tu estilo de escritura y crear textos que suenan exactamente como tú en segundos.",
+    fr: "🎯 L'IA peut apprendre votre style d'écriture et créer des textes qui vous ressemblent en quelques secondes."
   },
   {
-    sv: "En genomsnittlig knowledge worker spenderar 2.5 timmar per dag på att söka information.",
-    en: "An average knowledge worker spends 2.5 hours per day searching for information.",
-    es: "Un trabajador del conocimiento promedio pasa 2.5 horas al día buscando información.",
-    fr: "Un travailleur du savoir moyen passe 2,5 heures par jour à chercher des informations."
+    sv: "💰 Rätt AI-prompts kan öka kvaliteten på output med upp till 300% jämfört med enkla frågor.",
+    en: "💰 The right AI prompts can increase output quality by up to 300% compared to simple queries.",
+    es: "💰 Los prompts de IA correctos pueden aumentar la calidad del output hasta un 300% comparado con consultas simples.",
+    fr: "💰 Les bons prompts IA peuvent augmenter la qualité de sortie jusqu'à 300% par rapport aux requêtes simples."
+  },
+  {
+    sv: "🔮 GPT-5 tränas på data motsvarande 10 miljoner böcker och blir smartare varje dag.",
+    en: "🔮 GPT-5 is trained on data equivalent to 10 million books and gets smarter every day.",
+    es: "🔮 GPT-5 se entrena con datos equivalentes a 10 millones de libros y se vuelve más inteligente cada día.",
+    fr: "🔮 GPT-5 est entraîné sur des données équivalentes à 10 millions de livres et devient plus intelligent chaque jour."
+  },
+  {
+    sv: "📈 90% av framtidens jobb kommer kräva AI-kompetens - du ligger steget före!",
+    en: "📈 90% of future jobs will require AI skills - you're staying ahead!",
+    es: "📈 El 90% de los trabajos futuros requerirán habilidades de IA - ¡estás un paso adelante!",
+    fr: "📈 90% des emplois futurs nécessiteront des compétences en IA - vous gardez une longueur d'avance!"
   }
 ];
 
@@ -55,23 +67,23 @@ export default function LoadingAnalysis() {
   const [currentFactIndex, setCurrentFactIndex] = useState(0);
 
   useEffect(() => {
-    // Slower progress animation over ~2 minutes
+    // Slower progress animation over ~2.5 minutes (150 seconds)
     const progressInterval = setInterval(() => {
       setProgress(prev => {
         // Stop at 95% and wait for actual data
         if (prev >= 95) {
           return prev;
         }
-        // Very slow linear progression: 95% over 120 seconds = ~0.79% per second
-        // With 100ms intervals = ~0.079% per interval
-        return prev + 0.079;
+        // Very slow linear progression: 95% over 150 seconds = ~0.633% per second
+        // With 100ms intervals = ~0.0633% per interval
+        return prev + 0.0633;
       });
     }, 100);
 
-    // Change fact every 8 seconds (faster rotation)
+    // Change fact every 10 seconds for better reading time
     const factInterval = setInterval(() => {
       setCurrentFactIndex(prev => (prev + 1) % LOADING_FACTS.length);
-    }, 8000);
+    }, 10000);
 
     return () => {
       clearInterval(progressInterval);
@@ -93,13 +105,16 @@ export default function LoadingAnalysis() {
         {/* Loading text */}
         <div className="text-center space-y-2">
           <h3 className="text-2xl font-bold text-gray-900">
-            {t('results.loading')}
+            Genererar makalösa AI-lösningar...
           </h3>
           <p className="text-gray-600">
-            {progress < 30 && "Samlar information om ditt yrke..."}
-            {progress >= 30 && progress < 60 && "Analyserar dina arbetsuppgifter..."}
-            {progress >= 60 && progress < 90 && "Hittar de bästa AI-verktygen för dig..."}
-            {progress >= 90 && "Skapar din personliga guide..."}
+            {progress < 30 && "Analyserar dina arbetsuppgifter med GPT-5..."}
+            {progress >= 30 && progress < 60 && "Skapar skräddarsydda prompts för ditt yrke..."}
+            {progress >= 60 && progress < 90 && "Optimerar lösningar för maximal tidsbesparing..."}
+            {progress >= 90 && "Slutför din personliga AI-guide..."}
+          </p>
+          <p className="text-sm text-gray-500 mt-2">
+            Detta kan ta upp till 2,5 minuter för bästa resultat
           </p>
         </div>
 

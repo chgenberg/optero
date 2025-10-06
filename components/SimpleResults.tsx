@@ -6,6 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import FeedbackButton from "@/components/FeedbackButton";
 import { ChevronRight, ChevronDown, Copy, Check, Mail, Sparkles, Share2, Bot, Calendar } from "lucide-react";
 import EmailCaptureModal from "./EmailCaptureModal";
+import LoadingAnalysis from "./LoadingAnalysis";
 
 interface Task {
   task: string;
@@ -164,17 +165,7 @@ export default function SimpleResults({
   };
 
   if (loading) {
-    return (
-      <div className="w-full max-w-2xl mx-auto animate-fade-in-up">
-        <div className="bg-white rounded-2xl p-8 sm:p-12 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <div className="w-16 h-16 rounded-full border-4 border-gray-200 border-t-gray-900 animate-spin"></div>
-            <p className="text-lg font-medium text-gray-900">Genererar dina AI-lösningar...</p>
-            <p className="text-sm text-gray-600">Detta tar bara några sekunder</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingAnalysis />;
   }
 
   return (
