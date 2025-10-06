@@ -146,17 +146,11 @@ Für JEDE Aufgabe, geben Sie GENAU dieses JSON-Format zurück:
 
     const selectedPrompts = prompts[language as keyof typeof prompts] || prompts.sv;
 
-    // GPT-5-mini doesn't support system messages, so we combine them
-    const combinedPrompt = `${selectedPrompts.system}
-
-${selectedPrompts.user}
-
-VIKTIGT: Returnera ENDAST ett giltigt JSON-objekt utan någon extra text eller förklaring.`;
-
     const completion = await openai.chat.completions.create({
       model: "gpt-5-mini", // Using GPT-5-mini for fast, quality prompts
       messages: [
-        { role: "user", content: combinedPrompt }
+        { role: "system", content: selectedPrompts.system },
+        { role: "user", content: selectedPrompts.user }
       ],
       max_completion_tokens: 4000,
       // GPT-5 doesn't support temperature or response_format
