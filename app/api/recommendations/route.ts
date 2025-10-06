@@ -365,7 +365,7 @@ async function generatePrompts(profession: string, specialization: string, tasks
     const role = specialization || profession;
     const existingPromptNames = existingPrompts.map(p => p.name).join(", ");
     
-    console.log(`🤖 Calling GPT-5 to generate prompts for ${role}...`);
+    console.log(`🤖 Calling GPT-5-mini to generate prompts for ${role}...`);
     
     const prompt = `Skapa 10 högkvalitativa, värdefulla AI-prompts för: ${role}
 
@@ -418,11 +418,11 @@ Format som JSON:
     const openai = new OpenAI({ 
       apiKey: process.env.OPENAI_API_KEY!,
       maxRetries: 1,
-      timeout: 180000, // 3 minutes for prompt generation
+      timeout: 60000, // 1 minute - faster with gpt-5-mini
     });
 
     const response = await openai.chat.completions.create({
-      model: "gpt-5",
+      model: "gpt-5-mini", // Using mini for faster background generation (20x cheaper, 10x faster)
       messages: [
         { role: "system", content: "You are a helpful assistant that responds in JSON format." },
         { role: "user", content: prompt }
@@ -430,7 +430,7 @@ Format som JSON:
       max_completion_tokens: 16000,
     });
 
-    console.log('✅ GPT-5 response received');
+    console.log('✅ GPT-5-mini response received for prompts');
     
     const data = JSON.parse(response.choices[0].message.content || "{}");
     const generatedPrompts = data.prompts || [];
@@ -464,8 +464,8 @@ Format som JSON:
             howToUse: promptData.howToUse,
             tools: promptData.tools || [],
             tags: promptData.tags || [],
-            aiModel: "gpt-5",
-            supportedModels: ["gpt-4", "gpt-5", "claude-3", "gemini"],
+            aiModel: "gpt-5-mini",
+            supportedModels: ["gpt-4", "gpt-5", "gpt-5-mini", "claude-3", "gemini"],
           },
         });
         savedPrompts.push(saved);
