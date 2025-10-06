@@ -45,6 +45,8 @@ VARJE prompt ska spara minst 30 minuter och vara så pedagogisk att även en nyb
         user: `Skapa AVANCERADE lösningar för dessa arbetsuppgifter:
 ${tasks.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
 
+KRITISKT: Svara ENDAST med giltig JSON. Ingen annan text, ingen förklaring, ingen markdown.
+
 För VARJE uppgift, returnera EXAKT detta JSON-format:
 {
   "solutions": [
@@ -168,7 +170,23 @@ Für JEDE Aufgabe, geben Sie GENAU dieses JSON-Format zurück:
       // GPT-5 doesn't support temperature or response_format
     });
 
-    const result = JSON.parse(completion.choices[0].message.content || "{}");
+    const content = completion.choices[0].message.content || "{}";
+    console.log("GPT-5 raw response:", content);
+    
+    // Try to extract JSON if wrapped in markdown code blocks
+    let cleanedContent = content;
+    const jsonMatch = content.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
+    if (jsonMatch) {
+      cleanedContent = jsonMatch[1];
+    }
+    
+    const result = JSON.parse(cleanedContent);
+    
+    // Validate that we have solutions
+    if (!result.solutions || !Array.isArray(result.solutions) || result.solutions.length === 0) {
+      console.error("Invalid GPT-5 response structure:", result);
+      throw new Error("GPT-5 returned invalid data structure");
+    }
 
     return NextResponse.json(result);
 

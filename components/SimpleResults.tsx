@@ -70,23 +70,43 @@ export default function SimpleResults({
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to generate solutions");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("API error:", response.status, errorData);
+        throw new Error(`API returned ${response.status}`);
+      }
 
       const data = await response.json();
+      console.log("Received data:", data);
       
       // Validate that we got solutions array
       if (!data.solutions || !Array.isArray(data.solutions) || data.solutions.length === 0) {
+        console.error("Invalid data structure:", data);
         throw new Error("Invalid solutions data received");
       }
       
       setSolutions(data.solutions);
     } catch (error) {
       console.error("Error generating solutions:", error);
-      // Fallback solutions
+      // Better fallback solutions with structure
       setSolutions(tasks.slice(0, 3).map(t => ({
         task: t.task,
-        solution: "Använd AI för att effektivisera denna uppgift genom automatisering och smarta verktyg.",
-        prompt: `Som ${profession} behöver jag hjälp med ${t.task}. Kan du ge mig en steg-för-steg guide?`
+        solution: `AI kan hjälpa dig automatisera och effektivisera denna uppgift. Med rätt verktyg och prompts kan du spara upp till 60% av tiden du lägger på ${t.task.toLowerCase()}.`,
+        prompt: `**ROLL & KONTEXT:**
+Jag är en professionell ${profession} som behöver hjälp med ${t.task.toLowerCase()}.
+
+**UPPGIFT:**
+Skapa en detaljerad steg-för-steg guide för att effektivisera denna uppgift med AI.
+
+**INPUT - Fyll i detta:**
+[BESKRIV DIN SITUATION]: 
+[SPECIFIKA KRAV]: 
+
+**OUTPUT-FORMAT:**
+Konkret handlingsplan med tidsbesparingar.
+
+**EXEMPEL:**
+Visa mig ett praktiskt exempel på hur jag kan använda detta direkt.`
       })));
     } finally {
       setLoading(false);
