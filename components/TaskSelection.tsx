@@ -165,6 +165,98 @@ export default function TaskSelection({
           </div>
         ) : (
           <>
+            {/* Add custom task section - MOVED TO TOP */}
+            <div className="mb-6 p-4 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
+              <h3 className="text-sm font-medium text-gray-700 mb-3">
+                Lägg till egna arbetsuppgifter
+              </h3>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={customTaskInput}
+                  onChange={(e) => setCustomTaskInput(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addCustomTask();
+                    }
+                  }}
+                  placeholder="Beskriv din arbetsuppgift..."
+                  className="flex-1 px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-lg focus:border-gray-900 focus:outline-none transition-all text-sm sm:text-base"
+                />
+                <button
+                  onClick={addCustomTask}
+                  disabled={!customTaskInput.trim()}
+                  className="px-4 sm:px-5 py-2 sm:py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </button>
+              </div>
+              {customTasks.length > 0 && (
+                <p className="text-xs text-gray-500 mt-2">
+                  {customTasks.length} egen{customTasks.length !== 1 ? 'a' : ''} uppgift{customTasks.length !== 1 ? 'er' : ''} tillagd{customTasks.length !== 1 ? 'a' : ''}
+                </p>
+              )}
+            </div>
+
+            {/* Divider text */}
+            <p className="text-center text-gray-500 text-sm mb-4">
+              eller hitta föreslagna arbetsuppgifter här nedan
+            </p>
+
+            {/* Custom tasks display */}
+            <div className="space-y-3 sm:space-y-4 mb-4">
+              {customTasks.map((task, index) => (
+                <div key={`custom-${index}`} className="space-y-2">
+                  <button
+                    onClick={() => toggleTask(task)}
+                    className={`w-full p-3 sm:p-4 rounded-xl lg:rounded-2xl text-left transition-colors duration-200 border-2 text-sm sm:text-base ${
+                      isSelected(task)
+                        ? "bg-gray-800 text-white border-gray-800"
+                        : "bg-gray-50 hover:bg-gray-100 border-transparent hover:border-gray-300"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-4 h-4 sm:w-5 sm:h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
+                          isSelected(task)
+                            ? "bg-white border-white"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        {isSelected(task) && (
+                          <span className="text-gray-800 text-xs sm:text-sm">✓</span>
+                        )}
+                      </div>
+                      <span
+                        className={`flex-1 transition-none ${
+                          isSelected(task) ? "text-white" : "text-gray-900"
+                        }`}
+                      >
+                        {task}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeCustomTask(task);
+                        }}
+                        className={`p-1 rounded hover:bg-gray-700 transition-colors ${
+                          isSelected(task) ? "text-white" : "text-gray-500"
+                        }`}
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Suggested tasks */}
             <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8 max-h-[50vh] sm:max-h-[60vh] overflow-y-auto pr-2">
               {tasks.map((task, index) => (
                 <div key={index} className="space-y-2">
@@ -245,42 +337,6 @@ export default function TaskSelection({
                   </button>
                 </div>
               ))}
-            </div>
-            
-            {/* Add custom task section */}
-            <div className="mb-6 sm:mb-8 p-4 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-              <h3 className="text-sm font-medium text-gray-700 mb-3">
-                Lägg till egna arbetsuppgifter
-              </h3>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={customTaskInput}
-                  onChange={(e) => setCustomTaskInput(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      addCustomTask();
-                    }
-                  }}
-                  placeholder="Beskriv din arbetsuppgift..."
-                  className="flex-1 px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-200 rounded-lg focus:border-gray-900 focus:outline-none transition-all text-sm sm:text-base"
-                />
-                <button
-                  onClick={addCustomTask}
-                  disabled={!customTaskInput.trim()}
-                  className="px-4 sm:px-5 py-2 sm:py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                </button>
-              </div>
-              {customTasks.length > 0 && (
-                <p className="text-xs text-gray-500 mt-2">
-                  {customTasks.length} egen{customTasks.length !== 1 ? 'a' : ''} uppgift{customTasks.length !== 1 ? 'er' : ''} tillagd{customTasks.length !== 1 ? 'a' : ''}
-                </p>
-              )}
             </div>
           </>
         )}
