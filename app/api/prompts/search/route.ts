@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Get related prompts if a profession is selected
-    let relatedPrompts = [];
+    let relatedPrompts: any[] = [];
     if (profession) {
       relatedPrompts = await prisma.taskSolution.findMany({
         where: {
