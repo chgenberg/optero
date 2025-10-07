@@ -166,10 +166,11 @@ export default function Home() {
             <div className="relative bg-white rounded-2xl p-8 sm:p-12">
               <div className="text-center animate-fade-in-up">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-wider uppercase">
-                  {t('hero.title')}
+                  AI som ger dig tiden tillbaka.
                 </h1>
                 <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light px-4 sm:px-0 tracking-wide">
-                  {t('hero.subtitle')}
+                  Skriv vad du jobbar med – få tre skräddarsydda AI-verktyg som sparar tid, minskar stress och gör ditt arbete roligare.<br/>
+                  <span className="text-base sm:text-lg">Gratis. Enkelt. Mänskligt.</span>
                 </p>
               </div>
               
@@ -185,6 +186,52 @@ export default function Home() {
                     {t('hero.demoLink')}
                   </a>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Så fungerar det - sektion */}
+          <div className="mt-16 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+            <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">Så fungerar det</h2>
+            <div className="grid gap-6 md:grid-cols-4">
+              {/* Steg 1 */}
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-4">
+                  1
+                </div>
+                <p className="text-sm text-gray-700">
+                  <span className="font-semibold">Skriv ditt yrke</span> – t.ex. lärare, sjuksköterska eller projektledare.
+                </p>
+              </div>
+
+              {/* Steg 2 */}
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-4">
+                  2
+                </div>
+                <p className="text-sm text-gray-700">
+                  <span className="font-semibold">Välj inriktning</span> – AI förstår din roll och dina dagliga uppgifter.
+                </p>
+              </div>
+
+              {/* Steg 3 */}
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-4">
+                  3
+                </div>
+                <p className="text-sm text-gray-700">
+                  <span className="font-semibold">Få tre skräddarsydda AI-prompts</span> – som direkt sparar dig tid varje vecka.
+                </p>
+              </div>
+
+              {/* Steg 4 */}
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-4">
+                  4
+                </div>
+                <p className="text-sm text-gray-700">
+                  <span className="font-semibold">Utforska fler idéer</span> – bidra till en växande bank av smarta prompts som gör samhället effektivare.
+                </p>
               </div>
             </div>
           </div>

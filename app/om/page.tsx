@@ -32,7 +32,7 @@ export default function OmPage() {
         <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-50 animate-gradient"></div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900 mb-8 animate-fade-in-up">
-            OM OPTERO
+            OM MENDIO
           </h1>
           <p className="text-xl sm:text-2xl text-gray-600 font-light animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
             En resa från oro till möjligheter
@@ -45,37 +45,53 @@ export default function OmPage() {
         {/* Story section */}
         <div className="prose prose-lg max-w-none">
           <div className="card p-8 sm:p-12 mb-12 animate-on-scroll opacity-0 translate-y-4 transition-all duration-700">
-            <div className="flex items-start gap-4 mb-6">
-              <div className="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center flex-shrink-0 animate-pulse-scale">
-                <span className="text-white text-xl">👋</span>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mt-0">Hej, jag heter Christopher</h2>
-            </div>
-            
             <div className="space-y-6 text-gray-700 leading-relaxed">
               <p>
-                Jag heter Christopher Genberg och jag har länge följt diskussionerna om AI – ofta med en ton av oro. 
-                Frågor som <span className="font-medium text-gray-900">"Kommer AI ta våra jobb?"</span> har blivit vardag. 
-                Men jag tror inte på att leva i rädsla. Jag tror på att se AI som ett redskap. Ett sätt att frigöra tid, 
-                skapa möjligheter och låta människor fokusera på det som verkligen betyder något.
+                Jag heter Christopher Genberg, och jag har länge följt samtalen om AI – ofta fyllda av oro.
               </p>
               
               <p>
-                För vissa handlar det om att prestera mer på jobbet. För andra om att komma hem lite tidigare, 
-                ha mer energi kvar och kunna spendera mer tid med barnen. AI behöver inte vara något avlägset 
-                och hotfullt – det kan vara en naturlig del av vår vardag, som hjälper oss snarare än ersätter oss.
+                Frågor som <span className="font-medium text-gray-900">"Kommer AI ta våra jobb?"</span> har blivit vanliga.
               </p>
               
               <p>
-                Det är därför jag skapade <span className="font-bold text-gray-900">Optero</span>. En tjänst som gör det enkelt att upptäcka hur AI kan 
-                underlätta just ditt arbete – oavsett yrke eller bakgrund. Här ska du inte behöva vara tekniker 
-                för att förstå. Du ska bara kunna se värdet direkt, och känna: 
-                <span className="italic">"Det här gör faktiskt mitt liv lättare."</span>
+                Men jag tror inte att lösningen är att vara rädd. Jag tror att vi behöver använda AI som det var tänkt – som ett verktyg för människor.
               </p>
               
-              <p className="text-lg font-medium text-gray-900">
-                Välkommen hit – jag hoppas att Optero kan bli en vän på vägen mot en vardag där vi har mer tid 
-                för det som gör livet värt att leva.
+              <p>
+                Jag skapade <span className="font-bold text-gray-900">MENDIO</span> för att visa just det.
+              </p>
+              
+              <p>
+                Här skriver du bara vad du jobbar med – och får på några sekunder förslag på hur du kan använda AI i ditt yrke för att spara tid, minska stress och göra jobbet roligare.
+              </p>
+              
+              <p>
+                Tre enkla prompts som du kan använda direkt. Ingen teknik, inget krångel – bara resultat.
+              </p>
+              
+              <p>
+                För vissa betyder det att hinna mer på jobbet.
+              </p>
+              
+              <p>
+                För andra att hinna hem lite tidigare, ha energi kvar och känna att man räcker till – både på jobbet och hemma.
+              </p>
+              
+              <p>
+                MENDIO finns för att visa att AI inte behöver ersätta människor – det kan frigöra dem.
+              </p>
+              
+              <p>
+                Tillsammans kan vi bygga ett samhälle där tekniken ger oss mer tid för det som verkligen betyder något.
+              </p>
+              
+              <p className="text-lg font-medium text-gray-900 mt-8">
+                Välkommen hit.
+              </p>
+              
+              <p className="text-lg">
+                Jag hoppas att MENDIO kan bli din vän på vägen mot en mänskligare och smartare vardag.
               </p>
               
               <p className="text-right mt-8">

@@ -11,7 +11,7 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: '#000000',
     icons: [
       {
-        src: '/mendio_logo.png',
+        src: '/MENDIO_logo.png',
         sizes: 'any',
         type: 'image/png',
       },

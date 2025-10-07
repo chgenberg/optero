@@ -12,10 +12,11 @@ export default function Footer() {
           {/* Logo and tagline */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-6 h-6 bg-gray-900 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xs">M</span>
-              </div>
-              <span className="font-bold text-gray-900 text-lg">Mendio</span>
+              <img 
+                src="/MENDIO_logo.png" 
+                alt="MENDIO" 
+                className="h-8 w-auto"
+              />
             </div>
             <p className="text-sm text-gray-600 max-w-sm">
               {t('footer.tagline')}
