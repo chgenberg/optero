@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { prisma } from "@/lib/prisma";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -19,10 +20,60 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Language-specific prompts
-    const prompts = {
-      sv: {
-        system: `Du är världens främsta prompt-ingenjör och pedagog specialiserad på att hjälpa ${profession}.
+    // Step 1: Check cache for existing solutions
+    const cachedSolutions = await Promise.all(
+      tasks.map(async (task: string) => {
+        const cached = await prisma.taskSolution.findUnique({
+          where: {
+            profession_specialization_task_language: {
+              profession,
+              specialization: specialization || "",
+              task,
+              language
+            }
+          }
+        });
+        
+        if (cached) {
+          // Update analytics
+          await prisma.taskSolution.update({
+            where: { id: cached.id },
+            data: {
+              hitCount: { increment: 1 },
+              usedInAnalyses: { increment: 1 }
+            }
+          });
+          
+          console.log(`Cache HIT for: ${task}`);
+          return {
+            task: cached.task,
+            solution: cached.solution,
+            prompt: cached.prompt,
+            fromCache: true
+          };
+        }
+        
+        console.log(`Cache MISS for: ${task}`);
+        return null;
+      })
+    );
+
+    // Step 2: Identify tasks that need to be generated
+    const tasksToGenerate = tasks.filter((_: string, index: number) => 
+      cachedSolutions[index] === null
+    );
+
+    let newSolutions: any[] = [];
+
+    // Step 3: Generate missing solutions with GPT-5-mini
+    if (tasksToGenerate.length > 0) {
+      console.log(`Generating ${tasksToGenerate.length} new solutions with GPT-5-mini`);
+    
+
+      // Language-specific prompts
+      const prompts = {
+        sv: {
+          system: `Du är världens främsta prompt-ingenjör och pedagog specialiserad på att hjälpa ${profession}.
         
 SKAPA PEDAGOGISKT STRUKTURERADE PROMPTS MED:
 
@@ -43,7 +94,7 @@ STRUKTUR SOM SKA FÖLJAS:
 VARJE prompt ska spara minst 30 minuter och vara så pedagogisk att även en nybörjare kan använda den.`,
         
         user: `Skapa AVANCERADE lösningar för dessa arbetsuppgifter:
-${tasks.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
+${tasksToGenerate.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
 
 KRITISKT: Svara ENDAST med giltig JSON. Ingen annan text, ingen förklaring, ingen markdown.
 
@@ -71,7 +122,7 @@ YOU MUST CREATE WORLD-CLASS PROMPTS THAT:
 - Are so detailed that NO follow-up is needed`,
         
         user: `Create ADVANCED solutions for these tasks:
-${tasks.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
+${tasksToGenerate.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
 
 For EACH task, return EXACTLY this JSON format:
 {
@@ -95,7 +146,7 @@ INSTRUCCIONES:
 - Enfócate en el VALOR y AHORRO DE TIEMPO`,
         
         user: `Crea soluciones para estas tareas:
-${tasks.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
+${tasksToGenerate.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
 
 Para CADA tarea, devuelve EXACTAMENTE este formato JSON:
 {
@@ -119,7 +170,7 @@ INSTRUCTIONS:
 - Concentrez-vous sur la VALEUR et le GAIN DE TEMPS`,
         
         user: `Créez des solutions pour ces tâches:
-${tasks.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
+${tasksToGenerate.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
 
 Pour CHAQUE tâche, retournez EXACTEMENT ce format JSON:
 {
@@ -143,7 +194,7 @@ ANWEISUNGEN:
 - Fokus auf WERT und ZEITERSPARNIS`,
         
         user: `Erstellen Sie Lösungen für diese Aufgaben:
-${tasks.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
+${tasksToGenerate.map((task: string, i: number) => `${i + 1}. ${task}`).join('\n')}
 
 Für JEDE Aufgabe, geben Sie GENAU dieses JSON-Format zurück:
 {
@@ -155,39 +206,89 @@ Für JEDE Aufgabe, geben Sie GENAU dieses JSON-Format zurück:
     }
   ]
 }`
+        }
+      };
+
+      const selectedPrompts = prompts[language as keyof typeof prompts] || prompts.sv;
+
+      const completion = await openai.chat.completions.create({
+        model: "gpt-5-mini", // Using GPT-5-mini for fast, quality prompts
+        messages: [
+          { role: "system", content: selectedPrompts.system },
+          { role: "user", content: selectedPrompts.user }
+        ],
+        max_completion_tokens: 4000,
+        // GPT-5 supports system messages unlike o1
+      });
+
+      const content = completion.choices[0].message.content || "{}";
+      console.log("GPT-5-mini raw response:", content);
+      
+      // Try to extract JSON if wrapped in markdown code blocks
+      let cleanedContent = content;
+      const jsonMatch = content.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
+      if (jsonMatch) {
+        cleanedContent = jsonMatch[1];
       }
-    };
+      
+      const result = JSON.parse(cleanedContent);
+      
+      // Validate that we have solutions
+      if (!result.solutions || !Array.isArray(result.solutions) || result.solutions.length === 0) {
+        console.error("Invalid GPT-5-mini response structure:", result);
+        throw new Error("GPT-5-mini returned invalid data structure");
+      }
 
-    const selectedPrompts = prompts[language as keyof typeof prompts] || prompts.sv;
+      newSolutions = result.solutions;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-5-mini", // Using GPT-5-mini for fast, quality prompts
-      messages: [
-        { role: "system", content: selectedPrompts.system },
-        { role: "user", content: selectedPrompts.user }
-      ],
-      // GPT-5 supports system messages unlike o1
+      // Step 4: Save new solutions to database
+      await Promise.all(
+        newSolutions.map(async (solution: any) => {
+          try {
+            await prisma.taskSolution.create({
+              data: {
+                profession,
+                specialization: specialization || "",
+                task: solution.task,
+                solution: solution.solution,
+                prompt: solution.prompt,
+                language,
+                hitCount: 1,
+                usedInAnalyses: 1
+              }
+            });
+            console.log(`Saved to DB: ${solution.task}`);
+          } catch (error) {
+            console.error(`Failed to save solution for ${solution.task}:`, error);
+            // Don't fail the whole request if DB save fails
+          }
+        })
+      );
+    }
+
+    // Step 5: Combine cached and new solutions in correct order
+    const finalSolutions = tasks.map((task: string, index: number) => {
+      const cached = cachedSolutions[index];
+      if (cached) {
+        return cached;
+      }
+      
+      // Find the generated solution for this task
+      const generated = newSolutions.find((sol: any) => sol.task === task);
+      return generated || {
+        task,
+        solution: "Kunde inte generera lösning.",
+        prompt: "Försök igen senare."
+      };
     });
 
-    const content = completion.choices[0].message.content || "{}";
-    console.log("GPT-5 raw response:", content);
-    
-    // Try to extract JSON if wrapped in markdown code blocks
-    let cleanedContent = content;
-    const jsonMatch = content.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
-    if (jsonMatch) {
-      cleanedContent = jsonMatch[1];
-    }
-    
-    const result = JSON.parse(cleanedContent);
-    
-    // Validate that we have solutions
-    if (!result.solutions || !Array.isArray(result.solutions) || result.solutions.length === 0) {
-      console.error("Invalid GPT-5 response structure:", result);
-      throw new Error("GPT-5 returned invalid data structure");
-    }
-
-    return NextResponse.json(result);
+    return NextResponse.json({ 
+      solutions: finalSolutions,
+      cacheStats: {
+        cached: cachedSolutions.filter(s => s !== null).length,
+        generated: tasksToGenerate.length
+      }
+    });
 
   } catch (error) {
     console.error("Error generating solutions:", error);
