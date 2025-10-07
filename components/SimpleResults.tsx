@@ -315,10 +315,7 @@ Visa mig ett praktiskt exempel på hur jag kan använda detta direkt.`
               className="group flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-all duration-200"
             >
               <span className="text-sm font-medium">Nästa uppgift</span>
-              <div className="relative">
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                <div className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"></div>
-              </div>
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
 
@@ -423,10 +420,7 @@ Visa mig ett praktiskt exempel på hur jag kan använda detta direkt.`
               className="group flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-all duration-200"
             >
               <span className="text-sm font-medium">Nästa</span>
-              <div className="relative">
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                <div className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"></div>
-              </div>
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
           
