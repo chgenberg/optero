@@ -399,11 +399,10 @@ Visa mig ett praktiskt exempel på hur jag kan använda detta direkt.`
                     <Copy className="w-4 h-4" />
                   )}
                 </button>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
+        </div>
           
           {/* Bottom navigation - both desktop and mobile */}
           <div className="flex justify-between items-center mt-6">
