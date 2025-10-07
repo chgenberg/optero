@@ -39,6 +39,29 @@ model CommonTasks {
   @@index([language])
 }
 
+// Sparar genererade task-lösningar och prompts (cache för snabbare laddning)
+model TaskSolution {
+  id              String   @id @default(cuid())
+  profession      String
+  specialization  String
+  task            String   @db.Text // Arbetsuppgiften
+  solution        String   @db.Text // Lösningsbeskrivning
+  prompt          String   @db.Text // Den genererade prompten
+  language        String   @default("sv")
+  
+  // Analytics
+  hitCount        Int      @default(0)
+  usedInAnalyses  Int      @default(0)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@unique([profession, specialization, task, language])
+  @@index([profession, specialization])
+  @@index([hitCount])
+  @@index([language])
+}
+
 // Sparar kompletta AI-rekommendationer (för snabbare laddning)
 model RecommendationCache {
   id              Int      @id @default(autoincrement())
