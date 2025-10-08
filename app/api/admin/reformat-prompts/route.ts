@@ -37,8 +37,11 @@ export async function POST(request: NextRequest) {
     // Process each prompt
     for (const prompt of prompts) {
       try {
-        // Check if prompt already has modern formatting (has ** and [])
-        const hasModernFormat = prompt.prompt.includes("**") && prompt.prompt.includes("[");
+        // Check if prompt already has modern formatting (has ** for headings)
+        // Look for **ROLL** or **UPPGIFT** or **INPUT** as signs of modern format
+        const hasModernFormat = prompt.prompt.includes("**ROLL") || 
+                                prompt.prompt.includes("**UPPGIFT") || 
+                                prompt.prompt.includes("**INPUT");
         
         if (hasModernFormat) {
           console.log(`✅ Skip (redan formaterad): ${prompt.task}`);
