@@ -34,11 +34,7 @@ Returnera ENDAST JSON:
         { role: "user", content: user }
       ],
       response_format: { type: "json_object" },
-      max_completion_tokens: 2500,
-      temperature: 0.2,
-      top_p: 1,
-      presence_penalty: 0,
-      frequency_penalty: 0
+      max_completion_tokens: 2500
     });
 
     const contentRaw = completion.choices[0].message.content || "{}";
