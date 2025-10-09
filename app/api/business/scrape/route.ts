@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import cheerio from "cheerio";
+import { load } from "cheerio";
 
 async function fetchHtml(url: string): Promise<string> {
   const res = await fetch(url, { headers: { "User-Agent": "MendioBot/1.0" } });
@@ -8,14 +8,14 @@ async function fetchHtml(url: string): Promise<string> {
 }
 
 function extractText(html: string): string {
-  const $ = cheerio.load(html);
+  const $ = load(html);
   $("script, style, noscript").remove();
   const text = $("body").text();
   return text.replace(/\s+/g, " ").trim();
 }
 
 function findLinks(html: string, baseUrl: string): string[] {
-  const $ = cheerio.load(html);
+  const $ = load(html);
   const links = new Set<string>();
   $("a[href]").each((_, el) => {
     const href = $(el).attr("href") || "";
