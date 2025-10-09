@@ -67,6 +67,33 @@ Returnera ENDAST JSON enligt exakt detta format:
   ]
 }`;
 
+    // Helper: always-available local fallback (no OpenAI dependency)
+    const buildFallback = () => {
+      const mkPrompt = (task: string, body: string) => (
+        `**ROLL & KONTEXT:**\nDu arbetar på avdelningen ${department} på ${url}.\n\n**UPPGIFT:**\n${body}\n\n**INPUT - Fyll i detta:**\n[MÅL]: Vad vill ni uppnå\n[KÄLLA]: Länkar/dokument\n[FORMAT]: Hur ni vill ha resultatet\n\n**OUTPUT-FORMAT:**\n1) Sammanfattad analys\n2) Handlingslista\n3) Mätetal/uppföljning\n\n**EXEMPEL:**\nInput:\n[MÅL]: Snabbare process\n[KÄLLA]: Webbplats + interna dokument\n[FORMAT]: Checklista\n\nOutput:\n1. Analys...\n2. Åtgärder...\n3. KPI: tid/vecka, felgrad`
+      );
+      const bases = [
+        {
+          task: `AI-assisterad arbetsflödesanalys för ${department}`,
+          solution: `Analysera ert nuvarande arbetssätt med AI och identifiera flaskhalsar samt steg som kan automatiseras. Ger en konkret åtgärdsplan och uppskattad tidsbesparing per vecka.`,
+        },
+        {
+          task: `Automatiserad sammanställning av ${department}-underlag` ,
+          solution: `Låt AI samla, strukturera och sammanfatta underlag från webbplats och dokument till handlingsbara punkter. Minskar manuellt arbete och ökar kvalitet.`,
+        },
+        {
+          task: `Standardiserade mallar och checklistor för ${department}`,
+          solution: `Skapa AI-drivna mallar/checklistor anpassade för ert team. Säkerställer konsekvens, påskyndar leverans och underlättar onboarding.`,
+        }
+      ];
+      return bases.map(b => ({
+        task: b.task,
+        solution: b.solution,
+        prompt: mkPrompt(b.task, b.solution),
+        recommendedTool: "ChatGPT 4",
+      }));
+    };
+
     let completion;
     try {
       // Chat Completions API med gpt-5-mini (beprövat och fungerar)
@@ -81,13 +108,14 @@ Returnera ENDAST JSON enligt exakt detta format:
       });
     } catch (err: any) {
       console.error("OpenAI gpt-5-mini error:", err?.message, err?.status, err?.code, err?.response?.data || err);
-      return NextResponse.json({ 
-        error: "OpenAI request failed",
-        message: err?.message,
-        status: err?.status || err?.response?.status,
-        code: err?.code || err?.response?.data?.error?.code,
-        response: err?.response?.data || null
-      }, { status: 500 });
+      const fallback = buildFallback();
+      // Persist fallback
+      try {
+        await prisma.businessSolution.createMany({
+          data: fallback.map((s: any) => ({ companyUrl: url, department, task: s.task, solution: s.solution, prompt: s.prompt, recommendedTool: s.recommendedTool })),
+        });
+      } catch {}
+      return NextResponse.json({ solutions: fallback });
     }
 
     // Chat Completions: use message.content
@@ -99,7 +127,13 @@ Returnera ENDAST JSON enligt exakt detta format:
       parsed = JSON.parse(cleaned);
     } catch (e) {
       console.error("Invalid JSON from model:", contentRaw?.slice(0, 500));
-      return NextResponse.json({ error: "Invalid JSON from model", raw: contentRaw?.slice(0, 1000) }, { status: 500 });
+      const fallback = buildFallback();
+      try {
+        await prisma.businessSolution.createMany({
+          data: fallback.map((s: any) => ({ companyUrl: url, department, task: s.task, solution: s.solution, prompt: s.prompt, recommendedTool: s.recommendedTool })),
+        });
+      } catch {}
+      return NextResponse.json({ solutions: fallback });
     }
     // Normalize various possible shapes into { solutions: [...] }
     const candidateKeys = [
@@ -133,7 +167,9 @@ Returnera ENDAST JSON enligt exakt detta format:
         const coerceClean = coerceMatch ? coerceMatch[1] : coerceRaw;
         const coerced = JSON.parse(coerceClean);
         if (Array.isArray(coerced?.solutions) && coerced.solutions.length) {
-          return NextResponse.json({ solutions: coerced.solutions.slice(0,3) });
+          const out = coerced.solutions.slice(0,3);
+          try { await prisma.businessSolution.createMany({ data: out.map((s: any) => ({ companyUrl: url, department, task: s.task, solution: s.solution, prompt: s.prompt, recommendedTool: s.recommendedTool || "ChatGPT 4" })) }); } catch {}
+          return NextResponse.json({ solutions: out });
         }
       } catch (e) {
         console.error("Coercion step failed", e);
@@ -153,20 +189,18 @@ Returnera ENDAST JSON enligt exakt detta format:
         const regenRaw = regen.choices?.[0]?.message?.content || "{}";
         const regenParsed = JSON.parse(regenRaw);
         if (Array.isArray(regenParsed?.solutions) && regenParsed.solutions.length) {
-          return NextResponse.json({ solutions: regenParsed.solutions.slice(0,3) });
+          const out = regenParsed.solutions.slice(0,3);
+          try { await prisma.businessSolution.createMany({ data: out.map((s: any) => ({ companyUrl: url, department, task: s.task, solution: s.solution, prompt: s.prompt, recommendedTool: s.recommendedTool || "ChatGPT 4" })) }); } catch {}
+          return NextResponse.json({ solutions: out });
         }
       } catch (e) {
         console.error("Regen step failed", e);
       }
 
       console.error("Model returned JSON without solutions array:", JSON.stringify(parsed).slice(0, 500));
-      console.error("Raw contentRaw:", contentRaw?.slice(0, 800));
-      return NextResponse.json({ 
-        error: "No solutions in model output", 
-        raw: parsed,
-        rawText: contentRaw?.slice(0, 1000),
-        parsedKeys: Object.keys(parsed || {})
-      }, { status: 500 });
+      const fallback = buildFallback();
+      try { await prisma.businessSolution.createMany({ data: fallback.map((s: any) => ({ companyUrl: url, department, task: s.task, solution: s.solution, prompt: s.prompt, recommendedTool: s.recommendedTool })) }); } catch {}
+      return NextResponse.json({ solutions: fallback });
     }
 
     // Clean helper
