@@ -114,7 +114,7 @@ VIKTIGT:
               analysis: finalSol.analysis,
               approach: finalSol.approach,
               prompt: finalSol.prompt || null,
-              botInstructions: finalSol.botInstructions || null,
+              botInstructions: finalSol.botInstructions ?? undefined,
               expectedOutcomes: finalSol.expectedOutcomes
             }
           });
@@ -173,7 +173,7 @@ Output:
               analysis: fallback.analysis,
               approach: fallback.approach,
               prompt: fallback.prompt || null,
-              botInstructions: null,
+              botInstructions: undefined,
               expectedOutcomes: fallback.expectedOutcomes
             }
           });
