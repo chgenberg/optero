@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     }
 
     const site = (content || "").slice(0, 12000);
-    const systemPrompt = `Du är expert på AI-lösningar för ${department}-avdelningar. Du skapar praktiska prompts som sparar tid. Svara ENDAST med giltig JSON.`;
+    const systemPrompt = `Du är expert på AI-lösningar för ${department}-avdelningar. Du skapar praktiska, välstrukturerade prompts som sparar tid och ger tydliga resultat. Svara ENDAST med giltig JSON.`;
     
     const userPrompt = `Företag: ${url}
 Avdelning: ${department}
@@ -27,19 +27,42 @@ Skapa 3 specifika AI-användningsfall för ${department} baserat på företagets
 KRAV PER LÖSNING:
 - task: konkret arbetsuppgift (t.ex. "Skriva jobbeskrivningar", "Analysera medarbetarfeedback")
 - solution: 2-3 meningar om HUR AI hjälper och tidsbesparing i minuter/timmar
-- prompt: välstrukturerad med dessa sektioner (använd **fet text** för rubriker):
-  **ROLL & KONTEXT:** [vem är AI:n?]
-  **UPPGIFT:** [vad ska göras?]
-  **INPUT - Fyll i detta:** [max 3 fält med [hakparenteser]]
-  **OUTPUT-FORMAT:** [hur ska resultatet se ut?]
-  **EXEMPEL:** [konkret scenario med ifyllda värden]
+- prompt: välstrukturerad med dessa sektioner (använd **fet text** för rubriker och radbrytningar mellan sektioner):
+- recommendedTool: vilket AI-verktyg som passar bäst ("ChatGPT 4", "Claude 3", "Gemini Pro", eller "Perplexity")
+
+PROMPT-FORMAT (använd exakt denna struktur med radbrytningar):
+**ROLL & KONTEXT:**
+[Beskriv AI:ns roll och företagsspecifik kontext]
+
+**UPPGIFT:**
+[Vad ska göras - tydligt och konkret]
+
+**INPUT - Fyll i detta:**
+[PLACEHOLDER1]: [Beskrivning]
+[PLACEHOLDER2]: [Beskrivning]
+[PLACEHOLDER3]: [Beskrivning om behövs]
+
+**OUTPUT-FORMAT:**
+Leverera:
+1) [Första delen - vad]
+2) [Andra delen - vad]
+3) [Tredje delen - vad]
+4) [Fjärde delen om relevant]
+
+**EXEMPEL:**
+Input:
+[PLACEHOLDER1]: [Konkret exempelvärde]
+[PLACEHOLDER2]: [Konkret exempelvärde]
+
+Output:
+[Visa exakt hur resultatet ser ut med konkreta värden, formaterat som det ska levereras]
 
 Returnera ENDAST JSON enligt exakt detta format:
 {
   "solutions": [
-    { "task": string, "solution": string, "prompt": string },
-    { "task": string, "solution": string, "prompt": string },
-    { "task": string, "solution": string, "prompt": string }
+    { "task": string, "solution": string, "prompt": string, "recommendedTool": string },
+    { "task": string, "solution": string, "prompt": string, "recommendedTool": string },
+    { "task": string, "solution": string, "prompt": string, "recommendedTool": string }
   ]
 }`;
 
@@ -153,13 +176,15 @@ Returnera ENDAST JSON enligt exakt detta format:
         return {
           task: `Förslag ${idx+1}`,
           solution: cleanStr(it),
-          prompt: `**ROLL & KONTEXT:**\nDu är ansvarig för ${department}.\n\n**UPPGIFT:**\n${cleanStr(it)}\n\n**INPUT – Fyll i detta:**\nMål: [ange]\nSystem: [ange]\n\n**OUTPUT-FORMAT:**\n1) steg\n2) exempel\n\n**FÄRDIGT EXEMPEL:**\nAnvänd rimliga antaganden för ${url}.`
+          prompt: `**ROLL & KONTEXT:**\nDu är ansvarig för ${department}.\n\n**UPPGIFT:**\n${cleanStr(it)}\n\n**INPUT – Fyll i detta:**\n[MÅL]: Vad vill du uppnå\n[KONTEXT]: Din nuvarande situation\n\n**OUTPUT-FORMAT:**\nLeverera:\n1) Analys\n2) Handlingsplan\n3) Förväntade resultat\n\n**EXEMPEL:**\nInput:\n[MÅL]: Effektivisera processer\n[KONTEXT]: 10 anställda, manuella rutiner\n\nOutput:\n1. Analys: Identifierade flaskhalsar\n2. Plan: Implementera automation\n3. Resultat: 30% tidsbesparing`,
+          recommendedTool: "ChatGPT 4"
         };
       }
       return {
         task: cleanStr(it.task || it.title || it.name || `Förslag ${idx+1}`),
         solution: cleanStr(it.solution || it.summary || it.description || it.value || ""),
-        prompt: cleanStr(it.prompt || it.instructions || it.guide || "")
+        prompt: cleanStr(it.prompt || it.instructions || it.guide || ""),
+        recommendedTool: it.recommendedTool || "ChatGPT 4"
       };
     });
 

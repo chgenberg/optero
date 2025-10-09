@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import FeedbackButton from "@/components/FeedbackButton";
-import { ChevronRight, ChevronDown, ChevronLeft, Copy, Check, Mail, Sparkles, Share2, Bot, Calendar, HelpCircle, X } from "lucide-react";
+import { ChevronRight, ChevronDown, ChevronLeft, Copy, Check, Mail, Sparkles, Share2, Bot, Calendar, HelpCircle, X, ExternalLink } from "lucide-react";
 import EmailCaptureModal from "./EmailCaptureModal";
 import LoadingAnalysis from "./LoadingAnalysis";
 
@@ -17,6 +17,7 @@ interface TaskSolution {
   task: string;
   solution: string;
   prompt: string;
+  recommendedTool?: string;
 }
 
 interface SimpleResultsProps {
@@ -42,9 +43,69 @@ export default function SimpleResults({
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showToolGuide, setShowToolGuide] = useState<string | null>(null);
 
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
+
+  const toolGuides = {
+    "ChatGPT 4": {
+      name: "ChatGPT 4",
+      icon: "🤖",
+      color: "bg-green-100 text-green-700",
+      url: "https://chat.openai.com",
+      steps: [
+        "Gå till chat.openai.com",
+        "Logga in eller skapa konto (ChatGPT Plus krävs för GPT-4)",
+        "Välj 'GPT-4' i dropdown-menyn högst upp",
+        "Klistra in prompten och tryck Enter"
+      ],
+      pros: "Bäst för komplexa uppgifter, kreativt skrivande, kodning",
+      cost: "Plus: $20/mån"
+    },
+    "Claude 3": {
+      name: "Claude 3",
+      icon: "🧠",
+      color: "bg-purple-100 text-purple-700",
+      url: "https://claude.ai",
+      steps: [
+        "Gå till claude.ai",
+        "Skapa konto med email",
+        "Starta ny konversation",
+        "Klistra in prompten och tryck Enter"
+      ],
+      pros: "Utmärkt för långa dokument, analys, forskningsuppgifter",
+      cost: "Gratis (begränsad) eller Pro: $20/mån"
+    },
+    "Gemini Pro": {
+      name: "Gemini Pro",
+      icon: "💎",
+      color: "bg-blue-100 text-blue-700",
+      url: "https://gemini.google.com",
+      steps: [
+        "Gå till gemini.google.com",
+        "Logga in med Google-konto",
+        "Välj 'Gemini Pro' om tillgängligt",
+        "Klistra in prompten och tryck Enter"
+      ],
+      pros: "Integrerad med Google-tjänster, bra för faktasökning",
+      cost: "Gratis eller Advanced: $19.99/mån"
+    },
+    "Perplexity": {
+      name: "Perplexity",
+      icon: "🔍",
+      color: "bg-amber-100 text-amber-700",
+      url: "https://perplexity.ai",
+      steps: [
+        "Gå till perplexity.ai",
+        "Använd direkt (inget konto krävs)",
+        "Välj 'Pro' för bästa resultat",
+        "Klistra in prompten och tryck Enter"
+      ],
+      pros: "Bäst för research med källor, realtidsdata",
+      cost: "Gratis eller Pro: $20/mån"
+    }
+  };
 
   useEffect(() => {
     generateSolutions();
@@ -309,6 +370,69 @@ Returnera svaret i ovan format, även om inga inputfält fylls i. Anta rimliga s
           </div>
         </div>
       )}
+
+      {/* Tool Guide Modal */}
+      {showToolGuide && toolGuides[showToolGuide as keyof typeof toolGuides] && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 animate-fade-in">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl animate-fade-in-up">
+            <div className="sticky top-0 bg-white border-b border-gray-100 p-4 sm:p-6">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-2xl ${toolGuides[showToolGuide as keyof typeof toolGuides].color}`}>
+                    {toolGuides[showToolGuide as keyof typeof toolGuides].icon}
+                  </div>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                      Så använder du {toolGuides[showToolGuide as keyof typeof toolGuides].name}
+                    </h2>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {toolGuides[showToolGuide as keyof typeof toolGuides].pros}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowToolGuide(null)}
+                  className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-4 sm:p-6 space-y-6">
+              {/* Steps */}
+              <div className="space-y-4">
+                {toolGuides[showToolGuide as keyof typeof toolGuides].steps.map((step, idx) => (
+                  <div key={idx} className="flex gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                      <span className="font-bold text-gray-700">{idx + 1}</span>
+                    </div>
+                    <p className="text-gray-700 pt-2">{step}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA */}
+              <div className="border-t pt-6">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <a
+                    href={toolGuides[showToolGuide as keyof typeof toolGuides].url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                  >
+                    <span>Öppna {toolGuides[showToolGuide as keyof typeof toolGuides].name}</span>
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                  <div className="text-center text-sm text-gray-600">
+                    <p>Kostnad: {toolGuides[showToolGuide as keyof typeof toolGuides].cost}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       {currentStep < solutions.length ? (
         <>
@@ -377,6 +501,27 @@ Returnera svaret i ovan format, även om inga inputfält fylls i. Anta rimliga s
                 </p>
               </div>
 
+              {/* Recommended Tool */}
+              {solutions[currentStep].recommendedTool && (
+                <div className="mb-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Bot className="w-5 h-5 text-gray-600" />
+                      <span className="text-sm font-medium text-gray-700">Rekommenderat verktyg:</span>
+                      <span className="text-sm font-bold text-gray-900">
+                        {solutions[currentStep].recommendedTool}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setShowToolGuide(solutions[currentStep].recommendedTool || null)}
+                      className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                    >
+                      Hur använder jag detta?
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Prompt */}
               <div className="mb-6 sm:mb-8">
                 <div className="flex items-center justify-between mb-3">
@@ -388,7 +533,7 @@ Returnera svaret i ovan format, även om inga inputfält fylls i. Anta rimliga s
                     className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
                   >
                     <HelpCircle className="w-4 h-4" />
-                    <span>Så här gör du</span>
+                    <span>Allmän guide</span>
                   </button>
                 </div>
                 <div className="relative bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-100">
