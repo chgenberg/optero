@@ -5,7 +5,11 @@ import { Readability } from "@mozilla/readability";
 import prisma from "@/lib/prisma";
 
 async function fetchHtml(url: string): Promise<string> {
-  const res = await fetch(url, { headers: { "User-Agent": "MendioBot/1.0" } });
+  const res = await fetch(url, { headers: { 
+    "User-Agent": "MendioBot/1.0",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "sv-SE,sv;q=0.9,en-US;q=0.8,en;q=0.7"
+  } });
   if (!res.ok) throw new Error(`Failed to fetch ${url}`);
   return await res.text();
 }
@@ -156,24 +160,48 @@ function findLinks(html: string, baseUrl: string): string[] {
 }
 
 async function fetchSitemap(baseUrl: string): Promise<string[]> {
-  const sitemapUrls = ['/sitemap.xml', '/sitemap_index.xml', '/sitemap'];
-  for (const path of sitemapUrls) {
+  const sitemapPaths = ['/sitemap.xml', '/sitemap_index.xml', '/sitemap'];
+  const collected: string[] = [];
+  for (const path of sitemapPaths) {
     try {
       const sitemapUrl = new URL(path, baseUrl).toString();
-      const res = await fetch(sitemapUrl, { headers: { "User-Agent": "MendioBot/1.0" } });
+      const res = await fetch(sitemapUrl, { headers: { 
+        "User-Agent": "MendioBot/1.0",
+        "Accept": "application/xml,text/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "sv-SE,sv;q=0.9,en-US;q=0.8,en;q=0.7"
+      } });
       if (!res.ok) continue;
       const xml = await res.text();
       const $ = load(xml, { xmlMode: true });
+      // If it's a sitemap index, follow nested sitemaps (limited)
+      const nested = $("sitemap > loc").map((_, el) => $(el).text()).get().slice(0, 5);
+      if (nested.length) {
+        for (const loc of nested) {
+          try {
+            const r = await fetch(loc, { headers: { "User-Agent": "MendioBot/1.0" } });
+            if (!r.ok) continue;
+            const xml2 = await r.text();
+            const $2 = load(xml2, { xmlMode: true });
+            const urls2 = $2("url > loc").map((_, el) => $2(el).text()).get();
+            collected.push(...urls2);
+            if (collected.length > 200) break;
+          } catch {}
+        }
+        break;
+      }
       const urls = $("url > loc").map((_, el) => $(el).text()).get();
-      if (urls.length > 0) return urls;
+      if (urls.length > 0) {
+        collected.push(...urls);
+        break;
+      }
     } catch {}
   }
-  return [];
+  return collected.slice(0, 500);
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const { url, maxPages = 20 } = await req.json();
+    const { url, maxPages = 25 } = await req.json();
     if (!url) return NextResponse.json({ error: "Missing url" }, { status: 400 });
 
     const visited = new Set<string>();
@@ -181,7 +209,7 @@ export async function POST(req: NextRequest) {
     const allPages: any[] = [];
     
     // Priority keywords for important pages
-    const priorityKeywords = ['om-oss', 'om', 'about', 'tjanster', 'tjenester', 'services', 'produkter', 'products', 'kontakt', 'contact', 'team', 'case', 'kunder', 'customers', 'losningar', 'solutions'];
+    const priorityKeywords = ['om-oss', 'om', 'about', 'tjanster', 'tjänster', 'tjenester', 'services', 'produkter', 'products', 'kontakt', 'contact', 'team', 'case', 'kunder', 'customers', 'losningar', 'lösningar', 'solutions', 'pricing', 'priser', 'careers', 'jobb'];
     
     // Try to get sitemap first
     const sitemapUrls = await fetchSitemap(url);
@@ -189,8 +217,11 @@ export async function POST(req: NextRequest) {
       priorityKeywords.some(k => u.toLowerCase().includes(k))
     ).slice(0, 10);
     
-    // Start with homepage + priority sitemap URLs
-    const queue: string[] = [url, ...prioritySitemapUrls];
+    // Common fallback paths to seed early
+    const fallbackPaths = ['/about', '/om', '/services', '/tjanster', '/tjänster', '/products', '/produkter', '/solutions', '/losningar', '/lösningar', '/customers', '/kunder', '/contact', '/kontakt', '/pricing', '/priser', '/careers', '/jobb'];
+    const seededPaths = Array.from(new Set(fallbackPaths.map(p => { try { return new URL(p, url).toString(); } catch { return ''; } }).filter(Boolean)));
+    // Start with homepage + priority sitemap URLs + seeded common paths
+    const queue: string[] = [url, ...prioritySitemapUrls, ...seededPaths];
 
     while (queue.length && visited.size < maxPages) {
       const current = queue.shift()!;
@@ -246,20 +277,24 @@ export async function POST(req: NextRequest) {
   const afterRenderLen = allPages.reduce((sum, p) => sum + (p.mainText?.length || 0), 0);
   if (afterRenderLen < 500) {
     try {
-      const jinaText = await fetchRenderedViaJina(url);
-      if (jinaText && jinaText.length > 500) {
-        const cleanse = (t: string) => t.replace(/[\x00-\x1F\x7F]/g, ' ').replace(/\s+/g, ' ').trim();
-        const jinaMain = cleanse(jinaText).slice(0, 8000);
-        const jinaPage = {
-          url: url + " (jina)",
-          title: '',
-          description: '',
-          headings: [],
-          keywords: [],
-          mainText: jinaMain,
-          length: jinaMain.length
-        };
-        allPages.unshift(jinaPage as any);
+      // Try homepage via Jina
+      const tryUrls = [url, ...seededPaths].slice(0, 6);
+      for (const u of tryUrls) {
+        const jinaText = await fetchRenderedViaJina(u);
+        if (jinaText && jinaText.length > 300) {
+          const cleanse = (t: string) => t.replace(/[\x00-\x1F\x7F]/g, ' ').replace(/\s+/g, ' ').trim();
+          const jinaMain = cleanse(jinaText).slice(0, 8000);
+          const jinaPage = {
+            url: u + " (jina)",
+            title: '',
+            description: '',
+            headings: [],
+            keywords: [],
+            mainText: jinaMain,
+            length: jinaMain.length
+          };
+          allPages.unshift(jinaPage as any);
+        }
       }
     } catch (e) {
       console.error("Forced Jina fallback failed:", e);
