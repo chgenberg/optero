@@ -211,8 +211,8 @@ Für JEDE Aufgabe, geben Sie GENAU dieses JSON-Format zurück:
 
       const selectedPrompts = prompts[language as keyof typeof prompts] || prompts.sv;
 
-      // Build context string to enrich the user message
-      const contextString = context ? `\n\nTILLÄGGSKONTEXT (använd detta för att göra lösningarna mer specifika):\n- Mål: ${context.goal || '-'}\n- Befintliga verktyg: ${context.tools || '-'}\n- Ton/kvalitet: ${context.tone || '-'}\n` : '';
+      // Build context string to enrich the user message + require a filled example
+      const contextString = `\n\nKRAV PÅ LEVERANS:\n- Ge färdig lösning utan följdfrågor, med rimliga antaganden\n- Inkludera ett FULLT I FYLLT "FÄRDIGT EXEMPEL" baserat på vanliga standarder\n- Minimera antalet [PLACEHOLDERS] – endast om absolut nödvändigt (max 3)\n- Om info saknas: anta branschstandard och fortsätt\n${context ? `\nTILLÄGGSKONTEXT:\n- Mål: ${context.goal || '-'}\n- Verktyg: ${context.tools || '-'}\n- Ton: ${context.tone || '-'}` : ''}\n`;
 
     const completion = await openai.chat.completions.create({
         model: "gpt-5-mini", // Using GPT-5-mini for fast, quality prompts

@@ -99,22 +99,32 @@ export default function SimpleResults({
       // Better fallback solutions with structure
       setSolutions(tasks.slice(0, 3).map(t => ({
         task: t.task,
-        solution: `AI kan hjälpa dig automatisera och effektivisera denna uppgift. Med rätt verktyg och prompts kan du spara upp till 60% av tiden du lägger på ${t.task.toLowerCase()}.`,
+        solution: `AI kan hjälpa dig automatisera och effektivisera denna uppgift. Här får du en färdig plan och ett konkret exempel utan att du behöver fylla i mycket själv.`,
         prompt: `**ROLL & KONTEXT:**
-Jag är en professionell ${profession} som behöver hjälp med ${t.task.toLowerCase()}.
+Du är expert på ${profession.toLowerCase()} och ska effektivisera: ${t.task.toLowerCase()}.
 
 **UPPGIFT:**
-Skapa en detaljerad steg-för-steg guide för att effektivisera denna uppgift med AI.
+Leverera en färdig, praktisk lösning som kan köras direkt (utan följdfrågor), samt ett ifyllt exempel.
 
-**INPUT - Fyll i detta:**
-[BESKRIV DIN SITUATION]: 
-[SPECIFIKA KRAV]: 
+**INPUT – Fyll i endast vid behov (max 3):**
+Bransch/område: [ange vid behov]
+System/verktyg: [t.ex. Excel, Google Drive, Fortnox]
+Outputmål: [t.ex. Excel-fil, JSON, e‑postutkast]
 
 **OUTPUT-FORMAT:**
-Konkret handlingsplan med tidsbesparingar.
+1) Steg‑för‑steg (3–7 steg) med konkreta klick/kommandon
+2) Minimal verktygslista (exakta länkar/menyval om relevant)
+3) Testdata och valideringslista
+4) Tidsbesparing (uppskattning) och eventuella risker
 
-**EXEMPEL:**
-Visa mig ett praktiskt exempel på hur jag kan använda detta direkt.`
+**FÄRDIGT EXEMPEL (ifyllt):**
+Scenario: Mindre bolag tar emot PDF‑fakturor via e‑post, vill exportera: datum, belopp, moms, leverantör till Excel.
+Verktyg: Google Drive + Make.com + Google Sheets
+Plan: 1) Skapa e‑posttrigger i Make, 2) Spara PDF i Drive, 3) OCR med PDF.co, 4) Extrahera fält via RegEx‑mall, 5) Lägg rad i Google Sheet, 6) Markera dubbletter, 7) Skicka e‑postsammanfattning.
+Testdata: /fakturor/2025‑09‑ACME‑1234.pdf
+Validering: Belopp > 0, moms i {6%,12%,25%}, datum ISO‑8601.
+
+Returnera svaret i ovan format, även om inga inputfält fylls i. Anta rimliga standarder om något saknas.`
       })));
     } finally {
       setLoading(false);
