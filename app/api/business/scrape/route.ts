@@ -8,6 +8,21 @@ async function fetchHtml(url: string): Promise<string> {
   return await res.text();
 }
 
+// Fallback: server-side rendered content via Jina AI Reader
+async function fetchRenderedViaJina(targetUrl: string): Promise<string | null> {
+  try {
+    const urlObj = new URL(targetUrl);
+    const hostAndPath = urlObj.host + urlObj.pathname + urlObj.search;
+    const jinaUrl = `https://r.jina.ai/http://${hostAndPath}`;
+    const resp = await fetch(jinaUrl, { headers: { "User-Agent": "MendioBot/1.0" } });
+    if (!resp.ok) return null;
+    const text = await resp.text();
+    return text || null;
+  } catch {
+    return null;
+  }
+}
+
 function extractStructuredData(html: string, url: string): any {
   const $ = load(html);
   
@@ -152,6 +167,30 @@ export async function POST(req: NextRequest) {
         console.error("Playwright fallback failed:", e);
       }
     }
+
+  // Additional fallback: Jina AI Reader for JS-heavy sites, regardless of Playwright availability
+  const totalAfterPw = allPages.reduce((sum, p) => sum + (p.mainText?.length || 0), 0);
+  if (totalAfterPw < MIN_TEXT_LEN) {
+    try {
+      const jinaText = await fetchRenderedViaJina(url);
+      if (jinaText && jinaText.length > 500) {
+        const cleanse = (t: string) => t.replace(/[\x00-\x1F\x7F]/g, ' ').replace(/\s+/g, ' ').trim();
+        const jinaMain = cleanse(jinaText).slice(0, 8000);
+        const jinaPage = {
+          url: url + " (jina)",
+          title: '',
+          description: '',
+          headings: [],
+          keywords: [],
+          mainText: jinaMain,
+          length: jinaMain.length
+        };
+        allPages.unshift(jinaPage as any);
+      }
+    } catch (e) {
+      console.error("Jina fallback failed:", e);
+    }
+  }
 
     // Helper to clean any string recursively
     const deepClean = (obj: any): any => {
