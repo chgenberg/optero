@@ -173,10 +173,10 @@ export default function BusinessResults() {
             {currentStep > 0 ? (
               <button
                 onClick={handlePrevious}
-                className="group flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                className="group flex items-center gap-2 px-4 py-2 text-sm text-gray-500 hover:text-gray-900 transition-all duration-200 rounded-lg hover:bg-gray-50"
               >
                 <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-                <span>Tillbaka</span>
+                <span className="font-medium">Tillbaka</span>
               </button>
             ) : (
               <div className="w-20" />
@@ -184,10 +184,11 @@ export default function BusinessResults() {
             
             <button
               onClick={handleNext}
-              className="group flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-all duration-200"
+              className="group relative flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-full hover:from-gray-700 hover:to-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
             >
-              <span className="text-sm font-medium">Nästa uppgift</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <span className="relative z-10 text-sm font-semibold">Nästa uppgift</span>
+              <ChevronRight className="relative z-10 w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
             </button>
           </div>
 
@@ -197,18 +198,22 @@ export default function BusinessResults() {
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
           >
-            <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_48px_rgba(0,0,0,0.12)] transition-shadow duration-300">
+            <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:shadow-[0_16px_64px_rgba(0,0,0,0.16)] transition-all duration-500 border border-gray-100 hover:border-gray-200">
               {/* Progress */}
               <div className="flex items-center justify-between mb-6 sm:mb-8">
-                <h2 className="text-xs sm:text-sm font-medium text-gray-500">
+                <h2 className="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wider">
                   Prompt {currentStep + 1} av {solutions.length}
                 </h2>
-                <div className="flex gap-1">
+                <div className="flex gap-1.5">
                   {solutions.map((_, idx) => (
                     <div
                       key={idx}
-                      className={`h-1.5 w-6 sm:w-8 rounded-full transition-all duration-300 ${
-                        idx <= currentStep ? 'bg-gray-900' : 'bg-gray-200'
+                      className={`h-2 w-6 sm:w-8 rounded-full transition-all duration-500 ${
+                        idx === currentStep
+                          ? 'bg-gradient-to-r from-gray-800 to-gray-900 scale-110'
+                          : idx < currentStep
+                          ? 'bg-gray-600'
+                          : 'bg-gray-200'
                       }`}
                     />
                   ))}
@@ -217,15 +222,19 @@ export default function BusinessResults() {
 
               {/* Task */}
               <div className="mb-6 sm:mb-8">
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
-                  {solutions[currentStep].task}
-                </h3>
+                <div className="flex items-start gap-3">
+                  <div className="w-1 h-8 bg-gradient-to-b from-gray-800 to-gray-600 rounded-full flex-shrink-0"></div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
+                    {solutions[currentStep].task}
+                  </h3>
+                </div>
               </div>
 
               {/* Solution */}
-              <div className="mb-6 sm:mb-8">
-                <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">
-                  Lösning:
+              <div className="mb-6 sm:mb-8 bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-xl p-4 sm:p-6 border border-gray-200/50">
+                <h4 className="text-base sm:text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-gray-600" />
+                  Lösning
                 </h4>
                 <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                   {solutions[currentStep].solution}
@@ -246,20 +255,20 @@ export default function BusinessResults() {
                     <span>Så här gör du</span>
                   </button>
                 </div>
-                <div className="relative bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-100">
-                  <div className="pr-10 overflow-x-auto">
+                <div className="relative bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100/30 rounded-xl p-4 sm:p-5 border border-gray-200 shadow-inner">
+                  <div className="pr-12 overflow-x-auto">
                     <pre 
                       className="text-gray-800 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-mono break-words"
                       dangerouslySetInnerHTML={{
                         __html: solutions[currentStep].prompt
                           .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-gray-900 font-bold">$1</strong>')
-                          .replace(/\[([^\]]+)\]/g, '<strong class="bg-yellow-200 px-1 rounded text-gray-900">[$1]</strong>')
+                          .replace(/\[([^\]]+)\]/g, '<mark class="bg-yellow-200 px-1.5 py-0.5 rounded text-gray-900 font-semibold shadow-sm">[$1]</mark>')
                       }}
                     />
                   </div>
                   <button
                     onClick={() => handleCopy(solutions[currentStep].prompt, currentStep)}
-                    className="absolute top-3 right-3 p-1.5 text-gray-500 hover:text-gray-700 transition-colors"
+                    className="absolute top-4 right-4 p-2 bg-white text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
                     title="Kopiera prompt"
                   >
                     {copiedIndex === currentStep ? (
@@ -278,10 +287,10 @@ export default function BusinessResults() {
             {currentStep > 0 ? (
               <button
                 onClick={handlePrevious}
-                className="group flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                className="group flex items-center gap-2 px-4 py-2 text-sm text-gray-500 hover:text-gray-900 transition-all duration-200 rounded-lg hover:bg-gray-50"
               >
                 <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-                <span className="hidden sm:inline">Tillbaka</span>
+                <span className="hidden sm:inline font-medium">Tillbaka</span>
               </button>
             ) : (
               <div className="w-20" />
@@ -289,10 +298,11 @@ export default function BusinessResults() {
             
             <button
               onClick={handleNext}
-              className="group flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-all duration-200"
+              className="group relative flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-full hover:from-gray-700 hover:to-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
             >
-              <span className="text-sm font-medium">Nästa</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <span className="relative z-10 text-sm font-semibold">Nästa</span>
+              <ChevronRight className="relative z-10 w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
             </button>
           </div>
           
@@ -303,23 +313,26 @@ export default function BusinessResults() {
         </>
       ) : (
         // Choice card
-        <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
-          <div className="flex justify-start mb-6">
+        <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-gray-100">
+          <div className="flex justify-start mb-8">
             <button
               onClick={() => setCurrentStep(solutions.length - 1)}
-              className="group flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              className="group flex items-center gap-2 px-4 py-2 text-sm text-gray-500 hover:text-gray-900 transition-all duration-200 rounded-lg hover:bg-gray-50"
             >
               <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-              <span>Tillbaka till sista prompten</span>
+              <span className="font-medium">Tillbaka till sista prompten</span>
             </button>
           </div>
           
-          <div className="text-center mb-8">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full mb-4">
+              <Sparkles className="w-8 h-8 text-gray-700" />
+            </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
               Vad vill du göra nu?
             </h2>
             <p className="text-base sm:text-lg text-gray-600">
-              Välj hur du vill fortsätta
+              Välj hur du vill fortsätta med dina AI-prompts
             </p>
           </div>
 
@@ -327,18 +340,19 @@ export default function BusinessResults() {
             {/* Email option */}
             <button
               onClick={() => alert("Email-funktion kommer snart!")}
-              className="w-full group/choice flex items-center justify-between p-5 bg-white hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-100 hover:border-gray-200"
+              className="w-full group/choice relative flex items-center justify-between p-5 bg-white hover:bg-gray-50 rounded-xl transition-all duration-300 border border-gray-200 hover:border-gray-300 hover:shadow-md overflow-hidden"
             >
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+              <div className="relative z-10 flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center flex-shrink-0 group-hover/choice:scale-110 transition-transform duration-300">
+                  <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-blue-700" />
                 </div>
                 <div className="text-left">
-                  <h3 className="text-sm sm:text-base font-semibold text-gray-900">Få alla prompts via email</h3>
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900">Få alla prompts via email</h3>
                   <p className="text-xs sm:text-sm text-gray-600">Skicka alla prompts + implementationsguide</p>
                 </div>
               </div>
-              <ChevronRight className="w-6 h-6 text-gray-400 group-hover/choice:translate-x-1 transition-transform" />
+              <ChevronRight className="relative z-10 w-6 h-6 text-gray-400 group-hover/choice:translate-x-1 transition-transform" />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-50/0 via-blue-50/50 to-blue-50/0 translate-x-[-100%] group-hover/choice:translate-x-[100%] transition-transform duration-1000"></div>
             </button>
 
             {/* Share option */}
@@ -352,35 +366,37 @@ export default function BusinessResults() {
                   });
                 }
               }}
-              className="w-full group/choice flex items-center justify-between p-5 bg-white hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-100 hover:border-gray-200"
+              className="w-full group/choice relative flex items-center justify-between p-5 bg-white hover:bg-gray-50 rounded-xl transition-all duration-300 border border-gray-200 hover:border-gray-300 hover:shadow-md overflow-hidden"
             >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                  <Share2 className="w-6 h-6 text-orange-600" />
+              <div className="relative z-10 flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center flex-shrink-0 group-hover/choice:scale-110 transition-transform duration-300">
+                  <Share2 className="w-5 h-5 sm:w-6 sm:h-6 text-orange-700" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-gray-900">Dela med kollegor</h3>
-                  <p className="text-sm text-gray-600">Hjälp dina kollegor spara tid också!</p>
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900">Dela med kollegor</h3>
+                  <p className="text-xs sm:text-sm text-gray-600">Hjälp dina kollegor spara tid också!</p>
                 </div>
               </div>
-              <ChevronRight className="w-6 h-6 text-gray-400 group-hover/choice:translate-x-1 transition-transform" />
+              <ChevronRight className="relative z-10 w-6 h-6 text-gray-400 group-hover/choice:translate-x-1 transition-transform" />
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-50/0 via-orange-50/50 to-orange-50/0 translate-x-[-100%] group-hover/choice:translate-x-[100%] transition-transform duration-1000"></div>
             </button>
 
             {/* Consultation option */}
             <button
               onClick={() => window.open('mailto:ch.genberg@gmail.com?subject=Konsultation för ' + (data?.dept || 'företag'), '_blank')}
-              className="w-full group/choice flex items-center justify-between p-5 bg-white hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-100 hover:border-gray-200"
+              className="w-full group/choice relative flex items-center justify-between p-5 bg-white hover:bg-gray-50 rounded-xl transition-all duration-300 border border-gray-200 hover:border-gray-300 hover:shadow-md overflow-hidden"
             >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-indigo-600" />
+              <div className="relative z-10 flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-full flex items-center justify-center flex-shrink-0 group-hover/choice:scale-110 transition-transform duration-300">
+                  <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-700" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-gray-900">Boka 15-min konsultation</h3>
-                  <p className="text-sm text-gray-600">Gratis genomgång med AI-expert</p>
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900">Boka 15-min konsultation</h3>
+                  <p className="text-xs sm:text-sm text-gray-600">Gratis genomgång med AI-expert</p>
                 </div>
               </div>
-              <ChevronRight className="w-6 h-6 text-gray-400 group-hover/choice:translate-x-1 transition-transform" />
+              <ChevronRight className="relative z-10 w-6 h-6 text-gray-400 group-hover/choice:translate-x-1 transition-transform" />
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/0 via-indigo-50/50 to-indigo-50/0 translate-x-[-100%] group-hover/choice:translate-x-[100%] transition-transform duration-1000"></div>
             </button>
           </div>
 
