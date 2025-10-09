@@ -153,7 +153,12 @@ Returnera JSON:
 
     return NextResponse.json({ solutions: normalized });
   } catch (e: any) {
-    return NextResponse.json({ error: e?.message || "Failed" }, { status: 500 });
+    console.error("Top-level catch in generate-company-prompts:", e);
+    return NextResponse.json({ 
+      error: e?.message || "Failed", 
+      stack: e?.stack?.slice(0, 500),
+      type: e?.constructor?.name 
+    }, { status: 500 });
   }
 }
 
