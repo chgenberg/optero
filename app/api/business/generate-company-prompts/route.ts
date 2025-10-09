@@ -37,14 +37,7 @@ OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "pr
       completion = await openai.responses.create({
         model: "gpt-5",
         instructions,
-        input: [
-          {
-            role: "user",
-            content: [
-              { type: "text", text: combinedPrompt }
-            ]
-          }
-        ],
+        input: combinedPrompt,
         temperature: 0.2,
         max_output_tokens: 1500,
         reasoning_effort: "medium",
