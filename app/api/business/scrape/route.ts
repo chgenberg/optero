@@ -78,8 +78,10 @@ export async function POST(req: NextRequest) {
 
 async function renderWithPlaywright(targetUrl: string): Promise<string | null> {
   try {
-    // dynamic import to avoid bundling when disabled
-    const { chromium } = await import('playwright');
+    // dynamic import via variable to prevent bundlers from resolving at build time
+    const modName: any = 'playwright';
+    // @ts-ignore - resolved at runtime only if installed
+    const { chromium } = await import(modName);
     const browser = await chromium.launch({ args: ['--no-sandbox','--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     await page.goto(targetUrl, { waitUntil: 'networkidle', timeout: 30000 });
