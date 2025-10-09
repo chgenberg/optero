@@ -95,7 +95,7 @@ export default function ExecutiveConsultant() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gray-50">
       <div className="flex flex-col items-center justify-start min-h-screen p-4 pt-20 sm:pt-24">
         <div className="space-y-16 max-w-3xl mx-auto w-full">
           {/* Hero section */}
@@ -103,20 +103,26 @@ export default function ExecutiveConsultant() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-zinc-900 rounded-2xl mb-4 group hover:scale-110 transition-transform duration-300">
               <Sparkles className="w-8 h-8 text-white group-hover:text-gray-300 transition-colors" />
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-gray-900">
               Executive AI Consultant
             </h1>
-            <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
               Djupgående AI-analys för ledningsgrupper. 
               <br className="hidden sm:block" />
               Ladda upp dokument, beskriv utmaningar, få konkreta lösningar.
             </p>
           </div>
           {/* Form */}
-          <div className="space-y-8">
+          <div className="bg-white rounded-3xl p-8 sm:p-10 space-y-8 shadow-xl relative overflow-hidden">
+            {/* Animated blue border effect */}
+            <div className="absolute inset-0 rounded-3xl">
+              <div className="absolute inset-0 rounded-3xl animate-pulse-blue"></div>
+            </div>
+            
+            <div className="relative z-10 space-y-8">
             {/* URL Input */}
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-400 uppercase tracking-wider">
+              <label className="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
                 Företagets webbplats
               </label>
               <input
@@ -124,22 +130,22 @@ export default function ExecutiveConsultant() {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://dittforetag.se"
-                className="w-full px-6 py-4 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
+                className="w-full px-6 py-4 text-lg bg-white border-2 border-gray-900 rounded-2xl focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all duration-200 placeholder-gray-500 font-medium"
               />
             </div>
 
             {/* Document Upload */}
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-400 uppercase tracking-wider">
+              <label className="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
                 Dokument (valfritt)
               </label>
-              <div className="border-2 border-dashed border-zinc-800 rounded-xl p-8 hover:border-zinc-700 transition-colors">
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 hover:border-gray-400 transition-colors bg-gray-50">
                 <div className="text-center">
                   <Upload className="w-10 h-10 text-gray-500 mx-auto mb-3" />
-                  <p className="text-sm text-gray-400 mb-4">
+                  <p className="text-sm text-gray-600 mb-4">
                     Excel (.xlsx), Word (.docx) • Max 10 MB
                   </p>
-                  <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors">
+                  <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
                     <Plus className="w-4 h-4" />
                     <span className="text-sm font-medium">Välj filer</span>
                     <input
@@ -155,21 +161,21 @@ export default function ExecutiveConsultant() {
                 {files.length > 0 && (
                   <div className="mt-6 space-y-2">
                     {files.map((file, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
+                      <div key={idx} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
                         <div className="flex items-center gap-3">
-                          <div className="text-gray-400">
+                          <div className="text-gray-600">
                             {getFileIcon(file.name)}
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-white">{file.name}</p>
+                            <p className="text-sm font-medium text-gray-900">{file.name}</p>
                             <p className="text-xs text-gray-500">{(file.size / 1024).toFixed(1)} KB</p>
                           </div>
                         </div>
                         <button
                           onClick={() => removeFile(idx)}
-                          className="p-1 hover:bg-zinc-700 rounded transition-colors"
+                          className="p-1 hover:bg-gray-100 rounded transition-colors"
                         >
-                          <X className="w-4 h-4 text-gray-400" />
+                          <X className="w-4 h-4 text-gray-500" />
                         </button>
                       </div>
                     ))}
@@ -180,24 +186,24 @@ export default function ExecutiveConsultant() {
 
             {/* Problems */}
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-400 uppercase tracking-wider">
+              <label className="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
                 Tre specifika utmaningar
               </label>
               <div className="space-y-4">
                 {[0, 1, 2].map((idx) => (
                   <div key={idx} className="group">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 bg-zinc-900 rounded-full flex items-center justify-center font-bold text-white text-sm group-hover:bg-zinc-800 transition-colors">
+                      <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center font-bold text-white text-sm">
                         {idx + 1}
                       </div>
-                      <span className="text-sm font-medium text-gray-400">Problem {idx + 1}</span>
+                      <span className="text-sm font-medium text-gray-700">Problem {idx + 1}</span>
                     </div>
                     <textarea
                       value={problems[idx]}
                       onChange={(e) => updateProblem(idx, e.target.value)}
                       placeholder={`T.ex. "Vi har svårt att rekrytera rätt kompetens inom 6 månader"`}
                       rows={2}
-                      className="w-full px-6 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors resize-none"
+                      className="w-full px-6 py-3 bg-white border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:border-gray-400 focus:bg-gray-50 transition-all duration-200 resize-none"
                     />
                   </div>
                 ))}
@@ -208,10 +214,10 @@ export default function ExecutiveConsultant() {
             <button
               onClick={startConsultation}
               disabled={!url || problems.filter(p => p.trim()).length < 3 || loading}
-              className={`group relative w-full py-4 text-lg rounded-xl font-semibold transition-all duration-300 ${
+              className={`w-full py-4 rounded-2xl font-semibold transition-all duration-200 ${
                 !url || problems.filter(p => p.trim()).length < 3 || loading
-                  ? "bg-zinc-900 text-gray-500 cursor-not-allowed"
-                  : "bg-white text-black hover:bg-gray-100 active:scale-[0.98]"
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-900 text-white hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] shadow-md"
               }`}
             >
               {loading ? (
@@ -226,11 +232,12 @@ export default function ExecutiveConsultant() {
                 </span>
               )}
             </button>
+            </div>
           </div>
 
           {/* Info section */}
           <div className="space-y-12">
-            <h2 className="text-2xl font-bold text-white text-center">Så fungerar det</h2>
+            <h2 className="text-2xl font-bold text-gray-900 text-center">Så fungerar det</h2>
             
             <div className="grid gap-8">
               {[
@@ -256,12 +263,12 @@ export default function ExecutiveConsultant() {
                 }
               ].map((step) => (
                 <div key={step.num} className="flex items-start gap-4 group">
-                  <div className="w-12 h-12 bg-zinc-900 text-white rounded-xl flex items-center justify-center font-bold text-lg flex-shrink-0 group-hover:bg-zinc-800 transition-all duration-300">
+                  <div className="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
                     {step.num}
                   </div>
                   <div className="pt-2">
-                    <h3 className="font-bold text-white mb-1">{step.title}</h3>
-                    <p className="text-sm text-gray-400">
+                    <h3 className="font-bold text-gray-900 mb-1">{step.title}</h3>
+                    <p className="text-sm text-gray-600">
                       {step.desc}
                     </p>
                   </div>
@@ -271,6 +278,13 @@ export default function ExecutiveConsultant() {
           </div>
         </div>
       </div>
+      
+      <style jsx>{`
+        @keyframes pulse-blue {
+          0%, 100% { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); }
+          50% { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3); }
+        }
+      `}</style>
     </div>
   );
 }

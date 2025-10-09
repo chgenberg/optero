@@ -23,34 +23,57 @@ export default function BusinessPage() {
 
   const startAnalysis = async () => {
     if (!url || !department) {
-      alert("Fyll i webbplats och avdelning");
-      return;
+      // Vi försöker ändå: hämtar profil och sätter rekommenderad avdelning automatiskt
     }
     setLoading(true);
     setProgress(10);
     try {
+      const normalizeUrl = (u: string) => {
+        const trim = (u || "").trim();
+        try { return new URL(trim).toString(); } catch {}
+        try { return new URL(`https://${trim}`).toString(); } catch {}
+        return `https://${trim}`;
+      };
+      const targetUrl = normalizeUrl(url);
       // 1) Scrape
       setProgress(30);
       const scrape = await fetch("/api/business/scrape", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url })
+        body: JSON.stringify({ url: targetUrl })
       });
       const scraped = await scrape.json();
 
-      // 2) Generate prompts
-      setProgress(70);
+      // 2) Bygg CompanyProfile och föreslagna avdelningar
+      setProgress(55);
+      let chosenDept = department;
+      try {
+        const profRes = await fetch("/api/business/profile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: targetUrl, scrape: scraped })
+        });
+        const prof = await profRes.json();
+        sessionStorage.setItem("companyProfile", JSON.stringify(prof));
+        if (!chosenDept && Array.isArray(prof.recommendedDepartments) && prof.recommendedDepartments.length > 0) {
+          chosenDept = prof.recommendedDepartments[0].dept || chosenDept;
+          setDepartment(chosenDept);
+        }
+      } catch {}
+
+      // 3) Generate prompts
+      setProgress(75);
       const gen = await fetch("/api/business/generate-company-prompts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         // Pass entire scrape payload so API can parse structured summary
-        body: JSON.stringify({ url, department, content: JSON.stringify(scraped) })
+        body: JSON.stringify({ url: targetUrl, department: chosenDept || department, content: JSON.stringify(scraped) })
       });
       const data = await gen.json();
 
-      // 3) Save and go
+      // 4) Save and go
       setProgress(100);
-      sessionStorage.setItem("companyPromptResults", JSON.stringify({ url, department, solutions: data.solutions || [] }));
+      sessionStorage.setItem("companyPromptResults", JSON.stringify({ url: targetUrl, department: chosenDept || department, solutions: data.solutions || [] }));
       router.push("/business/prompt-results");
     } catch (e) {
       console.error(e);
@@ -61,37 +84,45 @@ export default function BusinessPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white px-4 pt-20 sm:pt-24">
+    <main className="min-h-screen bg-gray-50 px-4 pt-20 sm:pt-24 pb-24">
       <div className="max-w-3xl mx-auto w-full">
-        <div className="text-center space-y-4 mb-10">
-          <h1 className="text-4xl sm:text-5xl font-bold">AI för företag</h1>
-          <p className="text-gray-400">Ange webbplats och avdelning – få 3 skräddarsydda AI‑prompts</p>
+        <div className="text-center space-y-4 mb-12">
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900">AI för företag</h1>
+          <p className="text-lg text-gray-600">Ange webbplats och avdelning – få 3 skräddarsydda AI‑prompts</p>
         </div>
 
-        <div className="space-y-6">
+        <div className="bg-white rounded-3xl p-8 shadow-xl space-y-8 relative overflow-hidden">
+          {/* Animated blue border effect */}
+          <div className="absolute inset-0 rounded-3xl">
+            <div className="absolute inset-0 rounded-3xl animate-pulse-blue"></div>
+          </div>
+          
+          <div className="relative z-10 space-y-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Webbplats</label>
+            <label className="block text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Webbplats</label>
             <input
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://dittforetag.se"
-              className="w-full px-6 py-4 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
+              className="w-full px-6 py-4 text-lg bg-white border-2 border-gray-900 rounded-2xl focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all duration-200 placeholder-gray-500 font-medium"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Avdelning</label>
+            <label className="block text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Avdelning</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {DEPARTMENTS.map((d) => (
                 <button
                   key={d.value}
                   onClick={() => setDepartment(d.value)}
-                  className={`p-4 rounded-xl border text-left transition-colors ${
-                    department === d.value ? 'border-white bg-zinc-900' : 'border-zinc-800 bg-black hover:bg-zinc-900'
+                  className={`p-4 rounded-xl border-2 text-left transition-all duration-200 ${
+                    department === d.value 
+                      ? 'border-gray-900 bg-gray-50 shadow-md' 
+                      : 'border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-400'
                   }`}
                 >
-                  <div className="font-medium">{d.label}</div>
+                  <div className="font-medium text-gray-900">{d.label}</div>
                   <div className="text-xs text-gray-500 mt-1">{d.value}</div>
                 </button>
               ))}
@@ -101,14 +132,24 @@ export default function BusinessPage() {
           <button
             onClick={startAnalysis}
             disabled={!url || !department || loading}
-            className={`w-full py-4 rounded-xl font-semibold transition-all ${
-              !url || !department || loading ? 'bg-zinc-900 text-gray-500' : 'bg-white text-black hover:bg-gray-100'
+            className={`w-full py-4 rounded-2xl font-semibold transition-all duration-200 ${
+              !url || !department || loading 
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                : 'bg-gray-900 text-white hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] shadow-md'
             }`}
           >
             {loading ? `Analyserar... ${progress}%` : 'Generera 3 AI‑prompts'}
           </button>
+          </div>
         </div>
       </div>
+      
+      <style jsx>{`
+        @keyframes pulse-blue {
+          0%, 100% { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); }
+          50% { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3); }
+        }
+      `}</style>
     </main>
   );
 }
