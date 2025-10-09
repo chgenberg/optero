@@ -60,6 +60,12 @@ export default function SimpleResults({
         .slice(0, 3)
         .map(t => t.task);
 
+      // Read optional context
+      let context: any = {};
+      try {
+        context = JSON.parse(sessionStorage.getItem("analysisContext") || "{}");
+      } catch {}
+
       const response = await fetch("/api/business/generate-solutions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -67,7 +73,8 @@ export default function SimpleResults({
           profession,
           specialization,
           tasks: topTasks,
-          language: t('language.code')
+          language: t('language.code'),
+          context
         }),
       });
 

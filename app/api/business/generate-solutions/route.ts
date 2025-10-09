@@ -11,7 +11,7 @@ export const maxDuration = 180; // 3 minutes
 
 export async function POST(request: NextRequest) {
   try {
-    const { profession, specialization, tasks, language = 'sv' } = await request.json();
+    const { profession, specialization, tasks, language = 'sv', context } = await request.json();
 
     if (!profession || !tasks || tasks.length === 0) {
       return NextResponse.json(
@@ -211,11 +211,14 @@ Für JEDE Aufgabe, geben Sie GENAU dieses JSON-Format zurück:
 
       const selectedPrompts = prompts[language as keyof typeof prompts] || prompts.sv;
 
-      const completion = await openai.chat.completions.create({
+      // Build context string to enrich the user message
+      const contextString = context ? `\n\nTILLÄGGSKONTEXT (använd detta för att göra lösningarna mer specifika):\n- Mål: ${context.goal || '-'}\n- Befintliga verktyg: ${context.tools || '-'}\n- Ton/kvalitet: ${context.tone || '-'}\n` : '';
+
+    const completion = await openai.chat.completions.create({
         model: "gpt-5-mini", // Using GPT-5-mini for fast, quality prompts
-        messages: [
+      messages: [
           { role: "system", content: selectedPrompts.system },
-          { role: "user", content: selectedPrompts.user }
+          { role: "user", content: selectedPrompts.user + contextString }
         ],
         max_completion_tokens: 4000,
         // GPT-5 supports system messages unlike o1

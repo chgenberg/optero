@@ -15,9 +15,9 @@ echo ""
 while true; do
   echo "📦 Batch från offset $OFFSET..."
   
-  RESPONSE=$(curl -s -X POST "$API_URL" \
+RESPONSE=$(curl -s -X POST "$API_URL" \
     -H "Content-Type: application/json" \
-    -d "{\"batchSize\": $BATCH_SIZE, \"offset\": $OFFSET}")
+    -d "{\"batchSize\": $BATCH_SIZE, \"offset\": $OFFSET, \"force\": true}")
   
   echo "$RESPONSE" | jq '.'
   

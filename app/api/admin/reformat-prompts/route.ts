@@ -10,7 +10,7 @@ export const maxDuration = 300; // 5 minutes
 
 export async function POST(request: NextRequest) {
   try {
-    const { batchSize = 10, offset = 0 } = await request.json();
+    const { batchSize = 10, offset = 0, force = false } = await request.json();
 
     // Fetch a batch of prompts
     const prompts = await prisma.taskSolution.findMany({
@@ -39,11 +39,11 @@ export async function POST(request: NextRequest) {
       try {
         // Check if prompt already has modern formatting (has ** for headings)
         // Look for **ROLL** or **UPPGIFT** or **INPUT** as signs of modern format
-        const hasModernFormat = prompt.prompt.includes("**ROLL") || 
-                                prompt.prompt.includes("**UPPGIFT") || 
+        const hasModernFormat = prompt.prompt.includes("**ROLL") ||
+                                prompt.prompt.includes("**UPPGIFT") ||
                                 prompt.prompt.includes("**INPUT");
-        
-        if (hasModernFormat) {
+
+        if (!force && hasModernFormat) {
           console.log(`✅ Skip (redan formaterad): ${prompt.task}`);
           successCount++;
           continue;

@@ -55,6 +55,10 @@ export default function TaskSelection({
   const [customTasks, setCustomTasks] = useState<string[]>([]);
   const [customTaskInput, setCustomTaskInput] = useState("");
   const [showHelp, setShowHelp] = useState(false);
+  // Optional context for richer prompts
+  const [goal, setGoal] = useState("");
+  const [tools, setTools] = useState("");
+  const [tone, setTone] = useState("");
 
   useEffect(() => {
     // Hämta uppgifter från API med GPT-4o-mini
@@ -109,6 +113,14 @@ export default function TaskSelection({
 
   const handleSubmit = () => {
     if (selectedTasks.length > 0) {
+      // Persist optional context for later use
+      try {
+        sessionStorage.setItem(
+          "analysisContext",
+          JSON.stringify({ goal, tools, tone })
+        );
+      } catch {}
+
       onSubmit(selectedTasks);
     }
   };
@@ -165,6 +177,36 @@ export default function TaskSelection({
           </div>
         ) : (
           <>
+            {/* Optional context fields */}
+            <div className="mb-6 grid grid-cols-1 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Mål (valfritt)</label>
+                <input
+                  value={goal}
+                  onChange={(e) => setGoal(e.target.value)}
+                  placeholder="Vad vill du uppnå? T.ex. halvera administrationstiden"
+                  className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-gray-900 focus:outline-none text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Befintliga verktyg (valfritt)</label>
+                <input
+                  value={tools}
+                  onChange={(e) => setTools(e.target.value)}
+                  placeholder="T.ex. Google Drive, Excel, Fortnox, Slack"
+                  className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-gray-900 focus:outline-none text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ton/kvalitet (valfritt)</label>
+                <input
+                  value={tone}
+                  onChange={(e) => setTone(e.target.value)}
+                  placeholder="T.ex. formell, pedagogisk, med exempel och checklistor"
+                  className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-gray-900 focus:outline-none text-sm"
+                />
+              </div>
+            </div>
             {/* Add custom task section - MOVED TO TOP */}
             <div className="mb-6 p-4 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
               <h3 className="text-sm font-medium text-gray-700 mb-3">
