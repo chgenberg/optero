@@ -223,11 +223,13 @@ Returnera ENDAST JSON enligt exakt detta format:
       };
     });
 
+    const finalOut = normalized.length ? normalized : buildFallback();
+
     // Persist to DB (BusinessSolution)
     try {
-      if (normalized.length > 0) {
+      if (finalOut.length > 0) {
         await prisma.businessSolution.createMany({
-          data: normalized.map((s: any) => ({
+          data: finalOut.map((s: any) => ({
             companyUrl: url,
             department,
             task: s.task,
@@ -242,14 +244,29 @@ Returnera ENDAST JSON enligt exakt detta format:
       console.error("BusinessSolution save error:", dbErr);
     }
 
-    return NextResponse.json({ solutions: normalized });
+    return NextResponse.json({ solutions: finalOut });
   } catch (e: any) {
     console.error("Top-level catch in generate-company-prompts:", e);
-    return NextResponse.json({ 
-      error: e?.message || "Failed", 
-      stack: e?.stack?.slice(0, 500),
-      type: e?.constructor?.name 
-    }, { status: 500 });
+    // Top-level fallback
+    const { url, department } = (() => {
+      try { return (e?.reqBody && JSON.parse(e.reqBody)) || {}; } catch { return {}; }
+    })();
+    const fallback = (() => {
+      const dept = department || 'business';
+      const site = url || 'företaget';
+      const mk = (t: string, s: string) => ({
+        task: t,
+        solution: s,
+        prompt: `**ROLL & KONTEXT:**\nDu arbetar på avdelningen ${dept} på ${site}.\n\n**UPPGIFT:**\n${s}\n\n**INPUT - Fyll i detta:**\n[MÅL]\n[KÄLLA]\n[FORMAT]\n\n**OUTPUT-FORMAT:**\n1) Analys\n2) Handlingslista\n3) KPI`,
+        recommendedTool: 'ChatGPT 4',
+      });
+      return [
+        mk(`AI-assisterad arbetsflödesanalys för ${dept}`, 'Analysera nuvarande arbetssätt och identifiera flaskhalsar.'),
+        mk(`Automatiserad sammanställning av ${dept}-underlag`, 'Samla och strukturera underlag till handlingspunkter.'),
+        mk(`Standardiserade mallar och checklistor för ${dept}`, 'AI-drivna mallar som påskyndar leverans och höjer kvalitet.'),
+      ];
+    })();
+    return NextResponse.json({ solutions: fallback });
   }
 }
 
