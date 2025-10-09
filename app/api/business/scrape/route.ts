@@ -7,11 +7,42 @@ async function fetchHtml(url: string): Promise<string> {
   return await res.text();
 }
 
-function extractText(html: string): string {
+function extractStructuredData(html: string, url: string): any {
   const $ = load(html);
-  $("script, style, noscript").remove();
-  const text = $("body").text();
-  return text.replace(/\s+/g, " ").trim();
+  
+  // Remove noise
+  $("script, style, noscript, nav, header, footer, aside, .cookie, .banner, .popup").remove();
+  
+  // Extract metadata
+  const title = $("title").text().trim() || $('meta[property="og:title"]').attr("content") || "";
+  const description = $('meta[name="description"]').attr("content") || $('meta[property="og:description"]').attr("content") || "";
+  
+  // Extract headings (structure)
+  const headings = $("h1, h2, h3").map((_, el) => $(el).text().trim()).get().filter(Boolean);
+  
+  // Main content (prioritera main, article, eller största text-block)
+  let mainText = "";
+  if ($("main").length) {
+    mainText = $("main").text();
+  } else if ($("article").length) {
+    mainText = $("article").text();
+  } else {
+    mainText = $("body").text();
+  }
+  mainText = mainText.replace(/\s+/g, " ").trim();
+  
+  // Keywords/topics (från headings och meta)
+  const keywords = $('meta[name="keywords"]').attr("content")?.split(",").map(k => k.trim()) || [];
+  
+  return {
+    url,
+    title,
+    description,
+    headings: headings.slice(0, 10),
+    keywords: keywords.slice(0, 10),
+    mainText: mainText.slice(0, 8000),
+    length: mainText.length
+  };
 }
 
 function findLinks(html: string, baseUrl: string): string[] {
@@ -37,8 +68,14 @@ export async function POST(req: NextRequest) {
     if (!url) return NextResponse.json({ error: "Missing url" }, { status: 400 });
 
     const visited = new Set<string>();
+    const priorityPages: string[] = [];
+    const allPages: any[] = [];
+    
+    // Priority keywords for important pages
+    const priorityKeywords = ['om-oss', 'om', 'about', 'tjanster', 'services', 'produkter', 'products', 'kontakt', 'contact', 'team'];
+    
+    // Start with homepage
     const queue: string[] = [url];
-    let collected = "";
 
     while (queue.length && visited.size < maxPages) {
       const current = queue.shift()!;
@@ -47,31 +84,82 @@ export async function POST(req: NextRequest) {
 
       try {
         const html = await fetchHtml(current);
-        collected += "\n\n# " + current + "\n" + extractText(html);
+        const data = extractStructuredData(html, current);
+        allPages.push(data);
+        
+        // Prioritize important pages
+        const urlLower = current.toLowerCase();
+        if (priorityKeywords.some(k => urlLower.includes(k))) {
+          priorityPages.push(current);
+        }
+        
         const links = findLinks(html, url);
-        for (const l of links) if (!visited.has(l)) queue.push(l);
+        // Add priority links first
+        const priorityLinks = links.filter(l => priorityKeywords.some(k => l.toLowerCase().includes(k)));
+        const otherLinks = links.filter(l => !priorityKeywords.some(k => l.toLowerCase().includes(k)));
+        
+        for (const l of [...priorityLinks, ...otherLinks]) {
+          if (!visited.has(l) && queue.length < 20) queue.push(l);
+        }
       } catch (e) {
-        // ignore page errors, continue
+        console.error(`Failed to scrape ${current}:`, e);
       }
     }
 
-    // If content looks too small and fallback enabled, try Playwright render of root page
+    // If content looks too small and fallback enabled, try Playwright
+    const totalText = allPages.reduce((sum, p) => sum + (p.mainText?.length || 0), 0);
     const MIN_TEXT_LEN = 2000;
-    if (collected.replace(/\s+/g, " ").length < MIN_TEXT_LEN && process.env.ENABLE_PLAYWRIGHT === 'true') {
+    if (totalText < MIN_TEXT_LEN && process.env.ENABLE_PLAYWRIGHT === 'true') {
       try {
         const htmlRendered = await renderWithPlaywright(url);
         if (htmlRendered) {
-          collected += "\n\n# (rendered) " + url + "\n" + extractText(htmlRendered);
+          const rendered = extractStructuredData(htmlRendered, url + " (rendered)");
+          allPages.unshift(rendered);
         }
-      } catch {
-        // ignore fallback errors
+      } catch (e) {
+        console.error("Playwright fallback failed:", e);
       }
     }
 
-    // Cap size to ~120k chars to keep token costs reasonable
-    const content = collected.slice(0, 120000);
-    return NextResponse.json({ content, pages: Array.from(visited) });
+    // Build rich summary for AI
+    const summary = {
+      company: url,
+      pages: allPages.length,
+      priorityPages,
+      overview: allPages[0] || {},
+      allData: allPages.slice(0, 6).map(p => ({
+        url: p.url,
+        title: p.title,
+        description: p.description,
+        headings: p.headings?.slice(0, 5),
+        mainText: p.mainText?.slice(0, 2000)
+      }))
+    };
+
+    // Create rich text summary for GPT
+    const richContent = `
+FÖRETAG: ${url}
+TITEL: ${summary.overview.title || 'N/A'}
+BESKRIVNING: ${summary.overview.description || 'N/A'}
+NYCKELORD: ${summary.overview.keywords?.join(', ') || 'N/A'}
+
+VIKTIGA SIDOR HITTADE: ${priorityPages.join(', ') || 'Endast startsidan'}
+
+HUVUDRUBRIKER:
+${summary.overview.headings?.join('\n') || 'Inga rubriker'}
+
+INNEHÅLL FRÅN ${allPages.length} SIDOR:
+${allPages.map(p => `\n## ${p.title || p.url}\n${p.mainText?.slice(0, 1500) || ''}`).join('\n')}
+`.trim();
+
+    return NextResponse.json({ 
+      content: richContent.slice(0, 60000),
+      summary,
+      pages: Array.from(visited),
+      totalTextLength: totalText
+    });
   } catch (e: any) {
+    console.error("Scrape error:", e);
     return NextResponse.json({ error: e?.message || "Failed to scrape" }, { status: 500 });
   }
 }
