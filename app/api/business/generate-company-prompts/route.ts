@@ -296,28 +296,27 @@ Returnera ENDAST JSON enligt exakt detta format:
 
     // Post-process: enforce specificity and light sector adjustments
     const sectLabel = sectorLabelSv[sector] || 'verksamheten';
+    const deptLabelSv: Record<string,string> = {
+      sales: 'försäljning', marketing: 'marknadsföring', finance: 'ekonomi', hr: 'HR',
+      'customer-service': 'kundtjänst', operations: 'operations', it: 'IT', management: 'ledning', general: 'verksamheten'
+    };
+    const deptLabel = deptLabelSv[departmentKey] || departmentKey || 'verksamheten';
     const headingTerms = headingsList.slice(0, 3).filter(Boolean);
     const svcTerms = [...servicesLinks, ...productsList, ...servicesList].slice(0, 3).filter(Boolean);
     const ensureKpi = (s: string) => (/\b(min|h|tim|vecka|%|procent|KPI)\b/i.test(s) ? s : (s ? `${s} Tidsbesparing/KPI: uppskatta min/h per vecka.` : s));
-    const containsAny = (txt: string, terms: string[]) => terms.some(t => txt.toLowerCase().includes(String(t).toLowerCase()));
 
     const adjusted = (normalized.length ? normalized : buildFallback()).map((s: any) => {
-      let task = s.task || '';
-      task = task.replace(/för\s+business/gi, `för ${sectLabel}`);
-      let prompt = s.prompt || '';
       const mustCompany = companyName || url;
-      const needHeadings = !containsAny(prompt, headingTerms);
-      const needSvc = !containsAny(prompt, svcTerms);
-      const needCompany = !containsAny(prompt, [companyName]) && !prompt.includes(url);
-      const additions: string[] = [];
-      if (needCompany) additions.push(`Företag: ${mustCompany}`);
-      if (needHeadings && headingTerms.length) additions.push(`Rubriker att referera: ${headingTerms.join(' | ')}`);
-      if (needSvc && svcTerms.length) additions.push(`Tjänst/produkt: ${svcTerms[0]}`);
-      if (additions.length) {
-        prompt = `${prompt}\n\n${additions.join('\n')}`.trim();
-      }
+      const task = (s.task || '').replace(/för\s+business/gi, `för ${sectLabel}`);
+      const basePrompt = s.prompt || '';
+      const roleHeader = `**ROLL & KONTEXT:**\nDu arbetar på avdelningen ${deptLabel} på ${mustCompany}.`;
+      const refs = `${headingTerms.length ? `\nKällrubriker: ${headingTerms.join(' | ')}` : ''}${svcTerms.length ? `\nTjänst/produkt: ${svcTerms[0]}` : ''}`.trim();
+      const kpiNote = `\n\nKPI (måste anges i leverans): tid/vecka, % förbättring eller felgrad.`;
+      const synthesized = basePrompt
+        ? `${roleHeader}\n\n${basePrompt}${refs ? `\n\n${refs}` : ''}${kpiNote}`
+        : `${roleHeader}\n\n**UPPGIFT:**\n${task}\n\n**INPUT - Fyll i detta:**\n[MÅL]\n[KÄLLA]\n[FORMAT]\n\n**OUTPUT-FORMAT:**\n1) Analys\n2) Handlingslista\n3) KPI${kpiNote}${refs ? `\n\n${refs}` : ''}`;
       const solution = ensureKpi(s.solution || '');
-      return { ...s, task, prompt, solution };
+      return { ...s, task, prompt: synthesized, solution };
     });
 
     const finalOut = adjusted;
