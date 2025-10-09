@@ -16,20 +16,44 @@ export async function POST(req: NextRequest) {
     }
 
     const site = (content || "").slice(0, 12000);
-    const instructions = "Du är en världsklass AI‑strateg och prompt‑ingenjör som skapar praktiska, direkt användbara prompts åt företag. Svara på svenska.";
-    const combinedPrompt = `FÖRETAG: ${url}
-AVDELNING: ${department}
-UTDRAG FRÅN WEBBPLATS (komprimerat):\n${site}
+    const systemPrompt = `Du är världens främsta prompt-ingenjör och pedagog specialiserad på att hjälpa företag inom ${department}.
 
-MÅL: Generera 3 specifika, högvärdiga användningsfall för AI i denna avdelnings dagliga arbete.
+SKAPA PEDAGOGISKT STRUKTURERADE PROMPTS MED:
 
-KRAV:
-- Returnera ENDAST giltig JSON enligt formatet nedan (ingen extra text eller kodblock)
-- Varje förslag ska innehålla: {task, solution, prompt}
-- prompt ska ha tydlig struktur med **ROLL & KONTEXT**, **UPPGIFT**, **INPUT – Fyll i detta** (max 3 placeholders), **OUTPUT-FORMAT**, **KVALITETSKRITERIER**, **FÄRDIGT EXEMPEL** (ifyllt för detta företag utifrån rimliga antaganden)
-- Anta rimliga standarder om något saknas; minimera [PLACEHOLDERS]
+1. **Tydlig sektionsindelning** (använd **fet text** för rubriker)
+2. **[PLATSHÅLLARE]** i hakparenteser för allt användaren ska fylla i
+3. **Steg-för-steg instruktioner** så det är omöjligt att missförstå
+4. **Konkreta exempel** på input OCH output
+5. **Kvalitetskriterier** så användaren vet vad som är ett bra resultat
 
-OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "prompt": string }, { ... }, { ... } ] }`;
+STRUKTUR SOM SKA FÖLJAS:
+- ROLL & KONTEXT (vem är AI:n?)
+- UPPGIFT (vad ska göras?)
+- INPUT - Fyll i detta (alla parametrar med [hakparenteser])
+- OUTPUT-FORMAT (exakt hur resultatet ska se ut)
+- KVALITETSKRITERIER (vad gör det bra?)
+- EXEMPEL (konkret input → output)
+
+VARJE prompt ska spara minst 30 minuter och vara så pedagogisk att även en nybörjare kan använda den.`;
+    
+    const userPrompt = `Baserat på detta företag: ${url}
+Avdelning: ${department}
+Information från webbplats: ${site.slice(0, 5000)}
+
+Skapa AVANCERADE lösningar för 3 vanliga arbetsuppgifter inom ${department}.
+
+KRITISKT: Svara ENDAST med giltig JSON. Ingen annan text, ingen förklaring, ingen markdown.
+
+För VARJE uppgift, returnera EXAKT detta JSON-format:
+{
+  "solutions": [
+    {
+      "task": "Konkret arbetsuppgift",
+      "solution": "Konkret lösning i 2-3 meningar. Förklara specifikt HUR AI revolutionerar denna uppgift och EXAKT vilken tidsbesparing (i minuter/timmar) det ger.",
+      "prompt": "En VÄLSTRUKTURERAD prompt med alla sektioner enligt STRUKTUR ovan."
+    }
+  ]
+}`;
 
     let completion;
     try {
@@ -37,11 +61,11 @@ OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "pr
       completion = await openai.chat.completions.create({
         model: "gpt-5-mini",
         messages: [
-          { role: "system", content: instructions },
-          { role: "user", content: combinedPrompt }
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
         ],
         response_format: { type: "json_object" },
-        max_completion_tokens: 1500
+        max_completion_tokens: 3000
       });
     } catch (err: any) {
       console.error("OpenAI gpt-5-mini error:", err?.message, err?.status, err?.code, err?.response?.data || err);
@@ -108,11 +132,11 @@ OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "pr
         const regen = await openai.chat.completions.create({
           model: "gpt-5-mini",
           messages: [
-            { role: "system", content: "Returnera ENDAST giltig JSON enligt formatet { \"solutions\": [ { \"task\": string, \"solution\": string, \"prompt\": string } ] } utan extra text." },
-            { role: "user", content: combinedPrompt }
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
           ],
           response_format: { type: "json_object" },
-          max_completion_tokens: 1500
+          max_completion_tokens: 2500
         });
         const regenRaw = regen.choices?.[0]?.message?.content || "{}";
         const regenParsed = JSON.parse(regenRaw);
