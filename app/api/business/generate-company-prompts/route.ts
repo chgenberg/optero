@@ -324,7 +324,20 @@ Returnera ENDAST JSON enligt exakt detta format:
       console.log("generate-company-prompts ctx:", JSON.stringify({ url, department, companyName, headings: headingsList.slice(0,3), services: servicesLinks.slice(0,2) }));
     } catch {}
 
-    const finalOut = adjusted;
+    // Hard override: ensure role header always shows company/department, and append refs/KPI
+    const hardOverridden = adjusted.map((s: any) => {
+      const mustCompany = companyName || url;
+      const roleHeader = `**ROLL & KONTEXT:**\nDu arbetar på avdelningen ${deptLabel} på ${mustCompany}.`;
+      const refs = `${headingTerms.length ? `\nKällrubriker: ${headingTerms.join(' | ')}` : ''}${svcTerms.length ? `\nTjänst/produkt: ${svcTerms[0]}` : ''}`.trim();
+      const kpiNote = `\n\nKPI (måste anges i leverans): tid/vecka, % förbättring eller felgrad.`;
+      const text = String(s.prompt || "");
+      const upgIdx = text.indexOf("**UPPGIFT:**");
+      const rest = upgIdx !== -1 ? text.slice(upgIdx) : text;
+      const newPrompt = `${roleHeader}\n\n${rest}${refs ? `\n\n${refs}` : ''}${kpiNote}`.trim();
+      return { ...s, prompt: newPrompt };
+    });
+
+    const finalOut = hardOverridden;
 
     // Persist to DB (BusinessSolution)
     try {
