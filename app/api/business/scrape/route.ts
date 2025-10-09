@@ -55,11 +55,41 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // If content looks too small and fallback enabled, try Playwright render of root page
+    const MIN_TEXT_LEN = 2000;
+    if (collected.replace(/\s+/g, " ").length < MIN_TEXT_LEN && process.env.ENABLE_PLAYWRIGHT === 'true') {
+      try {
+        const htmlRendered = await renderWithPlaywright(url);
+        if (htmlRendered) {
+          collected += "\n\n# (rendered) " + url + "\n" + extractText(htmlRendered);
+        }
+      } catch {
+        // ignore fallback errors
+      }
+    }
+
     // Cap size to ~120k chars to keep token costs reasonable
     const content = collected.slice(0, 120000);
     return NextResponse.json({ content, pages: Array.from(visited) });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Failed to scrape" }, { status: 500 });
+  }
+}
+
+async function renderWithPlaywright(targetUrl: string): Promise<string | null> {
+  try {
+    // dynamic import to avoid bundling when disabled
+    const { chromium } = await import('playwright');
+    const browser = await chromium.launch({ args: ['--no-sandbox','--disable-setuid-sandbox'] });
+    const page = await browser.newPage();
+    await page.goto(targetUrl, { waitUntil: 'networkidle', timeout: 30000 });
+    // give some time for hydration-heavy apps
+    await page.waitForTimeout(1500);
+    const html = await page.content();
+    await browser.close();
+    return html;
+  } catch (e) {
+    return null;
   }
 }
 
