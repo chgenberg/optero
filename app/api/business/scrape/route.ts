@@ -202,20 +202,20 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // If content looks too small and fallback enabled, try Playwright
-    const totalText = allPages.reduce((sum, p) => sum + (p.mainText?.length || 0), 0);
-    const MIN_TEXT_LEN = 2000;
-    if (totalText < MIN_TEXT_LEN && process.env.ENABLE_PLAYWRIGHT === 'true') {
-      try {
-        const htmlRendered = await renderWithPlaywright(url);
-        if (htmlRendered) {
-          const rendered = extractStructuredData(htmlRendered, url + " (rendered)");
-          allPages.unshift(rendered);
-        }
-      } catch (e) {
-        console.error("Playwright fallback failed:", e);
-      }
+  // Always attempt Playwright render once to capture SPA/JS content
+  const totalText = allPages.reduce((sum, p) => sum + (p.mainText?.length || 0), 0);
+  const MIN_TEXT_LEN = 2000;
+  try {
+    const htmlRendered = await renderWithPlaywright(url);
+    if (htmlRendered) {
+      const rendered = extractStructuredData(htmlRendered, url + " (rendered)");
+      // Only prepend if we actually get more text than initial fetch or if initial was sparse
+      const hasValue = (rendered.mainText?.length || 0) > 300 || totalText < MIN_TEXT_LEN;
+      if (hasValue) allPages.unshift(rendered);
     }
+  } catch (e) {
+    console.error("Playwright render failed:", e);
+  }
 
   // Additional fallback: Jina AI Reader for JS-heavy sites, regardless of Playwright availability
   const totalAfterPw = allPages.reduce((sum, p) => sum + (p.mainText?.length || 0), 0);
