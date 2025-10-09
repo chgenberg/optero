@@ -16,9 +16,8 @@ export async function POST(req: NextRequest) {
     }
 
     const site = (content || "").slice(0, 12000);
-    const combinedPrompt = `Du är en världsklass AI‑strateg och prompt‑ingenjör som skapar praktiska, direkt användbara prompts åt företag.
-
-FÖRETAG: ${url}
+    const instructions = "Du är en världsklass AI‑strateg och prompt‑ingenjör som skapar praktiska, direkt användbara prompts åt företag. Svara på svenska.";
+    const combinedPrompt = `FÖRETAG: ${url}
 AVDELNING: ${department}
 UTDRAG FRÅN WEBBPLATS (komprimerat):\n${site}
 
@@ -34,12 +33,22 @@ OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "pr
 
     let completion;
     try {
-      completion = await openai.chat.completions.create({
+      // Responses API (GPT-5)
+      completion = await openai.responses.create({
         model: "gpt-5",
-        messages: [
-          { role: "user", content: combinedPrompt }
+        instructions,
+        input: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: combinedPrompt }
+            ]
+          }
         ],
-        max_completion_tokens: 2500
+        temperature: 0.2,
+        max_output_tokens: 1500,
+        reasoning_effort: "medium",
+        verbosity: "low"
       });
     } catch (err: any) {
       console.error("OpenAI gpt-5 error:", err?.message, err?.status, err?.code, err?.response?.data || err);
@@ -52,7 +61,8 @@ OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "pr
       }, { status: 500 });
     }
 
-    const contentRaw = completion.choices?.[0]?.message?.content || "{}";
+    // Responses API: use output_text
+    const contentRaw = (completion as any)?.output_text || "{}";
     const match = contentRaw.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
     const cleaned = match ? match[1] : contentRaw;
     let parsed;
@@ -78,7 +88,26 @@ OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "pr
       if (firstArray) list = firstArray as any[];
     }
 
+    // Last-resort: ask a smaller model to coerce any text into our schema
     if (!list || list.length === 0) {
+      try {
+        const coerce = await openai.chat.completions.create({
+          model: "gpt-5-mini",
+          messages: [
+            { role: "user", content: `Konvertera följande innehåll till exakt JSON enligt:\n{ "solutions": [ { "task": string, "solution": string, "prompt": string }, {..}, {..} ] }\n\nINNEHÅLL:\n${contentRaw}` }
+          ],
+          max_completion_tokens: 1200
+        });
+        const coerceRaw = coerce.choices?.[0]?.message?.content || "{}";
+        const coerceMatch = coerceRaw.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
+        const coerceClean = coerceMatch ? coerceMatch[1] : coerceRaw;
+        const coerced = JSON.parse(coerceClean);
+        if (Array.isArray(coerced?.solutions) && coerced.solutions.length) {
+          return NextResponse.json({ solutions: coerced.solutions.slice(0,3) });
+        }
+      } catch (e) {
+        console.error("Coercion step failed", e);
+      }
       console.error("Model returned JSON without solutions array:", JSON.stringify(parsed).slice(0, 500));
       return NextResponse.json({ error: "No solutions in model output", raw: parsed }, { status: 500 });
     }
