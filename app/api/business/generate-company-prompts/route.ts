@@ -27,6 +27,10 @@ export async function POST(req: NextRequest) {
     let headingsList: string[] = [];
     let titleStr = "";
     let descriptionStr = "";
+    let companyName = "";
+    let servicesLinks: string[] = [];
+    let productsList: string[] = [];
+    let servicesList: string[] = [];
     try {
       const maybeObj = JSON.parse(content);
       if (maybeObj && typeof maybeObj === 'object' && maybeObj.summary?.overview) {
@@ -34,6 +38,10 @@ export async function POST(req: NextRequest) {
         titleStr = ov.title || '';
         descriptionStr = ov.description || '';
         headingsList = Array.isArray(ov.headings) ? ov.headings.slice(0, 6) : [];
+        companyName = ov.companyName || '';
+        servicesLinks = Array.isArray(ov.servicesLinks) ? ov.servicesLinks.slice(0,5) : [];
+        productsList = Array.isArray(ov.products) ? ov.products.slice(0,5) : [];
+        servicesList = Array.isArray(ov.services) ? ov.services.slice(0,5) : [];
         structuredHints = `\nFÖRETAGSNAMN: ${ov.companyName || ''}\nUSPs: ${(ov.usps||[]).join(', ').slice(0,300)}\nKONTAKT: e-post ${(ov.contacts?.emails||[]).join(', ')}; tel ${(ov.contacts?.phones||[]).join(', ')}\nSOCIALA: ${(ov.socials||[]).slice(0,5).join(', ')}\nTJÄNSTLÄNKAR: ${(ov.servicesLinks||[]).slice(0,5).join(', ')}\nTEAM/Ledningssidor: ${(ov.likelyTeamPages||[]).slice(0,3).join(', ')}`;
       }
     } catch {}
@@ -64,6 +72,13 @@ export async function POST(req: NextRequest) {
       }
     } as any;
     const departmentKey = String(department || '').toLowerCase();
+    const sectorLabelSv: Record<string,string> = {
+      ecommerce: 'e‑handel',
+      saas: 'SaaS',
+      healthcare: 'vård',
+      education: 'utbildning',
+      general: 'verksamheten'
+    };
     const focusAreas = (focusByDept[departmentKey]?.[sector]) || (focusByDept[departmentKey]?.general) || [];
     const systemPrompt = `Du är expert på AI-lösningar för ${department}-avdelningar. Du skapar praktiska, välstrukturerade prompts som sparar tid och ger tydliga resultat. Svara ENDAST med giltig JSON.`;
     
@@ -279,7 +294,33 @@ Returnera ENDAST JSON enligt exakt detta format:
       };
     });
 
-    const finalOut = normalized.length ? normalized : buildFallback();
+    // Post-process: enforce specificity and light sector adjustments
+    const sectLabel = sectorLabelSv[sector] || 'verksamheten';
+    const headingTerms = headingsList.slice(0, 3).filter(Boolean);
+    const svcTerms = [...servicesLinks, ...productsList, ...servicesList].slice(0, 3).filter(Boolean);
+    const ensureKpi = (s: string) => (/\b(min|h|tim|vecka|%|procent|KPI)\b/i.test(s) ? s : (s ? `${s} Tidsbesparing/KPI: uppskatta min/h per vecka.` : s));
+    const containsAny = (txt: string, terms: string[]) => terms.some(t => txt.toLowerCase().includes(String(t).toLowerCase()));
+
+    const adjusted = (normalized.length ? normalized : buildFallback()).map((s: any) => {
+      let task = s.task || '';
+      task = task.replace(/för\s+business/gi, `för ${sectLabel}`);
+      let prompt = s.prompt || '';
+      const mustCompany = companyName || url;
+      const needHeadings = !containsAny(prompt, headingTerms);
+      const needSvc = !containsAny(prompt, svcTerms);
+      const needCompany = !containsAny(prompt, [companyName]) && !prompt.includes(url);
+      const additions: string[] = [];
+      if (needCompany) additions.push(`Företag: ${mustCompany}`);
+      if (needHeadings && headingTerms.length) additions.push(`Rubriker att referera: ${headingTerms.join(' | ')}`);
+      if (needSvc && svcTerms.length) additions.push(`Tjänst/produkt: ${svcTerms[0]}`);
+      if (additions.length) {
+        prompt = `${prompt}\n\n${additions.join('\n')}`.trim();
+      }
+      const solution = ensureKpi(s.solution || '');
+      return { ...s, task, prompt, solution };
+    });
+
+    const finalOut = adjusted;
 
     // Persist to DB (BusinessSolution)
     try {
