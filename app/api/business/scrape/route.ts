@@ -152,8 +152,11 @@ INNEHÅLL FRÅN ${allPages.length} SIDOR:
 ${allPages.map(p => `\n## ${p.title || p.url}\n${p.mainText?.slice(0, 1500) || ''}`).join('\n')}
 `.trim();
 
+    // Remove control characters that break JSON
+    const cleanContent = richContent.replace(/[\x00-\x1F\x7F]/g, ' ');
+
     return NextResponse.json({ 
-      content: richContent.slice(0, 60000),
+      content: cleanContent.slice(0, 60000),
       summary,
       pages: Array.from(visited),
       totalTextLength: totalText
