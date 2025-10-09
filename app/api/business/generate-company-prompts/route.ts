@@ -74,8 +74,10 @@ Strukturerad sammanfattning (om tillgänglig): ${structuredHints}
 
 FOKUSOMRÅDEN (${department} × ${sector}): ${focusAreas.join('; ')}
 
-ANVÄND ALLTID MINST 2 TER MER FRÅN RUBRIKER: ${headingsList.join(', ').slice(0, 200)}
-NÄMN FÖRETAGSNAMN om det finns, och koppla tips till tjänster/produkter.
+MUST INCLUDE:
+- Företagsnamn (om känt) i ROLL & KONTEXT
+- Minst 2 termer från rubrikerna: ${headingsList.join(', ').slice(0, 200)}
+- Minst 1 länk/term från tjänster/produkter om tillgängligt
 
 Skapa 3 specifika AI-användningsfall för ${department} baserat på företagets kontext.
 

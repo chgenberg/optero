@@ -354,12 +354,44 @@ async function renderWithPlaywright(targetUrl: string): Promise<string | null> {
     const modName: any = 'playwright';
     // @ts-ignore - resolved at runtime only if installed
     const { chromium } = await import(modName);
-    const browser = await chromium.launch({ args: ['--no-sandbox','--disable-setuid-sandbox'] });
-    const page = await browser.newPage();
-    await page.goto(targetUrl, { waitUntil: 'networkidle', timeout: 30000 });
-    // give some time for hydration-heavy apps
-    await page.waitForTimeout(1500);
+    const browser = await chromium.launch({ args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-blink-features=AutomationControlled'
+    ]});
+
+    const userAgents = [
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36',
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0 Safari/537.36',
+      'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36'
+    ];
+    const ua = userAgents[Math.floor(Math.random() * userAgents.length)];
+
+    const context = await chromium.launchPersistentContext('', {
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-blink-features=AutomationControlled'
+      ],
+      viewport: { width: 1366, height: 900 },
+      userAgent: ua,
+      locale: 'en-US',
+      extraHTTPHeaders: { 'Accept-Language': 'en-US,en;q=0.9' }
+    });
+
+    const page = await context.newPage();
+    await page.addInitScript(() => {
+      // @ts-ignore
+      Object.defineProperty(navigator, 'webdriver', { get: () => false });
+    });
+
+    await page.goto(targetUrl, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.waitForTimeout(2500);
     const html = await page.content();
+    await context.close();
     await browser.close();
     return html;
   } catch (e) {
