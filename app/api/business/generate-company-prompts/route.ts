@@ -4,9 +4,9 @@ import OpenAI from "openai";
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY,
   maxRetries: 1,
-  timeout: 180000
+  timeout: 300000 // 5 minutes for GPT-5 (o1 needs more time to think)
 });
-export const maxDuration = 180;
+export const maxDuration = 300;
 
 export async function POST(req: NextRequest) {
   try {
@@ -46,12 +46,13 @@ Returnera ENDAST JSON enligt exakt detta format:
     let completion;
     try {
       // Chat Completions API med GPT-5 (högre kvalitet)
+      // GPT-5/o1 behöver combined prompt (user-only) och längre timeout
       completion = await openai.chat.completions.create({
         model: "gpt-5",
         messages: [
           { role: "user", content: systemPrompt + "\n\n" + userPrompt }
         ],
-        max_completion_tokens: 3000
+        max_completion_tokens: 16000
       });
     } catch (err: any) {
       console.error("OpenAI gpt-5 error:", err?.message, err?.status, err?.code, err?.response?.data || err);
