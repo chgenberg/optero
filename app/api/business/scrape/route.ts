@@ -37,6 +37,32 @@ async function fetchRenderedViaJina(targetUrl: string): Promise<string | null> {
   }
 }
 
+// Browserless render (optional)
+async function fetchRenderedViaBrowserless(targetUrl: string): Promise<string | null> {
+  try {
+    const key = process.env.BROWSERLESS_API_KEY;
+    if (!key) return null;
+    const payload = {
+      url: targetUrl,
+      gotoOptions: { waitUntil: 'networkidle2', timeout: 60000 },
+      headers: {
+        'User-Agent': 'MendioBot/1.0',
+        'Accept-Language': 'sv-SE,sv;q=0.9,en-US;q=0.8,en;q=0.7'
+      }
+    } as any;
+    const res = await fetch(`https://chrome.browserless.io/content?token=${key}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+    return html || null;
+  } catch {
+    return null;
+  }
+}
+
 function extractStructuredData(html: string, url: string): any {
   const $ = load(html);
   
@@ -271,6 +297,20 @@ export async function POST(req: NextRequest) {
     }
   } catch (e) {
     console.error("Playwright render failed:", e);
+  }
+
+  // Try Browserless if available and content still thin
+  try {
+    const afterPwLen = allPages.reduce((s,p)=>s+(p.mainText?.length||0),0);
+    if (afterPwLen < MIN_TEXT_LEN) {
+      const blHtml = await fetchRenderedViaBrowserless(url);
+      if (blHtml) {
+        const rendered = extractStructuredData(blHtml, url + " (browserless)");
+        if ((rendered.mainText?.length || 0) > 300) allPages.unshift(rendered);
+      }
+    }
+  } catch (e) {
+    console.error("Browserless render failed:", e);
   }
 
   // If still empty, force Jina fallback
