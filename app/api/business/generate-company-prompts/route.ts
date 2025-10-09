@@ -62,7 +62,43 @@ OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "pr
       console.error("Invalid JSON from model:", contentRaw?.slice(0, 500));
       return NextResponse.json({ error: "Invalid JSON from model", raw: contentRaw?.slice(0, 1000) }, { status: 500 });
     }
-    return NextResponse.json(parsed);
+    // Normalize various possible shapes into { solutions: [...] }
+    const candidateKeys = [
+      'solutions','items','ideas','useCases','use_cases','prompts','recommendations','outputs','results'
+    ];
+    let list: any = Array.isArray(parsed) ? parsed : null;
+    if (!list) {
+      for (const k of candidateKeys) {
+        if (parsed && Array.isArray((parsed as any)[k])) { list = (parsed as any)[k]; break; }
+      }
+    }
+    if (!list) {
+      // If the object has values that are arrays, take the first array
+      const firstArray = Object.values(parsed).find(v => Array.isArray(v));
+      if (firstArray) list = firstArray as any[];
+    }
+
+    if (!list || list.length === 0) {
+      console.error("Model returned JSON without solutions array:", JSON.stringify(parsed).slice(0, 500));
+      return NextResponse.json({ error: "No solutions in model output", raw: parsed }, { status: 500 });
+    }
+
+    const normalized = (list as any[]).slice(0, 3).map((it: any, idx: number) => {
+      if (typeof it === 'string') {
+        return {
+          task: `Förslag ${idx+1}`,
+          solution: it,
+          prompt: `**ROLL & KONTEXT:**\nDu är ansvarig för ${department}.\n\n**UPPGIFT:**\n${it}\n\n**INPUT – Fyll i detta:**\nMål: [ange]\nSystem: [ange]\n\n**OUTPUT-FORMAT:**\n1) steg\n2) exempel\n\n**FÄRDIGT EXEMPEL:**\nAnvänd rimliga antaganden för ${url}.`
+        };
+      }
+      return {
+        task: it.task || it.title || it.name || `Förslag ${idx+1}`,
+        solution: it.solution || it.summary || it.description || it.value || "",
+        prompt: it.prompt || it.instructions || it.guide || ""
+      };
+    });
+
+    return NextResponse.json({ solutions: normalized });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Failed" }, { status: 500 });
   }
