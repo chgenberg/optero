@@ -26,27 +26,18 @@ KRAV:
 Returnera ENDAST JSON:
 { "solutions": [ { "task": string, "solution": string, "prompt": string }, ... ] }`;
 
-    let completion;
-    try {
-      completion = await openai.chat.completions.create({
-        model: "gpt-5",
-        messages: [
-          { role: "system", content: system },
-          { role: "user", content: user }
-        ],
-        max_completion_tokens: 3000,
-      });
-    } catch (e) {
-      // Fallback to gpt-5-mini if main model fails
-      completion = await openai.chat.completions.create({
-        model: "gpt-5-mini",
-        messages: [
-          { role: "system", content: system },
-          { role: "user", content: user }
-        ],
-        max_completion_tokens: 3000,
-      });
-    }
+    const completion = await openai.chat.completions.create({
+      model: "gpt-5",
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: user }
+      ],
+      max_tokens: 2500,
+      temperature: 0.2,
+      top_p: 1,
+      presence_penalty: 0,
+      frequency_penalty: 0
+    });
 
     const contentRaw = completion.choices[0].message.content || "{}";
     const match = contentRaw.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
