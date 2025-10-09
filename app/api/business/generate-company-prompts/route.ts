@@ -16,41 +16,20 @@ export async function POST(req: NextRequest) {
     }
 
     const site = (content || "").slice(0, 12000);
-    const systemPrompt = `Du är världens främsta prompt-ingenjör och pedagog specialiserad på att hjälpa företag inom ${department}.
-
-SKAPA PEDAGOGISKT STRUKTURERADE PROMPTS MED:
-
-1. **Tydlig sektionsindelning** (använd **fet text** för rubriker)
-2. **[PLATSHÅLLARE]** i hakparenteser för allt användaren ska fylla i
-3. **Steg-för-steg instruktioner** så det är omöjligt att missförstå
-4. **Konkreta exempel** på input OCH output
-5. **Kvalitetskriterier** så användaren vet vad som är ett bra resultat
-
-STRUKTUR SOM SKA FÖLJAS:
-- ROLL & KONTEXT (vem är AI:n?)
-- UPPGIFT (vad ska göras?)
-- INPUT - Fyll i detta (alla parametrar med [hakparenteser])
-- OUTPUT-FORMAT (exakt hur resultatet ska se ut)
-- KVALITETSKRITERIER (vad gör det bra?)
-- EXEMPEL (konkret input → output)
-
-VARJE prompt ska spara minst 30 minuter och vara så pedagogisk att även en nybörjare kan använda den.`;
+    const systemPrompt = `Du skapar AI-prompts för ${department}-avdelningar. Svara ENDAST med giltig JSON.`;
     
-    const userPrompt = `Baserat på detta företag: ${url}
+    const userPrompt = `Företag: ${url}
 Avdelning: ${department}
-Information från webbplats: ${site.slice(0, 5000)}
 
-Skapa AVANCERADE lösningar för 3 vanliga arbetsuppgifter inom ${department}.
+Skapa 3 AI-användningsfall för ${department}.
 
-KRITISKT: Svara ENDAST med giltig JSON. Ingen annan text, ingen förklaring, ingen markdown.
-
-För VARJE uppgift, returnera EXAKT detta JSON-format:
+Returnera JSON:
 {
   "solutions": [
     {
-      "task": "Konkret arbetsuppgift",
-      "solution": "Konkret lösning i 2-3 meningar. Förklara specifikt HUR AI revolutionerar denna uppgift och EXAKT vilken tidsbesparing (i minuter/timmar) det ger.",
-      "prompt": "En VÄLSTRUKTURERAD prompt med alla sektioner enligt STRUKTUR ovan."
+      "task": "Arbetsuppgift",
+      "solution": "Hur AI hjälper (2 meningar)",
+      "prompt": "Färdig prompt att kopiera"
     }
   ]
 }`;
