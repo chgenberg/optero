@@ -31,7 +31,8 @@ export default function RootLayout({
   return (
     <html lang="sv">
       <head>
-        <link rel="manifest" href="/manifest.json" />
+        {/* Next.js genererar manifest från app/manifest.ts som /manifest.webmanifest */}
+        <link rel="manifest" href="/manifest.webmanifest" />
         <meta name="theme-color" content="#000000" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

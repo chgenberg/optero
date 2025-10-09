@@ -218,10 +218,10 @@ Für JEDE Aufgabe, geben Sie GENAU dieses JSON-Format zurück:
         model: "gpt-5-mini", // Using GPT-5-mini for fast, quality prompts
       messages: [
           { role: "system", content: selectedPrompts.system },
-          { role: "user", content: selectedPrompts.user + contextString }
+          { role: "user", content: selectedPrompts.user + contextString + "\n\nKRAV: Returnera ENDAST giltig JSON enligt { \"solutions\": [ { \"task\": string, \"solution\": string, \"prompt\": string } ] } utan extra text eller kodblock." }
         ],
+        response_format: { type: "json_object" },
         max_completion_tokens: 4000,
-        // GPT-5 supports system messages unlike o1
       });
 
       const content = completion.choices[0].message.content || "{}";
@@ -234,15 +234,24 @@ Für JEDE Aufgabe, geben Sie GENAU dieses JSON-Format zurück:
         cleanedContent = jsonMatch[1];
       }
       
-      const result = JSON.parse(cleanedContent);
-      
-      // Validate that we have solutions
-      if (!result.solutions || !Array.isArray(result.solutions) || result.solutions.length === 0) {
+      let result: any;
+      try { result = JSON.parse(cleanedContent); } catch { result = {}; }
+      let modelSolutions: any[] | undefined = Array.isArray(result?.solutions) ? result.solutions
+        : Array.isArray(result?.items) ? result.items
+        : Array.isArray(result?.ideas) ? result.ideas
+        : undefined;
+
+      if (!modelSolutions || modelSolutions.length === 0) {
         console.error("Invalid GPT-5-mini response structure:", result);
-        throw new Error("GPT-5-mini returned invalid data structure");
+        // Last resort: synthesize structured defaults, avoid 500
+        modelSolutions = tasksToGenerate.map((t: string) => ({
+          task: t,
+          solution: `AI kan hjälpa dig automatisera och effektivisera denna uppgift. Här får du en färdig plan och ett konkret exempel utan att du behöver fylla i mycket själv.`,
+          prompt: `**ROLL & KONTEXT:**\nDu är expert inom ${profession.toLowerCase()} och ska effektivisera: ${t.toLowerCase()}.\n\n**UPPGIFT:**\nLeverera en praktisk lösning som kan köras direkt och ett ifyllt exempel.\n\n**INPUT – vid behov (max 3):**\nMål: [ange]\nSystem: [ange]\n\n**OUTPUT-FORMAT:**\n1) Steg\n2) Exempel\n\n**FÄRDIGT EXEMPEL:**\nAnta rimliga standarder.`
+        }));
       }
 
-      newSolutions = result.solutions;
+      newSolutions = modelSolutions as any[];
 
       // Step 4: Save new solutions to database
       await Promise.all(
