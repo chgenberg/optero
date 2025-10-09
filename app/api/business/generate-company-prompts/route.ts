@@ -16,21 +16,30 @@ export async function POST(req: NextRequest) {
     }
 
     const site = (content || "").slice(0, 12000);
-    const systemPrompt = `Du skapar AI-prompts för ${department}-avdelningar. Svara ENDAST med giltig JSON.`;
+    const systemPrompt = `Du är expert på AI-lösningar för ${department}-avdelningar. Du skapar praktiska prompts som sparar tid. Svara ENDAST med giltig JSON.`;
     
     const userPrompt = `Företag: ${url}
 Avdelning: ${department}
+Webbplats-info: ${site.slice(0, 3000)}
 
-Skapa 3 AI-användningsfall för ${department}.
+Skapa 3 specifika AI-användningsfall för ${department} baserat på företagets kontext.
 
-Returnera JSON:
+KRAV PER LÖSNING:
+- task: konkret arbetsuppgift (t.ex. "Skriva jobbeskrivningar", "Analysera medarbetarfeedback")
+- solution: 2-3 meningar om HUR AI hjälper och tidsbesparing i minuter/timmar
+- prompt: välstrukturerad med dessa sektioner (använd **fet text** för rubriker):
+  **ROLL & KONTEXT:** [vem är AI:n?]
+  **UPPGIFT:** [vad ska göras?]
+  **INPUT - Fyll i detta:** [max 3 fält med [hakparenteser]]
+  **OUTPUT-FORMAT:** [hur ska resultatet se ut?]
+  **EXEMPEL:** [konkret scenario med ifyllda värden]
+
+Returnera ENDAST JSON enligt exakt detta format:
 {
   "solutions": [
-    {
-      "task": "Arbetsuppgift",
-      "solution": "Hur AI hjälper (2 meningar)",
-      "prompt": "Färdig prompt att kopiera"
-    }
+    { "task": string, "solution": string, "prompt": string },
+    { "task": string, "solution": string, "prompt": string },
+    { "task": string, "solution": string, "prompt": string }
   ]
 }`;
 
