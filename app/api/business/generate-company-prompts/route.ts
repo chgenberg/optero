@@ -79,6 +79,11 @@ export async function POST(req: NextRequest) {
       education: 'utbildning',
       general: 'verksamheten'
     };
+    const deptLabelSv: Record<string,string> = {
+      sales: 'försäljning', marketing: 'marknadsföring', finance: 'ekonomi', hr: 'HR',
+      'customer-service': 'kundtjänst', operations: 'operations', it: 'IT', management: 'ledning', general: 'verksamheten'
+    };
+    const deptLabel = deptLabelSv[departmentKey] || departmentKey || 'verksamheten';
     const focusAreas = (focusByDept[departmentKey]?.[sector]) || (focusByDept[departmentKey]?.general) || [];
     const systemPrompt = `Du är expert på AI-lösningar för ${department}-avdelningar. Du skapar praktiska, välstrukturerade prompts som sparar tid och ger tydliga resultat. Svara ENDAST med giltig JSON.`;
     
@@ -141,19 +146,19 @@ Returnera ENDAST JSON enligt exakt detta format:
     // Helper: always-available local fallback (no OpenAI dependency)
     const buildFallback = () => {
       const mkPrompt = (task: string, body: string) => (
-        `**ROLL & KONTEXT:**\nDu arbetar på avdelningen ${department} på ${(titleStr && url) ? `${url} (${titleStr})` : url}. Referera minst 2 rubriker från: ${headingsList.slice(0,3).join('; ')}.\n\n**UPPGIFT:**\n${body}\n\n**INPUT - Fyll i detta:**\n[MÅL]: Vad vill ni uppnå\n[KÄLLA]: Länkar/dokument\n[FORMAT]: Hur ni vill ha resultatet\n\n**OUTPUT-FORMAT:**\n1) Sammanfattad analys\n2) Handlingslista\n3) Mätetal/uppföljning\n\n**EXEMPEL:**\nInput:\n[MÅL]: Snabbare process\n[KÄLLA]: Webbplats + interna dokument\n[FORMAT]: Checklista\n\nOutput:\n1. Analys...\n2. Åtgärder...\n3. KPI: tid/vecka, felgrad`
+        `**ROLL & KONTEXT:**\nDu arbetar på avdelningen ${deptLabel} på ${(companyName || (titleStr ? `${url} (${titleStr})` : url))}.\n\n**UPPGIFT:**\n${body}\n\n**INPUT - Fyll i detta:**\n[MÅL]: Vad vill ni uppnå\n[KÄLLA]: Länkar/dokument\n[FORMAT]: Hur ni vill ha resultatet\n\n**OUTPUT-FORMAT:**\n1) Sammanfattad analys\n2) Handlingslista\n3) Mätetal/uppföljning\n\nKPI (måste anges i leverans): tid/vecka, % förbättring eller felgrad.\n${headingsList.length ? `\nKällrubriker: ${headingsList.slice(0,3).join(' | ')}` : ''}${servicesLinks.length ? `\nTjänst/produkt: ${servicesLinks[0]}` : ''}`
       );
       const bases = [
         {
-          task: `AI-assisterad arbetsflödesanalys för ${department}`,
+          task: `AI-assisterad arbetsflödesanalys för ${deptLabel}`,
           solution: `Analysera ert nuvarande arbetssätt med AI och identifiera flaskhalsar samt steg som kan automatiseras. Ger en konkret åtgärdsplan och uppskattad tidsbesparing per vecka.`,
         },
         {
-          task: `Automatiserad sammanställning av ${department}-underlag` ,
+          task: `Automatiserad sammanställning av ${deptLabel}-underlag` ,
           solution: `Låt AI samla, strukturera och sammanfatta underlag från webbplats och dokument till handlingsbara punkter. Minskar manuellt arbete och ökar kvalitet.`,
         },
         {
-          task: `Standardiserade mallar och checklistor för ${department}`,
+          task: `Standardiserade mallar och checklistor för ${deptLabel}`,
           solution: `Skapa AI-drivna mallar/checklistor anpassade för ert team. Säkerställer konsekvens, påskyndar leverans och underlättar onboarding.`,
         }
       ];
@@ -318,6 +323,11 @@ Returnera ENDAST JSON enligt exakt detta format:
       const solution = ensureKpi(s.solution || '');
       return { ...s, task, prompt: synthesized, solution };
     });
+
+    // Debug log (temporary): summarize injection context
+    try {
+      console.log("generate-company-prompts ctx:", JSON.stringify({ url, department, companyName, headings: headingsList.slice(0,3), services: servicesLinks.slice(0,2) }));
+    } catch {}
 
     const finalOut = adjusted;
 
