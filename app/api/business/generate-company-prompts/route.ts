@@ -26,19 +26,37 @@ KRAV:
 Returnera ENDAST JSON:
 { "solutions": [ { "task": string, "solution": string, "prompt": string }, ... ] }`;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-5",
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: user }
-      ],
-      max_completion_tokens: 3000,
-    });
+    let completion;
+    try {
+      completion = await openai.chat.completions.create({
+        model: "gpt-5",
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user }
+        ],
+        max_completion_tokens: 3000,
+      });
+    } catch (e) {
+      // Fallback to gpt-5-mini if main model fails
+      completion = await openai.chat.completions.create({
+        model: "gpt-5-mini",
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user }
+        ],
+        max_completion_tokens: 3000,
+      });
+    }
 
     const contentRaw = completion.choices[0].message.content || "{}";
     const match = contentRaw.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
     const cleaned = match ? match[1] : contentRaw;
-    const parsed = JSON.parse(cleaned);
+    let parsed;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch (e) {
+      return NextResponse.json({ error: "Invalid JSON from model", raw: contentRaw.slice(0, 1000) }, { status: 500 });
+    }
     return NextResponse.json(parsed);
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Failed" }, { status: 500 });
