@@ -46,7 +46,8 @@ export default function ProfessionInput({ onSelect }: ProfessionInputProps) {
   return (
     <div className="w-full max-w-2xl mx-auto px-4">
       <form onSubmit={handleSubmit} className="relative">
-        <div className="relative">
+        {/* Mobile: Button outside input | Desktop: Button inside input */}
+        <div className="flex gap-2 sm:block relative">
           <input
             ref={inputRef}
             id="profession"
@@ -54,7 +55,7 @@ export default function ProfessionInput({ onSelect }: ProfessionInputProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder={t('profession.placeholder')}
-            className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg bg-white border-2 border-gray-900 rounded-xl sm:rounded-2xl focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all duration-200 placeholder-gray-500 font-medium"
+            className="flex-1 sm:w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg bg-white border-2 border-gray-900 rounded-xl sm:rounded-2xl focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all duration-200 placeholder-gray-500 font-medium"
             autoComplete="off"
             autoFocus
           />
@@ -62,7 +63,7 @@ export default function ProfessionInput({ onSelect }: ProfessionInputProps) {
           <button
             type="submit"
             disabled={!input.trim()}
-            className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-5 py-2.5 rounded-xl font-medium transition-all duration-200 ${
+            className={`flex-shrink-0 sm:absolute sm:right-2 sm:top-1/2 sm:transform sm:-translate-y-1/2 px-5 py-2.5 rounded-xl font-medium transition-all duration-200 ${
               input.trim()
                 ? "bg-gray-900 text-white hover:bg-gray-800 hover:scale-105 active:scale-95 shadow-md"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
