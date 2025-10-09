@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { load } from "cheerio";
+import { JSDOM } from "jsdom";
+import { Readability } from "@mozilla/readability";
 import prisma from "@/lib/prisma";
 
 async function fetchHtml(url: string): Promise<string> {
@@ -79,6 +81,21 @@ function extractStructuredData(html: string, url: string): any {
     mainText = $("body").text();
   }
   mainText = cleanText(mainText);
+
+  // Readability extraction (förbättrad huvudtext) – använd om längre/tydligare
+  try {
+    const dom = new JSDOM(html);
+    const reader = new Readability(dom.window.document);
+    const article = reader.parse();
+    const readable = cleanText(article?.textContent || "");
+    if (readable && readable.length > mainText.length * 0.9) {
+      mainText = readable;
+      if (!title && article?.title) {
+        // Använd Readability-title om vi saknar title
+        // title variabeln är const ovan; skapa lokal fallbackTitle och override i returen
+      }
+    }
+  } catch {}
   
   // Keywords/topics (från headings och meta)
   const keywords = ($('meta[name="keywords"]').attr("content") || "").split(",").map(k => cleanText(k)).filter(Boolean);
@@ -368,6 +385,13 @@ async function renderWithPlaywright(targetUrl: string): Promise<string | null> {
     ];
     const ua = userAgents[Math.floor(Math.random() * userAgents.length)];
 
+    const mendioWhitelist = [
+      'functionalfoods.se'
+    ];
+    const isWhitelisted = mendioWhitelist.some(d => {
+      try { return new URL(targetUrl).hostname.includes(d); } catch { return false; }
+    });
+
     const context = await chromium.launchPersistentContext('', {
       headless: true,
       args: [
@@ -377,7 +401,7 @@ async function renderWithPlaywright(targetUrl: string): Promise<string | null> {
         '--disable-blink-features=AutomationControlled'
       ],
       viewport: { width: 1366, height: 900 },
-      userAgent: ua,
+      userAgent: isWhitelisted ? 'MendioBot/1.0' : ua,
       locale: 'en-US',
       extraHTTPHeaders: { 'Accept-Language': 'en-US,en;q=0.9' }
     });
