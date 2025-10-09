@@ -301,11 +301,6 @@ Returnera ENDAST JSON enligt exakt detta format:
 
     // Post-process: enforce specificity and light sector adjustments
     const sectLabel = sectorLabelSv[sector] || 'verksamheten';
-    const deptLabelSv: Record<string,string> = {
-      sales: 'försäljning', marketing: 'marknadsföring', finance: 'ekonomi', hr: 'HR',
-      'customer-service': 'kundtjänst', operations: 'operations', it: 'IT', management: 'ledning', general: 'verksamheten'
-    };
-    const deptLabel = deptLabelSv[departmentKey] || departmentKey || 'verksamheten';
     const headingTerms = headingsList.slice(0, 3).filter(Boolean);
     const svcTerms = [...servicesLinks, ...productsList, ...servicesList].slice(0, 3).filter(Boolean);
     const ensureKpi = (s: string) => (/\b(min|h|tim|vecka|%|procent|KPI)\b/i.test(s) ? s : (s ? `${s} Tidsbesparing/KPI: uppskatta min/h per vecka.` : s));
