@@ -27,17 +27,21 @@ KRAV:
 Returnera ENDAST JSON:
 { "solutions": [ { "task": string, "solution": string, "prompt": string }, ... ] }`;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-5",
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: user }
-      ],
-      response_format: { type: "json_object" },
-      max_completion_tokens: 2500
-    });
+    let completion;
+    try {
+      completion = await openai.chat.completions.create({
+        model: "gpt-5",
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user + "\n\nKRAV: Svara ENDAST med giltig JSON enligt formatet, utan kodblock eller text runtom." }
+        ],
+        max_completion_tokens: 2500
+      });
+    } catch (err: any) {
+      return NextResponse.json({ error: err?.message || "OpenAI request failed", details: err }, { status: 500 });
+    }
 
-    const contentRaw = completion.choices[0].message.content || "{}";
+    const contentRaw = completion.choices?.[0]?.message?.content || "{}";
     const match = contentRaw.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
     const cleaned = match ? match[1] : contentRaw;
     let parsed;
