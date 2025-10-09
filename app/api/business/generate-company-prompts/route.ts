@@ -306,7 +306,7 @@ Returnera ENDAST JSON enligt exakt detta format:
     const ensureKpi = (s: string) => (/\b(min|h|tim|vecka|%|procent|KPI)\b/i.test(s) ? s : (s ? `${s} Tidsbesparing/KPI: uppskatta min/h per vecka.` : s));
 
     const adjusted = (normalized.length ? normalized : buildFallback()).map((s: any) => {
-      const mustCompany = companyName || url;
+      const mustCompany = companyName || titleStr || url;
       const task = (s.task || '').replace(/för\s+business/gi, `för ${sectLabel}`);
       const basePrompt = s.prompt || '';
       const roleHeader = `**ROLL & KONTEXT:**\nDu arbetar på avdelningen ${deptLabel} på ${mustCompany}.`;
@@ -326,7 +326,7 @@ Returnera ENDAST JSON enligt exakt detta format:
 
     // Hard override: ensure role header always shows company/department, and append refs/KPI
     const hardOverridden = adjusted.map((s: any) => {
-      const mustCompany = companyName || url;
+      const mustCompany = companyName || titleStr || url;
       const refs = `${headingTerms.length ? `\nKällrubriker: ${headingTerms.join(' | ')}` : ''}${svcTerms.length ? `\nTjänst/produkt: ${svcTerms[0]}` : ''}`.trim();
       const kpiNote = `\n\nKPI (måste anges i leverans): tid/vecka, % förbättring eller felgrad.`;
       const serverPrompt = [
