@@ -124,8 +124,22 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Helper to clean any string recursively
+    const deepClean = (obj: any): any => {
+      if (typeof obj === 'string') return obj.replace(/[\x00-\x1F\x7F]/g, ' ');
+      if (Array.isArray(obj)) return obj.map(deepClean);
+      if (obj && typeof obj === 'object') {
+        const cleaned: any = {};
+        for (const [k, v] of Object.entries(obj)) {
+          cleaned[k] = deepClean(v);
+        }
+        return cleaned;
+      }
+      return obj;
+    };
+
     // Build rich summary for AI
-    const summary = {
+    const summary = deepClean({
       company: url,
       pages: allPages.length,
       priorityPages,
@@ -137,7 +151,7 @@ export async function POST(req: NextRequest) {
         headings: p.headings?.slice(0, 5),
         mainText: p.mainText?.slice(0, 2000)
       }))
-    };
+    });
 
     // Create rich text summary for GPT
     const richContent = `
