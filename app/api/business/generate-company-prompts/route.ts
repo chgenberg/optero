@@ -10,28 +10,72 @@ const openai = new OpenAI({
 export const maxDuration = 300;
 
 export async function POST(req: NextRequest) {
+  // Parse body first so we can use values in any fallback
+  let body: any = null;
+  try { body = await req.json(); } catch {}
+  const url = body?.url;
+  const department = body?.department;
+  const content = body?.content;
+  if (!url || !department || !content) {
+    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+  }
   try {
-    const { url, department, content } = await req.json();
-    if (!url || !department || !content) {
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-    }
 
     const site = (content || "").slice(0, 12000);
     // Attempt to include structured hints from scrape summary if present in content JSON
     let structuredHints = "";
+    let headingsList: string[] = [];
+    let titleStr = "";
+    let descriptionStr = "";
     try {
       const maybeObj = JSON.parse(content);
       if (maybeObj && typeof maybeObj === 'object' && maybeObj.summary?.overview) {
         const ov = maybeObj.summary.overview;
+        titleStr = ov.title || '';
+        descriptionStr = ov.description || '';
+        headingsList = Array.isArray(ov.headings) ? ov.headings.slice(0, 6) : [];
         structuredHints = `\nFÖRETAGSNAMN: ${ov.companyName || ''}\nUSPs: ${(ov.usps||[]).join(', ').slice(0,300)}\nKONTAKT: e-post ${(ov.contacts?.emails||[]).join(', ')}; tel ${(ov.contacts?.phones||[]).join(', ')}\nSOCIALA: ${(ov.socials||[]).slice(0,5).join(', ')}\nTJÄNSTLÄNKAR: ${(ov.servicesLinks||[]).slice(0,5).join(', ')}\nTEAM/Ledningssidor: ${(ov.likelyTeamPages||[]).slice(0,3).join(', ')}`;
       }
     } catch {}
+
+    // Sector heuristic
+    const lowerBlob = (titleStr + ' ' + descriptionStr).toLowerCase();
+    const sector = /shop|cart|checkout|product|store/.test(lowerBlob) ? 'ecommerce'
+      : /clinic|health|medical|patient/.test(lowerBlob) ? 'healthcare'
+      : /saas|software|platform|api/.test(lowerBlob) ? 'saas'
+      : /education|school|learning|course/.test(lowerBlob) ? 'education'
+      : 'general';
+
+    // Department × sector focus areas
+    const focusByDept: Record<string, Record<string, string[]>> = {
+      sales: {
+        ecommerce: ["Abandoned cart recovery", "Cross/upsell sequencing", "CRM enrichment from orders"],
+        saas: ["Lead scoring & PQL detection", "Demo follow-up automation", "CRM hygiene"],
+        healthcare: ["Inbound triage to appointment", "Referral tracking", "Lead qualification"],
+        education: ["Application nurturing", "Scholarship matching", "Alumni reactivation"],
+        general: ["Lead qualification", "Meeting prep/notes", "Pipeline hygiene"]
+      },
+      marketing: {
+        ecommerce: ["Product description variants", "UGC curation", "Email/SMS flows"],
+        saas: ["Feature launch copy", "Case study drafting", "SEO briefs"],
+        healthcare: ["Service page clarity", "FAQ drafting", "Local SEO"],
+        education: ["Program page optimization", "Student stories", "Open day campaigns"],
+        general: ["Content calendar", "Campaign briefs", "SEO outlines"]
+      }
+    } as any;
+    const departmentKey = String(department || '').toLowerCase();
+    const focusAreas = (focusByDept[departmentKey]?.[sector]) || (focusByDept[departmentKey]?.general) || [];
     const systemPrompt = `Du är expert på AI-lösningar för ${department}-avdelningar. Du skapar praktiska, välstrukturerade prompts som sparar tid och ger tydliga resultat. Svara ENDAST med giltig JSON.`;
     
     const userPrompt = `Företag: ${url}
 Avdelning: ${department}
-Webbplats-info: ${site.slice(0, 3000)}
+Webbplats-info: ${site.slice(0, 1000)}
 Strukturerad sammanfattning (om tillgänglig): ${structuredHints}
+
+FOKUSOMRÅDEN (${department} × ${sector}): ${focusAreas.join('; ')}
+
+ANVÄND ALLTID MINST 2 TER MER FRÅN RUBRIKER: ${headingsList.join(', ').slice(0, 200)}
+NÄMN FÖRETAGSNAMN om det finns, och koppla tips till tjänster/produkter.
 
 Skapa 3 specifika AI-användningsfall för ${department} baserat på företagets kontext.
 
