@@ -12,9 +12,10 @@ export async function POST(req: NextRequest) {
     }
 
     const system = `Du är en världsklass AI‑strateg och prompt‑ingenjör som skapar praktiska, direkt användbara prompts åt företag.`;
+    const site = (content || "").slice(0, 15000);
     const user = `FÖRETAG: ${url}
 AVDELNING: ${department}
-UTDRAG FRÅN WEBBPLATS (komprimerat):\n${content.slice(0, 100000)}
+UTDRAG FRÅN WEBBPLATS (komprimerat):\n${site}
 
 MÅL: Generera 3 specifika, högvärdiga användningsfall för AI i denna avdelnings dagliga arbete.
 
@@ -32,6 +33,7 @@ Returnera ENDAST JSON:
         { role: "system", content: system },
         { role: "user", content: user }
       ],
+      response_format: { type: "json_object" },
       max_tokens: 2500,
       temperature: 0.2,
       top_p: 1,
