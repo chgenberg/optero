@@ -33,15 +33,18 @@ OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "pr
 
     let completion;
     try {
-      // Responses API (GPT-5)
-      completion = await openai.responses.create({
-        model: "gpt-5",
-        instructions,
-        input: combinedPrompt,
-        max_output_tokens: 1500
+      // Chat Completions API med gpt-5-mini (samma som privatflödet)
+      completion = await openai.chat.completions.create({
+        model: "gpt-5-mini",
+        messages: [
+          { role: "system", content: instructions },
+          { role: "user", content: combinedPrompt }
+        ],
+        response_format: { type: "json_object" },
+        max_completion_tokens: 1500
       });
     } catch (err: any) {
-      console.error("OpenAI gpt-5 error:", err?.message, err?.status, err?.code, err?.response?.data || err);
+      console.error("OpenAI gpt-5-mini error:", err?.message, err?.status, err?.code, err?.response?.data || err);
       return NextResponse.json({ 
         error: "OpenAI request failed",
         message: err?.message,
@@ -51,8 +54,8 @@ OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "pr
       }, { status: 500 });
     }
 
-    // Responses API: use output_text
-    const contentRaw = (completion as any)?.output_text || "{}";
+    // Chat Completions: use message.content
+    const contentRaw = completion.choices?.[0]?.message?.content || "{}";
     const match = contentRaw.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
     const cleaned = match ? match[1] : contentRaw;
     let parsed;
