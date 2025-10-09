@@ -19,8 +19,8 @@ export default function Header() {
             <div className="flex justify-center">
               <a href="/" className="inline-flex items-center group">
                 <img
-                  src="/MENDIO_logo_with_slogan.png"
-                  alt="MENDIO - AI som ger dig tiden tillbaka"
+                  src="/MENDIO_logo.png"
+                  alt="MENDIO"
                   className="h-10 sm:h-12 md:h-14 w-auto transition-transform group-hover:scale-105"
                 />
               </a>
