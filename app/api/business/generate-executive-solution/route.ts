@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import prisma from "@/lib/prisma";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -94,19 +95,37 @@ VIKTIGT:
         const solution = JSON.parse(content);
 
         // Ensure the solution has the correct structure
-        solutions.push({
+        const finalSol = {
           problem: solution.problem || problem,
           analysis: solution.analysis || "Djupgående analys krävs för detta problem.",
           approach: solution.approach || "prompt",
           prompt: solution.approach === "prompt" ? solution.prompt : undefined,
           botInstructions: solution.approach === "bot" ? solution.botInstructions : undefined,
           expectedOutcomes: solution.expectedOutcomes || ["Förbättrad effektivitet", "Minskade kostnader", "Bättre kvalitet"]
-        });
+        } as any;
+        solutions.push(finalSol);
+
+        // Persist to DB
+        try {
+          await prisma.executiveSolution.create({
+            data: {
+              companyUrl: url || null,
+              problem: finalSol.problem,
+              analysis: finalSol.analysis,
+              approach: finalSol.approach,
+              prompt: finalSol.prompt || null,
+              botInstructions: finalSol.botInstructions || null,
+              expectedOutcomes: finalSol.expectedOutcomes
+            }
+          });
+        } catch (dbErr) {
+          console.error("Failed to save ExecutiveSolution:", dbErr);
+        }
 
       } catch (error) {
         console.error(`Error generating solution for problem ${i + 1}:`, error);
         // Fallback solution
-        solutions.push({
+        const fallback = {
           problem,
           analysis: `Detta är ett komplext problem som kräver noggrann analys. Baserat på intervjun identifierar vi flera kritiska faktorer som påverkar er verksamhet.`,
           approach: "prompt",
@@ -144,7 +163,21 @@ Output:
             "Minskad manuell arbetsbelastning",
             "Bättre datakvalitet och insikter"
           ]
-        });
+        } as any;
+        solutions.push(fallback);
+        try {
+          await prisma.executiveSolution.create({
+            data: {
+              companyUrl: url || null,
+              problem: fallback.problem,
+              analysis: fallback.analysis,
+              approach: fallback.approach,
+              prompt: fallback.prompt || null,
+              botInstructions: null,
+              expectedOutcomes: fallback.expectedOutcomes
+            }
+          });
+        } catch {}
       }
     }
 

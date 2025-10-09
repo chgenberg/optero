@@ -329,3 +329,59 @@ model User {
   
   @@index([email])
 }
+
+// Business flow: company-specific prompts and metadata
+model BusinessSolution {
+  id              String   @id @default(cuid())
+  companyUrl      String
+  department      String
+  task            String   @db.Text
+  solution        String   @db.Text
+  prompt          String   @db.Text
+  recommendedTool String?
+  language        String   @default("sv")
+  createdAt       DateTime @default(now())
+  
+  @@index([companyUrl, department])
+}
+
+// Executive flow: interview logs (conversation turns/history)
+model ExecutiveConversation {
+  id           String   @id @default(cuid())
+  sessionId    String?
+  companyUrl   String?
+  problem      String
+  conversation Json
+  createdAt    DateTime @default(now())
+  
+  @@index([sessionId])
+  @@index([companyUrl])
+}
+
+// Executive flow: generated deep-dive solutions
+model ExecutiveSolution {
+  id                String   @id @default(cuid())
+  companyUrl        String?
+  problem           String
+  analysis          String   @db.Text
+  approach          String
+  prompt            String?  @db.Text
+  botInstructions   Json?
+  expectedOutcomes  Json
+  createdAt         DateTime @default(now())
+  
+  @@index([companyUrl])
+}
+
+// Store scrape summaries to aid analytics and debugging
+model CompanyScrapeRun {
+  id              String   @id @default(cuid())
+  url             String
+  summary         Json
+  content         String?  @db.Text
+  pages           Int?
+  totalTextLength Int?
+  createdAt       DateTime @default(now())
+  
+  @@index([url])
+}

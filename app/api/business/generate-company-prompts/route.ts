@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import prisma from "@/lib/prisma";
 
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY,
@@ -187,6 +188,25 @@ Returnera ENDAST JSON enligt exakt detta format:
         recommendedTool: it.recommendedTool || "ChatGPT 4"
       };
     });
+
+    // Persist to DB (BusinessSolution)
+    try {
+      if (normalized.length > 0) {
+        await prisma.businessSolution.createMany({
+          data: normalized.map((s: any) => ({
+            companyUrl: url,
+            department,
+            task: s.task,
+            solution: s.solution,
+            prompt: s.prompt,
+            recommendedTool: s.recommendedTool || null,
+          })),
+          skipDuplicates: false,
+        });
+      }
+    } catch (dbErr) {
+      console.error("BusinessSolution save error:", dbErr);
+    }
 
     return NextResponse.json({ solutions: normalized });
   } catch (e: any) {

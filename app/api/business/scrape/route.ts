@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { load } from "cheerio";
+import prisma from "@/lib/prisma";
 
 async function fetchHtml(url: string): Promise<string> {
   const res = await fetch(url, { headers: { "User-Agent": "MendioBot/1.0" } });
@@ -200,11 +201,26 @@ ${allPages.map(p => `\n## ${p.title || p.url}\n${p.mainText?.slice(0, 1500) || '
     // Remove control characters that break JSON
     const cleanContent = richContent.replace(/[\x00-\x1F\x7F]/g, ' ');
 
-    return NextResponse.json({ 
+    // Persist scrape summary
+    try {
+      await prisma.companyScrapeRun.create({
+        data: {
+          url,
+          summary,
+          content: cleanContent.slice(0, 60000),
+          pages: visited.size,
+          totalTextLength: totalText,
+        }
+      });
+    } catch (e) {
+      console.error("Failed to persist CompanyScrapeRun:", e);
+    }
+
+    return NextResponse.json({
       content: cleanContent.slice(0, 60000),
       summary,
       pages: Array.from(visited),
-      totalTextLength: totalText
+      totalTextLength: totalText,
     });
   } catch (e: any) {
     console.error("Scrape error:", e);

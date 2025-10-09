@@ -139,13 +139,27 @@ export default function ExecutiveInterview() {
         };
         setMessages(prev => [...prev, aiMessage]);
         
-        // Save conversation for this problem
+        // Save conversation for this problem (in session)
         const savedConversations = JSON.parse(sessionStorage.getItem("problemConversations") || "[]");
         savedConversations.push({
           problem: problems[currentProblemIndex].problem,
           conversation: [...newHistory, { role: "assistant", content: aiMessage.content }]
         });
         sessionStorage.setItem("problemConversations", JSON.stringify(savedConversations));
+
+        // Persist conversation to API/DB
+        try {
+          await fetch("/api/business/executive/log-conversation", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              sessionId: (typeof window !== 'undefined' && window.sessionStorage.getItem('execSessionId')) || undefined,
+              companyUrl: data.url,
+              problem: problems[currentProblemIndex].problem,
+              conversation: savedConversations[savedConversations.length - 1].conversation
+            })
+          });
+        } catch {}
         
         // Move to next problem or finish
         if (currentProblemIndex < problems.length - 1) {
