@@ -39,9 +39,7 @@ OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "pr
         instructions,
         input: combinedPrompt,
         temperature: 0.2,
-        max_output_tokens: 1500,
-        reasoning_effort: "medium",
-        verbosity: "low"
+        max_output_tokens: 1500
       });
     } catch (err: any) {
       console.error("OpenAI gpt-5 error:", err?.message, err?.status, err?.code, err?.response?.data || err);
