@@ -13,12 +13,15 @@ function extractStructuredData(html: string, url: string): any {
   // Remove noise
   $("script, style, noscript, nav, header, footer, aside, .cookie, .banner, .popup").remove();
   
+  // Helper to clean text from control chars
+  const cleanText = (text: string) => text.replace(/[\x00-\x1F\x7F]/g, ' ').replace(/\s+/g, " ").trim();
+  
   // Extract metadata
-  const title = $("title").text().trim() || $('meta[property="og:title"]').attr("content") || "";
-  const description = $('meta[name="description"]').attr("content") || $('meta[property="og:description"]').attr("content") || "";
+  const title = cleanText($("title").text() || $('meta[property="og:title"]').attr("content") || "");
+  const description = cleanText($('meta[name="description"]').attr("content") || $('meta[property="og:description"]').attr("content") || "");
   
   // Extract headings (structure)
-  const headings = $("h1, h2, h3").map((_, el) => $(el).text().trim()).get().filter(Boolean);
+  const headings = $("h1, h2, h3").map((_, el) => cleanText($(el).text())).get().filter(Boolean);
   
   // Main content (prioritera main, article, eller största text-block)
   let mainText = "";
@@ -29,10 +32,10 @@ function extractStructuredData(html: string, url: string): any {
   } else {
     mainText = $("body").text();
   }
-  mainText = mainText.replace(/\s+/g, " ").trim();
+  mainText = cleanText(mainText);
   
   // Keywords/topics (från headings och meta)
-  const keywords = $('meta[name="keywords"]').attr("content")?.split(",").map(k => k.trim()) || [];
+  const keywords = ($('meta[name="keywords"]').attr("content") || "").split(",").map(k => cleanText(k)).filter(Boolean);
   
   return {
     url,
