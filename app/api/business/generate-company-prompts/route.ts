@@ -86,6 +86,7 @@ OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "pr
           messages: [
             { role: "user", content: `Konvertera följande innehåll till exakt JSON enligt:\n{ "solutions": [ { "task": string, "solution": string, "prompt": string }, {..}, {..} ] }\n\nINNEHÅLL:\n${contentRaw}` }
           ],
+          response_format: { type: "json_object" },
           max_completion_tokens: 1200
         });
         const coerceRaw = coerce.choices?.[0]?.message?.content || "{}";
@@ -98,6 +99,27 @@ OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "pr
       } catch (e) {
         console.error("Coercion step failed", e);
       }
+
+      // Second fallback: regenerate fresh with gpt-5-mini
+      try {
+        const regen = await openai.chat.completions.create({
+          model: "gpt-5-mini",
+          messages: [
+            { role: "system", content: "Returnera ENDAST giltig JSON enligt formatet { \"solutions\": [ { \"task\": string, \"solution\": string, \"prompt\": string } ] } utan extra text." },
+            { role: "user", content: combinedPrompt }
+          ],
+          response_format: { type: "json_object" },
+          max_completion_tokens: 1500
+        });
+        const regenRaw = regen.choices?.[0]?.message?.content || "{}";
+        const regenParsed = JSON.parse(regenRaw);
+        if (Array.isArray(regenParsed?.solutions) && regenParsed.solutions.length) {
+          return NextResponse.json({ solutions: regenParsed.solutions.slice(0,3) });
+        }
+      } catch (e) {
+        console.error("Regen step failed", e);
+      }
+
       console.error("Model returned JSON without solutions array:", JSON.stringify(parsed).slice(0, 500));
       return NextResponse.json({ error: "No solutions in model output", raw: parsed }, { status: 500 });
     }
