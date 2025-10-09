@@ -38,7 +38,6 @@ OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "pr
         model: "gpt-5",
         instructions,
         input: combinedPrompt,
-        temperature: 0.2,
         max_output_tokens: 1500
       });
     } catch (err: any) {
