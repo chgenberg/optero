@@ -47,8 +47,15 @@ function extractStructuredData(html: string, url: string): any {
       if (Array.isArray(obj)) jsonLd.push(...obj); else jsonLd.push(obj);
     } catch {}
   });
-  const orgSchema = jsonLd.find((o: any) => (o && (o['@type'] === 'Organization' || (Array.isArray(o['@type']) && o['@type'].includes('Organization')))));
+  const isType = (obj: any, type: string) => obj && (obj['@type'] === type || (Array.isArray(obj['@type']) && obj['@type'].includes(type)));
+  const orgSchema = jsonLd.find((o: any) => isType(o, 'Organization'));
   if (orgSchema?.name) companyName = cleanText(String(orgSchema.name));
+
+  // Collect people and products/services hints
+  const people = jsonLd.filter((o: any) => isType(o, 'Person')).map((p: any) => cleanText(p.name || '')).filter(Boolean).slice(0, 10);
+  const products = jsonLd.filter((o: any) => isType(o, 'Product')).map((p: any) => cleanText(p.name || p.description || '')).filter(Boolean).slice(0, 15);
+  const services = jsonLd.filter((o: any) => isType(o, 'Service')).map((s: any) => cleanText(s.name || s.description || '')).filter(Boolean).slice(0, 15);
+  const breadcrumbs = jsonLd.filter((o: any) => isType(o, 'BreadcrumbList')).flatMap((b: any) => (Array.isArray(b.itemListElement) ? b.itemListElement.map((el: any) => cleanText(el?.name || '')) : [])).filter(Boolean).slice(0, 20);
   if (!companyName) companyName = siteName || title;
   
   // Extract headings (structure)
@@ -98,6 +105,10 @@ function extractStructuredData(html: string, url: string): any {
     contacts: { emails: Array.from(new Set(emails)), phones: Array.from(new Set(phones)), contactLinks: Array.from(new Set(contactLinks)) },
     socials: Array.from(new Set(socials)),
     servicesLinks,
+    people,
+    products,
+    services,
+    breadcrumbs,
     likelyTeamPages
   };
 }

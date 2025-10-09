@@ -7,7 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate && npx playwright install chromium",
+    "postinstall": "prisma generate && npx playwright install-deps && npx playwright install chromium",
     "prisma:migrate": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "seed:specializations": "node --loader ts-node/esm scripts/seed-specializations.ts",
