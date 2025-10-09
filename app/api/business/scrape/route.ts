@@ -35,6 +35,21 @@ function extractStructuredData(html: string, url: string): any {
   // Extract metadata
   const title = cleanText($("title").text() || $('meta[property="og:title"]').attr("content") || "");
   const description = cleanText($('meta[name="description"]').attr("content") || $('meta[property="og:description"]').attr("content") || "");
+  const siteName = cleanText($('meta[property="og:site_name"]').attr("content") || title);
+  
+  // Try to extract Organization schema
+  let companyName = "";
+  const jsonLd: any[] = [];
+  $('script[type="application/ld+json"]').each((_, el) => {
+    try {
+      const txt = $(el).contents().text();
+      const obj = JSON.parse(txt);
+      if (Array.isArray(obj)) jsonLd.push(...obj); else jsonLd.push(obj);
+    } catch {}
+  });
+  const orgSchema = jsonLd.find((o: any) => (o && (o['@type'] === 'Organization' || (Array.isArray(o['@type']) && o['@type'].includes('Organization')))));
+  if (orgSchema?.name) companyName = cleanText(String(orgSchema.name));
+  if (!companyName) companyName = siteName || title;
   
   // Extract headings (structure)
   const headings = $("h1, h2, h3").map((_, el) => cleanText($(el).text())).get().filter(Boolean);
@@ -52,15 +67,38 @@ function extractStructuredData(html: string, url: string): any {
   
   // Keywords/topics (från headings och meta)
   const keywords = ($('meta[name="keywords"]').attr("content") || "").split(",").map(k => cleanText(k)).filter(Boolean);
+
+  // Simple USP extraction: top list items
+  const usps = $("li").slice(0, 20).map((_, el) => cleanText($(el).text())).get().filter(t => t && t.length <= 140).slice(0, 8);
+
+  // Contacts
+  const linksAll = new Set<string>();
+  $("a[href]").each((_, el) => { const h = $(el).attr("href") || ""; if (h) linksAll.add(h); });
+  const emails = Array.from(linksAll).filter(h => h.startsWith("mailto:")).map(h => h.replace(/^mailto:/, ''));
+  const phones = Array.from(linksAll).filter(h => h.startsWith("tel:")).map(h => h.replace(/^tel:/, ''));
+  const contactLinks = Array.from(linksAll).filter(h => /kontakt|contact/i.test(h));
+  const socials = Array.from(linksAll).filter(h => /facebook\.com|instagram\.com|linkedin\.com|twitter\.com|x\.com|youtube\.com/i.test(h));
+
+  // Likely service/product and team pages
+  const allAbsLinks = Array.from(linksAll).map(h => { try { return new URL(h, url).toString(); } catch { return ''; } }).filter(Boolean);
+  const likelyTeamPages = allAbsLinks.filter(l => /team|about|om|people|medarbet/i.test(l)).slice(0, 10);
+  const servicesLinks = allAbsLinks.filter(l => /service|tjanst|tjänst|produkt|product/i.test(l)).slice(0, 15);
   
   return {
     url,
+    companyName,
+    siteName,
     title,
     description,
     headings: headings.slice(0, 10),
     keywords: keywords.slice(0, 10),
     mainText: mainText.slice(0, 8000),
-    length: mainText.length
+    length: mainText.length,
+    usps,
+    contacts: { emails: Array.from(new Set(emails)), phones: Array.from(new Set(phones)), contactLinks: Array.from(new Set(contactLinks)) },
+    socials: Array.from(new Set(socials)),
+    servicesLinks,
+    likelyTeamPages
   };
 }
 

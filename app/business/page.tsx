@@ -43,7 +43,8 @@ export default function BusinessPage() {
       const gen = await fetch("/api/business/generate-company-prompts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url, department, content: scraped.content || "" })
+        // Pass entire scrape payload so API can parse structured summary
+        body: JSON.stringify({ url, department, content: JSON.stringify(scraped) })
       });
       const data = await gen.json();
 

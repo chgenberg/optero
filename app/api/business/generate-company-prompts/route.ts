@@ -17,11 +17,21 @@ export async function POST(req: NextRequest) {
     }
 
     const site = (content || "").slice(0, 12000);
+    // Attempt to include structured hints from scrape summary if present in content JSON
+    let structuredHints = "";
+    try {
+      const maybeObj = JSON.parse(content);
+      if (maybeObj && typeof maybeObj === 'object' && maybeObj.summary?.overview) {
+        const ov = maybeObj.summary.overview;
+        structuredHints = `\nFÖRETAGSNAMN: ${ov.companyName || ''}\nUSPs: ${(ov.usps||[]).join(', ').slice(0,300)}\nKONTAKT: e-post ${(ov.contacts?.emails||[]).join(', ')}; tel ${(ov.contacts?.phones||[]).join(', ')}\nSOCIALA: ${(ov.socials||[]).slice(0,5).join(', ')}\nTJÄNSTLÄNKAR: ${(ov.servicesLinks||[]).slice(0,5).join(', ')}\nTEAM/Ledningssidor: ${(ov.likelyTeamPages||[]).slice(0,3).join(', ')}`;
+      }
+    } catch {}
     const systemPrompt = `Du är expert på AI-lösningar för ${department}-avdelningar. Du skapar praktiska, välstrukturerade prompts som sparar tid och ger tydliga resultat. Svara ENDAST med giltig JSON.`;
     
     const userPrompt = `Företag: ${url}
 Avdelning: ${department}
 Webbplats-info: ${site.slice(0, 3000)}
+Strukturerad sammanfattning (om tillgänglig): ${structuredHints}
 
 Skapa 3 specifika AI-användningsfall för ${department} baserat på företagets kontext.
 
