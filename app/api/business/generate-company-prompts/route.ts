@@ -124,7 +124,13 @@ OUTPUTFORMAT (JSON):\n{ "solutions": [ { "task": string, "solution": string, "pr
       }
 
       console.error("Model returned JSON without solutions array:", JSON.stringify(parsed).slice(0, 500));
-      return NextResponse.json({ error: "No solutions in model output", raw: parsed }, { status: 500 });
+      console.error("Raw contentRaw:", contentRaw?.slice(0, 800));
+      return NextResponse.json({ 
+        error: "No solutions in model output", 
+        raw: parsed,
+        rawText: contentRaw?.slice(0, 1000),
+        parsedKeys: Object.keys(parsed || {})
+      }, { status: 500 });
     }
 
     const normalized = (list as any[]).slice(0, 3).map((it: any, idx: number) => {
