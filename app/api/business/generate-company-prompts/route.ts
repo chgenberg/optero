@@ -45,18 +45,16 @@ Returnera ENDAST JSON enligt exakt detta format:
 
     let completion;
     try {
-      // Chat Completions API med gpt-5-mini (samma som privatflödet)
+      // Chat Completions API med GPT-5 (högre kvalitet)
       completion = await openai.chat.completions.create({
-        model: "gpt-5-mini",
+        model: "gpt-5",
         messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt }
+          { role: "user", content: systemPrompt + "\n\n" + userPrompt }
         ],
-        response_format: { type: "json_object" },
         max_completion_tokens: 3000
       });
     } catch (err: any) {
-      console.error("OpenAI gpt-5-mini error:", err?.message, err?.status, err?.code, err?.response?.data || err);
+      console.error("OpenAI gpt-5 error:", err?.message, err?.status, err?.code, err?.response?.data || err);
       return NextResponse.json({ 
         error: "OpenAI request failed",
         message: err?.message,
