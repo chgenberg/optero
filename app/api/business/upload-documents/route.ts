@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import pdf from "pdf-parse/lib/pdf-parse.js";
 import * as XLSX from "xlsx";
 import mammoth from "mammoth";
 
@@ -22,9 +21,8 @@ export async function POST(req: NextRequest) {
 
       try {
         if (filename.endsWith('.pdf')) {
-          // Parse PDF
-          const data = await pdf(buffer);
-          parsedContents.push(`\n\n=== ${file.name} ===\n${data.text}`);
+          // PDF support coming soon - use Word or Excel instead
+          parsedContents.push(`\n\n=== ${file.name} ===\n[PDF support coming soon - please convert to Word (.docx) or Excel (.xlsx)]`);
         } 
         else if (filename.endsWith('.xlsx') || filename.endsWith('.xls')) {
           // Parse Excel
@@ -69,4 +67,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-

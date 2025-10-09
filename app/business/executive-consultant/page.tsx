@@ -16,7 +16,7 @@ export default function ExecutiveConsultant() {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files).filter(file => {
         const ext = file.name.split('.').pop()?.toLowerCase();
-        return ['pdf', 'xlsx', 'xls', 'docx', 'doc'].includes(ext || '');
+        return ['xlsx', 'xls', 'docx', 'doc'].includes(ext || '');
       });
       setFiles([...files, ...newFiles]);
     }
@@ -34,9 +34,9 @@ export default function ExecutiveConsultant() {
 
   const getFileIcon = (filename: string) => {
     const ext = filename.split('.').pop()?.toLowerCase();
-    if (ext === 'pdf') return <FileText className="w-5 h-5 text-red-600" />;
     if (['xlsx', 'xls'].includes(ext || '')) return <FileSpreadsheet className="w-5 h-5 text-green-600" />;
-    return <FileType className="w-5 h-5 text-blue-600" />;
+    if (['docx', 'doc'].includes(ext || '')) return <FileText className="w-5 h-5 text-blue-600" />;
+    return <FileType className="w-5 h-5 text-gray-600" />;
   };
 
   const startConsultation = async () => {
@@ -144,7 +144,7 @@ export default function ExecutiveConsultant() {
                     <div className="text-center">
                       <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                       <p className="text-sm text-gray-600 mb-2">
-                        PDF, Excel, Word • Max 10 MB per fil
+                        Excel (.xlsx), Word (.docx) • Max 10 MB per fil
                       </p>
                       <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
                         <Plus className="w-4 h-4" />
@@ -152,7 +152,7 @@ export default function ExecutiveConsultant() {
                         <input
                           type="file"
                           multiple
-                          accept=".pdf,.xlsx,.xls,.docx,.doc"
+                          accept=".xlsx,.xls,.docx,.doc"
                           onChange={handleFileUpload}
                           className="hidden"
                         />
