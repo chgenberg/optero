@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Send, Loader2, CheckCircle2, ArrowRight } from "lucide-react";
+import { Send, Loader2, CheckCircle2, ArrowRight, Sparkles } from "lucide-react";
 
 interface Message {
   role: "ai" | "user";
@@ -185,8 +185,8 @@ export default function ExecutiveInterview() {
 
   if (!data) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <Loader2 className="w-8 h-8 animate-spin text-white" />
       </div>
     );
   }
@@ -194,54 +194,59 @@ export default function ExecutiveInterview() {
   const allProblemsCompleted = problems.every(p => p.completed);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black text-white">
       <div className="max-w-4xl mx-auto p-4 sm:p-6 pt-20">
         {/* Header */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-            AI-intervju för {data.url}
-          </h1>
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+              AI-intervju
+            </h1>
+          </div>
           
           {/* Progress */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 mb-6">
             {problems.map((p, idx) => (
               <div key={idx} className="flex items-center gap-2">
                 <div className={`flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm transition-all duration-300 ${
                   idx === currentProblemIndex
-                    ? 'bg-blue-600 text-white scale-110'
+                    ? 'bg-white text-black scale-110'
                     : p.completed
-                    ? 'bg-green-500 text-white'
-                    : 'bg-gray-200 text-gray-600'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-zinc-900 text-gray-400'
                 }`}>
                   {p.completed ? <CheckCircle2 className="w-5 h-5" /> : idx + 1}
                 </div>
-                <span className="text-xs sm:text-sm text-gray-600 hidden sm:inline">
-                  Problem {idx + 1}
-                </span>
+                {idx < problems.length - 1 && (
+                  <div className={`w-8 h-0.5 ${p.completed ? 'bg-green-600' : 'bg-zinc-900'}`} />
+                )}
               </div>
             ))}
           </div>
           
           {currentProblemIndex < problems.length && (
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-              <p className="text-sm font-medium text-blue-900 mb-1">Diskuterar nu:</p>
-              <p className="text-blue-700">{problems[currentProblemIndex].problem}</p>
+            <div className="p-4 bg-zinc-900 rounded-xl">
+              <p className="text-sm font-medium text-gray-400 mb-1">Diskuterar:</p>
+              <p className="text-white">{problems[currentProblemIndex].problem}</p>
             </div>
           )}
         </div>
 
         {/* Messages */}
-        <div className="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden">
-          <div className="p-6 h-[60vh] overflow-y-auto space-y-4">
+        <div className="mb-6">
+          <div className="h-[65vh] overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-5 py-3 ${
                   msg.role === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-900'
+                    ? 'bg-white text-black'
+                    : 'bg-zinc-800 text-white'
                 }`}>
-                  <p className="text-sm sm:text-base whitespace-pre-wrap">{msg.content}</p>
-                  <p className={`text-xs mt-1 ${msg.role === 'user' ? 'text-blue-200' : 'text-gray-500'}`}>
+                  <p className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                  <p className={`text-xs mt-2 ${msg.role === 'user' ? 'text-gray-500' : 'text-gray-400'}`}>
                     {msg.timestamp.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
@@ -250,8 +255,12 @@ export default function ExecutiveInterview() {
             
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-gray-100 rounded-2xl px-4 py-3">
-                  <Loader2 className="w-5 h-5 animate-spin text-gray-600" />
+                <div className="bg-zinc-800 rounded-2xl px-5 py-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
                 </div>
               </div>
             )}
@@ -260,17 +269,17 @@ export default function ExecutiveInterview() {
           </div>
 
           {/* Input */}
-          <div className="border-t border-gray-200 p-4">
+          <div className="border-t border-zinc-800 pt-4">
             {allProblemsCompleted ? (
               <button
                 onClick={generateSolutions}
-                className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-xl hover:from-green-700 hover:to-blue-700 transition-all duration-300 font-semibold shadow-lg"
+                className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-white text-black rounded-xl hover:bg-gray-100 transition-all duration-300 font-semibold"
               >
-                <span>Generera djupgående lösningar</span>
+                <span>Generera lösningar</span>
                 <ArrowRight className="w-5 h-5" />
               </button>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <input
                   type="text"
                   value={input}
@@ -278,12 +287,12 @@ export default function ExecutiveInterview() {
                   onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                   placeholder="Skriv ditt svar..."
                   disabled={loading}
-                  className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent disabled:bg-gray-100"
+                  className="flex-1 px-5 py-4 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors disabled:opacity-50"
                 />
                 <button
                   onClick={sendMessage}
                   disabled={loading || !input.trim()}
-                  className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                  className="p-4 bg-white text-black rounded-xl hover:bg-gray-100 disabled:bg-zinc-900 disabled:text-gray-600 disabled:cursor-not-allowed transition-all duration-300"
                 >
                   <Send className="w-5 h-5" />
                 </button>
