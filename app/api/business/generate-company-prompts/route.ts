@@ -124,7 +124,7 @@ Returnera ENDAST JSON enligt exakt detta format:
     // Helper: always-available local fallback (no OpenAI dependency)
     const buildFallback = () => {
       const mkPrompt = (task: string, body: string) => (
-        `**ROLL & KONTEXT:**\nDu arbetar på avdelningen ${department} på ${url}.\n\n**UPPGIFT:**\n${body}\n\n**INPUT - Fyll i detta:**\n[MÅL]: Vad vill ni uppnå\n[KÄLLA]: Länkar/dokument\n[FORMAT]: Hur ni vill ha resultatet\n\n**OUTPUT-FORMAT:**\n1) Sammanfattad analys\n2) Handlingslista\n3) Mätetal/uppföljning\n\n**EXEMPEL:**\nInput:\n[MÅL]: Snabbare process\n[KÄLLA]: Webbplats + interna dokument\n[FORMAT]: Checklista\n\nOutput:\n1. Analys...\n2. Åtgärder...\n3. KPI: tid/vecka, felgrad`
+        `**ROLL & KONTEXT:**\nDu arbetar på avdelningen ${department} på ${(titleStr && url) ? `${url} (${titleStr})` : url}. Referera minst 2 rubriker från: ${headingsList.slice(0,3).join('; ')}.\n\n**UPPGIFT:**\n${body}\n\n**INPUT - Fyll i detta:**\n[MÅL]: Vad vill ni uppnå\n[KÄLLA]: Länkar/dokument\n[FORMAT]: Hur ni vill ha resultatet\n\n**OUTPUT-FORMAT:**\n1) Sammanfattad analys\n2) Handlingslista\n3) Mätetal/uppföljning\n\n**EXEMPEL:**\nInput:\n[MÅL]: Snabbare process\n[KÄLLA]: Webbplats + interna dokument\n[FORMAT]: Checklista\n\nOutput:\n1. Analys...\n2. Åtgärder...\n3. KPI: tid/vecka, felgrad`
       );
       const bases = [
         {
