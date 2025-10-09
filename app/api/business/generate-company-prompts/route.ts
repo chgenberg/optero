@@ -145,18 +145,21 @@ Returnera ENDAST JSON enligt exakt detta format:
       }, { status: 500 });
     }
 
+    // Clean helper
+    const cleanStr = (s: string) => (s || "").replace(/[\x00-\x1F\x7F]/g, ' ').replace(/\s+/g, ' ').trim();
+
     const normalized = (list as any[]).slice(0, 3).map((it: any, idx: number) => {
       if (typeof it === 'string') {
         return {
           task: `Förslag ${idx+1}`,
-          solution: it,
-          prompt: `**ROLL & KONTEXT:**\nDu är ansvarig för ${department}.\n\n**UPPGIFT:**\n${it}\n\n**INPUT – Fyll i detta:**\nMål: [ange]\nSystem: [ange]\n\n**OUTPUT-FORMAT:**\n1) steg\n2) exempel\n\n**FÄRDIGT EXEMPEL:**\nAnvänd rimliga antaganden för ${url}.`
+          solution: cleanStr(it),
+          prompt: `**ROLL & KONTEXT:**\nDu är ansvarig för ${department}.\n\n**UPPGIFT:**\n${cleanStr(it)}\n\n**INPUT – Fyll i detta:**\nMål: [ange]\nSystem: [ange]\n\n**OUTPUT-FORMAT:**\n1) steg\n2) exempel\n\n**FÄRDIGT EXEMPEL:**\nAnvänd rimliga antaganden för ${url}.`
         };
       }
       return {
-        task: it.task || it.title || it.name || `Förslag ${idx+1}`,
-        solution: it.solution || it.summary || it.description || it.value || "",
-        prompt: it.prompt || it.instructions || it.guide || ""
+        task: cleanStr(it.task || it.title || it.name || `Förslag ${idx+1}`),
+        solution: cleanStr(it.solution || it.summary || it.description || it.value || ""),
+        prompt: cleanStr(it.prompt || it.instructions || it.guide || "")
       };
     });
 

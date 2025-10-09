@@ -65,9 +65,25 @@ function findLinks(html: string, baseUrl: string): string[] {
   return Array.from(links);
 }
 
+async function fetchSitemap(baseUrl: string): Promise<string[]> {
+  const sitemapUrls = ['/sitemap.xml', '/sitemap_index.xml', '/sitemap'];
+  for (const path of sitemapUrls) {
+    try {
+      const sitemapUrl = new URL(path, baseUrl).toString();
+      const res = await fetch(sitemapUrl, { headers: { "User-Agent": "MendioBot/1.0" } });
+      if (!res.ok) continue;
+      const xml = await res.text();
+      const $ = load(xml, { xmlMode: true });
+      const urls = $("url > loc").map((_, el) => $(el).text()).get();
+      if (urls.length > 0) return urls;
+    } catch {}
+  }
+  return [];
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { url, maxPages = 8 } = await req.json();
+    const { url, maxPages = 20 } = await req.json();
     if (!url) return NextResponse.json({ error: "Missing url" }, { status: 400 });
 
     const visited = new Set<string>();
@@ -75,10 +91,16 @@ export async function POST(req: NextRequest) {
     const allPages: any[] = [];
     
     // Priority keywords for important pages
-    const priorityKeywords = ['om-oss', 'om', 'about', 'tjanster', 'services', 'produkter', 'products', 'kontakt', 'contact', 'team'];
+    const priorityKeywords = ['om-oss', 'om', 'about', 'tjanster', 'tjenester', 'services', 'produkter', 'products', 'kontakt', 'contact', 'team', 'case', 'kunder', 'customers', 'losningar', 'solutions'];
     
-    // Start with homepage
-    const queue: string[] = [url];
+    // Try to get sitemap first
+    const sitemapUrls = await fetchSitemap(url);
+    const prioritySitemapUrls = sitemapUrls.filter(u => 
+      priorityKeywords.some(k => u.toLowerCase().includes(k))
+    ).slice(0, 10);
+    
+    // Start with homepage + priority sitemap URLs
+    const queue: string[] = [url, ...prioritySitemapUrls];
 
     while (queue.length && visited.size < maxPages) {
       const current = queue.shift()!;
@@ -101,8 +123,14 @@ export async function POST(req: NextRequest) {
         const priorityLinks = links.filter(l => priorityKeywords.some(k => l.toLowerCase().includes(k)));
         const otherLinks = links.filter(l => !priorityKeywords.some(k => l.toLowerCase().includes(k)));
         
-        for (const l of [...priorityLinks, ...otherLinks]) {
-          if (!visited.has(l) && queue.length < 20) queue.push(l);
+        // Skip pagination, archives, and duplicate-looking URLs
+        const skipPatterns = ['/page/', '/arkiv/', '/archive/', '?page=', '&page=', '/tag/', '/kategori/', '/category/'];
+        const filteredLinks = [...priorityLinks, ...otherLinks].filter(l => 
+          !skipPatterns.some(p => l.includes(p))
+        );
+        
+        for (const l of filteredLinks) {
+          if (!visited.has(l) && queue.length < 40) queue.push(l);
         }
       } catch (e) {
         console.error(`Failed to scrape ${current}:`, e);
