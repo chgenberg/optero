@@ -103,7 +103,7 @@ export default function ExecutiveConsultant() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-zinc-900 rounded-2xl mb-4 group hover:scale-110 transition-transform duration-300">
               <Sparkles className="w-8 h-8 text-white group-hover:text-gray-300 transition-colors" />
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-gray-900 uppercase">
               Executive AI Consultant
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">

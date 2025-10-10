@@ -20,13 +20,27 @@ export default function BusinessPage() {
   const [department, setDepartment] = useState("");
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   const startAnalysis = async () => {
     if (!url || !department) {
       // Vi försöker ändå: hämtar profil och sätter rekommenderad avdelning automatiskt
     }
     setLoading(true);
-    setProgress(10);
+    setProgress(0);
+    setLoadingMessage("Förbereder analys...");
+    
+    // Smooth progress animation over ~2.5 min
+    const progressInterval = setInterval(() => {
+      setProgress((p) => {
+        if (p >= 95) {
+          clearInterval(progressInterval);
+          return 95;
+        }
+        return p + (100 / 150); // 150s = 2.5 min
+      });
+    }, 1000);
+
     try {
       const normalizeUrl = (u: string) => {
         const trim = (u || "").trim();
@@ -36,7 +50,7 @@ export default function BusinessPage() {
       };
       const targetUrl = normalizeUrl(url);
       // 1) Scrape
-      setProgress(30);
+      setLoadingMessage("Skrapar företagets webbplats...");
       const scrape = await fetch("/api/business/scrape", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -45,7 +59,7 @@ export default function BusinessPage() {
       const scraped = await scrape.json();
 
       // 2) Bygg CompanyProfile och föreslagna avdelningar
-      setProgress(55);
+      setLoadingMessage("Analyserar företagsprofil...");
       let chosenDept = department;
       try {
         const profRes = await fetch("/api/business/profile", {
@@ -62,7 +76,7 @@ export default function BusinessPage() {
       } catch {}
 
       // 3) Generate prompts
-      setProgress(75);
+      setLoadingMessage("Genererar AI-prompts med GPT-5...");
       const gen = await fetch("/api/business/generate-company-prompts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -72,11 +86,14 @@ export default function BusinessPage() {
       const data = await gen.json();
 
       // 4) Save and go
+      clearInterval(progressInterval);
       setProgress(100);
+      setLoadingMessage("Klart!");
       sessionStorage.setItem("companyPromptResults", JSON.stringify({ url: targetUrl, department: chosenDept || department, solutions: data.solutions || [] }));
       router.push("/business/prompt-results");
     } catch (e) {
       console.error(e);
+      clearInterval(progressInterval);
       alert("Kunde inte genomföra analysen. Försök igen.");
     } finally {
       setLoading(false);
@@ -87,11 +104,43 @@ export default function BusinessPage() {
     <main className="min-h-screen bg-gray-50 px-4 pt-20 sm:pt-24 pb-24">
       <div className="max-w-3xl mx-auto w-full">
         <div className="text-center space-y-4 mb-12">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900">AI för företag</h1>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 uppercase tracking-tight">AI för företag</h1>
           <p className="text-lg text-gray-600">Ange webbplats och avdelning – få 3 skräddarsydda AI‑prompts</p>
         </div>
 
-        <div className="bg-white rounded-3xl p-8 shadow-xl space-y-8 relative overflow-hidden">
+        {loading ? (
+          <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-xl space-y-8">
+            <div className="text-center space-y-4">
+              <h3 className="text-2xl font-bold text-gray-900">
+                {loadingMessage || "Genererar..."}
+              </h3>
+              <p className="text-sm text-gray-500">
+                Detta kan ta upp till 2,5 minuter för bästa resultat
+              </p>
+            </div>
+
+            {/* Progress bar */}
+            <div className="space-y-2">
+              <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-gray-900 h-2 rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <p className="text-center text-sm text-gray-600">
+                {Math.round(progress)}%
+              </p>
+            </div>
+
+            {/* Time estimate */}
+            <div className="text-center">
+              <p className="text-xs text-gray-500">
+                Beräknad tid kvar: {Math.max(0, Math.ceil((100 - progress) * 1.5 / 60))} minuter
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white rounded-3xl p-8 shadow-xl space-y-8 relative overflow-hidden">
           {/* Animated blue border effect */}
           <div className="absolute inset-0 rounded-3xl">
             <div className="absolute inset-0 rounded-3xl animate-pulse-blue"></div>
@@ -142,6 +191,7 @@ export default function BusinessPage() {
           </button>
           </div>
         </div>
+        )}
       </div>
       
       <style jsx>{`
