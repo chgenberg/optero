@@ -8,7 +8,7 @@ export default function ExecutiveConsultant() {
   const router = useRouter();
   const [url, setUrl] = useState("");
   const [files, setFiles] = useState<File[]>([]);
-  const [problems, setProblems] = useState(["", "", ""]);
+  const [problem, setProblem] = useState("");
   const [loading, setLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -26,11 +26,6 @@ export default function ExecutiveConsultant() {
     setFiles(files.filter((_, i) => i !== index));
   };
 
-  const updateProblem = (index: number, value: string) => {
-    const newProblems = [...problems];
-    newProblems[index] = value;
-    setProblems(newProblems);
-  };
 
   const getFileIcon = (filename: string) => {
     const ext = filename.split('.').pop()?.toLowerCase();
@@ -40,8 +35,8 @@ export default function ExecutiveConsultant() {
   };
 
   const startConsultation = async () => {
-    if (!url || problems.filter(p => p.trim()).length < 3) {
-      alert("Fyll i företagets URL och alla 3 problem för att fortsätta.");
+    if (!url || !problem.trim()) {
+      alert("Fyll i företagets URL och beskriv problemet för att fortsätta.");
       return;
     }
 
@@ -80,7 +75,7 @@ export default function ExecutiveConsultant() {
         websiteContent: scrapeData.content || "",
         websiteSummary: scrapeData.summary || {},
         documentsContent,
-        problems: problems.filter(p => p.trim()),
+        problems: [problem.trim()],
         files: files.map(f => f.name)
       }));
       
@@ -184,38 +179,29 @@ export default function ExecutiveConsultant() {
               </div>
             </div>
 
-            {/* Problems */}
+            {/* Problem */}
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                Tre specifika utmaningar
+                Beskriv den största utmaningen
               </label>
-              <div className="space-y-4">
-                {[0, 1, 2].map((idx) => (
-                  <div key={idx} className="group">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center font-bold text-white text-sm">
-                        {idx + 1}
-                      </div>
-                      <span className="text-sm font-medium text-gray-700">Problem {idx + 1}</span>
-                    </div>
-                    <textarea
-                      value={problems[idx]}
-                      onChange={(e) => updateProblem(idx, e.target.value)}
-                      placeholder={`T.ex. "Vi har svårt att rekrytera rätt kompetens inom 6 månader"`}
-                      rows={2}
-                      className="w-full px-6 py-3 bg-white border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:border-gray-400 focus:bg-gray-50 transition-all duration-200 resize-none"
-                    />
-                  </div>
-                ))}
-              </div>
+              <textarea
+                value={problem}
+                onChange={(e) => setProblem(e.target.value)}
+                placeholder='T.ex. "Vi har svårt att rekrytera rätt kompetens inom 6 månader och det påverkar vår tillväxt negativt"'
+                rows={6}
+                className="w-full px-6 py-4 bg-white border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:border-gray-400 focus:bg-gray-50 transition-all duration-200 resize-none"
+              />
+              <p className="text-xs text-gray-500 mt-2">
+                Ju mer detaljerad beskrivning, desto bättre lösningar får du.
+              </p>
             </div>
 
             {/* Submit Button */}
             <button
               onClick={startConsultation}
-              disabled={!url || problems.filter(p => p.trim()).length < 3 || loading}
+              disabled={!url || !problem.trim() || loading}
               className={`w-full py-4 rounded-2xl font-semibold transition-all duration-200 ${
-                !url || problems.filter(p => p.trim()).length < 3 || loading
+                !url || !problem.trim() || loading
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "bg-gray-900 text-white hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] shadow-md"
               }`}
@@ -247,14 +233,14 @@ export default function ExecutiveConsultant() {
                   desc: "Vi skrapar webbplatsen och analyserar dokument"
                 },
                 {
-                  num: "2", 
+                  num: "2",
                   title: "Intervju",
-                  desc: "AI ställer riktade följdfrågor om era problem"
+                  desc: "AI ställer riktade följdfrågor om ditt problem"
                 },
                 {
                   num: "3",
-                  title: "Lösningar",
-                  desc: "Få färdiga AI-prompts eller bot-instruktioner"
+                  title: "Lösning",
+                  desc: "Få en färdig AI-prompt eller bot-instruktion"
                 },
                 {
                   num: "4",
