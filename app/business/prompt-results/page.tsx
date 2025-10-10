@@ -33,31 +33,31 @@ export default function PromptResultsPage() {
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">Laddar...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">Laddar...</div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-black text-white px-4 pt-20 pb-16">
+    <main className="min-h-screen bg-gray-50 px-4 pt-20 pb-16">
       <div className="max-w-4xl mx-auto">
         <div className="mb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2">AI‑prompts för {data.department}</h1>
-          <p className="text-gray-400">Baserade på {data.url}</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">AI‑prompts för {data.department}</h1>
+          <p className="text-gray-600">Baserade på {data.url}</p>
         </div>
 
         <div className="space-y-6">
           {data.solutions?.map((s, idx) => (
-            <div key={idx} className="bg-zinc-900 rounded-xl border border-zinc-800 overflow-hidden">
+            <div key={idx} className="bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden">
               <div className="p-6 space-y-4">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h2 className="text-xl font-bold">{s.task}</h2>
-                    <p className="text-gray-300 mt-1">{s.solution}</p>
+                    <h2 className="text-xl font-bold text-gray-900">{s.task}</h2>
+                    <p className="text-gray-600 mt-1">{s.solution}</p>
                   </div>
                   {s.recommendedTool && (
                     <a
                       href="#"
-                      className="text-sm text-gray-400 hover:text-white inline-flex items-center gap-2"
+                      className="text-sm text-gray-500 hover:text-gray-900 inline-flex items-center gap-2"
                       title={`Öppna ${s.recommendedTool}`}
                     >
                       <span>{s.recommendedTool}</span>
@@ -66,14 +66,14 @@ export default function PromptResultsPage() {
                   )}
                 </div>
 
-                <div className="bg-black rounded-lg p-4 border border-zinc-800">
-                  <pre className="whitespace-pre-wrap text-gray-300 text-sm">{s.prompt}</pre>
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <pre className="whitespace-pre-wrap text-gray-900 text-sm">{s.prompt}</pre>
                 </div>
 
                 <div className="flex justify-end">
                   <button
                     onClick={() => copyPrompt(s.prompt, idx)}
-                    className="px-3 py-2 bg-white text-black rounded-lg hover:bg-gray-100 inline-flex items-center gap-2"
+                    className="px-3 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 inline-flex items-center gap-2"
                   >
                     {copiedIndex === idx ? (
                       <>
@@ -96,7 +96,7 @@ export default function PromptResultsPage() {
         <div className="mt-12 text-center">
           <button
             onClick={() => router.push("/business")}
-            className="px-6 py-3 bg-zinc-900 rounded-xl border border-zinc-800 hover:bg-zinc-800"
+            className="px-6 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 shadow-md"
           >
             Starta ny analys
           </button>

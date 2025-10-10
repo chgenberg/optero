@@ -16,6 +16,8 @@ export async function POST(req: NextRequest) {
   const url = body?.url;
   const department = body?.department;
   const content = body?.content;
+  const challenge = body?.challenge || "";
+  const tools = body?.tools || "";
   if (!url || !department || !content) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   }
@@ -91,6 +93,10 @@ export async function POST(req: NextRequest) {
 Avdelning: ${department}
 Webbplats-info: ${site.slice(0, 1000)}
 Strukturerad sammanfattning (om tillgänglig): ${structuredHints}
+
+ANVÄNDARKONTEXT:
+- Största utmaning: ${challenge || 'ej angiven'}
+- Nuvarande verktyg/system: ${tools || 'ej angivet'}
 
 FOKUSOMRÅDEN (${department} × ${sector}): ${focusAreas.join('; ')}
 

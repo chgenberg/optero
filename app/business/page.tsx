@@ -21,11 +21,20 @@ export default function BusinessPage() {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState("");
+  const [showFollowUp, setShowFollowUp] = useState(false);
+  const [challenge, setChallenge] = useState("");
+  const [tools, setTools] = useState("");
+
+  const handleInitialSubmit = () => {
+    if (!url || !department) {
+      alert("Fyll i webbplats och avdelning");
+      return;
+    }
+    setShowFollowUp(true);
+  };
 
   const startAnalysis = async () => {
-    if (!url || !department) {
-      // Vi försöker ändå: hämtar profil och sätter rekommenderad avdelning automatiskt
-    }
+    setShowFollowUp(false);
     setLoading(true);
     setProgress(0);
     setLoadingMessage("Förbereder analys...");
@@ -80,8 +89,14 @@ export default function BusinessPage() {
       const gen = await fetch("/api/business/generate-company-prompts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Pass entire scrape payload so API can parse structured summary
-        body: JSON.stringify({ url: targetUrl, department: chosenDept || department, content: JSON.stringify(scraped) })
+        // Pass entire scrape payload + follow-up context
+        body: JSON.stringify({ 
+          url: targetUrl, 
+          department: chosenDept || department, 
+          content: JSON.stringify(scraped),
+          challenge,
+          tools
+        })
       });
       const data = await gen.json();
 
@@ -179,7 +194,7 @@ export default function BusinessPage() {
           </div>
 
           <button
-            onClick={startAnalysis}
+            onClick={handleInitialSubmit}
             disabled={!url || !department || loading}
             className={`w-full py-4 rounded-2xl font-semibold transition-all duration-200 ${
               !url || !department || loading 
@@ -187,10 +202,73 @@ export default function BusinessPage() {
                 : 'bg-gray-900 text-white hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] shadow-md'
             }`}
           >
-            {loading ? `Analyserar... ${progress}%` : 'Generera 3 AI‑prompts'}
+            Fortsätt
           </button>
           </div>
         </div>
+        )}
+
+        {/* Follow-up Modal */}
+        {showFollowUp && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl space-y-6 relative overflow-hidden">
+              {/* Animated blue border */}
+              <div className="absolute inset-0 rounded-3xl">
+                <div className="absolute inset-0 rounded-3xl animate-pulse-blue"></div>
+              </div>
+
+              <div className="relative z-10 space-y-6">
+                <h2 className="text-2xl font-bold text-gray-900 text-center">Några snabba frågor</h2>
+                <p className="text-sm text-gray-600 text-center">Detta ger betydligt bättre resultat</p>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                    Vad är er största utmaning inom {DEPARTMENTS.find(d => d.value === department)?.label || department} just nu?
+                  </label>
+                  <textarea
+                    value={challenge}
+                    onChange={(e) => setChallenge(e.target.value)}
+                    placeholder="T.ex. svårt att nå nya kunder, låg konvertering, långsam process..."
+                    rows={3}
+                    className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:border-gray-400 focus:bg-gray-50 transition-all duration-200 resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                    Vilka verktyg/system använder ni idag? (valfritt)
+                  </label>
+                  <input
+                    type="text"
+                    value={tools}
+                    onChange={(e) => setTools(e.target.value)}
+                    placeholder="T.ex. HubSpot, Excel, Google Analytics..."
+                    className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:border-gray-400 focus:bg-gray-50 transition-all duration-200"
+                  />
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowFollowUp(false)}
+                    className="flex-1 py-3 rounded-xl border-2 border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-all duration-200"
+                  >
+                    Tillbaka
+                  </button>
+                  <button
+                    onClick={startAnalysis}
+                    disabled={!challenge.trim()}
+                    className={`flex-1 py-3 rounded-xl font-semibold transition-all duration-200 ${
+                      !challenge.trim()
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-gray-900 text-white hover:bg-gray-800 shadow-md'
+                    }`}
+                  >
+                    Generera prompts
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
       

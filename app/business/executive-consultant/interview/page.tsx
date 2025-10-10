@@ -199,8 +199,8 @@ export default function ExecutiveInterview() {
 
   if (!data) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-black">
-        <Loader2 className="w-8 h-8 animate-spin text-white" />
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <Loader2 className="w-8 h-8 animate-spin text-gray-900" />
       </div>
     );
   }
@@ -208,15 +208,15 @@ export default function ExecutiveInterview() {
   const allProblemsCompleted = problems.every(p => p.completed);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <div className="max-w-4xl mx-auto p-4 sm:p-6 pt-20">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-gray-900" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
               AI-intervju
             </h1>
           </div>
@@ -229,22 +229,22 @@ export default function ExecutiveInterview() {
                   idx === currentProblemIndex
                     ? 'bg-white text-black scale-110'
                     : p.completed
-                    ? 'bg-green-600 text-white'
-                    : 'bg-zinc-900 text-gray-400'
+                    ? 'bg-green-600 text-gray-900'
+                    : 'bg-white text-gray-600'
                 }`}>
                   {p.completed ? <CheckCircle2 className="w-5 h-5" /> : idx + 1}
                 </div>
                 {idx < problems.length - 1 && (
-                  <div className={`w-8 h-0.5 ${p.completed ? 'bg-green-600' : 'bg-zinc-900'}`} />
+                  <div className={`w-8 h-0.5 ${p.completed ? 'bg-green-600' : 'bg-white'}`} />
                 )}
               </div>
             ))}
           </div>
           
           {currentProblemIndex < problems.length && (
-            <div className="p-4 bg-zinc-900 rounded-xl">
-              <p className="text-sm font-medium text-gray-400 mb-1">Diskuterar:</p>
-              <p className="text-white">{problems[currentProblemIndex].problem}</p>
+            <div className="p-4 bg-white rounded-xl">
+              <p className="text-sm font-medium text-gray-600 mb-1">Diskuterar:</p>
+              <p className="text-gray-900">{problems[currentProblemIndex].problem}</p>
             </div>
           )}
         </div>
@@ -257,10 +257,10 @@ export default function ExecutiveInterview() {
                 <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-5 py-3 ${
                   msg.role === 'user'
                     ? 'bg-white text-black'
-                    : 'bg-zinc-800 text-white'
+                    : 'bg-gray-100 text-gray-900'
                 }`}>
                   <p className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap">{msg.content}</p>
-                  <p className={`text-xs mt-2 ${msg.role === 'user' ? 'text-gray-500' : 'text-gray-400'}`}>
+                  <p className={`text-xs mt-2 ${msg.role === 'user' ? 'text-gray-500' : 'text-gray-600'}`}>
                     {msg.timestamp.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
@@ -269,7 +269,7 @@ export default function ExecutiveInterview() {
             
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-zinc-800 rounded-2xl px-5 py-3">
+                <div className="bg-gray-100 rounded-2xl px-5 py-3">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -283,7 +283,7 @@ export default function ExecutiveInterview() {
           </div>
 
           {/* Input */}
-          <div className="border-t border-zinc-800 pt-4">
+          <div className="border-t border-gray-200 pt-4">
             {allProblemsCompleted ? (
               <button
                 onClick={generateSolutions}
@@ -301,12 +301,12 @@ export default function ExecutiveInterview() {
                   onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                   placeholder="Skriv ditt svar..."
                   disabled={loading}
-                  className="flex-1 px-5 py-4 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors disabled:opacity-50"
+                  className="flex-1 px-5 py-4 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:border-white transition-colors disabled:opacity-50"
                 />
                 <button
                   onClick={sendMessage}
                   disabled={loading || !input.trim()}
-                  className="p-4 bg-white text-black rounded-xl hover:bg-gray-100 disabled:bg-zinc-900 disabled:text-gray-600 disabled:cursor-not-allowed transition-all duration-300"
+                  className="p-4 bg-white text-black rounded-xl hover:bg-gray-100 disabled:bg-white disabled:text-gray-600 disabled:cursor-not-allowed transition-all duration-300"
                 >
                   <Send className="w-5 h-5" />
                 </button>
