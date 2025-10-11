@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Download, Copy, Check, Bot, FileText, ChevronDown, ChevronUp, ExternalLink, Sparkles, ArrowRight } from "lucide-react";
+import { Loader2, Download, Copy, Check, Bot, FileText, ChevronDown, ChevronUp, ExternalLink, Sparkles, ArrowRight, Code, Zap, Clock, DollarSign, Users, BookOpen } from "lucide-react";
 
 interface Solution {
   problem: string;
@@ -25,6 +25,7 @@ export default function ExecutiveSolution() {
   const [solutions, setSolutions] = useState<Solution[]>([]);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<"solution" | "implementation">("solution");
 
   useEffect(() => {
     const consultData = sessionStorage.getItem("executiveConsultation");
@@ -104,11 +105,43 @@ export default function ExecutiveSolution() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-16 h-16 animate-spin text-gray-900 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Analyserar med AI...</h2>
-          <p className="text-gray-600">Detta kan ta upp till 2 minuter för optimala resultat</p>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-md w-full mx-auto p-8">
+          <div className="bg-white rounded-3xl p-8 shadow-xl">
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 bg-gray-900 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <Sparkles className="w-10 h-10 text-white animate-pulse" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">ANALYSERAR MED AI</h2>
+              <p className="text-gray-600">Skapar skräddarsydda lösningar</p>
+            </div>
+            
+            {/* Progress bar */}
+            <div className="space-y-4">
+              <div className="bg-gray-100 rounded-full h-3 overflow-hidden">
+                <div className="bg-gray-900 h-full rounded-full transition-all duration-1000 loading-progress" />
+              </div>
+              
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2 text-gray-600">
+                  <div className="w-2 h-2 bg-gray-900 rounded-full animate-pulse" />
+                  <span>Analyserar företagskontext...</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full" />
+                  <span>Genererar AI-lösningar...</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full" />
+                  <span>Förbereder implementationsplan...</span>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-center text-sm text-gray-500 mt-6">
+              Detta kan ta upp till 2 minuter
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -116,214 +149,280 @@ export default function ExecutiveSolution() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto p-4 sm:p-6 pt-20 pb-20">
+      <div className="max-w-6xl mx-auto p-4 sm:p-6 pt-20 pb-20">
         {/* Header */}
         <div className="mb-12">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-gray-900" />
-              </div>
-              <div>
-                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
-                  AI-lösningar
-                </h1>
-                <p className="text-gray-600">
-                  {solutions.length} skräddarsydda lösningar
-                </p>
-              </div>
-            </div>
+          <div className="text-center mb-8">
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 uppercase tracking-tight mb-4">
+              AI-LÖSNING FÖR DITT PROBLEM
+            </h1>
+            <p className="text-lg text-gray-600">
+              Skräddarsydd lösning baserad på er situation
+            </p>
+          </div>
+          
+          <div className="flex justify-center">
             <button
               onClick={downloadAsMarkdown}
-              className="flex items-center gap-2 px-5 py-3 bg-white text-gray-900 rounded-xl hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors"
             >
               <Download className="w-5 h-5" />
-              <span className="hidden sm:inline">Ladda ner</span>
+              <span>Ladda ner rapport</span>
             </button>
           </div>
         </div>
 
-        {/* Solutions */}
-        <div className="space-y-4">
-          {solutions.map((solution, idx) => (
-            <div key={idx} className="bg-white rounded-xl overflow-hidden border border-gray-200">
-              {/* Header */}
-              <button
-                onClick={() => setExpandedIndex(expandedIndex === idx ? null : idx)}
-                className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center text-gray-900 font-bold text-lg">
-                    {idx + 1}
-                  </div>
-                  <div className="text-left">
-                    <h3 className="text-lg sm:text-xl font-bold text-gray-900">
-                      {solution.problem}
-                    </h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      {solution.approach === "prompt" ? (
-                        <>
-                          <FileText className="w-4 h-4 text-gray-600" />
-                          <span className="text-sm text-gray-600">AI-prompt</span>
-                        </>
-                      ) : (
-                        <>
-                          <Bot className="w-4 h-4 text-gray-600" />
-                          <span className="text-sm text-gray-600">Bot-instruktioner</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
+        {/* Main Content */}
+        {solutions.map((solution, idx) => (
+          <div key={idx} className="space-y-8">
+            {/* Problem Card */}
+            <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-gray-900">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-gray-900 rounded-xl flex items-center justify-center">
+                  <Zap className="w-8 h-8 text-white" />
                 </div>
-                {expandedIndex === idx ? (
-                  <ChevronUp className="w-6 h-6 text-gray-600" />
-                ) : (
-                  <ChevronDown className="w-6 h-6 text-gray-600" />
-                )}
-              </button>
-
-              {/* Content */}
-              {expandedIndex === idx && (
-                <div className="p-6 border-t border-gray-200 space-y-6">
-                  {/* Analysis */}
-                  <div>
-                    <h4 className="text-lg font-bold text-gray-900 mb-3">
-                      Analys
-                    </h4>
-                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                      {solution.analysis}
-                    </p>
-                  </div>
-
-                  {/* Solution */}
-                  {solution.approach === "prompt" ? (
-                    <div>
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-lg font-bold text-gray-900">
-                          AI-prompt
-                        </h4>
-                        <button
-                          onClick={() => handleCopy(solution.prompt || "", idx)}
-                          className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-zinc-700 rounded-lg transition-colors"
-                        >
-                          {copiedIndex === idx ? (
-                            <>
-                              <Check className="w-4 h-4 text-green-400" />
-                              <span className="text-sm text-green-400">Kopierad!</span>
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="w-4 h-4 text-gray-600" />
-                              <span className="text-sm text-gray-600">Kopiera</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-                      <div className="bg-gray-900 rounded-xl p-6 border border-gray-200">
-                        <pre className="text-sm text-gray-700 whitespace-pre-wrap font-mono leading-relaxed">
-                          {solution.prompt}
-                        </pre>
-                      </div>
-                    </div>
-                  ) : (
-                    <div>
-                      <h4 className="text-lg font-bold text-gray-900 mb-4">
-                        Bot-implementation
-                      </h4>
-                      
-                      <div className="space-y-4">
-                        {/* Overview */}
-                        <div className="bg-gray-900 rounded-lg p-4 border border-gray-200">
-                          <h5 className="font-semibold text-gray-700 mb-2">Översikt</h5>
-                          <p className="text-gray-600">{solution.botInstructions?.overview}</p>
-                        </div>
-
-                        {/* Tech Stack */}
-                        <div className="bg-gray-900 rounded-lg p-4 border border-gray-200">
-                          <h5 className="font-semibold text-gray-700 mb-3">Teknisk stack</h5>
-                          <div className="flex flex-wrap gap-2">
-                            {solution.botInstructions?.technicalStack.map((tech, i) => (
-                              <span key={i} className="px-3 py-1 bg-gray-50 text-gray-700 rounded-full text-sm">
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Implementation Steps */}
-                        <div className="bg-gray-900 rounded-lg p-4 border border-gray-200">
-                          <h5 className="font-semibold text-gray-700 mb-3">Implementationssteg</h5>
-                          <ol className="space-y-2">
-                            {solution.botInstructions?.implementation.map((step, i) => (
-                              <li key={i} className="flex gap-3">
-                                <span className="flex-shrink-0 w-6 h-6 bg-white text-black rounded-full flex items-center justify-center text-xs font-bold">
-                                  {i + 1}
-                                </span>
-                                <span className="text-gray-600 pt-0.5">{step}</span>
-                              </li>
-                            ))}
-                          </ol>
-                        </div>
-
-                        {/* Cost & Timeline */}
-                        <div className="grid sm:grid-cols-2 gap-4">
-                          <div className="bg-gray-900 rounded-lg p-4 border border-gray-200">
-                            <h5 className="font-semibold text-gray-700 mb-2">Kostnad</h5>
-                            <p className="text-gray-600">{solution.botInstructions?.cost}</p>
-                          </div>
-                          <div className="bg-gray-900 rounded-lg p-4 border border-gray-200">
-                            <h5 className="font-semibold text-gray-700 mb-2">Tidslinje</h5>
-                            <p className="text-gray-600">{solution.botInstructions?.timeline}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Expected Outcomes */}
-                  <div>
-                    <h4 className="text-lg font-bold text-gray-900 mb-3">
-                      Förväntade resultat
-                    </h4>
-                    <ul className="space-y-2">
-                      {solution.expectedOutcomes.map((outcome, i) => (
-                        <li key={i} className="flex items-start gap-3">
-                          <Check className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                          <span className="text-gray-700">{outcome}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">PROBLEMET</h2>
+                  <p className="text-gray-600">{solution.problem}</p>
                 </div>
-              )}
+              </div>
             </div>
-          ))}
-        </div>
+
+            {/* Tabs */}
+            <div className="bg-gray-900 rounded-2xl p-1 inline-flex">
+              <button
+                onClick={() => setActiveTab("solution")}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+                  activeTab === "solution"
+                    ? "bg-white text-gray-900"
+                    : "text-white hover:text-gray-300"
+                }`}
+              >
+                LÖSNING
+              </button>
+              <button
+                onClick={() => setActiveTab("implementation")}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+                  activeTab === "implementation"
+                    ? "bg-white text-gray-900"
+                    : "text-white hover:text-gray-300"
+                }`}
+              >
+                IMPLEMENTATION
+              </button>
+            </div>
+
+            {/* Tab Content */}
+            {activeTab === "solution" ? (
+              <div className="space-y-6">
+                {/* Analysis Card */}
+                <div className="bg-white rounded-2xl p-8 shadow-lg">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 uppercase">Analys</h3>
+                  <div className="prose prose-gray max-w-none">
+                    {solution.analysis.split('\n\n').map((paragraph, i) => (
+                      <p key={i} className="text-gray-700 leading-relaxed mb-4">
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Solution Card */}
+                {solution.approach === "prompt" ? (
+                  <div className="bg-gray-900 rounded-2xl p-8 text-white">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-3">
+                        <FileText className="w-6 h-6" />
+                        <h3 className="text-xl font-bold uppercase">AI-Prompt</h3>
+                      </div>
+                      <button
+                        onClick={() => handleCopy(solution.prompt || "", idx)}
+                        className="flex items-center gap-2 px-4 py-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition-colors"
+                      >
+                        {copiedIndex === idx ? (
+                          <>
+                            <Check className="w-4 h-4 text-green-600" />
+                            <span className="text-sm font-semibold">Kopierad!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-4 h-4" />
+                            <span className="text-sm font-semibold">Kopiera</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <div className="bg-black/40 rounded-xl p-6 backdrop-blur">
+                      <pre className="text-sm text-gray-100 whitespace-pre-wrap font-mono leading-relaxed">
+                        {solution.prompt}
+                      </pre>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-gray-900 rounded-2xl p-8 text-white">
+                    <div className="flex items-center gap-3 mb-6">
+                      <Bot className="w-6 h-6" />
+                      <h3 className="text-xl font-bold uppercase">Bot-Implementation</h3>
+                    </div>
+                    
+                    <div className="space-y-6">
+                      {/* Overview */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-400 uppercase mb-2">Översikt</h4>
+                        <p className="text-gray-100">{solution.botInstructions?.overview}</p>
+                      </div>
+
+                      {/* Tech Stack */}
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-400 uppercase mb-3">Teknisk Stack</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {solution.botInstructions?.technicalStack.map((tech, i) => (
+                            <span key={i} className="px-3 py-1 bg-white/10 text-white rounded-lg text-sm font-medium">
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Expected Outcomes */}
+                <div className="bg-white rounded-2xl p-8 shadow-lg">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 uppercase">Förväntade Resultat</h3>
+                  <div className="grid gap-4">
+                    {solution.expectedOutcomes.map((outcome, i) => (
+                      <div key={i} className="flex items-start gap-4">
+                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Check className="w-5 h-5 text-green-600" />
+                        </div>
+                        <p className="text-gray-700 leading-relaxed">{outcome}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Implementation Tab */
+              <div className="space-y-6">
+                {solution.approach === "bot" && (
+                  <>
+                    {/* Implementation Steps */}
+                    <div className="bg-white rounded-2xl p-8 shadow-lg">
+                      <h3 className="text-xl font-bold text-gray-900 mb-6 uppercase">Steg-för-steg Guide</h3>
+                      <div className="space-y-6">
+                        {solution.botInstructions?.implementation.map((step, i) => (
+                          <div key={i} className="flex gap-4">
+                            <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center flex-shrink-0">
+                              <span className="text-white font-bold">{i + 1}</span>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-gray-700 leading-relaxed">{step}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Cost & Timeline Grid */}
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="bg-gray-900 rounded-2xl p-8 text-white">
+                        <div className="flex items-center gap-3 mb-4">
+                          <DollarSign className="w-6 h-6" />
+                          <h3 className="text-lg font-bold uppercase">Kostnad</h3>
+                        </div>
+                        <p className="text-gray-100">{solution.botInstructions?.cost}</p>
+                      </div>
+                      
+                      <div className="bg-gray-900 rounded-2xl p-8 text-white">
+                        <div className="flex items-center gap-3 mb-4">
+                          <Clock className="w-6 h-6" />
+                          <h3 className="text-lg font-bold uppercase">Tidslinje</h3>
+                        </div>
+                        <p className="text-gray-100">{solution.botInstructions?.timeline}</p>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {solution.approach === "prompt" && (
+                  <div className="bg-white rounded-2xl p-8 shadow-lg">
+                    <div className="flex items-center gap-3 mb-6">
+                      <BookOpen className="w-6 h-6 text-gray-900" />
+                      <h3 className="text-xl font-bold text-gray-900 uppercase">Så Använder Du Prompten</h3>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex gap-4">
+                        <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <span className="font-bold">1</span>
+                        </div>
+                        <p className="text-gray-700">Kopiera prompten ovan genom att klicka på "Kopiera"-knappen</p>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <span className="font-bold">2</span>
+                        </div>
+                        <p className="text-gray-700">Öppna ChatGPT, Claude eller annan AI-assistent</p>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <span className="font-bold">3</span>
+                        </div>
+                        <p className="text-gray-700">Klistra in prompten och fyll i de markerade fälten med er specifika information</p>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <span className="font-bold">4</span>
+                        </div>
+                        <p className="text-gray-700">Följ AI:ns instruktioner och iterera vid behov</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
 
         {/* CTA */}
-        <div className="mt-12 bg-white border border-gray-200 rounded-xl p-8">
-          <h3 className="text-2xl font-bold mb-4 text-gray-900">Nästa steg</h3>
-          <p className="mb-6 text-gray-600">
-            Vill du ha hjälp med implementation eller mer detaljerad konsultation?
+        <div className="mt-16 bg-gray-900 rounded-2xl p-10 text-white text-center">
+          <h3 className="text-3xl font-bold mb-4 uppercase">Redo att implementera?</h3>
+          <p className="mb-8 text-gray-300 text-lg">
+            Vi hjälper er att omsätta dessa lösningar i praktiken
           </p>
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="mailto:ch.genberg@gmail.com?subject=Executive AI Konsultation - Nästa steg"
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-black rounded-xl hover:bg-gray-100 transition-colors font-semibold"
+              href="mailto:ch.genberg@gmail.com?subject=Executive AI Konsultation - Implementation"
+              className="flex items-center justify-center gap-2 px-8 py-4 bg-white text-gray-900 rounded-xl hover:bg-gray-100 transition-all font-bold text-lg"
             >
-              <span>Boka konsultation</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>BOKA KONSULTATION</span>
+              <ArrowRight className="w-5 h-5" />
             </a>
             <button
               onClick={() => router.push("/business/executive-consultant")}
-              className="px-6 py-3 bg-gray-50 hover:bg-zinc-700 text-gray-900 rounded-xl transition-colors font-semibold"
+              className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all font-bold text-lg"
             >
-              Starta ny analys
+              NY ANALYS
             </button>
           </div>
         </div>
       </div>
+      
+      <style jsx>{`
+        @keyframes loading-progress {
+          0% { width: 0%; }
+          10% { width: 10%; }
+          30% { width: 35%; }
+          50% { width: 50%; }
+          70% { width: 70%; }
+          90% { width: 90%; }
+          100% { width: 100%; }
+        }
+        
+        .loading-progress {
+          animation: loading-progress 120s ease-out;
+        }
+      `}</style>
     </div>
   );
 }
-
