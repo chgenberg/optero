@@ -10,7 +10,13 @@ export async function POST(req: NextRequest) {
       role: "company_bot",
       url: consult.url,
       problem: consult.problems?.[0] || "",
+      type: "knowledge", // default, can be updated via /api/bots/update
+      webhookUrl: null as string | null,
       goals: consult.websiteSummary?.summary?.goals || [],
+      context: {
+        websiteMainText: consult.websiteSummary?.mainText || consult.websiteContent || "",
+        documents: consult.documentsContent || ""
+      },
       sources: {
         website: true,
         documents: Boolean(consult.documentsContent)

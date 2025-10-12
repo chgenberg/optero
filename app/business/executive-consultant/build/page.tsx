@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Loader2, Sparkles, Code, LinkIcon, Copy, CheckCircle, ArrowRight } from "lucide-react";
+import { Check, Loader2, Sparkles } from "lucide-react";
 
 export default function BuildBotPage() {
   const router = useRouter();
@@ -11,6 +11,9 @@ export default function BuildBotPage() {
   const [snippetCopied, setSnippetCopied] = useState(false);
   const [botId, setBotId] = useState<string | null>(null);
   const [widgetSnippet, setWidgetSnippet] = useState<string>("");
+  const [checkoutUrl, setCheckoutUrl] = useState<string>("");
+  const [botType, setBotType] = useState<'knowledge' | 'lead' | 'support'>("knowledge");
+  const [webhookUrl, setWebhookUrl] = useState<string>("");
 
   useEffect(() => {
     const start = async () => {
@@ -42,8 +45,20 @@ export default function BuildBotPage() {
         const snRes = await fetch(`/api/bots/snippet?botId=${encodeURIComponent(data.botId)}`);
         const snData = await snRes.json();
         setWidgetSnippet(snData.snippet || "");
-        setProgress(100);
+        setProgress(90);
         setStatus((s) => [...s, "Klar! Din bot är redo."]);
+
+        // Prepare checkout URL (best-effort)
+        try {
+          const ch = await fetch('/api/billing/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ plan: 'bot_monthly', botId: data.botId })
+          });
+          const chData = await ch.json();
+          if (ch.ok && chData.url) setCheckoutUrl(chData.url);
+        } catch {}
+        setProgress(100);
       } catch (e: any) {
         setStatus((s) => [...s, e.message || "Något gick fel"]);
       }
@@ -90,7 +105,40 @@ export default function BuildBotPage() {
 
           {botId && (
             <div className="space-y-6">
-              <div>
+              {checkoutUrl && (
+                <div className="flex justify-end">
+                  <a href={checkoutUrl} target="_blank" rel="noreferrer" className="px-6 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800">Uppgradera</a>
+                </div>
+              )}
+              <div className="space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Bot‑typ</label>
+                    <select value={botType} onChange={(e) => setBotType(e.target.value as any)} className="w-full border border-gray-200 rounded-lg px-3 py-2">
+                      <option value="knowledge">Knowledge/Q&A</option>
+                      <option value="lead">Lead‑kvalificering</option>
+                      <option value="support">Support‑triage</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Webhook (valfritt)</label>
+                    <input value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} placeholder="https://..." className="w-full border border-gray-200 rounded-lg px-3 py-2" />
+                  </div>
+                </div>
+                <div>
+                  <button
+                    onClick={async () => {
+                      if (!botId) return;
+                      await fetch('/api/bots/update', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ botId, type: botType, webhookUrl })
+                      });
+                      setStatus((s) => [...s, 'Uppdaterade bottype/webhook']);
+                    }}
+                    className="px-4 py-2 bg-gray-900 text-white rounded-lg"
+                  >Spara konfiguration</button>
+                </div>
                 <h2 className="text-xl font-bold mb-2">Widget‑snippet</h2>
                 <p className="text-sm text-gray-600 mb-4">Klistra in i &lt;head&gt; på er webb.</p>
                 <div className="bg-gray-900 text-white rounded-xl p-4 relative">
