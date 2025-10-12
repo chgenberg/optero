@@ -18,6 +18,7 @@ export default function BotsOverview() {
               </div>
               <div className="flex gap-2">
                 <a className="px-4 py-2 bg-white border-2 border-gray-900 rounded-xl" href={`/bots/${b.id}`} target="_blank" rel="noreferrer">Öppna chat</a>
+                <a className="px-4 py-2 bg-white border-2 border-gray-900 rounded-xl" href={`/bots/${b.id}/versions`}>Versioner</a>
               </div>
             </div>
           ))}

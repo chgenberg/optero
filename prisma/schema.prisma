@@ -388,6 +388,8 @@ model Bot {
   sources      BotSource[]
   usages       BotUsage[]
   approvals    ApprovalRequest[]
+  versions     BotVersion[]
+  evals        BotEval[]
   
   @@index([companyUrl])
 }
@@ -418,6 +420,34 @@ model BotUsage {
   
   @@index([botId])
   @@index([createdAt])
+}
+
+model BotVersion {
+  id        String   @id @default(cuid())
+  botId     String
+  version   Int
+  spec      Json
+  createdAt DateTime @default(now())
+
+  bot       Bot @relation(fields: [botId], references: [id])
+
+  @@unique([botId, version])
+  @@index([botId])
+}
+
+model BotEval {
+  id            String   @id @default(cuid())
+  botId         String
+  name          String
+  input         String   @db.Text
+  expectedMatch String
+  lastRunAt     DateTime?
+  lastPass      Boolean?
+  lastReply     String?  @db.Text
+
+  bot           Bot @relation(fields: [botId], references: [id])
+
+  @@index([botId])
 }
 
 // Approval queue for external actions
