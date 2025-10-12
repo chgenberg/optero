@@ -9,7 +9,11 @@ export async function POST(req: NextRequest) {
     if (!botId) return NextResponse.json({ error: "botId required" }, { status: 400 });
     const data: any = {};
     if (type) data.type = type;
-    if (webhookUrl !== undefined) data.spec = { ...(await prisma.bot.findUnique({ where: { id: botId } }))?.spec, webhookUrl };
+    if (webhookUrl !== undefined) {
+      const existing = await prisma.bot.findUnique({ where: { id: botId }, select: { spec: true } });
+      const currentSpec = (existing?.spec as Record<string, unknown> | null) ?? {};
+      data.spec = { ...currentSpec, webhookUrl };
+    }
     if (name) data.name = name;
     const bot = await prisma.bot.update({ where: { id: botId }, data });
     return NextResponse.json({ bot });
