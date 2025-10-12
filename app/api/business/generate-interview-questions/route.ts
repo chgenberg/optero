@@ -57,34 +57,28 @@ Din uppgift är att ställa SMARTA, INSIKTSFULLA följdfrågor som avslöjar:
 - Tidshorisonter och milstolpar
 
 INTERVJUTEKNIK:
-- Börja brett, bli gradvis mer specifik
-- Be om konkreta exempel när de är vaga
-- Utmana antaganden respektfullt
-- Gräv djupare i intressanta spår
+- Alltid specifik: förbjudna generiska fraser ("Berätta mer", "Kan du utveckla", "Vad menar ni?").
+- Referera problemet och företagskontexten explicit.
+- Inkludera 2–3 konkreta delpunkter i samma fråga (t.ex. tidsram, siffra, system/steg).
+- Be om siffror (%, antal, veckor) och exempel.
+- Börja bredare första frågan, sedan mer specifikt per svar.
 
 Efter 3-5 SUBSTANTIELLA svar med konkret information, sätt hasEnoughInfo: true.`;
 
     const userPrompt = contextInfo + conversationContext + `
 
-Analysera konversationen och ställ nästa SMART följdfråga. Fokusera på att få fram:
-- Konkreta siffror och mätetal
-- Specifika exempel och situationer
-- Tydliga orsak-verkan samband
-- Mätbara målbilder
-
-Din fråga ska vara:
-1. Direkt och lätt att svara på
-2. Bygga vidare på tidigare svar
-3. Avslöja ny, värdefull information
-4. Leda mot konkreta lösningar
+Ställ EN tydligt riktad följdfråga med 2–3 konkreta delpunkter (max 2 meningar + ev. punktlista). Krav:
+- Referera explicit till PROBLEMFORMULERINGEN (avdelning/område/ämne) eller tidigare svar.
+- Be om en siffra/tidsram/exempel och nämn system eller processsteg om relevant.
+- Undvik generiska uttryck ("Berätta mer", "Kan du utveckla").
 
 Returnera JSON:
 {
-  "question": "Din specifika, insiktsfulla följdfråga",
+  "question": "Din specifika följdfråga (på svenska)",
   "hasEnoughInfo": false
 }
 
-När du har 3-5 SUBSTANTIELLA svar med konkret info (siffror, exempel, detaljer), sätt hasEnoughInfo: true.`;
+När du har 3–5 substantiella svar, sätt hasEnoughInfo: true.`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-5-mini",
@@ -108,9 +102,29 @@ När du har 3-5 SUBSTANTIELLA svar med konkret info (siffror, exempel, detaljer)
       };
     }
 
+    // Server-side refinement to prevent generic fallbacks
+    const genericPatterns = /(berätta mer|kan du utveckla|berätta gärna|mer info)/i;
+    const pickDimension = (i: number) => {
+      const dims = [
+        "tidsram (veckor/månader)",
+        "mätetal/KPI (t.ex. %, antal, kostnad/vecka)",
+        "system/verktyg i processen",
+        "roller/intressenter",
+        "nuvarande steg (1–3 steg) och var det brister"
+      ];
+      return dims[i % dims.length];
+    };
+    let q = (result.question || "").trim();
+    if (!q || genericPatterns.test(q)) {
+      const step = conversationHistory.length || 0;
+      const dim = pickDimension(step);
+      const shortProblem = problem.slice(0, 160);
+      q = `För problemet: "${shortProblem}" – kan du specificera ${dim}? Lägg till en konkret siffra/tidsram och ett exempel.`;
+    }
+
     return NextResponse.json({
-      question: result.question || "Berätta mer om detta problem.",
-      hasEnoughInfo: result.hasEnoughInfo || conversationHistory.length >= 5
+      question: q,
+      hasEnoughInfo: Boolean(result.hasEnoughInfo) || conversationHistory.length >= 5
     });
 
   } catch (error: any) {

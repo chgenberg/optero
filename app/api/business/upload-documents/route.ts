@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import mammoth from "mammoth";
-import pdfParse from "pdf-parse";
+// pdf-parse causes build issues when statically imported; lazy-load inside handler
 
 export const maxDuration = 60; // 1 minute for file processing
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,6 +24,7 @@ export async function POST(req: NextRequest) {
 
       try {
         if (filename.endsWith('.pdf')) {
+          const { default: pdfParse } = await import('pdf-parse');
           const data = await pdfParse(buffer);
           parsedContents.push(`\n\n=== ${file.name} ===\n${data.text}`);
         }
