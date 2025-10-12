@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    const { url } = await req.json();
+    const { url, documents } = await req.json();
     if (!url) return NextResponse.json({ error: 'url required' }, { status: 400 });
     const normalizeUrl = (input: string) => {
       let u = (input || '').trim();
@@ -25,7 +25,9 @@ export async function POST(req: NextRequest) {
 
     // Strict schema/validator + citations (no source -> no claim)
     const rawProfile: any = profile?.profile || profile || {};
-    const siteText: string = scrape?.summary?.mainText || scrape?.content || '';
+    const baseText: string = scrape?.summary?.mainText || scrape?.content || '';
+    const docsText: string = typeof documents === 'string' ? documents : '';
+    const siteText: string = `${baseText}\n\n${docsText}`.trim();
 
     const schema = {
       companyName: 'string',
@@ -70,12 +72,15 @@ export async function POST(req: NextRequest) {
     };
 
     const verified: any = {};
+    const confidence: any = {};
     const citations: any = {};
     for (const k of Object.keys(profClean)) {
       const v = (profClean as any)[k];
       const cites = mkCitations(siteText, v);
       citations[k] = cites;
       verified[k] = cites.length > 0;
+      // naive confidence: base 0.5 if verified, +0.1 per citation up to 1.0
+      confidence[k] = verified[k] ? Math.min(1, 0.5 + 0.1 * cites.length) : 0;
       // enforce RAG: if no citation, blank out value
       if (!verified[k]) delete (profClean as any)[k];
     }
@@ -87,7 +92,7 @@ export async function POST(req: NextRequest) {
     const risk = 100 - opportunity;
     const scoring = { opportunityScore: opportunity, riskScore: risk, rationale: `Textbas ${textLen} tecken. Kontakter: ${hasContacts ? 'ja' : 'nej'}.` };
 
-    return NextResponse.json({ scrape, profile: profClean, verified, citations, scoring });
+    return NextResponse.json({ scrape, profile: profClean, verified, confidence, citations, scoring });
   } catch (e: any) {
     return NextResponse.json({ error: 'dd_analyze_failed' }, { status: 500 });
   }

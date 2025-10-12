@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import mammoth from "mammoth";
+import pdfParse from "pdf-parse";
 
 export const maxDuration = 60; // 1 minute for file processing
 
@@ -21,9 +22,9 @@ export async function POST(req: NextRequest) {
 
       try {
         if (filename.endsWith('.pdf')) {
-          // PDF support coming soon - use Word or Excel instead
-          parsedContents.push(`\n\n=== ${file.name} ===\n[PDF support coming soon - please convert to Word (.docx) or Excel (.xlsx)]`);
-        } 
+          const data = await pdfParse(buffer);
+          parsedContents.push(`\n\n=== ${file.name} ===\n${data.text}`);
+        }
         else if (filename.endsWith('.xlsx') || filename.endsWith('.xls')) {
           // Parse Excel
           const workbook = XLSX.read(buffer, { type: 'buffer' });
@@ -42,7 +43,10 @@ export async function POST(req: NextRequest) {
           const result = await mammoth.extractRawText({ buffer });
           parsedContents.push(`\n\n=== ${file.name} ===\n${result.value}`);
         }
-        else {
+        else if (filename.endsWith('.key')) {
+          // Keynote is a package/zip; without extra deps, ask user to export as PDF for now
+          parsedContents.push(`\n\n=== ${file.name} ===\n[Keynote (.key) stöds bäst via export till PDF. Vänligen exportera och ladda upp PDF.]`);
+        } else {
           console.log(`Unsupported file type: ${filename}`);
         }
       } catch (error) {
