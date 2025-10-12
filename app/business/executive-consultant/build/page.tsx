@@ -15,6 +15,7 @@ export default function BuildBotPage() {
   const [botType, setBotType] = useState<'knowledge' | 'lead' | 'support'>("knowledge");
   const [webhookUrl, setWebhookUrl] = useState<string>("");
   const [slackWebhook, setSlackWebhook] = useState<string>("");
+  const [requireApproval, setRequireApproval] = useState<boolean>(false);
   const [avail, setAvail] = useState<any>(null);
 
   useEffect(() => {
@@ -137,6 +138,10 @@ export default function BuildBotPage() {
                     <label className="block text-sm font-semibold mb-1">Slack Webhook (valfritt)</label>
                     <input value={slackWebhook} onChange={(e) => setSlackWebhook(e.target.value)} placeholder="https://hooks.slack.com/..." className="w-full border border-gray-200 rounded-lg px-3 py-2" />
                   </div>
+                  <div className="flex items-center gap-2 pt-6">
+                    <input id="reqappr" type="checkbox" checked={requireApproval} onChange={(e) => setRequireApproval(e.target.checked)} />
+                    <label htmlFor="reqappr" className="text-sm font-medium">Kräv godkännande innan externa postningar</label>
+                  </div>
                 </div>
                 <div>
                   <button
@@ -145,7 +150,7 @@ export default function BuildBotPage() {
                       await fetch('/api/bots/update', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ botId, type: botType, webhookUrl, slackWebhook, specPatch: { hubspotEnabled: true } })
+                        body: JSON.stringify({ botId, type: botType, webhookUrl, slackWebhook, specPatch: { hubspotEnabled: true, requireApproval } })
                       });
                       setStatus((s) => [...s, 'Uppdaterade bottype/webhook']);
                     }}

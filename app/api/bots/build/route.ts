@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
         websiteMainText: consult.websiteSummary?.mainText || consult.websiteContent || "",
         documents: consult.documentsContent || ""
       },
+      requireApproval: false,
       sources: {
         website: true,
         documents: Boolean(consult.documentsContent)

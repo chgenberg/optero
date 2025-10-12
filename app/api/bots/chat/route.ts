@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     try {
       const spec: any = bot.spec || {};
       const payload = { botId: bot.id, history, reply };
-      if ((bot.type === 'lead' || bot.type === 'support') && /CALL:WEBHOOK/i.test(reply)) {
+      if ((bot.type === 'lead' || bot.type === 'support') && /CALL:WEBHOOK/i.test(reply) && !spec.requireApproval) {
         if (spec.webhookUrl) {
           await fetch(spec.webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).catch(() => {});
         }
