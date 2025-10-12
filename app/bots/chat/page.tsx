@@ -7,7 +7,8 @@ import { Send, Loader2 } from "lucide-react";
 export default function BotChatTest() {
   const params = useSearchParams();
   const botId = params.get("botId") || "";
-  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  type ChatMsg = { role: "user" | "assistant"; content: string };
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
@@ -16,7 +17,7 @@ export default function BotChatTest() {
 
   const send = async () => {
     if (!input.trim() || loading) return;
-    const next = [...messages, { role: "user", content: input }];
+    const next: ChatMsg[] = [...messages, { role: "user" as const, content: input }];
     setMessages(next);
     setInput("");
     setLoading(true);
@@ -27,7 +28,7 @@ export default function BotChatTest() {
         body: JSON.stringify({ botId, history: next })
       });
       const data = await res.json();
-      setMessages((m) => [...m, { role: "assistant", content: data.reply || "(ingen respons)" }]);
+      setMessages((m) => [...m, { role: "assistant" as const, content: data.reply || "(ingen respons)" }]);
     } finally {
       setLoading(false);
     }
