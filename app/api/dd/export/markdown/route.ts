@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { POST as Analyze } from "@/app/api/dd/analyze/route";
 
 export const dynamic = "force-dynamic";
 
@@ -15,12 +16,40 @@ export async function GET(req: NextRequest) {
     const [analysis] = await prisma.dDAnalysis.findMany({ where: { companyId: company.id }, orderBy: { createdAt: 'desc' }, take: 1 });
     const metrics = await prisma.dDMetric.findMany({ where: { companyId: company.id }, orderBy: { category: 'asc' } });
 
-    const profile = (analysis as any)?.profile || {};
-    const scoring = (analysis as any)?.scoring || {};
+    let profile = (analysis as any)?.profile || {};
+    let scoring = (analysis as any)?.scoring || {};
+    let verified: any = {};
+    let citations: any = {};
+
+    try {
+      const aRes = await Analyze(new Request("http://local", { method: 'POST', body: JSON.stringify({ url }) }) as any);
+      const aJson = await (aRes as any).json();
+      if (aJson?.profile) profile = aJson.profile;
+      if (aJson?.scoring) scoring = aJson.scoring;
+      verified = aJson?.verified || {};
+      citations = aJson?.citations || {};
+    } catch {}
 
     let md = `# Due Diligence Rapport\n\n`;
     md += `## Företag\n- URL: ${company.url}\n- Namn: ${company.name || ''}\n\n`;
     md += `## Profil\n\n\`\`\`json\n${JSON.stringify(profile, null, 2)}\n\`\`\`\n\n`;
+    // Verified fields
+    const verifiedKeys = Object.keys(verified).filter(k=>verified[k]);
+    if (verifiedKeys.length) {
+      md += `### Verifierade fält\n`;
+      for (const k of verifiedKeys) md += `- ${k}\n`;
+    }
+    // Citations
+    const citationKeys = Object.keys(citations || {});
+    if (citationKeys.length) {
+      md += `\n### Citations (källsnuttar)\n`;
+      for (const k of citationKeys) {
+        const arr = (citations as any)[k] || [];
+        if (!arr.length) continue;
+        md += `- ${k}:\n`;
+        for (const c of arr.slice(0,3)) md += `  - "${(c.snippet||'').replace(/\n/g,' ')}"\n`;
+      }
+    }
     md += `## Scoring\n- Opportunity: ${scoring.opportunityScore ?? '—'}/100\n- Risk: ${scoring.riskScore ?? '—'}/100\n\n${scoring.rationale || ''}\n\n`;
     md += `## KPI / Metrics\n`;
     const byCat: Record<string, any[]> = {};
