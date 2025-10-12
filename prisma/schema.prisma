@@ -387,6 +387,7 @@ model Bot {
   
   sources      BotSource[]
   usages       BotUsage[]
+  approvals    ApprovalRequest[]
   
   @@index([companyUrl])
 }
@@ -417,6 +418,23 @@ model BotUsage {
   
   @@index([botId])
   @@index([createdAt])
+}
+
+// Approval queue for external actions
+model ApprovalRequest {
+  id         String   @id @default(cuid())
+  botId      String
+  type       String   // "lead" | "support"
+  payload    Json
+  status     String   @default("pending") // pending | approved | rejected
+  createdAt  DateTime @default(now())
+  approvedAt DateTime?
+  approvedBy String?
+
+  bot        Bot      @relation(fields: [botId], references: [id])
+
+  @@index([botId])
+  @@index([status])
 }
 
 // Store scrape summaries to aid analytics and debugging

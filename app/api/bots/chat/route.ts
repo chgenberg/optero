@@ -45,6 +45,15 @@ export async function POST(req: NextRequest) {
             await upsertHubspotContactStub({ email: m[0] });
           }
         }
+      } else if ((bot.type === 'lead' || bot.type === 'support') && /CALL:WEBHOOK/i.test(reply) && spec.requireApproval) {
+        // Skapa approval request
+        await prisma.approvalRequest.create({
+          data: {
+            botId: bot.id,
+            type: bot.type,
+            payload
+          }
+        });
       }
     } catch {}
 
