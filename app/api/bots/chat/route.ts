@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import prisma from "@/lib/prisma";
+import { upsertHubspotContactStub } from "@/lib/integrations";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -35,6 +36,14 @@ export async function POST(req: NextRequest) {
         }
         if (spec.slackWebhook) {
           await fetch(spec.slackWebhook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: `Ny ${bot.type}-sammanfattning:\n\n${reply}` }) }).catch(() => {});
+        }
+        if (bot.type === 'lead' && spec.hubspotEnabled) {
+          // naive parsing: hitta e‑post i historiken
+          const text = JSON.stringify(history);
+          const m = text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+          if (m) {
+            await upsertHubspotContactStub({ email: m[0] });
+          }
         }
       }
     } catch {}

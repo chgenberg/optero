@@ -15,9 +15,11 @@ export default function BuildBotPage() {
   const [botType, setBotType] = useState<'knowledge' | 'lead' | 'support'>("knowledge");
   const [webhookUrl, setWebhookUrl] = useState<string>("");
   const [slackWebhook, setSlackWebhook] = useState<string>("");
+  const [avail, setAvail] = useState<any>(null);
 
   useEffect(() => {
     const start = async () => {
+      try { const a = await fetch('/api/integrations/availability'); setAvail(await a.json()); } catch {}
       const consultData = sessionStorage.getItem("executiveConsultation");
       const conversations = sessionStorage.getItem("problemConversations");
       if (!consultData || !conversations) {
@@ -143,7 +145,7 @@ export default function BuildBotPage() {
                       await fetch('/api/bots/update', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ botId, type: botType, webhookUrl, slackWebhook })
+                        body: JSON.stringify({ botId, type: botType, webhookUrl, slackWebhook, specPatch: { hubspotEnabled: true } })
                       });
                       setStatus((s) => [...s, 'Uppdaterade bottype/webhook']);
                     }}
