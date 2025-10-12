@@ -65,7 +65,10 @@ export default function DueDiligence() {
 
         {result && !bots && (
           <div className="mt-8">
-            <button onClick={createPlaybooks} className="px-6 py-3 bg-gray-900 text-white rounded-xl">Skapa bot‑playbooks</button>
+            <div className="flex gap-3">
+              <button onClick={createPlaybooks} className="px-6 py-3 bg-gray-900 text-white rounded-xl">Skapa bot‑playbooks</button>
+              <a className="px-6 py-3 bg-white border-2 border-gray-900 rounded-xl" href={`/api/dd/export/markdown?url=${encodeURIComponent(url)}`}>Ladda ner rapport (MD)</a>
+            </div>
           </div>
         )}
 
