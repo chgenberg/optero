@@ -92,7 +92,7 @@ export default function BuildBotPage() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-xl font-bold mb-2">Widget‑snippet</h2>
-                <p className="text-sm text-gray-600 mb-4">Klistra in i <head> på er webb.</p>
+                <p className="text-sm text-gray-600 mb-4">Klistra in i &lt;head&gt; på er webb.</p>
                 <div className="bg-gray-900 text-white rounded-xl p-4 relative">
                   <pre className="whitespace-pre-wrap text-sm">{widgetSnippet}</pre>
                   <button
