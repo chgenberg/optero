@@ -437,6 +437,47 @@ model ApprovalRequest {
   @@index([status])
 }
 
+// Due Diligence entities
+model DDCompany {
+  id        String   @id @default(cuid())
+  url       String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+
+  analyses  DDAnalysis[]
+  metrics   DDMetric[]
+}
+
+model DDAnalysis {
+  id         String   @id @default(cuid())
+  companyId  String
+  version    Int      @default(1)
+  profile    Json
+  scoring    Json
+  createdAt  DateTime @default(now())
+
+  company    DDCompany @relation(fields: [companyId], references: [id])
+
+  @@index([companyId])
+}
+
+model DDMetric {
+  id         String   @id @default(cuid())
+  companyId  String
+  category   String   // financials | sales | support | web | hr
+  key        String   // e.g., ARR, MRR, CAC
+  period     String   // e.g., 2025-09, 2024, Q1-2025
+  value      Float
+  source     String   // scrape | customer | assumption | file
+  createdAt  DateTime @default(now())
+
+  company    DDCompany @relation(fields: [companyId], references: [id])
+
+  @@index([companyId])
+  @@index([category])
+  @@index([key, period])
+}
+
 // Store scrape summaries to aid analytics and debugging
 model CompanyScrapeRun {
   id              String   @id @default(cuid())
