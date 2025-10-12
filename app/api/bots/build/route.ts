@@ -13,6 +13,7 @@ export async function POST(req: NextRequest) {
       type: "knowledge", // default, can be updated via /api/bots/update
       webhookUrl: null as string | null,
       slackWebhook: null as string | null,
+      plan: 'free' as 'free' | 'pro',
       goals: consult.websiteSummary?.summary?.goals || [],
       context: {
         websiteMainText: consult.websiteSummary?.mainText || consult.websiteContent || "",

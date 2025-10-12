@@ -10,14 +10,14 @@
 
     var btn = document.createElement('button');
     btn.className = 'mendio-bot-btn';
-    btn.textContent = 'Chatta med AI';
+    btn.textContent = 'Chatta med AI · by Mendio (Free)';
 
     var panel = document.createElement('div');
     panel.className = 'mendio-bot-panel';
 
     var header = document.createElement('div');
     header.className = 'mendio-bot-header';
-    header.innerHTML = '<span>MENDIO BOT</span><button style="background:transparent;color:#fff;font-weight:700">×</button>';
+    header.innerHTML = '<span>MENDIO BOT · Free</span><button style="background:transparent;color:#fff;font-weight:700">×</button>';
     var closeBtn = header.querySelector('button');
     closeBtn.addEventListener('click', function(){ panel.style.display='none'; });
 

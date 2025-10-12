@@ -64,6 +64,19 @@ export async function POST(req: NextRequest) {
       });
     } catch {}
 
+    // Simple rate limit for free plan: max 50 messages per day per bot
+    try {
+      const spec: any = bot.spec || {};
+      const isFree = spec.plan !== 'pro';
+      if (isFree) {
+        const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const count = await prisma.botUsage.count({ where: { botId: bot.id, createdAt: { gte: since }, kind: 'message' } });
+        if (count > 50) {
+          return NextResponse.json({ reply: 'Gratisgränsen är nådd för idag. Uppgradera för mer kapacitet.' });
+        }
+      }
+    } catch {}
+
     return NextResponse.json({ reply });
   } catch (e: any) {
     console.error("chat error", e);
