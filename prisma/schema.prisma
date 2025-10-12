@@ -373,6 +373,52 @@ model ExecutiveSolution {
   @@index([companyUrl])
 }
 
+// Bot provisioning
+model Bot {
+  id           String   @id @default(cuid())
+  companyUrl   String?
+  name         String
+  type         String   // "knowledge" | "workflow"
+  spec         Json     // Full konfiguration: roll, mål, verktyg
+  embeddingKey String?  // referens till vektorindex/namespace
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  sources      BotSource[]
+  usages       BotUsage[]
+  
+  @@index([companyUrl])
+}
+
+model BotSource {
+  id        String   @id @default(cuid())
+  botId     String
+  kind      String   // "website" | "document"
+  url       String?  // för website
+  filename  String?  // för dokument
+  meta      Json?
+  createdAt DateTime @default(now())
+  
+  bot       Bot      @relation(fields: [botId], references: [id])
+  
+  @@index([botId])
+}
+
+model BotUsage {
+  id        String   @id @default(cuid())
+  botId     String
+  userId    String?
+  kind      String   // "message" | "action"
+  tokens    Int?     // valfritt
+  createdAt DateTime @default(now())
+  
+  bot       Bot      @relation(fields: [botId], references: [id])
+  
+  @@index([botId])
+  @@index([createdAt])
+}
+
 // Store scrape summaries to aid analytics and debugging
 model CompanyScrapeRun {
   id              String   @id @default(cuid())

@@ -391,6 +391,12 @@ export default function ExecutiveSolution() {
             Vi hjälper er att omsätta dessa lösningar i praktiken
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => router.push("/business/executive-consultant/build")}
+              className="px-8 py-4 bg-white text-gray-900 rounded-xl hover:bg-gray-100 transition-all font-bold text-lg"
+            >
+              BYGG MIN BOT
+            </button>
             <a
               href="mailto:ch.genberg@gmail.com?subject=Executive AI Konsultation - Implementation"
               className="flex items-center justify-center gap-2 px-8 py-4 bg-white text-gray-900 rounded-xl hover:bg-gray-100 transition-all font-bold text-lg"
