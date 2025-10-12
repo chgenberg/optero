@@ -35,6 +35,20 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    // Gap-analys mot benchmarks
+    md += `\n## Gap-analys (mot generiska benchmarks)\n`;
+    // naive map from metrics for some keys
+    const findVal = (key: string) => metrics.filter(m=>m.key.toLowerCase()===key.toLowerCase()).pop()?.value;
+    const bm = { conversion: 3.5, AHT: 15, MQL: 500, tickets: 400 };
+    const current = { conversion: findVal('conversion'), AHT: findVal('AHT'), MQL: findVal('MQL'), tickets: findVal('tickets') } as any;
+    for (const k of Object.keys(bm)) {
+      const cur = current[k];
+      if (cur === undefined) continue;
+      const target = (bm as any)[k];
+      const gap = k === 'AHT' ? (cur - target) : (target - cur); // lower AHT is better
+      md += `- ${k}: nu=${cur}, mål=${target}, gap=${gap>0?'+':''}${gap.toFixed(2)}\n`;
+    }
+
     return new NextResponse(md, { status: 200, headers: { 'Content-Type': 'text/markdown; charset=utf-8', 'Content-Disposition': 'attachment; filename="dd-report.md"' } });
   } catch (e: any) {
     return new NextResponse('export_failed', { status: 500 });
