@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Send, Loader2 } from "lucide-react";
 
-export default function BotChatTest() {
+export const dynamic = "force-dynamic";
+
+function ChatInner() {
   const params = useSearchParams();
   const botId = params.get("botId") || "";
   type ChatMsg = { role: "user" | "assistant"; content: string };
@@ -53,6 +55,14 @@ export default function BotChatTest() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function BotChatTest() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 text-gray-900 flex items-center justify-center">Laddar...</div>}>
+      <ChatInner />
+    </Suspense>
   );
 }
 
