@@ -7,8 +7,16 @@ export async function POST(req: NextRequest) {
   try {
     const { url } = await req.json();
     if (!url) return NextResponse.json({ error: 'url required' }, { status: 400 });
-    const company = await prisma.dDCompany.findUnique({ where: { url } });
-    if (!company) return NextResponse.json({ error: 'company_not_found' }, { status: 404 });
+    const normalizeUrl = (input: string) => {
+      let u = (input || '').trim();
+      if (!/^https?:\/\//i.test(u)) u = `https://${u}`;
+      return u;
+    };
+    const normUrl = normalizeUrl(url);
+    let company = await prisma.dDCompany.findUnique({ where: { url: normUrl } });
+    if (!company) {
+      company = await prisma.dDCompany.upsert({ where: { url: normUrl }, update: {}, create: { url: normUrl } });
+    }
 
     const metrics = await prisma.dDMetric.findMany({ where: { companyId: company.id } });
     const get = (cat: string, key: string) => {

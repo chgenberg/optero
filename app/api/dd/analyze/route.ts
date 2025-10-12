@@ -8,12 +8,19 @@ export async function POST(req: NextRequest) {
   try {
     const { url } = await req.json();
     if (!url) return NextResponse.json({ error: 'url required' }, { status: 400 });
+    const normalizeUrl = (input: string) => {
+      let u = (input || '').trim();
+      if (!u) return u;
+      if (!/^https?:\/\//i.test(u)) u = `https://${u}`;
+      return u;
+    };
+    const normUrl = normalizeUrl(url);
 
     // Reuse existing endpoints
-    const scrapeRes = await Scrape(new Request("http://local", { method: 'POST', body: JSON.stringify({ url }) }) as any);
+    const scrapeRes = await Scrape(new Request("http://local", { method: 'POST', body: JSON.stringify({ url: normUrl }) }) as any);
     const scrape = await (scrapeRes as any).json();
 
-    const profileRes = await Profile(new Request("http://local", { method: 'POST', body: JSON.stringify({ url, scrape }) }) as any);
+    const profileRes = await Profile(new Request("http://local", { method: 'POST', body: JSON.stringify({ url: normUrl, scrape }) }) as any);
     const profile = await (profileRes as any).json();
 
     // Strict schema/validator + citations (no source -> no claim)
