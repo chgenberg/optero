@@ -7,6 +7,7 @@ export default function DueDiligence() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [bots, setBots] = useState<any>(null);
+  const [scoring, setScoring] = useState<any>(null);
 
   const analyze = async () => {
     if (!url.trim()) return;
@@ -27,6 +28,12 @@ export default function DueDiligence() {
     const res = await fetch('/api/dd/playbooks', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url, analysis: result }) });
     const data = await res.json();
     setBots(data);
+  };
+
+  const refreshScoring = async () => {
+    const r = await fetch('/api/dd/score', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
+    const d = await r.json();
+    setScoring(d);
   };
 
   return (
@@ -68,7 +75,15 @@ export default function DueDiligence() {
             <div className="flex gap-3">
               <button onClick={createPlaybooks} className="px-6 py-3 bg-gray-900 text-white rounded-xl">Skapa bot‑playbooks</button>
               <a className="px-6 py-3 bg-white border-2 border-gray-900 rounded-xl" href={`/api/dd/export/markdown?url=${encodeURIComponent(url)}`}>Ladda ner rapport (MD)</a>
+              <button onClick={refreshScoring} className="px-6 py-3 bg-white border-2 border-gray-900 rounded-xl">Uppdatera scoring</button>
             </div>
+          </div>
+        )}
+
+        {scoring && (
+          <div className="mt-8 bg-white border-2 border-gray-900 rounded-2xl p-6">
+            <h2 className="text-xl font-bold mb-3">Uppdaterad scoring</h2>
+            <pre className="bg-gray-100 p-3 rounded text-sm overflow-auto">{JSON.stringify(scoring, null, 2)}</pre>
           </div>
         )}
 

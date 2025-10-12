@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     const { url, analysis } = await req.json();
     if (!url) return NextResponse.json({ error: 'url required' }, { status: 400 });
 
-    const sharedSpec = {
+    const sharedSpec: any = {
       role: 'company_bot',
       url,
       context: { websiteMainText: analysis?.scrape?.summary?.mainText || analysis?.scrape?.content || '' },
@@ -20,9 +20,9 @@ export async function POST(req: NextRequest) {
     // Knowledge bot
     created.push(await prisma.bot.create({ data: { name: `Knowledge for ${url}`, type: 'knowledge', companyUrl: url, spec: { ...sharedSpec } } }));
     // Lead bot
-    created.push(await prisma.bot.create({ data: { name: `Lead for ${url}`, type: 'lead', companyUrl: url, spec: { ...sharedSpec } } }));
+    created.push(await prisma.bot.create({ data: { name: `Lead for ${url}`, type: 'lead', companyUrl: url, spec: { ...sharedSpec, kpis: analysis?.scoring?.suggestedKPIs?.lead || null } } }));
     // Support bot
-    created.push(await prisma.bot.create({ data: { name: `Support for ${url}`, type: 'support', companyUrl: url, spec: { ...sharedSpec, requireApproval: true } } }));
+    created.push(await prisma.bot.create({ data: { name: `Support for ${url}`, type: 'support', companyUrl: url, spec: { ...sharedSpec, requireApproval: true, kpis: analysis?.scoring?.suggestedKPIs?.support || null } } }));
 
     return NextResponse.json({ created });
   } catch (e: any) {
