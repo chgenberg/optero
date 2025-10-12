@@ -5,14 +5,14 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    const { botId, type, webhookUrl, name } = await req.json();
+    const { botId, type, webhookUrl, slackWebhook, name } = await req.json();
     if (!botId) return NextResponse.json({ error: "botId required" }, { status: 400 });
     const data: any = {};
     if (type) data.type = type;
-    if (webhookUrl !== undefined) {
+    if (webhookUrl !== undefined || slackWebhook !== undefined) {
       const existing = await prisma.bot.findUnique({ where: { id: botId }, select: { spec: true } });
       const currentSpec = (existing?.spec as Record<string, unknown> | null) ?? {};
-      data.spec = { ...currentSpec, webhookUrl };
+      data.spec = { ...currentSpec, ...(webhookUrl !== undefined ? { webhookUrl } : {}), ...(slackWebhook !== undefined ? { slackWebhook } : {}) };
     }
     if (name) data.name = name;
     const bot = await prisma.bot.update({ where: { id: botId }, data });

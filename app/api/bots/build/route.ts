@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
       problem: consult.problems?.[0] || "",
       type: "knowledge", // default, can be updated via /api/bots/update
       webhookUrl: null as string | null,
+      slackWebhook: null as string | null,
       goals: consult.websiteSummary?.summary?.goals || [],
       context: {
         websiteMainText: consult.websiteSummary?.mainText || consult.websiteContent || "",

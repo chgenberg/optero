@@ -14,6 +14,7 @@ export default function BuildBotPage() {
   const [checkoutUrl, setCheckoutUrl] = useState<string>("");
   const [botType, setBotType] = useState<'knowledge' | 'lead' | 'support'>("knowledge");
   const [webhookUrl, setWebhookUrl] = useState<string>("");
+  const [slackWebhook, setSlackWebhook] = useState<string>("");
 
   useEffect(() => {
     const start = async () => {
@@ -105,11 +106,16 @@ export default function BuildBotPage() {
 
           {botId && (
             <div className="space-y-6">
-              {checkoutUrl && (
+              <div className="flex flex-col sm:flex-row gap-3 justify-end">
+                {botId && (
+                  <a href={`/bots/${botId}`} target="_blank" rel="noreferrer" className="px-6 py-3 bg-white border-2 border-gray-900 rounded-xl hover:bg-gray-50">Öppna publik chat</a>
+                )}
+                {checkoutUrl && (
                 <div className="flex justify-end">
                   <a href={checkoutUrl} target="_blank" rel="noreferrer" className="px-6 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800">Uppgradera</a>
                 </div>
-              )}
+                )}
+              </div>
               <div className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
@@ -124,6 +130,10 @@ export default function BuildBotPage() {
                     <label className="block text-sm font-semibold mb-1">Webhook (valfritt)</label>
                     <input value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} placeholder="https://..." className="w-full border border-gray-200 rounded-lg px-3 py-2" />
                   </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Slack Webhook (valfritt)</label>
+                    <input value={slackWebhook} onChange={(e) => setSlackWebhook(e.target.value)} placeholder="https://hooks.slack.com/..." className="w-full border border-gray-200 rounded-lg px-3 py-2" />
+                  </div>
                 </div>
                 <div>
                   <button
@@ -132,7 +142,7 @@ export default function BuildBotPage() {
                       await fetch('/api/bots/update', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ botId, type: botType, webhookUrl })
+                        body: JSON.stringify({ botId, type: botType, webhookUrl, slackWebhook })
                       });
                       setStatus((s) => [...s, 'Uppdaterade bottype/webhook']);
                     }}

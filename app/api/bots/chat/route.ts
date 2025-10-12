@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     const bot = await prisma.bot.findUnique({ where: { id: botId } });
     if (!bot) return NextResponse.json({ error: "Bot not found" }, { status: 404 });
 
-    const system = `Du är en företagsbot. Följ botens specifikation strikt.\n\nSpec: ${JSON.stringify(bot.spec).slice(0, 4000)}\n\nBottype: ${bot.type}.\n- knowledge: använd context för att svara.\n- lead: ställ 4-6 kvalificeringsfrågor (behov, budget, tidsram, roll, KPI), sammanfatta och POST:a till webhookUrl om satt.\n- support: kategorisera ärendet, föreslå lösning, be om kontaktinfo vid behov.\n`;
+    const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${JSON.stringify(bot.spec).slice(0, 4000)}\n\nBottype: ${bot.type}.\nknowledge:\n- svara bara utifrån context.\n- om saknas info: ställ precis en tydlig följdfråga.\nlead:\n- ställ i turordning: problem, mål/KPI, budgetintervall, tidsram, beslutsroll, nästa steg.\n- när allt är insamlat: gör en kort sammanfattning + CALL:WEBHOOK.\nsupport:\n- be om beskrivning, kategori, brådska, tidigare steg, kontaktinfo.\n- föreslå lösning + CALL:WEBHOOK.\n`;
 
     const messages = [
       { role: "system", content: system },
@@ -28,12 +28,14 @@ export async function POST(req: NextRequest) {
     // lead/support webhook best-effort
     try {
       const spec: any = bot.spec || {};
-      if (spec.webhookUrl && (bot.type === 'lead' || bot.type === 'support')) {
-        await fetch(spec.webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ botId: bot.id, history, reply })
-        }).catch(() => {});
+      const payload = { botId: bot.id, history, reply };
+      if ((bot.type === 'lead' || bot.type === 'support')) {
+        if (spec.webhookUrl) {
+          await fetch(spec.webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).catch(() => {});
+        }
+        if (spec.slackWebhook) {
+          await fetch(spec.slackWebhook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: `Ny ${bot.type}-sammanfattning:\n\n${reply}` }) }).catch(() => {});
+        }
       }
     } catch {}
 
