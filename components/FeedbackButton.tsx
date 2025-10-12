@@ -2,6 +2,43 @@
 
 import { useState } from "react";
 
+export default function FeedbackButton() {
+  const [open, setOpen] = useState(false);
+  const [score, setScore] = useState<number|undefined>(undefined);
+  const [comment, setComment] = useState("");
+  const submit = async () => {
+    await fetch('/api/feedback', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ score, comment, context: { path: window.location.pathname } }) });
+    setOpen(false); setScore(undefined); setComment("");
+    alert('Tack för din feedback!');
+  };
+  return (
+    <>
+      <button onClick={()=>setOpen(true)} className="fixed bottom-5 right-5 px-4 py-2 rounded-full bg-gray-900 text-white shadow-lg">Feedback</button>
+      {open && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border-2 border-gray-900 p-6 w-full max-w-md">
+            <h3 className="text-xl font-bold mb-3">Hur troligt är det att du rekommenderar oss?</h3>
+            <div className="flex gap-2 mb-3">
+              {Array.from({length:11},(_,i)=>i).map(n=> (
+                <button key={n} onClick={()=>setScore(n)} className={`w-8 h-8 rounded-full border ${score===n? 'bg-gray-900 text-white' : 'bg-white'}`}>{n}</button>
+              ))}
+            </div>
+            <textarea value={comment} onChange={(e)=>setComment(e.target.value)} rows={4} placeholder="Valfri kommentar" className="w-full border rounded-xl px-3 py-2 mb-3" />
+            <div className="flex justify-end gap-2">
+              <button onClick={()=>setOpen(false)} className="px-4 py-2 bg-white border-2 border-gray-900 rounded-xl">Avbryt</button>
+              <button onClick={submit} className="px-4 py-2 bg-gray-900 text-white rounded-xl">Skicka</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+"use client";
+
+import { useState } from "react";
+
 interface FeedbackButtonProps {
   context?: {
     profession: string;

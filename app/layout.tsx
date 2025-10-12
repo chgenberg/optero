@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
+import FreePlanBanner from "@/components/FreePlanBanner";
 import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import FeedbackButton from "@/components/FeedbackButton";
 
 export const metadata: Metadata = {
   title: "Mendio - Gör vardagen lättare med AI",
@@ -41,9 +43,15 @@ export default function RootLayout({
       <body className="antialiased bg-white text-gray-900 min-h-screen flex flex-col">
         <LanguageProvider>
           <Header />
-          <main className="pt-16 flex-grow">{children}</main>
+          <main className="pt-16 flex-grow">
+            <div className="max-w-5xl mx-auto px-4">
+              <FreePlanBanner />
+            </div>
+            {children}
+          </main>
           <Footer />
           <CookieBanner />
+          <FeedbackButton />
         </LanguageProvider>
       </body>
     </html>

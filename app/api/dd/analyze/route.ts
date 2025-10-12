@@ -58,14 +58,29 @@ export async function POST(req: NextRequest) {
 
     const mkCitations = (text: string, value: string | string[]) => {
       const cites: { snippet: string }[] = [];
-      const add = (s: string) => {
-        const idx = text.toLowerCase().indexOf(s.toLowerCase());
-        if (idx >= 0) {
-          const start = Math.max(0, idx - 60);
-          const end = Math.min(text.length, idx + s.length + 60);
-          cites.push({ snippet: text.slice(start, end) });
-        }
+      const L = text.toLowerCase();
+      const pushWindow = (idx: number, len: number) => {
+        const start = Math.max(0, idx - 80);
+        const end = Math.min(text.length, idx + len + 80);
+        cites.push({ snippet: text.slice(start, end) });
       };
+      const searchFuzzy = (s: string) => {
+        const q = s.toLowerCase().trim();
+        if (!q) return false;
+        // exact
+        let idx = L.indexOf(q);
+        if (idx >= 0) { pushWindow(idx, q.length); return true; }
+        // word token overlap (>=2 tokens of length>=4)
+        const toks = q.split(/[^a-z0-9åäöA-ZÅÄÖ]+/i).filter(w=>w.length>=4).slice(0,5);
+        let hits = 0; let firstIdx = -1; let len = 0;
+        for (const t of toks) {
+          const i = L.indexOf(t);
+          if (i>=0) { hits++; if (firstIdx<0) firstIdx=i; len += t.length; }
+        }
+        if (hits>=2 && firstIdx>=0) { pushWindow(firstIdx, Math.min(120, len)); return true; }
+        return false;
+      };
+      const add = (s: string) => { if (searchFuzzy(s)) return; };
       if (typeof value === 'string' && value) add(value);
       if (Array.isArray(value)) value.slice(0, 10).forEach(v => typeof v === 'string' && v && add(v));
       return cites;
@@ -84,6 +99,31 @@ export async function POST(req: NextRequest) {
       // enforce RAG: if no citation, blank out value
       if (!verified[k]) delete (profClean as any)[k];
     }
+
+    // Heuristic fallbacks for common sections if still missing
+    const ifEmpty = (key: string, extractor: () => string | string[] | undefined) => {
+      if ((profClean as any)[key]) return;
+      const val = extractor();
+      if (!val) return;
+      const c = mkCitations(siteText, val);
+      if (c.length) {
+        (profClean as any)[key] = val;
+        citations[key] = c; verified[key] = true; confidence[key] = Math.min(1, 0.5 + 0.1 * c.length);
+      }
+    };
+    // Extract from About/Om oss and Services/Tjänster blocks
+    const section = (labelRe: RegExp) => {
+      const m = siteText.match(new RegExp(`(^|\n)\s*(${labelRe.source}).{0,2000}`, 'i'));
+      return m ? m[0] : undefined;
+    };
+    ifEmpty('USPs', () => {
+      const s = section(/(om oss|about|tjänster|services)/);
+      if (!s) return undefined;
+      const lines = s.split(/\n+/).map(x=>x.trim()).filter(x=>x.length>0).slice(0,6);
+      // pick bullet‑like lines or short sentences
+      const usps = lines.filter(l=>/^[-•*]/.test(l) || l.split(' ').length<=12).map(l=>l.replace(/^[-•*]\s*/, ''));
+      return usps.slice(0,5);
+    });
 
     // Simple scoring heuristic
     const textLen = siteText.length;
