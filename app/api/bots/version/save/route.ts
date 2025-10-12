@@ -15,7 +15,8 @@ export async function POST(req: NextRequest) {
     const latest = await prisma.botVersion.findFirst({ where: { botId }, orderBy: { version: 'desc' } });
     const nextVersion = (latest?.version ?? 0) + 1;
 
-    const saved = await prisma.botVersion.create({ data: { botId, version: nextVersion, spec: bot.spec } });
+    const nextSpec = (bot.spec ?? {}) as any;
+    const saved = await prisma.botVersion.create({ data: { botId, version: nextVersion, spec: nextSpec } });
     return NextResponse.json({ ok: true, version: saved });
   } catch (e: any) {
     return NextResponse.json({ error: 'save_failed' }, { status: 500 });
