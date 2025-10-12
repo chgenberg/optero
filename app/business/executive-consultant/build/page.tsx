@@ -110,6 +110,7 @@ export default function BuildBotPage() {
                 {botId && (
                   <a href={`/bots/${botId}`} target="_blank" rel="noreferrer" className="px-6 py-3 bg-white border-2 border-gray-900 rounded-xl hover:bg-gray-50">Öppna publik chat</a>
                 )}
+                <a href="/analytics" className="px-6 py-3 bg-white border-2 border-gray-900 rounded-xl hover:bg-gray-50">Analytics</a>
                 {checkoutUrl && (
                 <div className="flex justify-end">
                   <a href={checkoutUrl} target="_blank" rel="noreferrer" className="px-6 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800">Uppgradera</a>
