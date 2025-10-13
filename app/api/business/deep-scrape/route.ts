@@ -18,17 +18,66 @@ export async function POST(req: NextRequest) {
       targetUrl = `https://${targetUrl}`;
     }
 
+    // Helper: resilient fetch with retry/backoff
+    const fetchWithRetry = async (input: string, init: RequestInit & { timeoutMs?: number } = {}) => {
+      const maxRetries = 2;
+      const timeoutMs = init.timeoutMs ?? 8000;
+      let lastErr: any;
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          const ctrl = new AbortController();
+          const t = setTimeout(() => ctrl.abort(), timeoutMs);
+          const res = await fetch(input, {
+            ...init,
+            signal: ctrl.signal,
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; MendioPremiumCrawler/1.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123 Safari/537.36',
+              'Accept-Language': 'sv-SE,sv;q=0.9,en;q=0.8',
+              ...(init.headers || {})
+            }
+          } as any);
+          clearTimeout(t);
+          if (!res.ok && res.status >= 500) throw new Error(`HTTP ${res.status}`);
+          return res;
+        } catch (e) {
+          lastErr = e;
+          await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
+        }
+      }
+      throw lastErr;
+    };
+
     // Fetch main page
-    const mainResponse = await fetch(targetUrl, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; MendioBot/1.0)' }
-    });
+    const mainResponse = await fetchWithRetry(targetUrl);
     const mainHtml = await mainResponse.text();
     const $ = cheerio.load(mainHtml);
 
-    // Extract sitemap URLs (simplified - check robots.txt or sitemap.xml)
+    // Extract sitemap URLs (robots.txt → sitemap, then sitemap.xml)
     let sitemapUrls: string[] = [];
     try {
-      const sitemapResponse = await fetch(`${new URL(targetUrl).origin}/sitemap.xml`);
+      // robots.txt
+      try {
+        const robotsRes = await fetchWithRetry(`${new URL(targetUrl).origin}/robots.txt`, { timeoutMs: 3000 });
+        if (robotsRes.ok) {
+          const robots = await robotsRes.text();
+          const m = robots.match(/sitemap:\s*(.*)/i);
+          if (m && m[1]) {
+            const robSitemap = m[1].trim();
+            const smRes = await fetchWithRetry(robSitemap, { timeoutMs: 6000 });
+            if (smRes.ok) {
+              const smXml = await smRes.text();
+              const $s = cheerio.load(smXml, { xmlMode: true });
+              $s('url > loc').each((_, el) => {
+                const locUrl = $s(el).text();
+                if (locUrl) sitemapUrls.push(locUrl);
+              });
+            }
+          }
+        }
+      } catch {}
+
+      // fallback sitemap.xml
+      const sitemapResponse = await fetchWithRetry(`${new URL(targetUrl).origin}/sitemap.xml`, { timeoutMs: 6000 });
       if (sitemapResponse.ok) {
         const sitemapXml = await sitemapResponse.text();
         const $sitemap = cheerio.load(sitemapXml, { xmlMode: true });
@@ -54,17 +103,23 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Limit to 10 pages for now (can be premium feature to crawl more)
-    sitemapUrls = Array.from(new Set([targetUrl, ...sitemapUrls])).slice(0, 10);
+    // Premium: crawl up to 20 pages
+    sitemapUrls = Array.from(new Set([targetUrl, ...sitemapUrls])).slice(0, 20);
 
     // Scrape each page
-    const pageContents: Array<{ url: string; title: string; text: string }> = [];
+    const pageContents: Array<{ 
+      url: string; 
+      title: string; 
+      text: string;
+      meta?: { description?: string; ogTitle?: string; ogDescription?: string; canonical?: string };
+      headings?: { h1: string[]; h2: string[]; h3: string[] };
+      links?: string[];
+      pdfs?: string[];
+      schema?: { faq?: Array<{ question: string; answer: string }> };
+    }> = [];
     for (const pageUrl of sitemapUrls) {
       try {
-        const res = await fetch(pageUrl, {
-          headers: { 'User-Agent': 'Mozilla/5.0 (compatible; MendioBot/1.0)' },
-          signal: AbortSignal.timeout(5000)
-        });
+        const res = await fetchWithRetry(pageUrl, { timeoutMs: 8000 });
         if (!res.ok) continue;
         const html = await res.text();
         const $page = cheerio.load(html);
@@ -72,10 +127,64 @@ export async function POST(req: NextRequest) {
         // Remove scripts, styles, nav, footer
         $page('script, style, nav, footer, header').remove();
         
-        const title = $page('title').text() || $page('h1').first().text() || '';
-        const text = $page('body').text().replace(/\s+/g, ' ').trim().slice(0, 3000);
-        
-        pageContents.push({ url: pageUrl, title, text });
+        const title = ($page('title').text() || $page('h1').first().text() || '').trim();
+        const description = ($page('meta[name="description"]').attr('content') || '').trim();
+        const ogTitle = ($page('meta[property="og:title"]').attr('content') || '').trim();
+        const ogDescription = ($page('meta[property="og:description"]').attr('content') || '').trim();
+        const canonical = ($page('link[rel="canonical"]').attr('href') || '').trim();
+
+        // Headings
+        const headings = { h1: [] as string[], h2: [] as string[], h3: [] as string[] };
+        $page('h1').each((_, el) => headings.h1.push($page(el).text().trim()));
+        $page('h2').each((_, el) => headings.h2.push($page(el).text().trim()));
+        $page('h3').each((_, el) => headings.h3.push($page(el).text().trim()));
+
+        // Links & PDFs
+        const links: string[] = [];
+        const pdfs: string[] = [];
+        $page('a[href]').each((_, el) => {
+          const href = $page(el).attr('href') || '';
+          try {
+            const full = new URL(href, pageUrl).href;
+            if (/\.pdf(\?|#|$)/i.test(full)) pdfs.push(full);
+            else links.push(full);
+          } catch {}
+        });
+
+        // Text with basic structure
+        const text = $page('body').text().replace(/\s+/g, ' ').trim().slice(0, 6000);
+
+        // JSON-LD FAQ
+        const schema: { faq?: Array<{ question: string; answer: string }> } = {};
+        try {
+          $page('script[type="application/ld+json"]').each((_, el) => {
+            try {
+              const json = JSON.parse($page(el).contents().text() || '{}');
+              const graphs = Array.isArray(json) ? json : (json['@graph'] ? json['@graph'] : [json]);
+              for (const node of graphs) {
+                if (node['@type'] === 'FAQPage' && Array.isArray(node.mainEntity)) {
+                  schema.faq = schema.faq || [];
+                  for (const q of node.mainEntity) {
+                    const question = (q.name || '').trim();
+                    const answer = (q.acceptedAnswer?.text || '').trim();
+                    if (question && answer) schema.faq.push({ question, answer });
+                  }
+                }
+              }
+            } catch {}
+          });
+        } catch {}
+
+        pageContents.push({ 
+          url: pageUrl, 
+          title, 
+          text,
+          meta: { description, ogTitle, ogDescription, canonical },
+          headings,
+          links: Array.from(new Set(links)).slice(0, 50),
+          pdfs: Array.from(new Set(pdfs)).slice(0, 20),
+          schema
+        });
       } catch (err) {
         console.error(`Failed to scrape ${pageUrl}:`, err);
       }
@@ -84,7 +193,7 @@ export async function POST(req: NextRequest) {
     // AI Analysis: extract company info, problems, USP, customer type
     const combinedText = pageContents.map(p => `${p.title}\n${p.text}`).join('\n\n').slice(0, 12000);
     
-    const analysisPrompt = `Analysera följande webbplatsinnehåll och extrahera:
+    const analysisPrompt = `Analysera följande webbplatsinnehåll (rubriker, meta, FAQ) och extrahera:
 
 1. **Företagsbeskrivning**: Vad gör företaget? (1-2 meningar)
 2. **Målgrupp**: Vem är deras kund? (B2B/B2C, bransch, storlek)
@@ -111,9 +220,9 @@ Svara i JSON-format:
     const aiResponse = await openai.chat.completions.create({
       model: "gpt-5-mini",
       messages: [{ role: "user", content: analysisPrompt }],
-      max_completion_tokens: 1500
+      max_completion_tokens: 2000
     }, {
-      timeout: 60000
+      timeout: 90000
     });
 
     let analysis: any = {};
@@ -140,7 +249,7 @@ Svara i JSON-format:
       success: true,
       url: targetUrl,
       pagesScraped: pageContents.length,
-      pages: pageContents, // Full content: url, title, text (for embeddings)
+      pages: pageContents,
       analysis,
       rawText: combinedText.slice(0, 5000) // for debugging
     });
