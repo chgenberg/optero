@@ -3,6 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 const ALLOWED_TYPES = [
   "image/png",
@@ -43,8 +44,17 @@ export async function POST(req: NextRequest) {
     await fs.writeFile(targetPath, buffer);
 
     const url = `/uploads/${filename}`;
-    // Return both keys so old/new clients work
-    return NextResponse.json({ url, logoUrl: url });
+    // Build absolute URL for environments behind proxies
+    try {
+      const host = req.headers.get('x-forwarded-host') || req.headers.get('host') || '';
+      const proto = req.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https');
+      const origin = host ? `${proto}://${host}` : '';
+      const absoluteUrl = origin ? `${origin}${url}` : url;
+      return NextResponse.json({ url, logoUrl: absoluteUrl });
+    } catch {
+      // Fallback
+      return NextResponse.json({ url, logoUrl: url });
+    }
   } catch (err) {
     console.error("Logo upload error:", err);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
