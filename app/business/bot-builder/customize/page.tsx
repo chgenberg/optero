@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { MinimalIcons } from "@/components/MinimalIcons";
 import { HexColorPicker } from "react-colorful";
 
 export default function CustomizeBotPage() {
@@ -12,8 +11,8 @@ export default function CustomizeBotPage() {
     fontFamily: 'system-ui',
     tone: 'professional' as 'formal' | 'casual' | 'professional',
     logoUrl: '',
-    logoPosition: 'bottom-right' as string,
-    logoOffset: { x: 20, y: 20 } as { x: number, y: number },
+    logoPosition: 'bottom-right',
+    logoOffset: { x: 20, y: 20 },
     fontUrl: ''
   });
   const [integrations, setIntegrations] = useState({
@@ -27,11 +26,9 @@ export default function CustomizeBotPage() {
   const [botType, setBotType] = useState('knowledge');
   const [loading, setLoading] = useState(true);
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const [showIntegrations, setShowIntegrations] = useState(false);
   const colorPickerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Get website URL from sessionStorage
     const websiteUrl = sessionStorage.getItem('botWebsiteUrl');
     const problemData = sessionStorage.getItem('botProblemData');
     const interviewData = sessionStorage.getItem('botInterviewData');
@@ -41,18 +38,15 @@ export default function CustomizeBotPage() {
       return;
     }
 
-    // Set bot type
     try {
       const parsed = JSON.parse(problemData);
       setBotType(parsed.botType || 'knowledge');
     } catch {}
 
-    // Auto-detect brand
     detectBrand(websiteUrl);
   }, [router]);
 
   useEffect(() => {
-    // Click outside to close color picker
     const handleClickOutside = (event: MouseEvent) => {
       if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
         setShowColorPicker(false);
@@ -87,20 +81,16 @@ export default function CustomizeBotPage() {
   };
 
   const handleContinue = () => {
-    // Save brand config + integrations
     sessionStorage.setItem('botBrandConfig', JSON.stringify(brand));
     sessionStorage.setItem('botIntegrations', JSON.stringify(integrations));
     router.push('/business/bot-builder/solution');
   };
 
   const fonts = [
-    { value: 'system-ui', label: 'System (Standard)' },
+    { value: 'system-ui', label: 'System' },
     { value: 'Arial', label: 'Arial' },
     { value: 'Helvetica', label: 'Helvetica' },
-    { value: 'Georgia', label: 'Georgia (Serif)' },
-    { value: 'Roboto', label: 'Roboto' },
-    { value: 'Open Sans', label: 'Open Sans' },
-    { value: 'Montserrat', label: 'Montserrat' },
+    { value: 'Georgia', label: 'Georgia' },
     { value: 'Inter', label: 'Inter' }
   ];
 
@@ -110,287 +100,320 @@ export default function CustomizeBotPage() {
     { value: 'casual', label: 'Avslappnad', description: 'Vänlig och personlig' }
   ];
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+        <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
+          <div className="w-12 h-12 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Analyserar din webbplats...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-6">
-      <div className="minimal-box max-w-2xl w-full animate-fade-in">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-light text-gray-900">Anpassa botens utseende</h1>
-          <MinimalIcons.Bot className="w-8 h-8 text-gray-400" />
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-12">
+          <button 
+            onClick={() => router.push('/business/bot-builder/interview')}
+            className="mb-6 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+          >
+            ← Tillbaka
+          </button>
+          <h1 className="text-4xl font-extralight text-gray-900 mb-2">Designa din bot</h1>
+          <p className="text-gray-600">Skapa en unik upplevelse som matchar ditt varumärke</p>
         </div>
 
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <MinimalIcons.Loader className="w-8 h-8 text-gray-400 animate-spin" />
-            <span className="ml-3 text-gray-600">Analyserar webbplatsens design...</span>
-          </div>
-        ) : (
-          <div className="space-y-8">
-            {/* Color selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Primärfärg
-              </label>
-              <div className="flex items-center gap-4">
-                <div className="relative" ref={colorPickerRef}>
-                  <button
-                    onClick={() => setShowColorPicker(!showColorPicker)}
-                    className="w-20 h-20 rounded-xl border-2 border-gray-200 cursor-pointer hover:border-gray-400 transition-colors"
-                    style={{ backgroundColor: brand.primaryColor }}
-                  />
-                  {showColorPicker && (
-                    <div className="absolute top-24 left-0 z-50 bg-white rounded-xl shadow-2xl p-4 border border-gray-200">
-                      <HexColorPicker
-                        color={brand.primaryColor}
-                        onChange={(color) => setBrand({ ...brand, primaryColor: color })}
-                      />
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">
-                    Vi hittade denna färg på din webbplats
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Klicka för att ändra
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Font selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Typsnitt
-              </label>
-              <select
-                value={brand.fontFamily}
-                onChange={(e) => setBrand({ ...brand, fontFamily: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
-                style={{ fontFamily: brand.fontFamily }}
-              >
-                {fonts.map(font => (
-                  <option key={font.value} value={font.value} style={{ fontFamily: font.value }}>
-                    {font.label}
-                  </option>
-                ))}
-              </select>
-            <input
-              type="url"
-              value={brand.fontUrl}
-              onChange={(e) => setBrand({ ...brand, fontUrl: e.target.value })}
-              placeholder="(Valfritt) Google Fonts URL"
-              className="mt-3 w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
-            />
-            </div>
-
-            {/* Tone selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Konversationston
-              </label>
-              <div className="space-y-3">
-                {tones.map(tone => (
-                  <label
-                    key={tone.value}
-                    className={`flex items-start p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                      brand.tone === tone.value
-                        ? 'border-black bg-gray-50'
-                        : 'border-gray-200 hover:border-gray-400'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="tone"
-                      value={tone.value}
-                      checked={brand.tone === tone.value}
-                      onChange={(e) => setBrand({ ...brand, tone: e.target.value as any })}
-                      className="sr-only"
-                    />
-                    <div>
-                      <p className="font-medium text-gray-900">{tone.label}</p>
-                      <p className="text-sm text-gray-600 mt-1">{tone.description}</p>
-                    </div>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Preview */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Förhandsgranskning
-              </label>
-              <div className="bg-gray-100 rounded-xl p-6">
-                <div 
-                  className="bg-white rounded-xl p-4 shadow-sm max-w-sm"
-                  style={{ fontFamily: brand.fontFamily }}
-                >
-                  <div 
-                    className="w-12 h-12 rounded-full mb-3"
-                    style={{ backgroundColor: brand.primaryColor }}
-                  />
-                {brand.logoUrl && (
-                  <img src={brand.logoUrl} alt="Logo" className="w-8 h-8 object-contain mb-3" />
-                )}
-                  <p className="text-gray-900">
-                    {brand.tone === 'formal' && "God dag! Hur kan jag bistå er idag?"}
-                    {brand.tone === 'professional' && "Hej! Hur kan jag hjälpa dig idag?"}
-                    {brand.tone === 'casual' && "Hej där! Vad kan jag hjälpa till med? 😊"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-          {/* Logo controls */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Logo (valfritt)
-            </label>
-            <input
-              type="url"
-              value={brand.logoUrl}
-              onChange={(e) => setBrand({ ...brand, logoUrl: e.target.value })}
-              placeholder="https://ditt-domän.se/logo.svg"
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
-            />
-            <div className="grid grid-cols-2 gap-3 mt-3">
-              <select
-                value={brand.logoPosition}
-                onChange={(e) => setBrand({ ...brand, logoPosition: e.target.value as any })}
-                className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
-              >
-                <option value="bottom-right">Nere höger</option>
-                <option value="bottom-left">Nere vänster</option>
-                <option value="top-right">Uppe höger</option>
-                <option value="top-left">Uppe vänster</option>
-              </select>
-              <div className="flex gap-3">
-                         <input
-                           type="number"
-                           value={brand.logoOffset?.x ?? 20}
-                           onChange={(e) => {
-                             const current = brand.logoOffset || { x: 20, y: 20 };
-                             setBrand({ ...brand, logoOffset: { ...current, x: Number(e.target.value) } });
-                           }}
-                           className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
-                           placeholder="X offset"
-                         />
-                         <input
-                           type="number"
-                           value={brand.logoOffset?.y ?? 20}
-                           onChange={(e) => {
-                             const current = brand.logoOffset || { x: 20, y: 20 };
-                             setBrand({ ...brand, logoOffset: { ...current, y: Number(e.target.value) } });
-                           }}
-                           className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
-                           placeholder="Y offset"
-                         />
-              </div>
-            </div>
-          </div>
-
-          {/* Integrations (conditional based on bot type) */}
-          {(botType === 'lead' || botType === 'support' || botType === 'workflow') && (
-            <div>
-              <button
-                onClick={() => setShowIntegrations(!showIntegrations)}
-                className="w-full flex justify-between items-center text-sm font-medium text-gray-700 mb-3"
-              >
-                <span>Integrationer (valfritt)</span>
-                <span className="text-gray-400">{showIntegrations ? '−' : '+'}</span>
-              </button>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left column - Settings */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            {/* Brand Colors */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm">
+              <h2 className="text-xl font-light mb-6">Varumärkesfärger</h2>
               
-              {showIntegrations && (
-                <div className="space-y-4 p-4 bg-gray-50 rounded-xl">
-                  {/* HubSpot (for lead bots) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="text-sm text-gray-600 mb-3 block">Primärfärg</label>
+                  <div className="relative" ref={colorPickerRef}>
+                    <button
+                      onClick={() => setShowColorPicker(!showColorPicker)}
+                      className="w-full h-24 rounded-xl shadow-inner relative overflow-hidden group"
+                      style={{ backgroundColor: brand.primaryColor }}
+                    >
+                      <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity" />
+                      <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded text-xs font-mono">
+                        {brand.primaryColor}
+                      </div>
+                    </button>
+                    
+                    {showColorPicker && (
+                      <div className="absolute top-28 left-0 z-50 bg-white rounded-2xl shadow-2xl p-6 border border-gray-100">
+                        <HexColorPicker
+                          color={brand.primaryColor}
+                          onChange={(color) => setBrand({ ...brand, primaryColor: color })}
+                        />
+                        <div className="mt-4 flex gap-2">
+                          {['#000000', '#1a1a1a', '#4F46E5', '#059669', '#DC2626'].map(color => (
+                            <button
+                              key={color}
+                              onClick={() => setBrand({ ...brand, primaryColor: color })}
+                              className="w-8 h-8 rounded-lg shadow-sm"
+                              style={{ backgroundColor: color }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="text-sm text-gray-600 mb-3 block">Förslag från din webbplats</label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {['#111111', '#666666', '#E5E5E5', '#ffffff'].map((color, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setBrand({ ...brand, primaryColor: color })}
+                        className="h-12 rounded-lg shadow-sm border border-gray-200 hover:scale-105 transition-transform"
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Typography & Tone */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm">
+              <h2 className="text-xl font-light mb-6">Typografi & Ton</h2>
+              
+              {/* Font Selection */}
+              <div className="mb-6">
+                <label className="text-sm text-gray-600 mb-4 block">Typsnitt</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {fonts.map(font => (
+                    <button
+                      key={font.value}
+                      onClick={() => setBrand({ ...brand, fontFamily: font.value })}
+                      className={`p-4 rounded-xl border-2 text-left transition-all ${
+                        brand.fontFamily === font.value 
+                          ? 'border-black bg-gray-50' 
+                          : 'border-gray-200 hover:border-gray-400'
+                      }`}
+                    >
+                      <div className="text-lg mb-1" style={{ fontFamily: font.value }}>
+                        Aa Bb Cc
+                      </div>
+                      <div className="text-xs text-gray-500">{font.label}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Tone Selection */}
+              <div>
+                <label className="text-sm text-gray-600 mb-4 block">Konversationston</label>
+                <div className="space-y-3">
+                  {tones.map(tone => (
+                    <button
+                      key={tone.value}
+                      onClick={() => setBrand({ ...brand, tone: tone.value as any })}
+                      className={`w-full p-5 rounded-xl border-2 text-left transition-all group ${
+                        brand.tone === tone.value
+                          ? 'border-black bg-gray-50'
+                          : 'border-gray-200 hover:border-gray-400'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium text-gray-900 mb-1">{tone.label}</p>
+                          <p className="text-sm text-gray-600">{tone.description}</p>
+                        </div>
+                        <div className={`w-5 h-5 rounded-full border-2 transition-all ${
+                          brand.tone === tone.value 
+                            ? 'border-black bg-black' 
+                            : 'border-gray-300'
+                        }`}>
+                          {brand.tone === tone.value && (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <div className="w-2 h-2 bg-white rounded-full" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Logo & Position */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm">
+              <h2 className="text-xl font-light mb-6">Logo (valfritt)</h2>
+              
+              <input
+                type="url"
+                value={brand.logoUrl}
+                onChange={(e) => setBrand({ ...brand, logoUrl: e.target.value })}
+                placeholder="https://din-domän.se/logo.svg"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm mb-4"
+              />
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-gray-500 mb-2 block">Position</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { value: 'top-left', label: '↖' },
+                      { value: 'top-right', label: '↗' },
+                      { value: 'bottom-left', label: '↙' },
+                      { value: 'bottom-right', label: '↘' }
+                    ].map(pos => (
+                      <button
+                        key={pos.value}
+                        onClick={() => setBrand({ ...brand, logoPosition: pos.value })}
+                        className={`p-3 rounded-lg border-2 text-lg transition-all ${
+                          brand.logoPosition === pos.value
+                            ? 'border-black bg-gray-50'
+                            : 'border-gray-200 hover:border-gray-400'
+                        }`}
+                      >
+                        {pos.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="text-xs text-gray-500 mb-2 block">Avstånd (px)</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      value={brand.logoOffset?.x ?? 20}
+                      onChange={(e) => setBrand({ ...brand, logoOffset: { ...brand.logoOffset, x: Number(e.target.value) } })}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                      placeholder="X"
+                    />
+                    <input
+                      type="number"
+                      value={brand.logoOffset?.y ?? 20}
+                      onChange={(e) => setBrand({ ...brand, logoOffset: { ...brand.logoOffset, y: Number(e.target.value) } })}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                      placeholder="Y"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Integrations */}
+            {(botType === 'lead' || botType === 'support' || botType === 'workflow') && (
+              <div className="bg-white rounded-2xl p-8 shadow-sm">
+                <h2 className="text-xl font-light mb-6">Integrationer (valfritt)</h2>
+                
+                <div className="space-y-4">
                   {botType === 'lead' && (
-                    <label className="flex items-center gap-3">
+                    <label className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl cursor-pointer">
                       <input
                         type="checkbox"
                         checked={integrations.hubspotEnabled}
                         onChange={(e) => setIntegrations({ ...integrations, hubspotEnabled: e.target.checked })}
-                        className="w-5 h-5 rounded border-gray-300"
+                        className="w-5 h-5 rounded"
                       />
-                      <span className="text-sm text-gray-700">Aktivera HubSpot-integration</span>
+                      <div>
+                        <span className="font-medium text-gray-900">HubSpot</span>
+                        <p className="text-xs text-gray-600">Synka leads automatiskt</p>
+                      </div>
                     </label>
                   )}
                   
-                  {/* Calendly (for booking bots) */}
                   {(botType === 'workflow' || botType === 'lead') && (
-                    <input
-                      type="url"
-                      value={integrations.calendlyUrl}
-                      onChange={(e) => setIntegrations({ ...integrations, calendlyUrl: e.target.value })}
-                      placeholder="Calendly URL (t.ex. https://calendly.com/dittnamn)"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm"
-                    />
+                    <div>
+                      <label className="text-sm text-gray-600 mb-2 block">Calendly</label>
+                      <input
+                        type="url"
+                        value={integrations.calendlyUrl}
+                        onChange={(e) => setIntegrations({ ...integrations, calendlyUrl: e.target.value })}
+                        placeholder="https://calendly.com/dittnamn"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                      />
+                    </div>
                   )}
-                  
-                  {/* Zendesk (for support bots) */}
-                  {botType === 'support' && (
-                    <input
-                      type="text"
-                      value={integrations.zendeskDomain}
-                      onChange={(e) => setIntegrations({ ...integrations, zendeskDomain: e.target.value })}
-                      placeholder="Zendesk domain (t.ex. dittforetag.zendesk.com)"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm"
-                    />
-                  )}
-                  
-                  {/* Shopify (for ecommerce bots) */}
-                  {botType === 'workflow' && (
-                    <input
-                      type="text"
-                      value={integrations.shopifyDomain}
-                      onChange={(e) => setIntegrations({ ...integrations, shopifyDomain: e.target.value })}
-                      placeholder="Shopify domain (t.ex. dinbutik.myshopify.com)"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm"
-                    />
-                  )}
-                  
-                  {/* Webhook URL (all types) */}
-                  <input
-                    type="url"
-                    value={integrations.webhookUrl}
-                    onChange={(e) => setIntegrations({ ...integrations, webhookUrl: e.target.value })}
-                    placeholder="Webhook URL (för notifikationer)"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm"
-                  />
-                  
-                  {/* Slack Webhook */}
-                  <input
-                    type="url"
-                    value={integrations.slackWebhook}
-                    onChange={(e) => setIntegrations({ ...integrations, slackWebhook: e.target.value })}
-                    placeholder="Slack Webhook URL"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm"
-                  />
-                  
-                  <p className="text-xs text-gray-600 mt-3">
-                    💡 Integrationer gör att boten kan skicka leads, skapa tickets och utföra actions automatiskt
-                  </p>
                 </div>
-              )}
-            </div>
-          )}
-
-            <div className="flex justify-between pt-6">
-              <button
-                onClick={() => router.push('/business/bot-builder/interview')}
-                className="btn-minimal-outline"
-              >
-                Tillbaka
-              </button>
-              <button
-                onClick={handleContinue}
-                className="btn-minimal flex items-center gap-2"
-              >
-                Fortsätt och bygg bot
-                <MinimalIcons.Arrow className="w-5 h-5" />
-              </button>
+              </div>
+            )}
+          </div>
+          
+          {/* Right column - Preview */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-6">
+              <div className="bg-white rounded-2xl p-8 shadow-sm">
+                <h3 className="text-lg font-light mb-6">Live förhandsgranskning</h3>
+                
+                <div className="relative bg-gray-50 rounded-xl p-6 min-h-[400px]">
+                  <div 
+                    className="bg-white rounded-t-xl px-4 py-3 flex items-center gap-3 shadow-sm"
+                    style={{ backgroundColor: brand.primaryColor }}
+                  >
+                    <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                      <div className="w-5 h-5 bg-white/40 rounded-full" />
+                    </div>
+                    <div>
+                      <p className="text-white font-medium" style={{ fontFamily: brand.fontFamily }}>
+                        Chatbot
+                      </p>
+                      <p className="text-white/80 text-xs">Alltid aktiv</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white rounded-b-xl p-4 space-y-4">
+                    <div className="flex gap-3">
+                      <div 
+                        className="w-8 h-8 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: brand.primaryColor }}
+                      />
+                      <div 
+                        className="bg-gray-100 rounded-2xl rounded-tl-md px-4 py-3 max-w-[80%]"
+                        style={{ fontFamily: brand.fontFamily }}
+                      >
+                        <p className="text-gray-900 text-sm">
+                          {brand.tone === 'formal' && "God dag! Hur kan jag bistå er idag?"}
+                          {brand.tone === 'professional' && "Hej! Hur kan jag hjälpa dig idag?"}
+                          {brand.tone === 'casual' && "Hej där! Vad kan jag hjälpa till med? 😊"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {brand.logoUrl && (
+                    <img 
+                      src={brand.logoUrl} 
+                      alt="Logo" 
+                      className="absolute w-12 h-12 object-contain rounded-lg shadow-sm"
+                      style={{
+                        [brand.logoPosition.includes('top') ? 'top' : 'bottom']: `${brand.logoOffset?.y ?? 20}px`,
+                        [brand.logoPosition.includes('left') ? 'left' : 'right']: `${brand.logoOffset?.x ?? 20}px`,
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-        )}
+        </div>
+        
+        {/* Continue Button */}
+        <div className="mt-12 flex justify-center">
+          <button
+            onClick={handleContinue}
+            className="px-8 py-4 bg-black text-white rounded-full hover:bg-gray-800 transition-all text-lg font-light"
+          >
+            Fortsätt och bygg bot →
+          </button>
+        </div>
       </div>
     </div>
   );
