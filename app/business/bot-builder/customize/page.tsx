@@ -1,75 +1,39 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { HexColorPicker } from "react-colorful";
+import { Upload, X, Info, Eye } from "lucide-react";
 
 export default function CustomizeBotPage() {
   const router = useRouter();
   const [brand, setBrand] = useState({
-    primaryColor: '#111111',
+    primaryColor: '#000000',
+    secondaryColor: '#666666',
     fontFamily: 'system-ui',
-    tone: 'professional' as 'formal' | 'casual' | 'professional',
+    tone: 'professional',
     logoUrl: '',
-    logoPosition: 'bottom-right',
+    logoPosition: 'top-left',
     logoOffset: { x: 20, y: 20 },
-    fontUrl: ''
+    fontUrl: null
   });
-  const [integrations, setIntegrations] = useState({
-    hubspotEnabled: false,
-    calendlyUrl: '',
-    zendeskDomain: '',
-    shopifyDomain: '',
-    webhookUrl: '',
-    slackWebhook: ''
-  });
-  const [botType, setBotType] = useState('knowledge');
-  const [loading, setLoading] = useState(true);
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const colorPickerRef = useRef<HTMLDivElement>(null);
-
-  const uploadLogo = async (file: File) => {
-    try {
-      const fd = new FormData();
-      fd.append('file', file);
-      const res = await fetch('/api/uploads/logo', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (data.url) {
-        setBrand((b) => ({ ...b, logoUrl: data.url }));
-      }
-    } catch (e) {
-      console.error('Upload failed', e);
-    }
-  };
+  const [loading, setLoading] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [additionalInfo, setAdditionalInfo] = useState("");
+  const [showInfo, setShowInfo] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
-    const websiteUrl = sessionStorage.getItem('botWebsiteUrl');
-    const problemData = sessionStorage.getItem('botProblemData');
-    const interviewData = sessionStorage.getItem('botInterviewData');
+    const problemData = sessionStorage.getItem("botProblemData");
+    const url = sessionStorage.getItem("botWebsiteUrl");
     
-    if (!websiteUrl || !problemData || !interviewData) {
-      router.push('/business/bot-builder');
+    if (!problemData || !url) {
+      router.push("/business/bot-builder");
       return;
     }
 
-    try {
-      const parsed = JSON.parse(problemData);
-      setBotType(parsed.botType || 'knowledge');
-    } catch {}
-
-    detectBrand(websiteUrl);
+    // Auto-detect brand
+    detectBrand(url);
   }, [router]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
-        setShowColorPicker(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const detectBrand = async (url: string) => {
     try {
@@ -78,7 +42,6 @@ export default function CustomizeBotPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url })
       });
-      
       const data = await res.json();
       if (data.brand) {
         setBrand({
@@ -88,370 +51,323 @@ export default function CustomizeBotPage() {
         });
       }
     } catch (error) {
-      console.error('Failed to detect brand:', error);
+      console.error('Brand detection failed:', error);
+    }
+  };
+
+  const uploadLogo = async (file: File) => {
+    if (!file) return;
+    setLoading(true);
+    const formData = new FormData();
+    formData.append('logo', file);
+
+    try {
+      const res = await fetch('/api/uploads/logo', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.logoUrl) {
+        setBrand(prev => ({ ...prev, logoUrl: data.logoUrl }));
+      }
+    } catch (error) {
+      console.error('Error uploading logo:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleContinue = () => {
-    sessionStorage.setItem('botBrandConfig', JSON.stringify(brand));
-    sessionStorage.setItem('botIntegrations', JSON.stringify(integrations));
-    router.push('/business/bot-builder/solution');
+  const handleFileSelect = (files: FileList | null) => {
+    if (!files) return;
+    const allowed = Array.from(files).filter(f => {
+      const n = f.name.toLowerCase();
+      return n.endsWith('.pdf') || n.endsWith('.docx') || n.endsWith('.doc') || 
+             n.endsWith('.xlsx') || n.endsWith('.xls') || n.endsWith('.txt');
+    });
+    setUploadedFiles(prev => [...prev, ...allowed]);
   };
 
+  const removeFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleContinue = async () => {
+    sessionStorage.setItem("botBrandConfig", JSON.stringify(brand));
+    
+    // Process additional documents if any
+    if (uploadedFiles.length > 0) {
+      const fd = new FormData();
+      uploadedFiles.forEach(f => fd.append('files', f));
+      
+      try {
+        const res = await fetch('/api/business/upload-documents', {
+          method: 'POST',
+          body: fd
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          const existingDocs = sessionStorage.getItem("botDocuments") || "";
+          sessionStorage.setItem("botDocuments", existingDocs + "\n\n" + data.content);
+        }
+      } catch (error) {
+        console.error('Document upload error:', error);
+      }
+    }
+    
+    sessionStorage.setItem("botAdditionalInfo", additionalInfo);
+    router.push("/business/bot-builder/solution");
+  };
+
+  const colors = ['#000000', '#1E40AF', '#DC2626', '#059669', '#7C3AED', '#D97706'];
   const fonts = [
-    { value: 'system-ui', label: 'System' },
-    { value: 'Arial', label: 'Arial' },
-    { value: 'Helvetica', label: 'Helvetica' },
-    { value: 'Georgia', label: 'Georgia' },
-    { value: 'Inter', label: 'Inter' }
+    { value: 'system-ui', label: 'SYSTEM' },
+    { value: 'serif', label: 'SERIF' },
+    { value: 'mono', label: 'MONO' }
   ];
-
   const tones = [
-    { value: 'formal', label: 'Formell', description: 'Professionell och artig' },
-    { value: 'professional', label: 'Professionell', description: 'Balanserad och kunnig' },
-    { value: 'casual', label: 'Avslappnad', description: 'Vänlig och personlig' }
+    { value: 'professional', label: 'PROFESSIONELL' },
+    { value: 'casual', label: 'VARDAGLIG' },
+    { value: 'formal', label: 'FORMELL' }
   ];
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
-          <div className="w-12 h-12 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Analyserar din webbplats...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-12">
-          <button 
-            onClick={() => router.push('/business/bot-builder/interview')}
-            className="mb-6 text-sm text-gray-500 hover:text-gray-900 transition-colors"
-          >
-            ← Tillbaka
-          </button>
-          <h1 className="text-4xl font-extralight text-gray-900 mb-2">Designa din bot</h1>
-          <p className="text-gray-600">Skapa en unik upplevelse som matchar ditt varumärke</p>
+    <div className="min-h-screen bg-white p-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Progress */}
+        <div className="flex justify-center mb-16">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-[1px] bg-gray-300" />
+            <div className="text-xs uppercase tracking-widest">STEG 3</div>
+            <div className="w-8 h-[1px] bg-gray-300" />
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left column - Settings */}
-          <div className="lg:col-span-2 space-y-6">
-            
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-thin uppercase tracking-wider">
+            ANPASSA DIN BOT
+          </h1>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-12">
+          {/* Left Column - Configuration */}
+          <div className="space-y-8">
             {/* Brand Colors */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm">
-              <h2 className="text-xl font-light mb-6">Varumärkesfärger</h2>
+            <div className="relative">
+              <h3 className="text-xs uppercase tracking-widest mb-4">
+                VARUMÄRKE
+                <button
+                  onClick={() => setShowInfo(showInfo === 'brand' ? null : 'brand')}
+                  className="ml-3 p-1 hover:bg-gray-100 rounded-full inline-flex"
+                >
+                  <Info className="w-3 h-3" />
+                </button>
+              </h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="text-sm text-gray-600 mb-3 block">Primärfärg</label>
-                  <div className="relative" ref={colorPickerRef}>
-                    <button
-                      onClick={() => setShowColorPicker(!showColorPicker)}
-                      className="w-full h-24 rounded-xl shadow-inner relative overflow-hidden group"
-                      style={{ backgroundColor: brand.primaryColor }}
-                    >
-                      <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity" />
-                      <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded text-xs font-mono">
-                        {brand.primaryColor}
-                      </div>
-                    </button>
-                    
-                    {showColorPicker && (
-                      <div className="absolute top-28 left-0 z-50 bg-white rounded-2xl shadow-2xl p-6 border border-gray-100">
-                        <HexColorPicker
-                          color={brand.primaryColor}
-                          onChange={(color) => setBrand({ ...brand, primaryColor: color })}
-                        />
-                        <div className="mt-4 flex gap-2">
-                          {['#000000', '#1a1a1a', '#4F46E5', '#059669', '#DC2626'].map(color => (
-                            <button
-                              key={color}
-                              onClick={() => setBrand({ ...brand, primaryColor: color })}
-                              className="w-8 h-8 rounded-lg shadow-sm"
-                              style={{ backgroundColor: color }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+              {showInfo === 'brand' && (
+                <div className="absolute left-0 top-8 w-64 p-4 bg-white border border-gray-200 shadow-lg z-10">
+                  <p className="text-xs text-gray-600">
+                    Anpassa botens utseende efter ditt varumärke. Vi har automatiskt detekterat färger från din webbplats.
+                  </p>
                 </div>
-                
-                <div>
-                  <label className="text-sm text-gray-600 mb-3 block">Förslag från din webbplats</label>
-                  <div className="grid grid-cols-4 gap-2">
-                    {['#111111', '#666666', '#E5E5E5', '#ffffff'].map((color, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setBrand({ ...brand, primaryColor: color })}
-                        className="h-12 rounded-lg shadow-sm border border-gray-200 hover:scale-105 transition-transform"
-                        style={{ backgroundColor: color }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Typography & Tone */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm">
-              <h2 className="text-xl font-light mb-6">Typografi & Ton</h2>
+              )}
               
-              {/* Font Selection */}
-              <div className="mb-6">
-                <label className="text-sm text-gray-600 mb-4 block">Typsnitt</label>
-                <div className="grid grid-cols-2 gap-3">
-                  {fonts.map(font => (
-                    <button
-                      key={font.value}
-                      onClick={() => setBrand({ ...brand, fontFamily: font.value })}
-                      className={`p-4 rounded-xl border-2 text-left transition-all ${
-                        brand.fontFamily === font.value 
-                          ? 'border-black bg-gray-50' 
-                          : 'border-gray-200 hover:border-gray-400'
-                      }`}
-                    >
-                      <div className="text-lg mb-1" style={{ fontFamily: font.value }}>
-                        Aa Bb Cc
-                      </div>
-                      <div className="text-xs text-gray-500">{font.label}</div>
-                    </button>
-                  ))}
-                </div>
+              <div className="flex gap-3 mb-4">
+                {colors.map(color => (
+                  <button
+                    key={color}
+                    onClick={() => setBrand({ ...brand, primaryColor: color })}
+                    className={`w-10 h-10 border-2 transition-all ${
+                      brand.primaryColor === color ? 'border-black' : 'border-transparent'
+                    }`}
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
               </div>
               
-              {/* Tone Selection */}
-              <div>
-                <label className="text-sm text-gray-600 mb-4 block">Konversationston</label>
-                <div className="space-y-3">
-                  {tones.map(tone => (
-                    <button
-                      key={tone.value}
-                      onClick={() => setBrand({ ...brand, tone: tone.value as any })}
-                      className={`w-full p-5 rounded-xl border-2 text-left transition-all group ${
-                        brand.tone === tone.value
-                          ? 'border-black bg-gray-50'
-                          : 'border-gray-200 hover:border-gray-400'
-                      }`}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium text-gray-900 mb-1">{tone.label}</p>
-                          <p className="text-sm text-gray-600">{tone.description}</p>
-                        </div>
-                        <div className={`w-5 h-5 rounded-full border-2 transition-all ${
-                          brand.tone === tone.value 
-                            ? 'border-black bg-black' 
-                            : 'border-gray-300'
-                        }`}>
-                          {brand.tone === tone.value && (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <div className="w-2 h-2 bg-white rounded-full" />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Logo & Position */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm">
-              <h2 className="text-xl font-light mb-6">Logo (valfritt)</h2>
-              
-              {/* Upload or URL */}
-              <div
-                className="w-full mb-4"
-                onDragOver={(e) => { e.preventDefault(); }}
-                onDrop={async (e) => {
-                  e.preventDefault();
-                  const file = e.dataTransfer.files?.[0];
-                  if (file) await uploadLogo(file);
-                }}
-              >
-                <div className="grid md:grid-cols-2 gap-3">
-                  <label className="flex items-center justify-center gap-2 px-4 py-6 bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl text-sm text-gray-600 hover:border-gray-400 cursor-pointer">
+              {/* Logo Upload */}
+              <div className="mt-6">
+                <label className="text-xs uppercase tracking-widest text-gray-600 block mb-3">
+                  Logotyp
+                </label>
+                <div
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={async (e) => {
+                    e.preventDefault();
+                    const file = e.dataTransfer.files?.[0];
+                    if (file) await uploadLogo(file);
+                  }}
+                  className="border border-gray-300 p-8 text-center hover:border-black transition-colors cursor-pointer"
+                >
+                  <label className="cursor-pointer">
                     <input
                       type="file"
-                      accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
-                      className="hidden"
+                      accept="image/*"
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (file) await uploadLogo(file);
                       }}
+                      className="hidden"
                     />
-                    <span>Ladda upp logo</span>
+                    {brand.logoUrl ? (
+                      <img src={brand.logoUrl} alt="Logo" className="h-12 mx-auto mb-2" />
+                    ) : (
+                      <div className="w-8 h-8 border border-gray-400 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <Upload className="w-4 h-4 text-gray-400" />
+                      </div>
+                    )}
+                    <p className="text-xs uppercase tracking-widest text-gray-600">
+                      {brand.logoUrl ? 'Byt logo' : 'Ladda upp logo'}
+                    </p>
                   </label>
-                  <input
-                    type="url"
-                    value={brand.logoUrl}
-                    onChange={(e) => setBrand({ ...brand, logoUrl: e.target.value })}
-                    placeholder="eller klistra in en logo‑URL (https://...)"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm"
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-2">Stöd: PNG, JPG, WEBP, SVG. Max 5 MB.</p>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs text-gray-500 mb-2 block">Position</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { value: 'top-left', label: '↖' },
-                      { value: 'top-right', label: '↗' },
-                      { value: 'bottom-left', label: '↙' },
-                      { value: 'bottom-right', label: '↘' }
-                    ].map(pos => (
-                      <button
-                        key={pos.value}
-                        onClick={() => setBrand({ ...brand, logoPosition: pos.value })}
-                        className={`p-3 rounded-lg border-2 text-lg transition-all ${
-                          brand.logoPosition === pos.value
-                            ? 'border-black bg-gray-50'
-                            : 'border-gray-200 hover:border-gray-400'
-                        }`}
-                      >
-                        {pos.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="text-xs text-gray-500 mb-2 block">Avstånd (px)</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="number"
-                      value={brand.logoOffset?.x ?? 20}
-                      onChange={(e) => setBrand({ ...brand, logoOffset: { ...brand.logoOffset, x: Number(e.target.value) } })}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
-                      placeholder="X"
-                    />
-                    <input
-                      type="number"
-                      value={brand.logoOffset?.y ?? 20}
-                      onChange={(e) => setBrand({ ...brand, logoOffset: { ...brand.logoOffset, y: Number(e.target.value) } })}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
-                      placeholder="Y"
-                    />
-                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Integrations */}
-            {(botType === 'lead' || botType === 'support' || botType === 'workflow') && (
-              <div className="bg-white rounded-2xl p-8 shadow-sm">
-                <h2 className="text-xl font-light mb-6">Integrationer (valfritt)</h2>
-                
-                <div className="space-y-4">
-                  {botType === 'lead' && (
-                    <label className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={integrations.hubspotEnabled}
-                        onChange={(e) => setIntegrations({ ...integrations, hubspotEnabled: e.target.checked })}
-                        className="w-5 h-5 rounded"
-                      />
-                      <div>
-                        <span className="font-medium text-gray-900">HubSpot</span>
-                        <p className="text-xs text-gray-600">Synka leads automatiskt</p>
-                      </div>
-                    </label>
-                  )}
-                  
-                  {(botType === 'workflow' || botType === 'lead') && (
-                    <div>
-                      <label className="text-sm text-gray-600 mb-2 block">Calendly</label>
-                      <input
-                        type="url"
-                        value={integrations.calendlyUrl}
-                        onChange={(e) => setIntegrations({ ...integrations, calendlyUrl: e.target.value })}
-                        placeholder="https://calendly.com/dittnamn"
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Right column - Preview */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-6">
-              <div className="bg-white rounded-2xl p-8 shadow-sm">
-                <h3 className="text-lg font-light mb-6">Live förhandsgranskning</h3>
-                
-                <div className="relative bg-gray-50 rounded-xl p-6 min-h-[400px]">
-                  <div 
-                    className="bg-white rounded-t-xl px-4 py-3 flex items-center gap-3 shadow-sm"
-                    style={{ backgroundColor: brand.primaryColor }}
+            {/* Tone */}
+            <div>
+              <h3 className="text-xs uppercase tracking-widest mb-4">Tonalitet</h3>
+              <div className="flex gap-3">
+                {tones.map(tone => (
+                  <button
+                    key={tone.value}
+                    onClick={() => setBrand({ ...brand, tone: tone.value })}
+                    className={`px-6 py-3 border text-xs uppercase tracking-widest transition-all ${
+                      brand.tone === tone.value
+                        ? 'border-black bg-black text-white'
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
                   >
-                    <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                      <div className="w-5 h-5 bg-white/40 rounded-full" />
-                    </div>
-                    <div>
-                      <p className="text-white font-medium" style={{ fontFamily: brand.fontFamily }}>
-                        Chatbot
-                      </p>
-                      <p className="text-white/80 text-xs">Alltid aktiv</p>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white rounded-b-xl p-4 space-y-4">
-                    <div className="flex gap-3">
-                      <div 
-                        className="w-8 h-8 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: brand.primaryColor }}
-                      />
-                      <div 
-                        className="bg-gray-100 rounded-2xl rounded-tl-md px-4 py-3 max-w-[80%]"
-                        style={{ fontFamily: brand.fontFamily }}
+                    {tone.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Additional Training */}
+            <div>
+              <h3 className="text-xs uppercase tracking-widest mb-4">
+                Specifik träning
+                <span className="ml-2 text-gray-400 normal-case tracking-normal">(valfritt)</span>
+              </h3>
+              
+              <div
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  handleFileSelect(e.dataTransfer.files);
+                }}
+                className="border border-gray-300 p-6 text-center hover:border-black transition-colors cursor-pointer mb-4"
+              >
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.docx,.doc,.xlsx,.xls,.txt"
+                    onChange={(e) => handleFileSelect(e.target.files)}
+                    className="hidden"
+                  />
+                  <p className="text-xs uppercase tracking-widest text-gray-600">
+                    Ladda upp dokument
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    FAQ, manualer, prislista etc.
+                  </p>
+                </label>
+              </div>
+              
+              {uploadedFiles.length > 0 && (
+                <div className="space-y-2 mb-4">
+                  {uploadedFiles.map((file, i) => (
+                    <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <span className="text-sm">{file.name}</span>
+                      <button
+                        onClick={() => removeFile(i)}
+                        className="p-1 hover:bg-gray-100 rounded-full"
                       >
-                        <p className="text-gray-900 text-sm">
-                          {brand.tone === 'formal' && "God dag! Hur kan jag bistå er idag?"}
-                          {brand.tone === 'professional' && "Hej! Hur kan jag hjälpa dig idag?"}
-                          {brand.tone === 'casual' && "Hej där! Vad kan jag hjälpa till med? 😊"}
-                        </p>
-                      </div>
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <textarea
+                value={additionalInfo}
+                onChange={(e) => setAdditionalInfo(e.target.value)}
+                placeholder="Beskriv speciella instruktioner, vanliga frågor, eller annat som boten ska veta..."
+                className="w-full p-4 border border-gray-300 focus:border-black outline-none transition-colors resize-none h-32 text-sm"
+              />
+            </div>
+          </div>
+
+          {/* Right Column - Preview */}
+          <div>
+            <div className="sticky top-6">
+              <h3 className="text-xs uppercase tracking-widest mb-4 flex items-center justify-between">
+                Förhandsvisning
+                <button
+                  onClick={() => setShowPreview(!showPreview)}
+                  className="p-2 hover:bg-gray-100 rounded-full"
+                >
+                  <Eye className="w-4 h-4" />
+                </button>
+              </h3>
+              
+              <div className="border border-gray-300 rounded-lg overflow-hidden">
+                <div 
+                  className="p-4 text-white"
+                  style={{ backgroundColor: brand.primaryColor }}
+                >
+                  <div className="flex items-center gap-3">
+                    {brand.logoUrl && (
+                      <img src={brand.logoUrl} alt="Logo" className="h-8 invert" />
+                    )}
+                    <div>
+                      <p className="font-medium">Support</p>
+                      <p className="text-xs opacity-80">Alltid aktiv</p>
                     </div>
                   </div>
-                  
-                  {brand.logoUrl && (
-                    <img 
-                      src={brand.logoUrl} 
-                      alt="Logo" 
-                      className="absolute w-12 h-12 object-contain rounded-lg shadow-sm"
-                      style={{
-                        [brand.logoPosition.includes('top') ? 'top' : 'bottom']: `${brand.logoOffset?.y ?? 20}px`,
-                        [brand.logoPosition.includes('left') ? 'left' : 'right']: `${brand.logoOffset?.x ?? 20}px`,
-                      }}
-                    />
-                  )}
+                </div>
+                
+                <div className="p-4 bg-gray-50 min-h-[300px]">
+                  <div className="bg-white rounded-lg p-3 mb-3 inline-block">
+                    <p className="text-sm" style={{ fontFamily: brand.fontFamily }}>
+                      {brand.tone === 'formal' 
+                        ? 'God dag! Hur kan jag bistå er idag?'
+                        : brand.tone === 'casual'
+                        ? 'Hej! Vad kan jag hjälpa till med? 😊'
+                        : 'Hej! Hur kan jag hjälpa dig idag?'}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="p-4 border-t border-gray-200">
+                  <input
+                    type="text"
+                    placeholder="Skriv ett meddelande..."
+                    className="w-full px-4 py-2 bg-gray-100 rounded-full text-sm"
+                    disabled
+                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
-        
-        {/* Continue Button */}
-        <div className="mt-12 flex justify-center">
+
+        {/* Actions */}
+        <div className="flex justify-center gap-4 mt-16">
+          <button
+            onClick={() => router.push("/business/bot-builder/analyze")}
+            className="px-12 py-4 border border-gray-300 text-xs uppercase tracking-widest hover:border-black transition-colors"
+          >
+            Tillbaka
+          </button>
           <button
             onClick={handleContinue}
-            className="px-8 py-4 bg-black text-white rounded-full hover:bg-gray-800 transition-all text-lg font-light"
+            className="px-16 py-4 bg-black text-white text-xs uppercase tracking-widest hover:bg-gray-900 transition-colors"
           >
-            Fortsätt och bygg bot →
+            Bygg bot
           </button>
         </div>
       </div>

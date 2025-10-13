@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Apple-like font stack */
+@layer base {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", 
+                 "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
 /* Modern minimal design system */
 @layer base {
   :root {
