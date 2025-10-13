@@ -12,8 +12,8 @@ export default function CustomizeBotPage() {
     fontFamily: 'system-ui',
     tone: 'professional' as 'formal' | 'casual' | 'professional',
     logoUrl: '',
-    logoPosition: 'bottom-right',
-    logoOffset: { x: 20, y: 20 },
+    logoPosition: 'bottom-right' as string,
+    logoOffset: { x: 20, y: 20 } as { x: number, y: number },
     fontUrl: ''
   });
   const [integrations, setIntegrations] = useState({
@@ -73,7 +73,11 @@ export default function CustomizeBotPage() {
       
       const data = await res.json();
       if (data.brand) {
-        setBrand(data.brand);
+        setBrand({
+          ...brand,
+          ...data.brand,
+          logoOffset: data.brand.logoOffset || { x: 20, y: 20 }
+        });
       }
     } catch (error) {
       console.error('Failed to detect brand:', error);

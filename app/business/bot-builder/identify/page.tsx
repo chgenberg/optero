@@ -22,6 +22,12 @@ export default function IdentifyProblem() {
       return;
     }
 
+    // Normalize URL: add https:// if missing
+    let normalizedUrl = url.trim();
+    if (!normalizedUrl.startsWith('http://') && !normalizedUrl.startsWith('https://')) {
+      normalizedUrl = 'https://' + normalizedUrl;
+    }
+
     setAnalyzing(true);
     setError("");
     
@@ -40,7 +46,7 @@ export default function IdentifyProblem() {
       // Store user and URL in session
       sessionStorage.setItem("botUserEmail", email);
       sessionStorage.setItem("botUserId", userData.userId);
-      sessionStorage.setItem("botWebsiteUrl", url);
+      sessionStorage.setItem("botWebsiteUrl", normalizedUrl);
       
       // Navigate to problem analysis
       router.push("/business/bot-builder/analyze");
