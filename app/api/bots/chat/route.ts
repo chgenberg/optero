@@ -118,7 +118,45 @@ export async function POST(req: NextRequest) {
       // Continue without RAG if it fails
     }
 
-    const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${specSafe}\n\nBottype: ${bot.type}.${subtype || ''}\n${extra}\n${typeInstructions}${ragContext}`;
+    // Personalization: Load previous context for returning visitors
+    let personalizedGreeting = '';
+    try {
+      if (sessionId && history.length === 0) {
+        // First message in new session - check for previous sessions
+        const previousSessions = await prisma.botSession.findMany({
+          where: { 
+            botId,
+            id: { not: sessionId },
+            createdAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } // last 30 days
+          },
+          orderBy: { updatedAt: 'desc' },
+          take: 1
+        });
+        
+        if (previousSessions.length > 0) {
+          const lastSession = previousSessions[0];
+          const lastMeta = (lastSession.metadata as any) || {};
+          const lastMessages = (lastSession.messages as any[]) || [];
+          const lastUserMsg = lastMessages.filter(m => m.role === 'user').slice(-1)[0]?.content || '';
+          
+          if (lastMeta.name) {
+            personalizedGreeting = `\n\nNOTE: Returning visitor. Previous name: ${lastMeta.name}. Last question: "${lastUserMsg.slice(0, 100)}". Greet personally and reference context if relevant.`;
+          }
+        }
+      }
+    } catch {}
+
+    // Adaptive tone based on user segment
+    let toneAdjustment = '';
+    if (history.length > 0) {
+      const allText = history.map((h: any) => h.content).join(' ');
+      const isB2B = /företag|company|business|b2b|enterprise|organization/i.test(allText);
+      if (isB2B) {
+        toneAdjustment = '\n\nUSER SEGMENT: B2B. Use slightly more formal and professional tone. Focus on ROI, efficiency, and business value.';
+      }
+    }
+
+    const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${specSafe}\n\nBottype: ${bot.type}.${subtype || ''}\n${extra}\n${typeInstructions}${ragContext}${personalizedGreeting}${toneAdjustment}`;
 
     const messages = [
       { role: "system", content: system },
@@ -133,7 +171,24 @@ export async function POST(req: NextRequest) {
 
     const reply = resp.choices[0]?.message?.content || "";
 
-    // Session tracking
+    // User profiling: Extract name, company, email from conversation
+    let userProfile: any = {};
+    try {
+      const allText = history.map((h: any) => h.content).join(' ');
+      const emailMatch = allText.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+      const nameMatch = allText.match(/(?:jag heter|mitt namn är|my name is)\s+([A-Za-zÅÄÖåäö\s]{2,30})/i);
+      const companyMatch = allText.match(/(?:jag jobbar på|arbetar på|från|company is|work at)\s+([A-Za-zÅÄÖåäö\s]{2,50})/i);
+      
+      if (emailMatch) userProfile.email = emailMatch[0];
+      if (nameMatch) userProfile.name = nameMatch[1].trim();
+      if (companyMatch) userProfile.company = companyMatch[1].trim();
+      
+      // Detect B2B vs B2C based on context
+      const isB2B = /företag|company|business|b2b|enterprise|organization/i.test(allText);
+      userProfile.segment = isB2B ? 'B2B' : 'B2C';
+    } catch {}
+
+    // Session tracking with user profile
     try {
       const currentSession = sessionId || `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
       const allMessages = [...history, { role: 'assistant', content: reply, timestamp: new Date() }];
@@ -142,6 +197,7 @@ export async function POST(req: NextRequest) {
         where: { id: currentSession },
         update: {
           messages: allMessages,
+          metadata: { ...userProfile, lastActive: new Date() },
           updatedAt: new Date()
         },
         create: {
@@ -149,7 +205,8 @@ export async function POST(req: NextRequest) {
           botId: bot.id,
           ip,
           userAgent,
-          messages: allMessages
+          messages: allMessages,
+          metadata: userProfile
         }
       });
     } catch (sesErr) {

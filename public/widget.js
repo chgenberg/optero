@@ -70,14 +70,16 @@
 
       var btn = document.createElement('button');
       btn.className = 'mendio-bot-btn';
-      btn.textContent = 'Chatta med oss';
+      var isPremium = brand.isPremium || false;
+      btn.textContent = isPremium ? 'Chatta med oss' : 'Chatta med oss · by Mendio';
 
       var panel = document.createElement('div');
       panel.className = 'mendio-bot-panel';
 
       var header = document.createElement('div');
       header.className = 'mendio-bot-header';
-      header.innerHTML = '<span>Chatt</span><button style="background:transparent;color:#fff;font-weight:700;border:none;cursor:pointer;font-size:20px">×</button>';
+      var headerTitle = isPremium ? 'Chatt' : 'Chatt · Mendio';
+      header.innerHTML = '<span>' + headerTitle + '</span><button style="background:transparent;color:' + headerTextColor + ';font-weight:700;border:none;cursor:pointer;font-size:20px">×</button>';
       var closeBtn = header.querySelector('button');
       closeBtn.addEventListener('click', function(){ panel.style.display='none'; });
 
@@ -171,6 +173,62 @@
 
       document.body.appendChild(btn);
       document.body.appendChild(panel);
+
+      // Smart triggers (proactive engagement)
+      var triggers = {
+        timeOnPage: false,
+        scrollDepth: false,
+        exitIntent: false
+      };
+
+      // Time on page trigger (30 seconds)
+      setTimeout(function() {
+        if (!triggers.timeOnPage && messages.children.length === 0) {
+          triggers.timeOnPage = true;
+          var pageUrl = window.location.pathname;
+          var contextMsg = 'Hej! Jag såg att du är på vår sida. Kan jag hjälpa dig med något?';
+          
+          if (pageUrl.includes('pric') || pageUrl.includes('price')) {
+            contextMsg = 'Har du några frågor om våra priser?';
+          } else if (pageUrl.includes('product') || pageUrl.includes('tjanst')) {
+            contextMsg = 'Vill du veta mer om våra produkter?';
+          } else if (pageUrl.includes('kontakt') || pageUrl.includes('contact')) {
+            contextMsg = 'Behöver du hjälp att komma i kontakt med oss?';
+          }
+          
+          panel.style.display = 'flex';
+          setTimeout(function() { addBubble(contextMsg, 'assistant'); }, 300);
+        }
+      }, 30000);
+
+      // Scroll depth trigger (90%)
+      window.addEventListener('scroll', function() {
+        if (!triggers.scrollDepth) {
+          var scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+          if (scrollPercentage > 90) {
+            triggers.scrollDepth = true;
+            if (messages.children.length === 0) {
+              panel.style.display = 'flex';
+              setTimeout(function() { 
+                addBubble('Du har läst igenom sidan - har du några frågor?', 'assistant'); 
+              }, 300);
+            }
+          }
+        }
+      });
+
+      // Exit-intent trigger
+      document.addEventListener('mouseleave', function(e) {
+        if (!triggers.exitIntent && e.clientY < 10) {
+          triggers.exitIntent = true;
+          if (messages.children.length === 0) {
+            panel.style.display = 'flex';
+            setTimeout(function() { 
+              addBubble('Vänta! Kan jag hjälpa dig hitta något innan du går?', 'assistant'); 
+            }, 300);
+          }
+        }
+      });
 
       // Optional logo
       if (logoUrl) {

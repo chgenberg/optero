@@ -54,6 +54,7 @@ export default function BotDetailPage() {
   const [trainQuestion, setTrainQuestion] = useState("");
   const [trainAnswer, setTrainAnswer] = useState("");
   const [training, setTraining] = useState(false);
+  const [publishing, setPublishing] = useState(false);
 
   useEffect(() => {
     if (botId) {
@@ -142,6 +143,32 @@ export default function BotDetailPage() {
     }
   };
 
+  const handlePublishToMarketplace = async () => {
+    if (!confirm('Publicera denna bot till marketplace? Du får 20% av alla premium-subscriptions från installs.')) return;
+    
+    setPublishing(true);
+    try {
+      const res = await fetch('/api/marketplace/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ botId })
+      });
+      
+      const data = await res.json();
+      if (data.success) {
+        alert('✅ Bot publicerad i marketplace! Se den på /marketplace');
+        router.push('/marketplace');
+      } else {
+        alert('❌ Fel: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Publish error:', error);
+      alert('❌ Något gick fel');
+    } finally {
+      setPublishing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -183,7 +210,14 @@ export default function BotDetailPage() {
               Skapad {new Date(stats.bot.createdAt).toLocaleDateString('sv-SE')}
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap">
+            <button
+              onClick={handlePublishToMarketplace}
+              disabled={publishing}
+              className="btn-minimal-outline disabled:opacity-50"
+            >
+              {publishing ? 'Publicerar...' : '🌐 Dela i Marketplace'}
+            </button>
             <button
               onClick={handleReindex}
               disabled={reindexing}

@@ -386,6 +386,8 @@ model Bot {
   spec         Json     // Full konfiguration: roll, mål, verktyg
   embeddingKey String?  // referens till vektorindex/namespace
   isActive     Boolean  @default(true)
+  isPublic     Boolean  @default(false) // Marketplace visibility
+  cloneCount   Int      @default(0) // How many times cloned
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   
@@ -398,9 +400,27 @@ model Bot {
   actions      BotAction[]
   knowledge    BotKnowledge[]
   sessions     BotSession[]
+  ratings      BotRating[]
   
   @@index([companyUrl])
   @@index([userId])
+  @@index([isPublic])
+}
+
+// Bot ratings for marketplace
+model BotRating {
+  id        String   @id @default(cuid())
+  botId     String
+  userId    String
+  rating    Int      // 1-5
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+  
+  bot       Bot      @relation(fields: [botId], references: [id], onDelete: Cascade)
+  
+  @@unique([botId, userId])
+  @@index([botId])
+  @@index([rating])
 }
 
 // RAG: Vector embeddings for semantic search (using JSONB for Railway compatibility)
