@@ -11,6 +11,24 @@ export default function IdentifyProblem() {
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState("");
 
+  // Normalize common URL inputs: abc.com, www.abc.com, https://www.abc.com
+  const normalizeUrlInput = (value: string): string => {
+    let v = (value || "").trim();
+    if (!v) return v;
+    // If starts with www., add https://
+    if (/^www\./i.test(v)) v = `https://${v}`;
+    // If missing protocol and looks like a domain, add https://
+    if (!/^https?:\/\//i.test(v) && /\./.test(v)) v = `https://${v}`;
+    // Lowercase hostname only
+    try {
+      const u = new URL(v);
+      const hostLower = u.hostname.toLowerCase();
+      return `${u.protocol}//${hostLower}${u.port ? `:${u.port}` : ""}${u.pathname}${u.search}${u.hash}`;
+    } catch {
+      return v; // If URL constructor fails, keep best-effort
+    }
+  };
+
   const handleAnalyze = async () => {
     if (!url.trim() || !email.trim() || !consent) {
       setError("Fyll i alla fält och godkänn integritetspolicyn");
@@ -22,11 +40,8 @@ export default function IdentifyProblem() {
       return;
     }
 
-    // Normalize URL: add https:// if missing
-    let normalizedUrl = url.trim();
-    if (!normalizedUrl.startsWith('http://') && !normalizedUrl.startsWith('https://')) {
-      normalizedUrl = 'https://' + normalizedUrl;
-    }
+    // Normalize URL for server
+    const normalizedUrl = normalizeUrlInput(url);
 
     setAnalyzing(true);
     setError("");
@@ -78,9 +93,11 @@ export default function IdentifyProblem() {
           
           <div className="space-y-6">
             <input
-              type="url"
+              type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
+              onBlur={() => setUrl((v) => normalizeUrlInput(v))}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleAnalyze(); }}
               placeholder="https://dinwebbplats.se"
               className="w-full px-6 py-4 bg-gray-50 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:bg-white focus:ring-2 focus:ring-black transition-all"
             />
