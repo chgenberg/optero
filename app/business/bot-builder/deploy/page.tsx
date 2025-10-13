@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { InstallationGuideButton } from "@/components/InstallationGuide";
 
 export default function DeployBot() {
   const router = useRouter();
@@ -86,22 +87,10 @@ export default function DeployBot() {
             <div className="border-t pt-8">
               <h3 className="font-medium text-gray-900 mb-4">Behöver du hjälp?</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <button className="text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                  <div className="font-medium mb-1">WordPress</div>
-                  <div className="text-gray-600">Steg-för-steg guide</div>
-                </button>
-                <button className="text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                  <div className="font-medium mb-1">Wix</div>
-                  <div className="text-gray-600">Steg-för-steg guide</div>
-                </button>
-                <button className="text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                  <div className="font-medium mb-1">Squarespace</div>
-                  <div className="text-gray-600">Steg-för-steg guide</div>
-                </button>
-                <button className="text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                  <div className="font-medium mb-1">Annat</div>
-                  <div className="text-gray-600">Kontakta support</div>
-                </button>
+                <InstallationGuideButton platform="wordpress" snippet={installSnippet} />
+                <InstallationGuideButton platform="wix" snippet={installSnippet} />
+                <InstallationGuideButton platform="squarespace" snippet={installSnippet} />
+                <InstallationGuideButton platform="other" snippet={installSnippet} />
               </div>
             </div>
           </div>
