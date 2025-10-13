@@ -31,6 +31,7 @@ export default function BotBuilderSolution() {
         const interviewData = JSON.parse(interview);
         const brand = JSON.parse(brandConfig);
         const deepAnalysis = JSON.parse(sessionStorage.getItem("botDeepAnalysis") || '{}');
+        const integrations = JSON.parse(sessionStorage.getItem("botIntegrations") || '{}');
         
         const consult = {
           url,
@@ -38,7 +39,9 @@ export default function BotBuilderSolution() {
           websiteSummary: {},
           documentsContent: '',
           problems: [problemData.problem],
+          botType: problemData.botType || 'knowledge',
           brandConfig: brand,
+          integrations,
           pages: deepAnalysis.pages || [] // Pass pages for embedding
         } as any;
 

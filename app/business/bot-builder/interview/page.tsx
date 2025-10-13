@@ -46,11 +46,14 @@ export default function BotBuilderInterview() {
 
   const getInitialMessage = (problem: string) => {
     const messages: Record<string, string> = {
-      "lead-qualification": "Hej! Jag ska hjälpa dig bygga en bot som kvalificerar leads. Kan du berätta lite om vilken typ av leads ni får idag?",
-      "customer-support": "Hej! Låt oss bygga en supportbot tillsammans. Vilka är de vanligaste frågorna ni får från kunder?",
-      "booking": "Hej! Vi ska skapa en bokningsbot. Vad för typ av bokningar hanterar ni?"
+      "knowledge": "Hej! Jag hjälper dig bygga en kunskapsbot. Vilka är de vanligaste frågorna era kunder/besökare har?",
+      "lead-qualification": "Hej! Låt oss bygga en leadkvalificeringsbot. Vad är ditt huvudsakliga mål - fler demos, konsultationer eller direktförsäljning?",
+      "customer-support": "Hej! Vi ska skapa en supportbot. Vilka är de 3 vanligaste supportärendena ni får?",
+      "booking": "Hej! Vi bygger en bokningsbot. Vad för typ av bokningar hanterar ni och hur lång tid tar varje bokning?",
+      "ecommerce": "Hej! Låt oss skapa en e-commerce assistant. Vilken typ av produkter säljer ni och vad är era kunders vanligaste frågor?",
+      "hr-recruitment": "Hej! Vi bygger en rekryteringsbot. Vad är de viktigaste kriterierna ni screena kandidater på?"
     };
-    return messages[problem] || "Hej! Låt oss börja bygga din bot.";
+    return messages[problem] || "Hej! Låt oss börja bygga din bot. Berätta lite om ditt use case.";
   };
 
   const addBotMessage = (content: string) => {
@@ -77,15 +80,58 @@ export default function BotBuilderInterview() {
     setInput("");
     setLoading(true);
 
+    // Get bot type-specific follow-up questions
+    const problemData = sessionStorage.getItem("botProblemData");
+    const botTypeId = problemData ? JSON.parse(problemData).problem : "knowledge";
+    
+    const typeQuestions: Record<string, string[]> = {
+      "knowledge": [
+        "Perfekt! Har ni några specifika dokument eller FAQ-sidor jag ska fokusera på?",
+        "Förstår. Vilken typ av svar föredrar ni - korta och koncisa eller utförliga förklaringar?",
+        "Bra! Hur formell ska boten vara - professionell eller mer avslappnad?",
+        "Tack! Jag har allt jag behöver. Låt mig konfigurera din kunskapsbot..."
+      ],
+      "lead-qualification": [
+        "Bra! Vilken information behöver ni samla in från leads? (Budget, tidsram, beslutsroll, etc)",
+        "Förstår. Vad är en kvalificerad lead för er? Finns det några disqualifiers?",
+        "Perfekt. Vart ska kvalificerade leads skickas - HubSpot, e-post, Slack?",
+        "Utmärkt! Jag skapar nu en leadbot som matchar era behov..."
+      ],
+      "customer-support": [
+        "Tack! Hur vill ni hantera ärenden boten inte kan lösa - skapa ticket eller e-posta direkt?",
+        "Förstår. Finns det någon prioritering - brådskande ärenden först?",
+        "Bra. Vilka system använder ni - Zendesk, Freshdesk, eller e-post?",
+        "Perfekt! Jag konfigurerar nu en supportbot för er..."
+      ],
+      "booking": [
+        "Bra! Vilka tider är ni tillgängliga? (Vardagar 9-17, helger, etc)",
+        "Förstår. Hur mycket tid i förväg ska bokningar göras - samma dag OK eller minst 24h?",
+        "Perfekt. Ska bekräftelse-mail skickas automatiskt?",
+        "Utmärkt! Jag skapar nu en bokningsbot åt er..."
+      ],
+      "ecommerce": [
+        "Intressant! Använder ni Shopify, WooCommerce eller annan plattform?",
+        "Förstår. Ska boten kunna lägga produkter i kundvagn eller bara rekommendera?",
+        "Bra! Vill ni att boten kan svara på order-status och returer också?",
+        "Perfekt! Jag konfigurerar nu en e-commerce assistant..."
+      ],
+      "hr-recruitment": [
+        "Bra! Vilken typ av roller rekryterar ni till? (Tech, sales, admin, etc)",
+        "Förstår. Vilka är era deal-breakers - språk, erfarenhet, plats?",
+        "Perfekt. Ska boten boka intervjuer direkt i er kalender?",
+        "Utmärkt! Jag skapar nu en rekryteringsbot..."
+      ]
+    };
+    
+    const responses = typeQuestions[botTypeId] || [
+      "Intressant! Kan du ge mig ett exempel?",
+      "Förstår. Hur hanterar ni detta idag?",
+      "Bra input. Vad är målet?",
+      "Tack! Jag har vad jag behöver..."
+    ];
+    
     // Simulate bot response
     setTimeout(() => {
-      const responses = [
-        "Intressant! Kan du ge mig ett exempel på en typisk situation?",
-        "Förstår. Hur hanterar ni detta idag?",
-        "Bra input. Vad skulle vara det ideala resultatet?",
-        "Tack! Jag tror jag har vad jag behöver. Låt mig sammanställa en lösning..."
-      ];
-      
       if (currentQuestion < responses.length - 1) {
         addBotMessage(responses[currentQuestion]);
         setCurrentQuestion(prev => prev + 1);

@@ -43,34 +43,106 @@ export default function AnalyzeProblem() {
     analyzeWebsite();
   }, [router]);
 
-  const problems = [
+  const botTypes = [
     {
-      id: "lead-qualification",
-      title: "Leadkvalificering",
-      description: "Många besökare lämnar utan att konvertera",
-      metric: "65% bounce rate"
+      id: "knowledge",
+      type: "knowledge",
+      title: "FAQ & Kunskap",
+      description: "Svara på vanliga frågor från din webbplats och dokument",
+      metric: "24/7 tillgänglighet",
+      icon: "📚",
+      complexity: 1,
+      useCases: ["FAQ", "Produktinfo", "Onboarding", "Dokumentation"]
     },
     {
-      id: "customer-support",
-      title: "Kundsupport",
-      description: "Återkommande frågor tar tid från teamet",
-      metric: "40% av tiden på samma frågor"
+      id: "lead-qualification",
+      type: "lead",
+      title: "Leadkvalificering",
+      description: "Kvalificera besökare och samla in kontaktinformation",
+      metric: "3x fler kvalificerade leads",
+      icon: "🎯",
+      complexity: 2,
+      useCases: ["B2B SaaS", "Konsultförsäljning", "Demo-bokningar"]
     },
     {
       id: "booking",
-      title: "Bokning & schemaläggning",
-      description: "Manuell hantering av bokningar",
-      metric: "2h/dag på administration"
+      type: "workflow",
+      title: "Bokning & Schemaläggning",
+      description: "Automatisera bokningar och minska administrativ tid",
+      metric: "Spara 2h/dag",
+      icon: "📅",
+      complexity: 2,
+      useCases: ["Frisör", "Tandläkare", "Konsultmöten", "Restaurang"]
+    },
+    {
+      id: "customer-support",
+      type: "support",
+      title: "Kundsupport (Tier 1)",
+      description: "Hantera vanliga supportärenden och skapa tickets",
+      metric: "60% färre tickets",
+      icon: "💬",
+      complexity: 2,
+      useCases: ["E-commerce", "SaaS", "IT-support"]
+    },
+    {
+      id: "ecommerce",
+      type: "workflow",
+      title: "E-commerce Assistant",
+      description: "Produktrekommendationer, order tracking, kundvagn",
+      metric: "25% högre konvertering",
+      icon: "🛒",
+      complexity: 3,
+      useCases: ["Webshop", "Shopify", "WooCommerce"]
+    },
+    {
+      id: "hr-recruitment",
+      type: "workflow",
+      title: "HR & Recruitment",
+      description: "Screena kandidater och boka intervjuer",
+      metric: "5x snabbare screening",
+      icon: "👥",
+      complexity: 2,
+      useCases: ["Rekrytering", "Onboarding", "HR-frågor"]
+    },
+    {
+      id: "sales-assistant",
+      type: "lead",
+      title: "Sales Assistant (Advanced)",
+      description: "Komplex produktkonfigurator med dynamisk prissättning",
+      metric: "Custom lösning",
+      icon: "💼",
+      complexity: 4,
+      useCases: ["Enterprise B2B", "CPQ", "Komplex försäljning"],
+      requiresCustom: true
+    },
+    {
+      id: "financial-advisor",
+      type: "knowledge",
+      title: "Finansiell Rådgivning",
+      description: "Personaliserade investeringsråd och riskvärdering",
+      metric: "Compliance-säker",
+      icon: "💰",
+      complexity: 5,
+      useCases: ["Bank", "Försäkring", "Investering"],
+      requiresCustom: true
     }
   ];
 
   const handleContinue = () => {
     if (!selectedProblem) return;
     
-    const problem = problems.find(p => p.id === selectedProblem);
+    const botType = botTypes.find(p => p.id === selectedProblem);
+    
+    // If requires custom, show enterprise modal
+    if (botType?.requiresCustom) {
+      router.push(`/business/bot-builder/enterprise?type=${selectedProblem}`);
+      return;
+    }
+    
     sessionStorage.setItem("botProblemData", JSON.stringify({
       problem: selectedProblem,
-      details: problem
+      botType: botType?.type,
+      details: botType
     }));
     router.push("/business/bot-builder/interview");
   };
@@ -127,29 +199,54 @@ export default function AnalyzeProblem() {
           )}
 
           <div className="space-y-4">
-            {problems.map((problem) => (
+            {botTypes.map((bot) => (
               <button
-                key={problem.id}
-                onClick={() => setSelectedProblem(problem.id)}
+                key={bot.id}
+                onClick={() => setSelectedProblem(bot.id)}
                 className={`w-full text-left p-6 rounded-xl border-2 transition-all ${
-                  selectedProblem === problem.id
+                  selectedProblem === bot.id
                     ? "border-black bg-gray-50"
+                    : bot.requiresCustom
+                    ? "border-yellow-300 bg-yellow-50 hover:border-yellow-400"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
               >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-1">
-                      {problem.title}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      {problem.description}
-                    </p>
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex items-start gap-3 flex-1">
+                    <span className="text-2xl">{bot.icon}</span>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-medium text-gray-900 mb-1">
+                        {bot.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-2">
+                        {bot.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {bot.useCases.map((uc, i) => (
+                          <span key={i} className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full">
+                            {uc}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-sm font-mono text-gray-500">
-                    {problem.metric}
+                  <div className="text-right ml-4">
+                    <div className="text-sm font-medium text-gray-900">
+                      {bot.metric}
+                    </div>
+                    {bot.requiresCustom && (
+                      <div className="text-xs text-yellow-700 mt-1 font-medium">
+                        Kräver konsultation
+                      </div>
+                    )}
                   </div>
                 </div>
+                
+                {bot.requiresCustom && (
+                  <div className="mt-3 pt-3 border-t border-yellow-200 text-sm text-yellow-800">
+                    💡 Detta use case kräver compliance-granskning och custom integrationer
+                  </div>
+                )}
               </button>
             ))}
           </div>

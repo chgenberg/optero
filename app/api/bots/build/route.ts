@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 export async function POST(req: NextRequest) {
   let urlForLock = '';
   try {
-    const { consult, conversations, brandConfig } = await req.json();
+    const { consult, conversations, brandConfig, integrations } = await req.json();
     urlForLock = consult?.url || '';
     // lightweight build lock per URL to avoid spikes
     const key = `build:${consult.url}`;
@@ -16,14 +16,22 @@ export async function POST(req: NextRequest) {
     }
     g.__buildLock.set(key, true);
 
-    // Minimal spec byggd av konsultdata + konversation + brand
+    const botType = consult.botType || 'knowledge';
+    const integrationsData = consult.integrations || integrations || {};
+
+    // Minimal spec byggd av konsultdata + konversation + brand + integrations
     const spec = {
       role: "company_bot",
       url: consult.url,
       problem: consult.problems?.[0] || "",
-      type: "knowledge", // default, can be updated via /api/bots/update
-      webhookUrl: null as string | null,
-      slackWebhook: null as string | null,
+      type: botType, // knowledge | lead | support | workflow
+      subtype: consult.problems?.[0] || '', // For specific variants
+      webhookUrl: integrationsData.webhookUrl || null,
+      slackWebhook: integrationsData.slackWebhook || null,
+      hubspotEnabled: integrationsData.hubspotEnabled || false,
+      calendlyUrl: integrationsData.calendlyUrl || null,
+      zendeskDomain: integrationsData.zendeskDomain || null,
+      shopifyDomain: integrationsData.shopifyDomain || null,
       plan: 'free' as 'free' | 'pro',
       goals: consult.websiteSummary?.summary?.goals || [],
       context: {
@@ -50,8 +58,8 @@ export async function POST(req: NextRequest) {
     const bot = await prisma.bot.create({
       data: {
         companyUrl: consult.url || null,
-        name: `Bot for ${consult.url || "company"}`,
-        type: "knowledge",
+        name: `${spec.type} Bot for ${consult.url || "company"}`,
+        type: botType,
         spec
       }
     });

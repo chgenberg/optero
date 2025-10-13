@@ -16,8 +16,18 @@ export default function CustomizeBotPage() {
     logoOffset: { x: 20, y: 20 },
     fontUrl: ''
   });
+  const [integrations, setIntegrations] = useState({
+    hubspotEnabled: false,
+    calendlyUrl: '',
+    zendeskDomain: '',
+    shopifyDomain: '',
+    webhookUrl: '',
+    slackWebhook: ''
+  });
+  const [botType, setBotType] = useState('knowledge');
   const [loading, setLoading] = useState(true);
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showIntegrations, setShowIntegrations] = useState(false);
   const colorPickerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,6 +40,12 @@ export default function CustomizeBotPage() {
       router.push('/business/bot-builder');
       return;
     }
+
+    // Set bot type
+    try {
+      const parsed = JSON.parse(problemData);
+      setBotType(parsed.botType || 'knowledge');
+    } catch {}
 
     // Auto-detect brand
     detectBrand(websiteUrl);
@@ -67,8 +83,9 @@ export default function CustomizeBotPage() {
   };
 
   const handleContinue = () => {
-    // Save brand config
+    // Save brand config + integrations
     sessionStorage.setItem('botBrandConfig', JSON.stringify(brand));
+    sessionStorage.setItem('botIntegrations', JSON.stringify(integrations));
     router.push('/business/bot-builder/solution');
   };
 
@@ -261,6 +278,91 @@ export default function CustomizeBotPage() {
               </div>
             </div>
           </div>
+
+          {/* Integrations (conditional based on bot type) */}
+          {(botType === 'lead' || botType === 'support' || botType === 'workflow') && (
+            <div>
+              <button
+                onClick={() => setShowIntegrations(!showIntegrations)}
+                className="w-full flex justify-between items-center text-sm font-medium text-gray-700 mb-3"
+              >
+                <span>Integrationer (valfritt)</span>
+                <span className="text-gray-400">{showIntegrations ? '−' : '+'}</span>
+              </button>
+              
+              {showIntegrations && (
+                <div className="space-y-4 p-4 bg-gray-50 rounded-xl">
+                  {/* HubSpot (for lead bots) */}
+                  {botType === 'lead' && (
+                    <label className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={integrations.hubspotEnabled}
+                        onChange={(e) => setIntegrations({ ...integrations, hubspotEnabled: e.target.checked })}
+                        className="w-5 h-5 rounded border-gray-300"
+                      />
+                      <span className="text-sm text-gray-700">Aktivera HubSpot-integration</span>
+                    </label>
+                  )}
+                  
+                  {/* Calendly (for booking bots) */}
+                  {(botType === 'workflow' || botType === 'lead') && (
+                    <input
+                      type="url"
+                      value={integrations.calendlyUrl}
+                      onChange={(e) => setIntegrations({ ...integrations, calendlyUrl: e.target.value })}
+                      placeholder="Calendly URL (t.ex. https://calendly.com/dittnamn)"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                    />
+                  )}
+                  
+                  {/* Zendesk (for support bots) */}
+                  {botType === 'support' && (
+                    <input
+                      type="text"
+                      value={integrations.zendeskDomain}
+                      onChange={(e) => setIntegrations({ ...integrations, zendeskDomain: e.target.value })}
+                      placeholder="Zendesk domain (t.ex. dittforetag.zendesk.com)"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                    />
+                  )}
+                  
+                  {/* Shopify (for ecommerce bots) */}
+                  {botType === 'workflow' && (
+                    <input
+                      type="text"
+                      value={integrations.shopifyDomain}
+                      onChange={(e) => setIntegrations({ ...integrations, shopifyDomain: e.target.value })}
+                      placeholder="Shopify domain (t.ex. dinbutik.myshopify.com)"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                    />
+                  )}
+                  
+                  {/* Webhook URL (all types) */}
+                  <input
+                    type="url"
+                    value={integrations.webhookUrl}
+                    onChange={(e) => setIntegrations({ ...integrations, webhookUrl: e.target.value })}
+                    placeholder="Webhook URL (för notifikationer)"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                  />
+                  
+                  {/* Slack Webhook */}
+                  <input
+                    type="url"
+                    value={integrations.slackWebhook}
+                    onChange={(e) => setIntegrations({ ...integrations, slackWebhook: e.target.value })}
+                    placeholder="Slack Webhook URL"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                  />
+                  
+                  <p className="text-xs text-gray-600 mt-3">
+                    💡 Integrationer gör att boten kan skicka leads, skapa tickets och utföra actions automatiskt
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
             <div className="flex justify-between pt-6">
               <button

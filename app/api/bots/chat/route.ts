@@ -35,6 +35,23 @@ export async function POST(req: NextRequest) {
     } as Record<string,string>;
     const subKey = subtype ? `${bot.type}.${subtype}` : '';
     const extra = subtypeHints[subKey] || '';
+    
+    // Type-specific instructions
+    let typeInstructions = '';
+    if (bot.type === 'knowledge') {
+      typeInstructions = 'KNOWLEDGE BOT:\n- Svara bara utifrån context och RAG-data.\n- Om info saknas: ställ EN tydlig följdfråga.\n- Länka alltid till källa när möjligt.\n';
+    } else if (bot.type === 'lead') {
+      typeInstructions = 'LEAD BOT:\n- Ställ frågor i ordning: problem → mål/KPI → budget → tidsram → beslutsroll.\n- När allt insamlat: sammanfatta + säg "CALL:WEBHOOK"\n- Om Calendly konfigurerad: erbjud bokning med "CALL:BOOK"\n';
+    } else if (bot.type === 'support') {
+      typeInstructions = 'SUPPORT BOT:\n- Samla: beskrivning, kategori, brådska, tidigare steg, kontaktinfo.\n- Försök lösa från KB först.\n- Om ej lösbart: "CALL:TICKET" för eskalering.\n';
+    } else if (bot.type === 'workflow') {
+      const workflowSubtype = subtype || '';
+      if (workflowSubtype.includes('booking')) {
+        typeInstructions = 'BOOKING BOT:\n- Samla: typ av bokning, datum, tid, namn, e-post.\n- När komplett: "CALL:BOOK"\n';
+      } else if (workflowSubtype.includes('ecommerce')) {
+        typeInstructions = 'E-COMMERCE BOT:\n- Rekommendera produkter baserat på behov.\n- Svara på order-status, returer, etc.\n- Vid produktfråga: "CALL:PRODUCT"\n';
+      }
+    }
 
     // PII masking for logs & downstream providers
     const maskPII = (text: string): string => {
@@ -101,7 +118,7 @@ export async function POST(req: NextRequest) {
       // Continue without RAG if it fails
     }
 
-    const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${specSafe}\n\nBottype: ${bot.type}.${subtype || ''}\n${extra}knowledge:\n- svara bara utifrån context.\n- om saknas info: ställ precis en tydlig följdfråga.\nlead:\n- ställ i turordning: problem, mål/KPI (använd spec.kpis om finns), budgetintervall, tidsram, beslutsroll, nästa steg.\n- när allt är insamlat: gör en kort sammanfattning + CALL:WEBHOOK.\nsupport:\n- be om beskrivning, kategori, brådska, tidigare steg, kontaktinfo.\n- föreslå lösning + CALL:WEBHOOK.\n${ragContext}`;
+    const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${specSafe}\n\nBottype: ${bot.type}.${subtype || ''}\n${extra}\n${typeInstructions}${ragContext}`;
 
     const messages = [
       { role: "system", content: system },
@@ -163,6 +180,40 @@ export async function POST(req: NextRequest) {
             botId: bot.id,
             type: bot.type,
             payload
+          }
+        });
+      }
+      
+      // Type-specific actions
+      
+      // Booking bot: Parse Calendly intent
+      if (bot.type === 'workflow' && spec.calendlyUrl && /CALL:BOOK/i.test(reply)) {
+        // Return Calendly link in reply
+        const calendlyLink = spec.calendlyUrl;
+        const enhancedReply = reply.replace(/CALL:BOOK/gi, `Boka här: ${calendlyLink}`);
+        // Update reply (handled below)
+      }
+      
+      // Support bot: Create Zendesk ticket
+      if (bot.type === 'support' && spec.zendeskDomain && /CALL:TICKET/i.test(reply)) {
+        // Create inbox action for manual handling (Zendesk API requires auth)
+        await prisma.botAction.create({
+          data: {
+            botId: bot.id,
+            type: 'support',
+            payload: { history, reply, zendeskDomain: spec.zendeskDomain }
+          }
+        });
+      }
+      
+      // E-commerce bot: Shopify integration placeholder
+      if (bot.type === 'workflow' && spec.shopifyDomain && /CALL:PRODUCT/i.test(reply)) {
+        // For now, just log the intent - full Shopify API requires OAuth
+        await prisma.botAction.create({
+          data: {
+            botId: bot.id,
+            type: 'ecommerce',
+            payload: { history, reply, action: 'product_recommendation' }
           }
         });
       }
