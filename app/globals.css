@@ -301,3 +301,77 @@ button, a, input, textarea, select {
   }
 }
 
+/* Minimalist bot builder styles */
+.minimal-box {
+  @apply relative bg-white rounded-2xl p-8;
+}
+
+.minimal-box::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 1rem;
+  background: #000;
+  opacity: 0.08;
+  z-index: -1;
+  animation: pulse-shadow 4s ease-in-out infinite;
+}
+
+@keyframes pulse-shadow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.08;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.12;
+  }
+}
+
+/* Minimal button styles */
+.btn-minimal {
+  @apply px-8 py-4 bg-black text-white rounded-full font-medium tracking-wide hover:bg-gray-800 transition-all duration-300;
+}
+
+.btn-minimal-outline {
+  @apply px-8 py-4 bg-white text-black border-2 border-black rounded-full font-medium tracking-wide hover:bg-gray-50 transition-all duration-300;
+}
+
+/* Chat message styles - Facebook Messenger inspired */
+.chat-container {
+  @apply flex flex-col h-[600px] bg-gray-50 rounded-2xl;
+}
+
+.chat-messages {
+  @apply flex-1 overflow-y-auto p-6 space-y-4;
+}
+
+.chat-message-user {
+  @apply flex justify-end;
+}
+
+.chat-message-bot {
+  @apply flex justify-start;
+}
+
+.chat-bubble-user {
+  @apply max-w-[70%] px-5 py-3 bg-black text-white rounded-t-2xl rounded-bl-2xl;
+}
+
+.chat-bubble-bot {
+  @apply max-w-[70%] px-5 py-3 bg-white text-gray-900 rounded-t-2xl rounded-br-2xl border border-gray-200;
+}
+
+.chat-input-container {
+  @apply p-4 bg-white border-t border-gray-200;
+}
+
+.chat-input {
+  @apply w-full px-5 py-3 bg-gray-50 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:bg-white focus:ring-2 focus:ring-black transition-all;
+}
+
+/* Minimal icons */
+.icon-minimal {
+  @apply w-6 h-6 stroke-2;
+}
+

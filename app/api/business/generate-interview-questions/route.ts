@@ -4,7 +4,7 @@ import OpenAI from "openai";
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
   maxRetries: 1,
-  timeout: 60000
+  timeout: 180000
 });
 
 export const maxDuration = 60;
@@ -86,8 +86,7 @@ När du har 3–5 substantiella svar, sätt hasEnoughInfo: true.`;
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }
       ],
-      response_format: { type: "json_object" },
-      max_completion_tokens: 500
+      max_completion_tokens: 800
     });
 
     const content = completion.choices[0].message.content || "{}";

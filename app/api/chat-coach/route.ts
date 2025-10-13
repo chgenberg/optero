@@ -83,10 +83,9 @@ export async function POST(request: NextRequest) {
     ];
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-5-mini",
       messages,
-      temperature: 0.7,
-      max_tokens: 500,
+      max_completion_tokens: 600,
     });
 
     const response = completion.choices[0].message.content || "Jag förstår inte riktigt. Kan du formulera om din fråga?";

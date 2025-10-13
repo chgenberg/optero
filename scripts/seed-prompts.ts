@@ -63,10 +63,9 @@ Format som JSON:
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-5-mini",
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.8,
-      response_format: { type: "json_object" },
+      max_completion_tokens: 4000,
     });
 
     const data = JSON.parse(response.choices[0].message.content || "{}");

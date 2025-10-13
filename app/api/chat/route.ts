@@ -30,10 +30,9 @@ Ge korta, konkreta och hjälpsamma svar. Fokusera på praktisk tillämpning. Hå
     ];
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-5-mini",
       messages: messages as any,
-      temperature: 0.7,
-      max_tokens: 200,
+      max_completion_tokens: 400,
     });
 
     const responseMessage = completion.choices[0].message.content || "Jag förstår inte riktigt. Kan du formulera om frågan?";

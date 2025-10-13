@@ -105,13 +105,12 @@ REGLER:
 Ställ EN fråga. Var personlig och empatisk. Endast frågan, inget annat.`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-5-mini",
       messages: [
         ...session.messages,
         { role: "user", content: nextQuestionPrompt },
       ],
-      temperature: 0.7,
-      max_tokens: 150,
+      max_completion_tokens: 200,
     });
 
     const nextQuestion = completion.choices[0].message.content || "Kan du berätta mer?";

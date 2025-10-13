@@ -220,7 +220,6 @@ Für JEDE Aufgabe, geben Sie GENAU dieses JSON-Format zurück:
           { role: "system", content: selectedPrompts.system },
           { role: "user", content: selectedPrompts.user + contextString + "\n\nKRAV: Returnera ENDAST giltig JSON enligt { \"solutions\": [ { \"task\": string, \"solution\": string, \"prompt\": string } ] } utan extra text eller kodblock." }
         ],
-        response_format: { type: "json_object" },
         max_completion_tokens: 4000,
       });
 

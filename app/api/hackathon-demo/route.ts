@@ -85,12 +85,11 @@ Gör lösningen så värdefull och konkret som möjligt!`;
       });
     }
 
-    const openai = new OpenAI({ apiKey });
+    const openai = new OpenAI({ apiKey, timeout: 180000 });
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-5-mini",
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.7,
-      response_format: { type: "json_object" },
+      max_completion_tokens: 4000,
     });
     const content = response.choices[0]?.message?.content || "";
     if (!content) throw new Error("Tomt AI-svar");

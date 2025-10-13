@@ -124,12 +124,12 @@ Var EXTREMT detaljerad och personlig. Referera till specifika svar från intervj
 
     let reportContent = "Rapport kunde inte genereras";
     if (apiKey) {
-      const openai = new OpenAI({ apiKey });
+      const openai = new OpenAI({ apiKey, timeout: 300000 });
       try {
         const response = await openai.chat.completions.create({
-          model: "gpt-4o",
+          model: "gpt-5",
           messages: [{ role: "user", content: reportPrompt }],
-          temperature: 0.8,
+          max_completion_tokens: 16000,
         });
         const text = response.choices[0]?.message?.content || "";
         if (text) reportContent = text;

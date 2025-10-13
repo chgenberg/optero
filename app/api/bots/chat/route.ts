@@ -87,11 +87,25 @@ export async function POST(req: NextRequest) {
       }
     } catch {}
 
-    return NextResponse.json({ reply });
+    const res = NextResponse.json({ reply });
+    res.headers.set('Access-Control-Allow-Origin', '*');
+    res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    return res;
   } catch (e: any) {
     console.error("chat error", e);
-    return NextResponse.json({ error: "chat failed" }, { status: 500 });
+    const res = NextResponse.json({ error: "chat failed" }, { status: 500 });
+    res.headers.set('Access-Control-Allow-Origin', '*');
+    res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    return res;
   }
+}
+
+export async function OPTIONS() {
+  const res = new NextResponse(null, { status: 204 });
+  res.headers.set('Access-Control-Allow-Origin', '*');
+  res.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+  return res;
 }
 
 

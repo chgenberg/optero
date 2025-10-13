@@ -196,16 +196,10 @@ Sortera rekommendationerna efter störst potentiell påverkan.`;
         const response = await openai.chat.completions.create({
           model: "gpt-5",
           messages: [
-            { 
-              role: "system", 
-              content: "You are a helpful assistant that responds in JSON format." 
-            },
-            { 
-              role: "user", 
-              content: prompt 
-            }
+            { role: "system", content: "You are a helpful assistant that responds in JSON format." },
+            { role: "user", content: prompt }
           ],
-          max_completion_tokens: 16000, // GPT-5 uses default temperature (1)
+          max_completion_tokens: 16000,
         });
         const content = response.choices[0]?.message?.content || "";
         if (content) {

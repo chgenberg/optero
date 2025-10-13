@@ -60,7 +60,10 @@
       addBubble(text, 'user');
       history.push({ role: 'user', content: text });
       try {
-        var res = await fetch('/api/bots/chat', {
+        var apiBase = (function(){
+          try { return new URL(script.src).origin || ''; } catch(e) { return ''; }
+        })();
+        var res = await fetch(apiBase + '/api/bots/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ botId: botId, history: history })

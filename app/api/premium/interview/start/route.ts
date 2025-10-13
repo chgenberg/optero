@@ -62,7 +62,7 @@ FÖRSTA FRÅGAN: Börja med att be dem beskriva en TYPISK arbetsdag från morgon
 Ställ frågan nu:`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-5-mini",
       messages: [
         {
           role: "system",
@@ -70,8 +70,7 @@ Ställ frågan nu:`;
         },
         { role: "user", content: context },
       ],
-      temperature: 0.7,
-      max_tokens: 150,
+      max_completion_tokens: 200,
     });
 
     const firstQuestion = completion.choices[0].message.content || "Kan du berätta om en typisk arbetsdag för dig?";

@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY,
   maxRetries: 1,
-  timeout: 300000 // 5 minutes for GPT-5 (o1 needs more time to think)
+  timeout: 300000 // 5 minutes for GPT-5
 });
 export const maxDuration = 300;
 
@@ -185,7 +185,6 @@ Returnera ENDAST JSON enligt exakt detta format:
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
         ],
-        response_format: { type: "json_object" },
         max_completion_tokens: 3000
       });
     } catch (err: any) {
@@ -241,7 +240,6 @@ Returnera ENDAST JSON enligt exakt detta format:
           messages: [
             { role: "user", content: `Konvertera följande innehåll till exakt JSON enligt:\n{ "solutions": [ { "task": string, "solution": string, "prompt": string }, {..}, {..} ] }\n\nINNEHÅLL:\n${contentRaw}` }
           ],
-          response_format: { type: "json_object" },
           max_completion_tokens: 1200
         });
         const coerceRaw = coerce.choices?.[0]?.message?.content || "{}";
@@ -265,7 +263,6 @@ Returnera ENDAST JSON enligt exakt detta format:
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt }
           ],
-          response_format: { type: "json_object" },
           max_completion_tokens: 2500
         });
         const regenRaw = regen.choices?.[0]?.message?.content || "{}";
