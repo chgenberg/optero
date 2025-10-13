@@ -28,6 +28,20 @@ export default function CustomizeBotPage() {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const colorPickerRef = useRef<HTMLDivElement>(null);
 
+  const uploadLogo = async (file: File) => {
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/uploads/logo', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (data.url) {
+        setBrand((b) => ({ ...b, logoUrl: data.url }));
+      }
+    } catch (e) {
+      console.error('Upload failed', e);
+    }
+  };
+
   useEffect(() => {
     const websiteUrl = sessionStorage.getItem('botWebsiteUrl');
     const problemData = sessionStorage.getItem('botProblemData');
@@ -254,13 +268,39 @@ export default function CustomizeBotPage() {
             <div className="bg-white rounded-2xl p-8 shadow-sm">
               <h2 className="text-xl font-light mb-6">Logo (valfritt)</h2>
               
-              <input
-                type="url"
-                value={brand.logoUrl}
-                onChange={(e) => setBrand({ ...brand, logoUrl: e.target.value })}
-                placeholder="https://din-domän.se/logo.svg"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm mb-4"
-              />
+              {/* Upload or URL */}
+              <div
+                className="w-full mb-4"
+                onDragOver={(e) => { e.preventDefault(); }}
+                onDrop={async (e) => {
+                  e.preventDefault();
+                  const file = e.dataTransfer.files?.[0];
+                  if (file) await uploadLogo(file);
+                }}
+              >
+                <div className="grid md:grid-cols-2 gap-3">
+                  <label className="flex items-center justify-center gap-2 px-4 py-6 bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl text-sm text-gray-600 hover:border-gray-400 cursor-pointer">
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) await uploadLogo(file);
+                      }}
+                    />
+                    <span>Ladda upp logo</span>
+                  </label>
+                  <input
+                    type="url"
+                    value={brand.logoUrl}
+                    onChange={(e) => setBrand({ ...brand, logoUrl: e.target.value })}
+                    placeholder="eller klistra in en logo‑URL (https://...)"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-2">Stöd: PNG, JPG, WEBP, SVG. Max 5 MB.</p>
+              </div>
               
               <div className="grid grid-cols-2 gap-3">
                 <div>
