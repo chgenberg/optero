@@ -10,7 +10,11 @@ export default function CustomizeBotPage() {
   const [brand, setBrand] = useState({
     primaryColor: '#111111',
     fontFamily: 'system-ui',
-    tone: 'professional' as 'formal' | 'casual' | 'professional'
+    tone: 'professional' as 'formal' | 'casual' | 'professional',
+    logoUrl: '',
+    logoPosition: 'bottom-right',
+    logoOffset: { x: 20, y: 20 },
+    fontUrl: ''
   });
   const [loading, setLoading] = useState(true);
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -149,6 +153,13 @@ export default function CustomizeBotPage() {
                   </option>
                 ))}
               </select>
+            <input
+              type="url"
+              value={brand.fontUrl}
+              onChange={(e) => setBrand({ ...brand, fontUrl: e.target.value })}
+              placeholder="(Valfritt) Google Fonts URL"
+              className="mt-3 w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+            />
             </div>
 
             {/* Tone selection */}
@@ -197,6 +208,9 @@ export default function CustomizeBotPage() {
                     className="w-12 h-12 rounded-full mb-3"
                     style={{ backgroundColor: brand.primaryColor }}
                   />
+                {brand.logoUrl && (
+                  <img src={brand.logoUrl} alt="Logo" className="w-8 h-8 object-contain mb-3" />
+                )}
                   <p className="text-gray-900">
                     {brand.tone === 'formal' && "God dag! Hur kan jag bistå er idag?"}
                     {brand.tone === 'professional' && "Hej! Hur kan jag hjälpa dig idag?"}
@@ -205,6 +219,48 @@ export default function CustomizeBotPage() {
                 </div>
               </div>
             </div>
+
+          {/* Logo controls */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Logo (valfritt)
+            </label>
+            <input
+              type="url"
+              value={brand.logoUrl}
+              onChange={(e) => setBrand({ ...brand, logoUrl: e.target.value })}
+              placeholder="https://ditt-domän.se/logo.svg"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+            />
+            <div className="grid grid-cols-2 gap-3 mt-3">
+              <select
+                value={brand.logoPosition}
+                onChange={(e) => setBrand({ ...brand, logoPosition: e.target.value as any })}
+                className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+              >
+                <option value="bottom-right">Nere höger</option>
+                <option value="bottom-left">Nere vänster</option>
+                <option value="top-right">Uppe höger</option>
+                <option value="top-left">Uppe vänster</option>
+              </select>
+              <div className="flex gap-3">
+                <input
+                  type="number"
+                  value={brand.logoOffset.x}
+                  onChange={(e) => setBrand({ ...brand, logoOffset: { ...brand.logoOffset, x: Number(e.target.value) } })}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+                  placeholder="X offset"
+                />
+                <input
+                  type="number"
+                  value={brand.logoOffset.y}
+                  onChange={(e) => setBrand({ ...brand, logoOffset: { ...brand.logoOffset, y: Number(e.target.value) } })}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+                  placeholder="Y offset"
+                />
+              </div>
+            </div>
+          </div>
 
             <div className="flex justify-between pt-6">
               <button

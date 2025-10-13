@@ -6,20 +6,47 @@ import { useRouter } from "next/navigation";
 export default function IdentifyProblem() {
   const router = useRouter();
   const [url, setUrl] = useState("");
+  const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [error, setError] = useState("");
 
   const handleAnalyze = async () => {
-    if (!url.trim()) return;
+    if (!url.trim() || !email.trim() || !consent) {
+      setError("Fyll i alla fält och godkänn integritetspolicyn");
+      return;
+    }
     
+    if (!email.includes('@')) {
+      setError("Ange en giltig e-postadress");
+      return;
+    }
+
     setAnalyzing(true);
+    setError("");
+    
     try {
-      // Store URL in session
+      // Create/update user
+      const userRes = await fetch('/api/users/upsert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      
+      if (!userRes.ok) throw new Error('Failed to create user');
+      
+      const userData = await userRes.json();
+      
+      // Store user and URL in session
+      sessionStorage.setItem("botUserEmail", email);
+      sessionStorage.setItem("botUserId", userData.userId);
       sessionStorage.setItem("botWebsiteUrl", url);
       
       // Navigate to problem analysis
       router.push("/business/bot-builder/analyze");
     } catch (error) {
       console.error("Error:", error);
+      setError("Ett fel uppstod. Försök igen.");
       setAnalyzing(false);
     }
   };
@@ -50,20 +77,50 @@ export default function IdentifyProblem() {
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://dinwebbplats.se"
               className="w-full px-6 py-4 bg-gray-50 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:bg-white focus:ring-2 focus:ring-black transition-all"
-              onKeyDown={(e) => e.key === "Enter" && handleAnalyze()}
+            />
+
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="din@email.se"
+              className="w-full px-6 py-4 bg-gray-50 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:bg-white focus:ring-2 focus:ring-black transition-all"
             />
             
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                className="mt-1 w-5 h-5 rounded border-gray-300 text-black focus:ring-black"
+              />
+              <span className="text-sm text-gray-700">
+                Jag godkänner att ni skapar ett konto, analyserar min webbplats och lagrar data enligt{' '}
+                <a 
+                  href="/integritetspolicy-bot-builder" 
+                  target="_blank"
+                  className="text-black underline hover:text-gray-700"
+                >
+                  integritetspolicyn
+                </a>
+              </span>
+            </label>
+
+            {error && (
+              <p className="text-sm text-red-600 text-center">{error}</p>
+            )}
+            
             <p className="text-sm text-gray-600 text-center">
-              Vi analyserar din webbplats för att förstå ditt företag och identifiera områden där en chatbot kan hjälpa
+              Vi analyserar din webbplats djupgående för att förstå ditt företag och identifiera var en chatbot kan ge mest värde
             </p>
 
             <div className="flex justify-center">
               <button
                 onClick={handleAnalyze}
-                disabled={!url.trim() || analyzing}
+                disabled={!url.trim() || !email.trim() || !consent || analyzing}
                 className="btn-minimal disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {analyzing ? "Analyserar..." : "Fortsätt"}
+                {analyzing ? "Skapar konto och analyserar..." : "Fortsätt"}
               </button>
             </div>
           </div>

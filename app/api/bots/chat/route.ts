@@ -8,11 +8,23 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 export async function POST(req: NextRequest) {
   try {
     const { botId, history } = await req.json();
-    const bot = await prisma.bot.findUnique({ where: { id: botId } });
+    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    const bot = await prisma.bot.findUnique({ where: { id: botId }, include: { versions: true } });
     if (!bot) return NextResponse.json({ error: "Bot not found" }, { status: 404 });
 
-    const specSafe = JSON.stringify(bot.spec).slice(0, 4000);
-    const subtype = (bot.spec as any)?.subtype || '';
+    // A/B: pick latest version or previous version with 10% traffic if exists
+    let activeSpec: any = bot.spec;
+    try {
+      if (bot.versions && bot.versions.length >= 2) {
+        const latest = bot.versions.sort((a: any,b: any) => b.version - a.version)[0];
+        const previous = bot.versions.sort((a: any,b: any) => b.version - a.version)[1];
+        const r = Math.random();
+        activeSpec = r < 0.1 ? previous.spec : latest.spec; // 10% to previous
+      }
+    } catch {}
+
+    const specSafe = JSON.stringify(activeSpec).slice(0, 4000);
+    const subtype = (activeSpec as any)?.subtype || '';
     const subtypeHints = {
       'knowledge.faq': '- svara kort och länka till relevanta delar i context.\n',
       'knowledge.onboarding': '- presentera steg-för-steg och föreslå nästa modul.\n',
@@ -23,9 +35,20 @@ export async function POST(req: NextRequest) {
     const extra = subtypeHints[subKey] || '';
     const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${specSafe}\n\nBottype: ${bot.type}.${subtype || ''}\n${extra}knowledge:\n- svara bara utifrån context.\n- om saknas info: ställ precis en tydlig följdfråga.\nlead:\n- ställ i turordning: problem, mål/KPI (använd spec.kpis om finns), budgetintervall, tidsram, beslutsroll, nästa steg.\n- när allt är insamlat: gör en kort sammanfattning + CALL:WEBHOOK.\nsupport:\n- be om beskrivning, kategori, brådska, tidigare steg, kontaktinfo.\n- föreslå lösning + CALL:WEBHOOK.\n`;
 
+    // PII masking for logs & downstream providers
+    const maskPII = (text: string): string => {
+      try {
+        if (!text) return text;
+        let t = text;
+        t = t.replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '[email]');
+        t = t.replace(/\b\+?\d[\d\s().-]{7,}\b/g, '[phone]');
+        return t;
+      } catch { return text; }
+    };
+
     const messages = [
       { role: "system", content: system },
-      ...history.map((m: any) => ({ role: m.role, content: m.content }))
+      ...history.map((m: any) => ({ role: m.role, content: maskPII(m.content) }))
     ] as any[];
 
     const resp = await openai.chat.completions.create({
@@ -38,7 +61,7 @@ export async function POST(req: NextRequest) {
 
     // lead/support webhook best-effort
     try {
-      const spec: any = bot.spec || {};
+      const spec: any = activeSpec || {};
       const payload = { botId: bot.id, history, reply };
       if ((bot.type === 'lead' || bot.type === 'support') && /CALL:WEBHOOK/i.test(reply) && !spec.requireApproval) {
         if (spec.webhookUrl) {
@@ -67,14 +90,12 @@ export async function POST(req: NextRequest) {
       }
     } catch {}
 
-    // Log usage (message)
+    // Log usage (message) with masked content summary (optional lightweight)
     try {
-      await prisma.botUsage.create({
-        data: { botId: bot.id, kind: "message" }
-      });
+      await prisma.botUsage.create({ data: { botId: bot.id, kind: "message" } });
     } catch {}
 
-    // Simple rate limit for free plan: max 50 messages per day per bot
+    // Simple rate limit for free plan: max 50 messages/day per bot + 20/min per IP
     try {
       const spec: any = bot.spec || {};
       const isFree = spec.plan !== 'pro';
@@ -85,6 +106,37 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ reply: 'Gratisgränsen är nådd för idag. Uppgradera för mer kapacitet.' });
         }
       }
+      // naive in-memory IP bucket (best-effort)
+      const g = globalThis as any;
+      g.__rate = g.__rate || new Map();
+      const key = `ip:${ip}:bot:${bot.id}`;
+      const now = Date.now();
+      const windowMs = 60 * 1000;
+      const rec = g.__rate.get(key) || { start: now, n: 0 };
+      if (now - rec.start > windowMs) { rec.start = now; rec.n = 0; }
+      rec.n += 1; g.__rate.set(key, rec);
+      if (rec.n > 20) {
+        return NextResponse.json({ reply: 'För många förfrågningar. Vänta en stund och försök igen.' }, { status: 429 });
+      }
+    } catch {}
+
+    // Short-lived cache key: same last user message within 30s → reuse reply
+    try {
+      const lastUser = history.filter((h: any) => h.role === 'user').slice(-1)[0]?.content || '';
+      const key = `cache:${bot.id}:${(lastUser || '').slice(0,64)}`;
+      // naive in-memory cache on globalThis (stateless fallback no-op in serverless)
+      const g = globalThis as any;
+      g.__mcache = g.__mcache || new Map();
+      const now = Date.now();
+      const cached = g.__mcache.get(key);
+      if (cached && now - cached.t < 30000) {
+        const res = NextResponse.json({ reply: cached.v });
+        res.headers.set('Access-Control-Allow-Origin', '*');
+        res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+        return res;
+      }
+      // store current
+      g.__mcache.set(key, { v: reply, t: now });
     } catch {}
 
     const res = NextResponse.json({ reply });

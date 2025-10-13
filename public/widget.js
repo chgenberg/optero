@@ -22,18 +22,42 @@
     function initWidget(brand) {
       var primaryColor = brand.primaryColor || '#111';
       var fontFamily = brand.fontFamily || 'system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif';
+      var fontUrl = brand.fontUrl || null;
       var tone = brand.tone || 'professional';
+      var logoUrl = brand.logoUrl || null;
+      var logoPosition = brand.logoPosition || 'bottom-right';
+      var logoOffset = brand.logoOffset || { x: 20, y: 20 };
+
+      // Optional Google Font link
+      if (fontUrl) {
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = fontUrl;
+        document.head.appendChild(link);
+      }
+
+      // Contrast helpers
+      function hexToRgb(hex){
+        try{ hex = hex.replace('#',''); if(hex.length===3){hex=hex.split('').map(function(c){return c+c;}).join('');}
+          var bigint=parseInt(hex,16); return { r:(bigint>>16)&255, g:(bigint>>8)&255, b:bigint&255 }; }catch(e){ return {r:17,g:17,b:17}; }
+      }
+      function relativeLuminance(r,g,b){ r/=255; g/=255; b/=255; r=r<=0.03928?r/12.92:Math.pow((r+0.055)/1.055,2.4); g=g<=0.03928?g/12.92:Math.pow((g+0.055)/1.055,2.4); b=b<=0.03928?b/12.92:Math.pow((b+0.055)/1.055,2.4); return 0.2126*r+0.7152*g+0.0722*b; }
+      function contrastRatio(hex1,hex2){ var a=hexToRgb(hex1), b=hexToRgb(hex2); var L1=relativeLuminance(a.r,a.g,a.b), L2=relativeLuminance(b.r,b.g,b.b); var light=Math.max(L1,L2), dark=Math.min(L1,L2); return (light+0.05)/(dark+0.05); }
+      function bestTextColor(bg){ return contrastRatio(bg,'#ffffff')>=4.5?'#ffffff':'#111111'; }
 
       // Build CSS with brand colors and fonts
       var css = [];
-      css.push('.mendio-bot-btn{position:fixed;bottom:20px;right:20px;background:' + primaryColor + ';color:#fff;border-radius:9999px;padding:12px 16px;font-family:' + fontFamily + ';font-weight:700;box-shadow:0 10px 25px rgba(0,0,0,.2);cursor:pointer;z-index:2147483000;transition:all 0.3s}');
+      var btnTextColor = bestTextColor(primaryColor);
+      css.push('.mendio-bot-btn{position:fixed;bottom:20px;right:20px;background:' + primaryColor + ';color:' + btnTextColor + ';border-radius:9999px;padding:12px 16px;font-family:' + fontFamily + ';font-weight:700;box-shadow:0 10px 25px rgba(0,0,0,.2);cursor:pointer;z-index:2147483000;transition:all 0.3s}');
       css.push('.mendio-bot-btn:hover{transform:scale(1.05);box-shadow:0 15px 35px rgba(0,0,0,.3)}');
       css.push('.mendio-bot-panel{position:fixed;bottom:80px;right:20px;width:340px;max-width:calc(100vw - 32px);height:480px;background:#fff;border:2px solid ' + primaryColor + ';border-radius:16px;box-shadow:0 20px 40px rgba(0,0,0,.25);overflow:hidden;display:none;flex-direction:column;z-index:2147483001;font-family:' + fontFamily + '}');
-      css.push('.mendio-bot-header{padding:12px 16px;background:' + primaryColor + ';color:#fff;font-weight:800;display:flex;align-items:center;justify-content:space-between}');
+      var headerTextColor = bestTextColor(primaryColor);
+      css.push('.mendio-bot-header{padding:12px 16px;background:' + primaryColor + ';color:' + headerTextColor + ';font-weight:800;display:flex;align-items:center;justify-content:space-between}');
       css.push('.mendio-bot-body{padding:12px;height:100%;display:flex;flex-direction:column;gap:8px;background:#f6f6f6}');
       css.push('.mendio-bot-messages{flex:1;overflow:auto;display:flex;flex-direction:column;gap:6px}');
       css.push('.mendio-bot-bubble{max-width:80%;padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.4}');
-      css.push('.mendio-bot-bubble.user{background:' + primaryColor + ';color:#fff;align-self:flex-end}');
+      var bubbleUserText = bestTextColor(primaryColor);
+      css.push('.mendio-bot-bubble.user{background:' + primaryColor + ';color:' + bubbleUserText + ';align-self:flex-end}');
       css.push('.mendio-bot-bubble.ai{background:#fff;color:#111;align-self:flex-start;border:1px solid #e5e5e5}');
       css.push('.mendio-bot-input{display:flex;gap:8px}');
       css.push('.mendio-bot-input input{flex:1;border:1px solid #e5e5e5;border-radius:12px;padding:10px 12px;font-size:14px;font-family:' + fontFamily + '}');
@@ -147,6 +171,25 @@
 
       document.body.appendChild(btn);
       document.body.appendChild(panel);
+
+      // Optional logo
+      if (logoUrl) {
+        var logo = document.createElement('img');
+        logo.src = logoUrl;
+        logo.alt = 'Logo';
+        logo.style.position = 'fixed';
+        logo.style.width = '36px';
+        logo.style.height = '36px';
+        logo.style.objectFit = 'contain';
+        logo.style.zIndex = '2147482999';
+        var x = (logoOffset && logoOffset.x) || 20;
+        var y = (logoOffset && logoOffset.y) || 20;
+        if (logoPosition === 'bottom-right') { logo.style.right = (20 + x) + 'px'; logo.style.bottom = (20 + y) + 'px'; }
+        if (logoPosition === 'bottom-left')  { logo.style.left  = (20 + x) + 'px'; logo.style.bottom = (20 + y) + 'px'; }
+        if (logoPosition === 'top-right')    { logo.style.right = (20 + x) + 'px'; logo.style.top    = (20 + y) + 'px'; }
+        if (logoPosition === 'top-left')     { logo.style.left  = (20 + x) + 'px'; logo.style.top    = (20 + y) + 'px'; }
+        document.body.appendChild(logo);
+      }
     }
   } catch(e) { 
     console.error('Mendio widget error:', e);

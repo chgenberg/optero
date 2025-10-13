@@ -18,7 +18,8 @@ export default function AnalyzeProblem() {
       }
 
       try {
-        const res = await fetch("/api/business/scrape", {
+        // Use deep-scrape instead of basic scrape
+        const res = await fetch("/api/business/deep-scrape", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ url }),
@@ -26,7 +27,12 @@ export default function AnalyzeProblem() {
         
         const data = await res.json();
         setResult(data);
-        try { sessionStorage.setItem("botBuilder_scrape", JSON.stringify(data)); } catch {}
+        
+        // Store comprehensive analysis
+        try { 
+          sessionStorage.setItem("botDeepAnalysis", JSON.stringify(data)); 
+          sessionStorage.setItem("botBuilder_scrape", JSON.stringify(data)); // legacy compat
+        } catch {}
       } catch (error) {
         console.error("Analysis error:", error);
       } finally {
@@ -74,7 +80,10 @@ export default function AnalyzeProblem() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="minimal-box max-w-md w-full text-center">
           <div className="w-12 h-12 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-6"></div>
-          <p className="text-gray-600">Analyserar din webbplats...</p>
+          <p className="text-gray-600 mb-3">Analyserar din webbplats djupgående...</p>
+          <p className="text-sm text-gray-500">
+            Vi crawlar sidor, extraherar innehåll och identifierar problem med AI
+          </p>
         </div>
       </div>
     );
@@ -98,9 +107,24 @@ export default function AnalyzeProblem() {
           <h2 className="text-2xl font-light text-gray-900 mb-2">
             Vad vill du lösa?
           </h2>
-          <p className="text-gray-600 mb-10">
+          <p className="text-gray-600 mb-4">
             Baserat på din webbplats har vi identifierat några områden där en chatbot kan göra störst skillnad
           </p>
+          
+          {/* Show AI insights if available */}
+          {result?.analysis && (
+            <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+              <p className="text-sm font-medium text-blue-900 mb-2">🔍 AI-insikter från din webbplats:</p>
+              <p className="text-sm text-blue-800">
+                {result.analysis.description || 'Analyserar...'}
+              </p>
+              {result.analysis.recommendedBotType && (
+                <p className="text-xs text-blue-700 mt-2">
+                  💡 Rekommenderat: <strong>{result.analysis.recommendedBotType}</strong>
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="space-y-4">
             {problems.map((problem) => (

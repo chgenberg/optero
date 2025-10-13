@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
@@ -27,7 +28,11 @@ export async function GET(req: NextRequest) {
       primaryColor: '#111111',
       secondaryColor: '#666666',
       fontFamily: 'system-ui',
-      tone: 'professional'
+      tone: 'professional',
+      logoUrl: null,
+      logoPosition: 'bottom-right',
+      logoOffset: { x: 20, y: 20 },
+      fontUrl: null
     };
 
     // Add CORS headers for widget
