@@ -129,12 +129,12 @@ Svara i JSON-format:
       };
     }
 
-    // Return comprehensive analysis
+    // Return comprehensive analysis with full page content for embedding
     return NextResponse.json({
       success: true,
       url,
       pagesScraped: pageContents.length,
-      pages: pageContents.map(p => ({ url: p.url, title: p.title })),
+      pages: pageContents, // Full content: url, title, text (for embeddings)
       analysis,
       rawText: combinedText.slice(0, 5000) // for debugging
     });

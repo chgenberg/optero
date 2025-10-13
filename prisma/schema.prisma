@@ -1,10 +1,12 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  extensions = [pgvector(map: "vector")]
 }
 
 // Sparar specialiseringar per yrke (AI-genererade)
@@ -391,8 +393,47 @@ model Bot {
   versions     BotVersion[]
   evals        BotEval[]
   actions      BotAction[]
+  knowledge    BotKnowledge[]
+  sessions     BotSession[]
   
   @@index([companyUrl])
+}
+
+// RAG: Vector embeddings for semantic search
+model BotKnowledge {
+  id          String                     @id @default(cuid())
+  botId       String
+  sourceUrl   String?                    // Original URL
+  title       String
+  content     String                     @db.Text
+  embedding   Unsupported("vector(1536)")?  // OpenAI ada-002 embedding
+  metadata    Json?                      // { section, date, author, etc }
+  createdAt   DateTime                   @default(now())
+  updatedAt   DateTime                   @updatedAt
+  
+  bot         Bot                        @relation(fields: [botId], references: [id], onDelete: Cascade)
+  
+  @@index([botId])
+  @@index([sourceUrl])
+}
+
+// Session tracking for multi-turn conversations
+model BotSession {
+  id          String   @id @default(cuid())
+  botId       String
+  userId      String?  // Optional: if user is logged in
+  ip          String?
+  userAgent   String?
+  messages    Json     // Array of {role, content, timestamp}
+  metadata    Json?    // { lead_captured, booking_made, etc }
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  bot         Bot      @relation(fields: [botId], references: [id], onDelete: Cascade)
+  
+  @@index([botId])
+  @@index([userId])
+  @@index([createdAt])
 }
 
 model BotSource {

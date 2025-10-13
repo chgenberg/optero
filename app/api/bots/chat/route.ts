@@ -7,8 +7,10 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: NextRequest) {
   try {
-    const { botId, history } = await req.json();
+    const { botId, history, sessionId } = await req.json();
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    const userAgent = req.headers.get('user-agent') || '';
+    
     const bot = await prisma.bot.findUnique({ where: { id: botId }, include: { versions: true } });
     if (!bot) return NextResponse.json({ error: "Bot not found" }, { status: 404 });
 
@@ -33,7 +35,6 @@ export async function POST(req: NextRequest) {
     } as Record<string,string>;
     const subKey = subtype ? `${bot.type}.${subtype}` : '';
     const extra = subtypeHints[subKey] || '';
-    const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${specSafe}\n\nBottype: ${bot.type}.${subtype || ''}\n${extra}knowledge:\n- svara bara utifrån context.\n- om saknas info: ställ precis en tydlig följdfråga.\nlead:\n- ställ i turordning: problem, mål/KPI (använd spec.kpis om finns), budgetintervall, tidsram, beslutsroll, nästa steg.\n- när allt är insamlat: gör en kort sammanfattning + CALL:WEBHOOK.\nsupport:\n- be om beskrivning, kategori, brådska, tidigare steg, kontaktinfo.\n- föreslå lösning + CALL:WEBHOOK.\n`;
 
     // PII masking for logs & downstream providers
     const maskPII = (text: string): string => {
@@ -45,6 +46,42 @@ export async function POST(req: NextRequest) {
         return t;
       } catch { return text; }
     };
+
+    // RAG: Semantic search in BotKnowledge
+    let ragContext = '';
+    try {
+      const lastUserMsg = history.filter((h: any) => h.role === 'user').slice(-1)[0]?.content || '';
+      if (lastUserMsg) {
+        // Generate embedding for user query
+        const queryEmbedding = await openai.embeddings.create({
+          model: "text-embedding-ada-002",
+          input: lastUserMsg
+        });
+        const queryVector = queryEmbedding.data[0]?.embedding;
+        
+        if (queryVector) {
+          // Semantic search: find top 3 most relevant chunks
+          const results: any[] = await prisma.$queryRaw`
+            SELECT id, "sourceUrl", title, content, "metadata",
+                   1 - (embedding <=> ${JSON.stringify(queryVector)}::vector) AS similarity
+            FROM "BotKnowledge"
+            WHERE "botId" = ${botId}
+            ORDER BY embedding <=> ${JSON.stringify(queryVector)}::vector
+            LIMIT 3
+          `;
+          
+          if (results && results.length > 0) {
+            ragContext = '\n\nRelevant information from knowledge base:\n' + 
+              results.map((r: any) => `[${r.title}](${r.sourceUrl || ''}): ${r.content}`).join('\n\n');
+          }
+        }
+      }
+    } catch (ragErr) {
+      console.error('RAG error:', ragErr);
+      // Continue without RAG if it fails
+    }
+
+    const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${specSafe}\n\nBottype: ${bot.type}.${subtype || ''}\n${extra}knowledge:\n- svara bara utifrån context.\n- om saknas info: ställ precis en tydlig följdfråga.\nlead:\n- ställ i turordning: problem, mål/KPI (använd spec.kpis om finns), budgetintervall, tidsram, beslutsroll, nästa steg.\n- när allt är insamlat: gör en kort sammanfattning + CALL:WEBHOOK.\nsupport:\n- be om beskrivning, kategori, brådska, tidigare steg, kontaktinfo.\n- föreslå lösning + CALL:WEBHOOK.\n${ragContext}`;
 
     const messages = [
       { role: "system", content: system },
@@ -59,6 +96,29 @@ export async function POST(req: NextRequest) {
 
     const reply = resp.choices[0]?.message?.content || "";
 
+    // Session tracking
+    try {
+      const currentSession = sessionId || `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+      const allMessages = [...history, { role: 'assistant', content: reply, timestamp: new Date() }];
+      
+      await prisma.botSession.upsert({
+        where: { id: currentSession },
+        update: {
+          messages: allMessages,
+          updatedAt: new Date()
+        },
+        create: {
+          id: currentSession,
+          botId: bot.id,
+          ip,
+          userAgent,
+          messages: allMessages
+        }
+      });
+    } catch (sesErr) {
+      console.error('Session tracking error:', sesErr);
+    }
+
     // lead/support webhook best-effort
     try {
       const spec: any = activeSpec || {};
@@ -71,7 +131,6 @@ export async function POST(req: NextRequest) {
           await fetch(spec.slackWebhook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: `Ny ${bot.type}-sammanfattning:\n\n${reply}` }) }).catch(() => {});
         }
         if (bot.type === 'lead' && spec.hubspotEnabled) {
-          // naive parsing: hitta e‑post i historiken
           const text = JSON.stringify(history);
           const m = text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
           if (m) {
@@ -79,7 +138,6 @@ export async function POST(req: NextRequest) {
           }
         }
       } else if ((bot.type === 'lead' || bot.type === 'support') && /CALL:WEBHOOK/i.test(reply) && spec.requireApproval) {
-        // Skapa approval request
         await prisma.approvalRequest.create({
           data: {
             botId: bot.id,
@@ -97,7 +155,7 @@ export async function POST(req: NextRequest) {
 
     // Simple rate limit for free plan: max 50 messages/day per bot + 20/min per IP
     try {
-      const spec: any = bot.spec || {};
+      const spec: any = activeSpec || {};
       const isFree = spec.plan !== 'pro';
       if (isFree) {
         const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -124,7 +182,6 @@ export async function POST(req: NextRequest) {
     try {
       const lastUser = history.filter((h: any) => h.role === 'user').slice(-1)[0]?.content || '';
       const key = `cache:${bot.id}:${(lastUser || '').slice(0,64)}`;
-      // naive in-memory cache on globalThis (stateless fallback no-op in serverless)
       const g = globalThis as any;
       g.__mcache = g.__mcache || new Map();
       const now = Date.now();
@@ -139,7 +196,7 @@ export async function POST(req: NextRequest) {
       g.__mcache.set(key, { v: reply, t: now });
     } catch {}
 
-    const res = NextResponse.json({ reply });
+    const res = NextResponse.json({ reply, sessionId: sessionId || undefined });
     res.headers.set('Access-Control-Allow-Origin', '*');
     res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
     return res;
@@ -159,5 +216,3 @@ export async function OPTIONS() {
   res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
   return res;
 }
-
-

@@ -79,6 +79,18 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Trigger embedding generation in background (best-effort, don't block response)
+    try {
+      const pages = consult.pages || [];
+      if (pages.length > 0) {
+        fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/bots/embed`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ botId: bot.id, pages })
+        }).catch(() => {}); // fire and forget
+      }
+    } catch {}
+
     return NextResponse.json({ botId: bot.id });
   } catch (e: any) {
     console.error("Bot build failed", e);
