@@ -30,11 +30,13 @@ export default function BotBuilderInterview() {
 
   useEffect(() => {
     // Start conversation
-    const problem = sessionStorage.getItem("botBuilder_problem");
-    if (!problem) {
+    const problemData = sessionStorage.getItem("botProblemData");
+    if (!problemData) {
       router.push("/business/bot-builder/analyze");
       return;
     }
+    
+    const problem = JSON.parse(problemData).problem;
 
     // Initial bot message
     setTimeout(() => {
@@ -91,8 +93,13 @@ export default function BotBuilderInterview() {
         // Final message and redirect
         addBotMessage(responses[responses.length - 1]);
         setTimeout(() => {
-          sessionStorage.setItem("botBuilder_interview", JSON.stringify(messages));
-          router.push("/business/bot-builder/solution");
+          // Save all interview data properly
+          const allMessages = [...messages, userMessage];
+          sessionStorage.setItem("botInterviewData", JSON.stringify({
+            messages: allMessages,
+            answers: allMessages.filter(m => m.role === 'user').map(m => m.content)
+          }));
+          router.push("/business/bot-builder/customize");
         }, 2000);
       }
       

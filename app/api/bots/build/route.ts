@@ -3,9 +3,9 @@ import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
   try {
-    const { consult, conversations } = await req.json();
+    const { consult, conversations, brandConfig } = await req.json();
 
-    // Minimal spec byggd av konsultdata + konversation
+    // Minimal spec byggd av konsultdata + konversation + brand
     const spec = {
       role: "company_bot",
       url: consult.url,
@@ -23,6 +23,12 @@ export async function POST(req: NextRequest) {
       sources: {
         website: true,
         documents: Boolean(consult.documentsContent)
+      },
+      brand: {
+        primaryColor: brandConfig?.primaryColor || '#111111',
+        secondaryColor: brandConfig?.secondaryColor || '#666666',
+        fontFamily: brandConfig?.fontFamily || 'system-ui',
+        tone: brandConfig?.tone || 'professional'
       }
     };
 

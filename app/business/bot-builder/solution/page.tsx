@@ -9,14 +9,15 @@ export default function BotBuilderSolution() {
   const [building, setBuilding] = useState(true);
   const [progress, setProgress] = useState(0);
   const [botId, setBotId] = useState<string | null>(null);
+  const [buildPhase, setBuildPhase] = useState("Förbereder...");
 
   useEffect(() => {
-    const interview = sessionStorage.getItem("botBuilder_interview");
-    const problem = sessionStorage.getItem("botBuilder_problem");
-    const url = sessionStorage.getItem("botBuilder_url");
-    const scrape = sessionStorage.getItem("botBuilder_scrape");
+    const interview = sessionStorage.getItem("botInterviewData");
+    const problem = sessionStorage.getItem("botProblemData");
+    const url = sessionStorage.getItem("botWebsiteUrl");
+    const brandConfig = sessionStorage.getItem("botBrandConfig");
     
-    if (!interview || !problem || !url) {
+    if (!interview || !problem || !url || !brandConfig) {
       router.push("/business/bot-builder");
       return;
     }
@@ -24,23 +25,39 @@ export default function BotBuilderSolution() {
     // Build bot server-side
     (async () => {
       try {
+        setBuildPhase("Analyserar webbplats...");
+        
+        const problemData = JSON.parse(problem);
+        const interviewData = JSON.parse(interview);
+        const brand = JSON.parse(brandConfig);
+        
         const consult = {
           url,
-          websiteContent: (() => { try { return JSON.parse(scrape || '{}').content || ''; } catch { return ''; } })(),
-          websiteSummary: (() => { try { return JSON.parse(scrape || '{}').summary || {}; } catch { return {}; } })(),
+          websiteContent: '',
+          websiteSummary: {},
           documentsContent: '',
-          problems: [problem]
+          problems: [problemData.problem],
+          brandConfig: brand
         } as any;
 
+        setBuildPhase("Konfigurerar AI-modell...");
+        
         const resp = await fetch('/api/bots/build', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ consult, conversations: JSON.parse(interview || '[]') })
+          body: JSON.stringify({ 
+            consult, 
+            conversations: interviewData.messages || [],
+            brandConfig: brand
+          })
         });
+        setBuildPhase("Optimerar för ditt use case...");
+        
         const data = await resp.json();
         if (data?.botId) {
           setBotId(data.botId);
           sessionStorage.setItem('botBuilder_botId', data.botId);
+          setBuildPhase("Slutför...");
         }
       } catch (e) {
         console.error('Failed to build bot', e);
@@ -55,7 +72,7 @@ export default function BotBuilderSolution() {
             }
             return p + 10;
           });
-        }, 400);
+        }, 300);
       }
     })();
   }, [router]);
@@ -85,10 +102,10 @@ export default function BotBuilderSolution() {
           </div>
           
           <p className="text-sm text-gray-600">
-            {progress < 30 && "Analyserar konversationen..."}
-            {progress >= 30 && progress < 60 && "Konfigurerar AI-modellen..."}
-            {progress >= 60 && progress < 90 && "Optimerar för ditt use case..."}
-            {progress >= 90 && "Slutför..."}
+            {buildPhase}
+          </p>
+          <p className="text-xs text-gray-500 mt-2">
+            Detta tar vanligtvis 10-30 sekunder
           </p>
         </div>
       </div>

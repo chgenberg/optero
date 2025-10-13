@@ -11,7 +11,7 @@ export default function AnalyzeProblem() {
 
   useEffect(() => {
     const analyzeWebsite = async () => {
-      const url = sessionStorage.getItem("botBuilder_url");
+      const url = sessionStorage.getItem("botWebsiteUrl");
       if (!url) {
         router.push("/business/bot-builder/identify");
         return;
@@ -61,7 +61,11 @@ export default function AnalyzeProblem() {
   const handleContinue = () => {
     if (!selectedProblem) return;
     
-    sessionStorage.setItem("botBuilder_problem", selectedProblem);
+    const problem = problems.find(p => p.id === selectedProblem);
+    sessionStorage.setItem("botProblemData", JSON.stringify({
+      problem: selectedProblem,
+      details: problem
+    }));
     router.push("/business/bot-builder/interview");
   };
 

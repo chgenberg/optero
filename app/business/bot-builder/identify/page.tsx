@@ -14,7 +14,7 @@ export default function IdentifyProblem() {
     setAnalyzing(true);
     try {
       // Store URL in session
-      sessionStorage.setItem("botBuilder_url", url);
+      sessionStorage.setItem("botWebsiteUrl", url);
       
       // Navigate to problem analysis
       router.push("/business/bot-builder/analyze");
