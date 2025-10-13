@@ -15,8 +15,30 @@ function ChatInner() {
   const [loading, setLoading] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [brand, setBrand] = useState<{ primaryColor?: string; fontFamily?: string; tone?: string } | null>(null);
+  const [botName, setBotName] = useState<string>("Bot");
 
   useEffect(() => { if (containerRef.current) containerRef.current.scrollTop = containerRef.current.scrollHeight; }, [messages]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        if (!botId) return;
+        const res = await fetch(`/api/bots/info?botId=${encodeURIComponent(botId)}`);
+        const data = await res.json();
+        if (data?.spec?.brand) setBrand(data.spec.brand);
+        if (data?.name) setBotName(data.name);
+        // friendly welcome based on tone
+        const tone = data?.spec?.brand?.tone || 'professional';
+        const welcome = tone === 'formal' ?
+          'God dag! Jag hjälper gärna till. Vad vill du veta?' :
+          tone === 'casual' ?
+          'Hej! 👋 Hur kan jag hjälpa dig idag?' :
+          'Hej! Hur kan jag hjälpa dig idag?';
+        setMessages([{ role: 'assistant', content: welcome }]);
+      } catch {}
+    })();
+  }, [botId]);
 
   const send = async () => {
     if (!input.trim() || loading) return;
@@ -38,21 +60,28 @@ function ChatInner() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-gray-50 text-gray-900" style={{ fontFamily: brand?.fontFamily || 'inherit' }}>
       <div className="max-w-3xl mx-auto p-4 sm:p-6 pt-20">
-        <h1 className="text-2xl font-bold mb-4">Bot‑chat test</h1>
+        <h1 className="text-2xl font-bold mb-4">{botName}</h1>
         <div ref={containerRef} className="h-[60vh] bg-white border border-gray-200 rounded-xl p-4 overflow-y-auto space-y-3">
           {messages.map((m, i) => (
             <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`px-4 py-2 rounded-xl ${m.role === 'user' ? 'bg-gray-900 text-white' : 'bg-gray-100'}`}>{m.content}</div>
+              <div className={`px-4 py-2 rounded-xl ${m.role === 'user' ? 'text-white' : ''}`} style={{ backgroundColor: m.role === 'user' ? (brand?.primaryColor || '#111') : '#f3f4f6' }}>{m.content}</div>
             </div>
           ))}
           {loading && <Loader2 className="w-6 h-6 animate-spin text-gray-500" />}
           <div ref={endRef} />
         </div>
+        {/* Quick prompts */}
+        <div className="mt-3 flex flex-wrap gap-2">
+          {["Prissättning", "Funktioner", "Integrationer", "Bokning"].map((q) => (
+            <button key={q} onClick={() => setInput(q)} className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-xs text-gray-700 transition-colors">{q}</button>
+          ))}
+        </div>
+
         <div className="mt-4 flex gap-2">
           <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key==='Enter' && send()} placeholder="Skriv ett meddelande..." className="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-xl" />
-          <button onClick={send} disabled={loading || !input.trim()} className="px-4 py-3 bg-gray-900 text-white rounded-xl"><Send className="w-4 h-4" /></button>
+          <button onClick={send} disabled={loading || !input.trim()} className="px-4 py-3 text-white rounded-xl" style={{ backgroundColor: brand?.primaryColor || '#111' }}><Send className="w-4 h-4" /></button>
         </div>
       </div>
     </div>
