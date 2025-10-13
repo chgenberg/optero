@@ -105,12 +105,16 @@ export async function GET(req: NextRequest) {
     }
 
     if (email) {
-      // Get all bots for user
-      // Note: We don't have direct user->bot relation yet, so we match by companyUrl or spec.email
-      // For now, return all bots (admin view) or implement user relation
+      // Get user by email
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        return NextResponse.json({ bots: [] });
+      }
+
+      // Get all bots for this user
       const allBots = await prisma.bot.findMany({
+        where: { userId: user.id },
         orderBy: { createdAt: 'desc' },
-        take: 50,
         include: {
           _count: {
             select: {

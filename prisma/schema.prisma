@@ -325,6 +325,8 @@ model User {
   profession    String?
   company       String?
   
+  bots          Bot[]
+  
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   
@@ -377,15 +379,17 @@ model ExecutiveSolution {
 // Bot provisioning
 model Bot {
   id           String   @id @default(cuid())
+  userId       String?  // Owner of the bot
   companyUrl   String?
   name         String
-  type         String   // "knowledge" | "workflow"
+  type         String   // "knowledge" | "lead" | "support" | "workflow"
   spec         Json     // Full konfiguration: roll, mål, verktyg
   embeddingKey String?  // referens till vektorindex/namespace
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   sources      BotSource[]
   usages       BotUsage[]
   approvals    ApprovalRequest[]
@@ -396,6 +400,7 @@ model Bot {
   sessions     BotSession[]
   
   @@index([companyUrl])
+  @@index([userId])
 }
 
 // RAG: Vector embeddings for semantic search (using JSONB for Railway compatibility)

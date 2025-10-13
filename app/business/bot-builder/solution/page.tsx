@@ -33,6 +33,8 @@ export default function BotBuilderSolution() {
         const deepAnalysis = JSON.parse(sessionStorage.getItem("botDeepAnalysis") || '{}');
         const integrations = JSON.parse(sessionStorage.getItem("botIntegrations") || '{}');
         
+        const userEmail = sessionStorage.getItem("botUserEmail") || "";
+        
         const consult = {
           url,
           websiteContent: '',
@@ -40,6 +42,7 @@ export default function BotBuilderSolution() {
           documentsContent: '',
           problems: [problemData.problem],
           botType: problemData.botType || 'knowledge',
+          userEmail, // Associate bot with user
           brandConfig: brand,
           integrations,
           pages: deepAnalysis.pages || [] // Pass pages for embedding

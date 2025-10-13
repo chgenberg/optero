@@ -55,8 +55,19 @@ export async function POST(req: NextRequest) {
       }
     };
 
+    // Get userId from request or lookup by email
+    let userId: string | null = null;
+    try {
+      const userEmail = consult.userEmail || brandConfig?.userEmail;
+      if (userEmail) {
+        const user = await prisma.user.findUnique({ where: { email: userEmail } });
+        userId = user?.id || null;
+      }
+    } catch {}
+
     const bot = await prisma.bot.create({
       data: {
+        userId,
         companyUrl: consult.url || null,
         name: `${spec.type} Bot for ${consult.url || "company"}`,
         type: botType,
