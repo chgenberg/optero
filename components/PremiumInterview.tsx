@@ -42,7 +42,8 @@ export default function PremiumInterview({
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const parent = messagesEndRef.current?.parentElement;
+    if (parent) parent.scrollTop = parent.scrollHeight;
   }, [messages]);
 
   const startInterview = async () => {

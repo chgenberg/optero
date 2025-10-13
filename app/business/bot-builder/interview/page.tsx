@@ -18,10 +18,14 @@ export default function BotBuilderInterview() {
   const [loading, setLoading] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const c = messagesContainerRef.current;
+    if (c) {
+      c.scrollTop = c.scrollHeight;
+    }
   };
 
   useEffect(() => {
@@ -181,52 +185,55 @@ export default function BotBuilderInterview() {
             </div>
           </div>
 
-          {/* Chat messages */}
-          <div className="chat-messages scrollbar-minimal">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={message.role === "user" ? "chat-message-user" : "chat-message-bot"}
-              >
-                <div className={message.role === "user" ? "chat-bubble-user" : "chat-bubble-bot"}>
-                  {message.content}
-                </div>
-              </div>
-            ))}
-            {loading && (
-              <div className="chat-message-bot">
-                <div className="chat-bubble-bot">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+          {/* Chat body: fixed height, scroll only messages */}
+          <div className="flex flex-col h-[600px]">
+            {/* Chat messages */}
+            <div ref={messagesContainerRef} className="chat-messages scrollbar-minimal">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={message.role === "user" ? "chat-message-user" : "chat-message-bot"}
+                >
+                  <div className={message.role === "user" ? "chat-bubble-user" : "chat-bubble-bot"}>
+                    {message.content}
                   </div>
                 </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
+              ))}
+              {loading && (
+                <div className="chat-message-bot">
+                  <div className="chat-bubble-bot">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
 
-          {/* Chat input */}
-          <div className="chat-input-container">
-            <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex gap-3">
-              <input
-                ref={inputRef}
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Skriv ditt svar..."
-                className="chat-input"
-                disabled={loading}
-              />
-              <button
-                type="submit"
-                disabled={!input.trim() || loading}
-                className="px-6 py-3 bg-black text-white rounded-full hover:bg-gray-800 transition-all disabled:opacity-50"
-              >
-                Skicka
-              </button>
-            </form>
+            {/* Chat input */}
+            <div className="chat-input-container">
+              <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex gap-3">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Skriv ditt svar..."
+                  className="chat-input"
+                  disabled={loading}
+                />
+                <button
+                  type="submit"
+                  disabled={!input.trim() || loading}
+                  className="px-6 py-3 bg-black text-white rounded-full hover:bg-gray-800 transition-all disabled:opacity-50"
+                >
+                  Skicka
+                </button>
+              </form>
+            </div>
           </div>
         </div>
 

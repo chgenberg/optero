@@ -11,8 +11,9 @@ export default function BotPublicChat() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+  useEffect(() => { if (containerRef.current) containerRef.current.scrollTop = containerRef.current.scrollHeight; }, [messages]);
 
   const send = async () => {
     if (!input.trim() || loading) return;
@@ -37,7 +38,7 @@ export default function BotPublicChat() {
     <div className="min-h-screen bg-gray-50 text-gray-900">
       <div className="max-w-3xl mx-auto p-4 sm:p-6 pt-20">
         <h1 className="text-2xl font-bold mb-4">Chatta med bot · Free</h1>
-        <div className="h-[60vh] bg-white border border-gray-200 rounded-xl p-4 overflow-y-auto space-y-3">
+        <div ref={containerRef} className="h-[60vh] bg-white border border-gray-200 rounded-xl p-4 overflow-y-auto space-y-3">
           {messages.map((m, i) => (
             <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`px-4 py-2 rounded-xl ${m.role === 'user' ? 'bg-gray-900 text-white' : 'bg-gray-100'}`}>{m.content}</div>

@@ -26,6 +26,7 @@ export default function ExecutiveInterview() {
   const [problems, setProblems] = useState<Problem[]>([]);
   const [conversationHistory, setConversationHistory] = useState<any[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const saved = sessionStorage.getItem("executiveConsultation");
@@ -49,11 +50,11 @@ export default function ExecutiveInterview() {
   }, []);
 
   useEffect(() => {
-    scrollToBottom();
+    if (containerRef.current) containerRef.current.scrollTop = containerRef.current.scrollHeight;
   }, [messages]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (containerRef.current) containerRef.current.scrollTop = containerRef.current.scrollHeight;
   };
 
   const startProblemInterview = async (problemIndex: number, consultData: any) => {
@@ -251,7 +252,7 @@ export default function ExecutiveInterview() {
 
         {/* Messages */}
         <div className="mb-6">
-          <div className="h-[65vh] overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+          <div ref={containerRef} className="h-[65vh] overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-5 py-3 ${

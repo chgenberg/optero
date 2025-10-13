@@ -55,10 +55,11 @@ export default function ChatCoach({ userContext, onClose }: ChatCoachProps) {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isMinimized, setIsMinimized] = useState(false);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (containerRef.current) containerRef.current.scrollTop = containerRef.current.scrollHeight;
   };
 
   useEffect(() => {
@@ -181,7 +182,7 @@ export default function ChatCoach({ userContext, onClose }: ChatCoachProps) {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+        <div ref={containerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
           {messages.map((message) => (
             <div
               key={message.id}

@@ -29,9 +29,10 @@ export default function ChatAssistant({ context }: ChatAssistantProps) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (containerRef.current) containerRef.current.scrollTop = containerRef.current.scrollHeight;
   };
 
   useEffect(() => {
@@ -106,7 +107,7 @@ export default function ChatAssistant({ context }: ChatAssistantProps) {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div ref={containerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message, index) => (
               <div
                 key={index}
