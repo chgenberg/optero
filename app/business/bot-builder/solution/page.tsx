@@ -32,6 +32,8 @@ export default function BotBuilderSolution() {
         const brand = JSON.parse(brandConfig);
         const deepAnalysis = JSON.parse(sessionStorage.getItem("botDeepAnalysis") || '{}');
         const integrations = JSON.parse(sessionStorage.getItem("botIntegrations") || '{}');
+        const documentContent = sessionStorage.getItem("botDocuments") || "";
+        const documentFiles = JSON.parse(sessionStorage.getItem("botDocumentFiles") || '[]');
         
         const userEmail = sessionStorage.getItem("botUserEmail") || "";
         
@@ -39,13 +41,14 @@ export default function BotBuilderSolution() {
           url,
           websiteContent: '',
           websiteSummary: {},
-          documentsContent: '',
+          documentsContent: documentContent,
+          documentFiles,
           problems: [problemData.problem],
           botType: problemData.botType || 'knowledge',
-          userEmail, // Associate bot with user
+          userEmail,
           brandConfig: brand,
           integrations,
-          pages: deepAnalysis.pages || [] // Pass pages for embedding
+          pages: deepAnalysis.pages || []
         } as any;
 
         setBuildPhase("Konfigurerar AI-modell...");

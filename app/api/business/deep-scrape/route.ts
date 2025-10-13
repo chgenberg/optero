@@ -6,7 +6,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: NextRequest) {
   try {
-    const { url } = await req.json();
+    const { url, documentContent } = await req.json();
     
     if (!url) {
       return NextResponse.json({ error: "URL required" }, { status: 400 });
@@ -190,10 +190,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // AI Analysis: extract company info, problems, USP, customer type
+    // AI Analysis: extract company info, problems, USP, customer type (include documents)
     const combinedText = pageContents.map(p => `${p.title}\n${p.text}`).join('\n\n').slice(0, 12000);
+    const docText = (documentContent || "").slice(0, 8000);
+    const fullContext = docText ? `${combinedText}\n\n=== DOKUMENT ===\n${docText}` : combinedText;
     
-    const analysisPrompt = `Analysera följande webbplatsinnehåll (rubriker, meta, FAQ) och extrahera:
+    const analysisPrompt = `Analysera följande webbplats OCH dokument (om tillgängligt) och extrahera:
 
 1. **Företagsbeskrivning**: Vad gör företaget? (1-2 meningar)
 2. **Målgrupp**: Vem är deras kund? (B2B/B2C, bransch, storlek)
@@ -202,9 +204,10 @@ export async function POST(req: NextRequest) {
 5. **Vanliga objections/frågor**: Vad funderar kunder på innan de köper?
 6. **Content gaps**: Vad saknas på webbplatsen som skulle hjälpa besökare?
 7. **Bot use case**: Vilken typ av bot skulle hjälpa dem mest? (lead qualification, FAQ support, booking, etc)
+8. **Dolda möjligheter** (från dokument): Vilka problem kan en chatbot lösa som kunden kanske inte tänkt på? (produktrekommendationer, upsell, workflow-automation)
 
-Webbplatsinnehåll:
-${combinedText}
+Webbplats + Dokument:
+${fullContext}
 
 Svara i JSON-format:
 {
@@ -214,7 +217,8 @@ Svara i JSON-format:
   "usp": ["...", "...", "..."],
   "objections": ["...", "...", "..."],
   "contentGaps": ["...", "...", "..."],
-  "recommendedBotType": "..."
+  "recommendedBotType": "...",
+  "hiddenOpportunities": ["...", "...", "..."]
 }`;
 
     const aiResponse = await openai.chat.completions.create({

@@ -18,11 +18,16 @@ export default function AnalyzeProblem() {
       }
 
       try {
-        // Use deep-scrape instead of basic scrape
+        // Deep scrape website + documents
+        const documentContent = sessionStorage.getItem("botDocuments") || "";
+        
         const res = await fetch("/api/business/deep-scrape", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url }),
+          body: JSON.stringify({ 
+            url,
+            documentContent // Pass documents to AI analysis
+          }),
         });
         
         const data = await res.json();
@@ -31,7 +36,7 @@ export default function AnalyzeProblem() {
         // Store comprehensive analysis
         try { 
           sessionStorage.setItem("botDeepAnalysis", JSON.stringify(data)); 
-          sessionStorage.setItem("botBuilder_scrape", JSON.stringify(data)); // legacy compat
+          sessionStorage.setItem("botBuilder_scrape", JSON.stringify(data));
         } catch {}
       } catch (error) {
         console.error("Analysis error:", error);
@@ -185,15 +190,32 @@ export default function AnalyzeProblem() {
           
           {/* Show AI insights if available */}
           {result?.analysis && (
-            <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-              <p className="text-sm font-medium text-blue-900 mb-2">🔍 AI-insikter från din webbplats:</p>
-              <p className="text-sm text-blue-800">
-                {result.analysis.description || 'Analyserar...'}
-              </p>
-              {result.analysis.recommendedBotType && (
-                <p className="text-xs text-blue-700 mt-2">
-                  💡 Rekommenderat: <strong>{result.analysis.recommendedBotType}</strong>
+            <div className="mb-8 space-y-4">
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <p className="text-sm font-medium text-blue-900 mb-2">🔍 AI-insikter från din webbplats:</p>
+                <p className="text-sm text-blue-800">
+                  {result.analysis.description || 'Analyserar...'}
                 </p>
+                {result.analysis.recommendedBotType && (
+                  <p className="text-xs text-blue-700 mt-2">
+                    💡 Rekommenderat: <strong>{result.analysis.recommendedBotType}</strong>
+                  </p>
+                )}
+              </div>
+              
+              {/* Hidden opportunities from documents */}
+              {result.analysis.hiddenOpportunities && result.analysis.hiddenOpportunities.length > 0 && (
+                <div className="p-4 bg-purple-50 border border-purple-200 rounded-xl">
+                  <p className="text-sm font-medium text-purple-900 mb-2">✨ Dolda möjligheter vi upptäckte:</p>
+                  <ul className="text-sm text-purple-800 space-y-1">
+                    {result.analysis.hiddenOpportunities.map((opp: string, i: number) => (
+                      <li key={i}>• {opp}</li>
+                    ))}
+                  </ul>
+                  <p className="text-xs text-purple-700 mt-2">
+                    Dessa insights baseras på era dokument och webbplatsdata
+                  </p>
+                </div>
               )}
             </div>
           )}

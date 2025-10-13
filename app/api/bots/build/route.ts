@@ -20,6 +20,9 @@ export async function POST(req: NextRequest) {
     const integrationsData = consult.integrations || integrations || {};
 
     // Minimal spec byggd av konsultdata + konversation + brand + integrations
+    const documentContent = consult.documentsContent || "";
+    const documentFiles = consult.documentFiles || [];
+
     const spec = {
       role: "company_bot",
       url: consult.url,
@@ -36,7 +39,8 @@ export async function POST(req: NextRequest) {
       goals: consult.websiteSummary?.summary?.goals || [],
       context: {
         websiteMainText: consult.websiteSummary?.mainText || consult.websiteContent || "",
-        documents: consult.documentsContent || ""
+        documents: documentContent,
+        documentFiles
       },
       requireApproval: false,
       sources: {
@@ -100,12 +104,36 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    // Source: documents (metadata only)
-    if (consult.files && consult.files.length) {
-      for (const f of consult.files) {
+    // Source: documents (metadata + create BotKnowledge entries)
+    if (documentFiles && documentFiles.length) {
+      for (const f of documentFiles) {
         await prisma.botSource.create({
           data: { botId: bot.id, kind: "document", filename: f }
         });
+      }
+      
+      // Store document content in BotKnowledge for RAG
+      if (documentContent) {
+        try {
+          const chunks = documentContent.split(/={3,}\s*/).filter((c: string) => c.trim().length > 100);
+          for (const chunk of chunks.slice(0, 20)) {
+            const titleMatch = chunk.match(/^(.+?)===\n/);
+            const title = titleMatch ? titleMatch[1].trim() : 'Dokument';
+            const content = chunk.replace(/^.+?===\n/, '').slice(0, 3000);
+            
+            await prisma.botKnowledge.create({
+              data: {
+                botId: bot.id,
+                sourceUrl: null,
+                title,
+                content,
+                metadata: { source: 'document', type: 'uploaded' }
+              }
+            });
+          }
+        } catch (e) {
+          console.error('Failed to create document knowledge:', e);
+        }
       }
     }
 
