@@ -65,11 +65,22 @@ export async function POST(req: NextRequest) {
       }
     } catch {}
 
+    // Extract company name from URL for better display
+    let companyName = 'Företaget';
+    try {
+      if (consult.url) {
+        const hostname = new URL(consult.url).hostname.replace(/^www\./, '');
+        const parts = hostname.split('.');
+        const domain = parts[0] || 'company';
+        companyName = domain.charAt(0).toUpperCase() + domain.slice(1);
+      }
+    } catch {}
+
     const bot = await prisma.bot.create({
       data: {
         userId,
         companyUrl: consult.url || null,
-        name: `${spec.type} Bot for ${consult.url || "company"}`,
+        name: `${companyName} Chatbot`,
         type: botType,
         spec
       }
