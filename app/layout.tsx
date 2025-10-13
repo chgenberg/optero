@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
-import FreePlanBanner from "@/components/FreePlanBanner";
 import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -44,9 +43,6 @@ export default function RootLayout({
         <LanguageProvider>
           <Header />
           <main className="pt-16 flex-grow">
-            <div className="max-w-5xl mx-auto px-4">
-              <FreePlanBanner />
-            </div>
             {children}
           </main>
           <Footer />
