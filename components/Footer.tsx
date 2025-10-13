@@ -25,21 +25,26 @@ export default function Footer() {
           
           {/* Quick links */}
           <div>
-            <h3 className="font-medium text-gray-900 mb-4">{t('footer.about')}</h3>
+            <h3 className="font-medium text-gray-900 mb-4">Produkt</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/om" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                  {t('footer.aboutUs')}
+                <Link href="/business/bot-builder" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                  Bygg en bot
                 </Link>
               </li>
               <li>
-                <Link href="/prompts" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                  {t('footer.promptLibrary')}
+                <Link href="/marketplace" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                  Bot Marketplace
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                  Mina bots
                 </Link>
               </li>
               <li>
                 <Link href="/kontakt" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                  {t('footer.contact')}
+                  Kontakt
                 </Link>
               </li>
             </ul>

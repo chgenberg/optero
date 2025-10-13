@@ -1,272 +1,110 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import ProfessionInput from "@/components/ProfessionInput";
-import SpecializationInput from "@/components/SpecializationInput";
-import ExperienceLevel from "@/components/ExperienceLevel";
-import ChallengesInput from "@/components/ChallengesInput";
-import TaskSelection from "@/components/TaskSelection";
-import AIRecommendations from "@/components/AIRecommendations";
-import SimpleResults from "@/components/SimpleResults";
-import InfoPopup from "@/components/InfoPopup";
-import ProgressIndicator from "@/components/ProgressIndicator";
-import EmailCapture from "@/components/EmailCapture";
-import { useLanguage } from "@/contexts/LanguageContext";
-
-export type Step = "profession" | "specialization" | "tasks" | "loading" | "results";
-
-const STEP_NUMBER: Record<Step, number> = {
-  profession: 1,
-  specialization: 2,
-  tasks: 3,
-  loading: 4,
-  results: 4
-};
+import { useRouter } from "next/navigation";
+import { Bot, Sparkles, Zap, Shield } from "lucide-react";
 
 export default function Home() {
-  const { t } = useLanguage();
-  const [step, setStep] = useState<Step>("profession");
-  const [profession, setProfession] = useState("");
-  const [specialization, setSpecialization] = useState("");
-  const [experience, setExperience] = useState("");
-  const [challenges, setChallenges] = useState<string[]>([]);
-  const [selectedTasks, setSelectedTasks] = useState<{task: string, priority: number}[]>([]);
-
-  // Check if user is returning from purchase page
-  useEffect(() => {
-    const lastResults = sessionStorage.getItem("lastResults");
-    if (lastResults) {
-      try {
-        const data = JSON.parse(lastResults);
-        // If results are less than 1 hour old, restore them
-        if (Date.now() - data.timestamp < 3600000) {
-          setProfession(data.profession);
-          setSpecialization(data.specialization);
-          setExperience(data.experience);
-          setChallenges(data.challenges);
-          setSelectedTasks(data.tasks);
-          setStep("results");
-        }
-      } catch (e) {
-        console.error("Failed to restore results:", e);
-      }
-    }
-  }, []);
-  const [showInfo, setShowInfo] = useState(false);
-  const [sessionId, setSessionId] = useState<string | null>(null);
-
-  // Save session data whenever step or data changes
-  useEffect(() => {
-    if (profession) {
-      saveSession();
-    }
-  }, [step, profession, specialization, selectedTasks]);
-
-  const saveSession = async () => {
-    try {
-      const response = await fetch("/api/session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId,
-          profession,
-          specialization,
-          experience,
-          selectedTasks,
-          challenges,
-          completedSteps: STEP_NUMBER[step],
-        }),
-      });
-
-      const data = await response.json();
-      if (data.sessionId && !sessionId) {
-        setSessionId(data.sessionId);
-      }
-    } catch (error) {
-      console.error("Failed to save session:", error);
-    }
-  };
-
-  const handleProfessionSelect = (prof: string) => {
-    setProfession(prof);
-    setStep("specialization");
-  };
-
-  const handleSpecializationSelect = (spec: string) => {
-    setSpecialization(spec);
-    setStep("tasks");
-  };
-
-  const handleTasksSubmit = (tasks: {task: string, priority: number}[]) => {
-    setSelectedTasks(tasks);
-    setStep("loading"); // Skip email, go directly to loading
-  };
-
-  const [userEmail, setUserEmail] = useState("");
-  const [userConsent, setUserConsent] = useState(false);
-
-  const handleEmailSubmit = (email: string, consent: boolean) => {
-    setUserEmail(email);
-    setUserConsent(consent);
-    setStep("loading");
-  };
-
-  const handleReset = () => {
-    setStep("profession");
-    setProfession("");
-    setSpecialization("");
-    setExperience("");
-    setChallenges([]);
-    setSelectedTasks([]);
-    setSessionId(null);
-  };
+  const router = useRouter();
 
   return (
-    <main className="min-h-screen bg-white">
-      <div className="flex flex-col items-center justify-start min-h-screen p-4 pt-20 sm:pt-24">
-        {showInfo && <InfoPopup onClose={() => setShowInfo(false)} />}
-      
-
-        {/* Minimal Progress indicator */}
-        {step !== "profession" && step !== "results" && (
-          <div className="max-w-2xl mx-auto mb-8 pt-4">
-            <div className="flex items-center gap-2 justify-center">
-              {[1, 2, 3].map((num) => (
-                <div key={num} className="flex items-center">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
-                      num <= STEP_NUMBER[step]
-                        ? "bg-gray-900 text-white"
-                        : "bg-gray-100 text-gray-400"
-                    }`}
-                  >
-                    {num}
-                  </div>
-                  {num < 3 && (
-                    <div
-                      className={`w-12 h-0.5 transition-all duration-300 ${
-                        num < STEP_NUMBER[step] ? "bg-gray-900" : "bg-gray-200"
-                      }`}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="max-w-6xl mx-auto px-6 py-20">
+        
+        {/* Hero Section */}
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full text-sm mb-6">
+            <Sparkles className="w-4 h-4" />
+            AI-drivna chatbots på 5 minuter
           </div>
-        )}
+          
+          <h1 className="text-5xl md:text-6xl font-extralight text-gray-900 mb-6 tracking-tight">
+            Bygg en chatbot som förstår<br />
+            <span className="font-light">ditt företag</span>
+          </h1>
+          
+          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
+            Tränad på din webbplats och dokument. Redo att svara på frågor, kvalificera leads och automatisera support – utan att du skriver en rad kod.
+          </p>
+          
+          <button
+            onClick={() => router.push('/business/bot-builder')}
+            className="px-8 py-4 bg-black text-white rounded-full hover:bg-gray-800 transition-all text-lg font-light shadow-lg hover:shadow-xl"
+          >
+            Kom igång gratis →
+          </button>
+          
+          <p className="text-sm text-gray-500 mt-4">
+            Ingen kodning krävs · Gratis att testa · 5 minuter setup
+          </p>
+        </div>
 
-      {step === "profession" && (
-        <div className="space-y-12 max-w-4xl mx-auto w-full">
-          {/* Hero section with interactive border */}
-          <div className="relative group">
-            {/* Animated border container */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-2xl opacity-75 group-hover:opacity-100 blur-sm transition duration-1000 group-hover:duration-200 animate-gradient-x overflow-hidden"></div>
-            
-            {/* Content */}
-            <div className="relative bg-white rounded-2xl p-8 sm:p-12">
-              <div className="text-center animate-fade-in-up">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-wider uppercase">
-                  AI som ger dig tiden tillbaka.
-                </h1>
-                <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light px-4 sm:px-8 tracking-wide max-w-3xl mx-auto">
-                  Skriv vad du jobbar med – få tre skräddarsydda AI-verktyg som sparar tid, minskar stress och gör ditt arbete roligare.<br/>
-                  <span className="text-base sm:text-lg">Gratis. Enkelt. Mänskligt.</span>
-                </p>
-              </div>
-              
-              <div className="mt-12">
-                <ProfessionInput onSelect={handleProfessionSelect} />
-                
-                {/* Subtle links below input */}
-                <div className="text-center mt-6">
-                  <a
-                    href="/demo/ekonomiassistent"
-                    className="text-gray-500 hover:text-gray-900 transition-colors text-sm underline-offset-4 hover:underline"
-                  >
-                    {t('hero.demoLink')}
-                  </a>
-                </div>
-              </div>
+        {/* Features Grid */}
+        <div className="grid md:grid-cols-3 gap-8 mb-20">
+          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center mb-4">
+              <Bot className="w-6 h-6 text-white" />
             </div>
+            <h3 className="text-xl font-light mb-3">Smart från dag 1</h3>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              Crawlar din webbplats och läser dina dokument. Boten förstår ditt företag, produkter och tjänster direkt.
+            </p>
           </div>
-
-          {/* Så fungerar det - sektion */}
-          <div className="mt-16 animate-fade-in-up max-w-2xl mx-auto" style={{ animationDelay: '0.3s' }}>
-            <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">Så fungerar det</h2>
-            <div className="space-y-6">
-              {/* Steg 1 */}
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
-                  1
-                </div>
-                <p className="text-base text-gray-700 pt-2">
-                  <span className="font-semibold">Skriv ditt yrke</span> – t.ex. lärare, sjuksköterska eller projektledare.
-                </p>
-              </div>
-
-              {/* Steg 2 */}
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
-                  2
-                </div>
-                <p className="text-base text-gray-700 pt-2">
-                  <span className="font-semibold">Välj inriktning</span> – AI förstår din roll och dina dagliga uppgifter.
-                </p>
-              </div>
-
-              {/* Steg 3 */}
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
-                  3
-                </div>
-                <p className="text-base text-gray-700 pt-2">
-                  <span className="font-semibold">Få tre skräddarsydda AI-prompts</span> – som direkt sparar dig tid varje vecka.
-                </p>
-              </div>
-
-              {/* Steg 4 */}
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
-                  4
-                </div>
-                <p className="text-base text-gray-700 pt-2">
-                  <span className="font-semibold">Utforska fler idéer</span> – bidra till en växande bank av smarta prompts som gör samhället effektivare.
-                </p>
-              </div>
+          
+          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center mb-4">
+              <Zap className="w-6 h-6 text-white" />
             </div>
+            <h3 className="text-xl font-light mb-3">Anpassad för dig</h3>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              Välj färger, typsnitt och ton. Koppla till Calendly, HubSpot, Zendesk. Din bot, ditt varumärke.
+            </p>
+          </div>
+          
+          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center mb-4">
+              <Shield className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-xl font-light mb-3">Säker & GDPR-kompatibel</h3>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              Data lagras säkert i EU. PII-maskering. Versionshantering och eval-pipeline för kvalitetssäkring.
+            </p>
           </div>
         </div>
-      )}
 
-      {step === "specialization" && (
-        <div className="space-y-6 max-w-2xl mx-auto w-full animate-fade-in-up">
-          <SpecializationInput
-            profession={profession}
-            onSelect={handleSpecializationSelect}
-            onBack={() => setStep("profession")}
-          />
+        {/* Use Cases */}
+        <div className="mb-20">
+          <h2 className="text-3xl font-light text-center mb-12">Vad kan du bygga?</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            {[
+              { title: "FAQ & Kundsupport", desc: "Svara på vanliga frågor 24/7, skapa tickets automatiskt" },
+              { title: "Leadkvalificering", desc: "Samla in kontaktinfo, kvalificera leads, synka till HubSpot" },
+              { title: "Bokning & Schemaläggning", desc: "Boka möten direkt i Calendly, hantera tidsbokning" },
+              { title: "E-commerce Assistant", desc: "Produktrekommendationer, order tracking, upsell" },
+              { title: "HR & Rekrytering", desc: "Screena kandidater, boka intervjuer, svara på HR-frågor" },
+              { title: "Custom Enterprise", desc: "Komplex integration, compliance, white-label" }
+            ].map((uc, i) => (
+              <div key={i} className="p-6 bg-white rounded-xl border border-gray-200 hover:border-gray-300 transition-all">
+                <h4 className="font-medium text-gray-900 mb-2">{uc.title}</h4>
+                <p className="text-sm text-gray-600">{uc.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      )}
 
-      {step === "tasks" && (
-        <div className="max-w-2xl mx-auto w-full animate-fade-in-up">
-          <TaskSelection
-            profession={profession}
-            specialization={specialization}
-            onSubmit={handleTasksSubmit}
-            onBack={() => setStep("specialization")}
-          />
+        {/* CTA */}
+        <div className="text-center bg-black text-white rounded-2xl p-12">
+          <h2 className="text-3xl font-light mb-4">Redo att testa?</h2>
+          <p className="text-gray-300 mb-8 max-w-xl mx-auto">
+            Skapa din första bot på 5 minuter. Helt gratis. Ingen betalning krävs.
+          </p>
+          <button
+            onClick={() => router.push('/business/bot-builder')}
+            className="px-8 py-4 bg-white text-black rounded-full hover:bg-gray-100 transition-all text-lg font-light"
+          >
+            Bygg din bot nu →
+          </button>
         </div>
-      )}
 
-      {(step === "loading" || step === "results") && (
-        <SimpleResults
-          profession={profession}
-          specialization={specialization}
-          tasks={selectedTasks}
-          onReset={handleReset}
-        />
-      )}
       </div>
     </main>
   );

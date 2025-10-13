@@ -28,12 +28,12 @@ export default function Header() {
 
             {/* Right actions */}
             <div className="flex items-center justify-end gap-2 sm:gap-4">
-              <button
-                onClick={() => setShowLoginModal(true)}
+              <a
+                href="/dashboard"
                 className="text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors px-2 sm:px-4 py-2 rounded-lg hover:bg-gray-100 whitespace-nowrap"
               >
-                Se tidigare resultat
-              </button>
+                Mina bots
+              </a>
               <LanguageSwitcher />
             </div>
           </div>
