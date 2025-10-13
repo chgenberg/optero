@@ -58,21 +58,17 @@ export async function POST(req: NextRequest) {
           const embedding = embeddingRes.data[0]?.embedding;
           if (!embedding) continue;
           
-          // Store in BotKnowledge with vector
-          await prisma.$executeRaw`
-            INSERT INTO "BotKnowledge" (id, "botId", "sourceUrl", title, content, embedding, metadata, "createdAt", "updatedAt")
-            VALUES (
-              gen_random_uuid()::text,
-              ${botId},
-              ${url || null},
-              ${title || 'Untitled'},
-              ${chunk},
-              ${JSON.stringify(embedding)}::vector,
-              ${JSON.stringify({ chunkIndex: i, totalChunks: chunks.length })}::jsonb,
-              NOW(),
-              NOW()
-            )
-          `;
+          // Store in BotKnowledge with JSONB embedding
+          await prisma.botKnowledge.create({
+            data: {
+              botId,
+              sourceUrl: url || null,
+              title: title || 'Untitled',
+              content: chunk,
+              embedding: embedding, // Store as JSON array
+              metadata: { chunkIndex: i, totalChunks: chunks.length }
+            }
+          });
           
           totalEmbeddings++;
         } catch (embErr) {

@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       } catch { return text; }
     };
 
-    // RAG: Semantic search in BotKnowledge
+    // RAG: Semantic search in BotKnowledge (JSONB-based cosine similarity)
     let ragContext = '';
     try {
       const lastUserMsg = history.filter((h: any) => h.role === 'user').slice(-1)[0]?.content || '';
@@ -60,19 +60,39 @@ export async function POST(req: NextRequest) {
         const queryVector = queryEmbedding.data[0]?.embedding;
         
         if (queryVector) {
-          // Semantic search: find top 3 most relevant chunks
-          const results: any[] = await prisma.$queryRaw`
-            SELECT id, "sourceUrl", title, content, "metadata",
-                   1 - (embedding <=> ${JSON.stringify(queryVector)}::vector) AS similarity
-            FROM "BotKnowledge"
-            WHERE "botId" = ${botId}
-            ORDER BY embedding <=> ${JSON.stringify(queryVector)}::vector
-            LIMIT 3
-          `;
+          // Fetch all knowledge chunks for this bot
+          const allKnowledge = await prisma.botKnowledge.findMany({
+            where: { botId },
+            select: { id: true, sourceUrl: true, title: true, content: true, embedding: true }
+          });
           
-          if (results && results.length > 0) {
+          // Calculate cosine similarity in JS
+          const cosineSimilarity = (a: number[], b: number[]): number => {
+            if (!a || !b || a.length !== b.length) return 0;
+            let dotProduct = 0, magA = 0, magB = 0;
+            for (let i = 0; i < a.length; i++) {
+              dotProduct += a[i] * b[i];
+              magA += a[i] * a[i];
+              magB += b[i] * b[i];
+            }
+            return dotProduct / (Math.sqrt(magA) * Math.sqrt(magB));
+          };
+          
+          // Rank by similarity
+          const ranked = allKnowledge
+            .map(k => ({
+              ...k,
+              similarity: cosineSimilarity(queryVector, k.embedding as number[] || [])
+            }))
+            .sort((a, b) => b.similarity - a.similarity)
+            .slice(0, 3);
+          
+          if (ranked.length > 0 && ranked[0].similarity > 0.7) {
             ragContext = '\n\nRelevant information from knowledge base:\n' + 
-              results.map((r: any) => `[${r.title}](${r.sourceUrl || ''}): ${r.content}`).join('\n\n');
+              ranked
+                .filter(r => r.similarity > 0.7) // Only include if similarity > 0.7
+                .map((r: any) => `[${r.title}](${r.sourceUrl || ''}): ${r.content}`)
+                .join('\n\n');
           }
         }
       }
