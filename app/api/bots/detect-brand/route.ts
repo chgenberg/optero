@@ -8,8 +8,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "URL required" }, { status: 400 });
     }
 
+    // Normalize URL: ensure protocol
+    let targetUrl = String(url).trim();
+    if (!/^https?:\/\//i.test(targetUrl)) {
+      targetUrl = `https://${targetUrl}`;
+    }
+
     // Fetch the website
-    const response = await fetch(url, {
+    const response = await fetch(targetUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; MendioBot/1.0)'
       }
@@ -95,7 +101,13 @@ export async function POST(req: NextRequest) {
         fontFamily: primaryFont,
         tone,
         colors: colorArray,
-        fonts: fontArray
+        fonts: fontArray,
+        // UI-safe defaults
+        logoUrl: null,
+        logoPosition: 'bottom-right',
+        logoOffset: { x: 20, y: 20 },
+        fontUrl: null,
+        isPremium: false
       }
     });
 
@@ -107,7 +119,15 @@ export async function POST(req: NextRequest) {
         primaryColor: '#111111',
         secondaryColor: '#666666',
         fontFamily: 'system-ui',
-        tone: 'professional'
+        tone: 'professional',
+        colors: [],
+        fonts: [],
+        // UI-safe defaults
+        logoUrl: null,
+        logoPosition: 'bottom-right',
+        logoOffset: { x: 20, y: 20 },
+        fontUrl: null,
+        isPremium: false
       }
     }, { status: 200 }); // Return defaults on error
   }

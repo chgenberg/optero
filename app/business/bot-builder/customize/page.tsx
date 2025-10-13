@@ -265,20 +265,26 @@ export default function CustomizeBotPage() {
                 <option value="top-left">Uppe vänster</option>
               </select>
               <div className="flex gap-3">
-                <input
-                  type="number"
-                  value={brand.logoOffset.x}
-                  onChange={(e) => setBrand({ ...brand, logoOffset: { ...brand.logoOffset, x: Number(e.target.value) } })}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
-                  placeholder="X offset"
-                />
-                <input
-                  type="number"
-                  value={brand.logoOffset.y}
-                  onChange={(e) => setBrand({ ...brand, logoOffset: { ...brand.logoOffset, y: Number(e.target.value) } })}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
-                  placeholder="Y offset"
-                />
+                         <input
+                           type="number"
+                           value={brand.logoOffset?.x ?? 20}
+                           onChange={(e) => {
+                             const current = brand.logoOffset || { x: 20, y: 20 };
+                             setBrand({ ...brand, logoOffset: { ...current, x: Number(e.target.value) } });
+                           }}
+                           className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+                           placeholder="X offset"
+                         />
+                         <input
+                           type="number"
+                           value={brand.logoOffset?.y ?? 20}
+                           onChange={(e) => {
+                             const current = brand.logoOffset || { x: 20, y: 20 };
+                             setBrand({ ...brand, logoOffset: { ...current, y: Number(e.target.value) } });
+                           }}
+                           className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+                           placeholder="Y offset"
+                         />
               </div>
             </div>
           </div>

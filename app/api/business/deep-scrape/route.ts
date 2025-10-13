@@ -12,8 +12,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "URL required" }, { status: 400 });
     }
 
+    // Normalize URL: ensure protocol
+    let targetUrl = String(url).trim();
+    if (!/^https?:\/\//i.test(targetUrl)) {
+      targetUrl = `https://${targetUrl}`;
+    }
+
     // Fetch main page
-    const mainResponse = await fetch(url, {
+    const mainResponse = await fetch(targetUrl, {
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; MendioBot/1.0)' }
     });
     const mainHtml = await mainResponse.text();
@@ -22,7 +28,7 @@ export async function POST(req: NextRequest) {
     // Extract sitemap URLs (simplified - check robots.txt or sitemap.xml)
     let sitemapUrls: string[] = [];
     try {
-      const sitemapResponse = await fetch(`${new URL(url).origin}/sitemap.xml`);
+      const sitemapResponse = await fetch(`${new URL(targetUrl).origin}/sitemap.xml`);
       if (sitemapResponse.ok) {
         const sitemapXml = await sitemapResponse.text();
         const $sitemap = cheerio.load(sitemapXml, { xmlMode: true });
@@ -35,12 +41,12 @@ export async function POST(req: NextRequest) {
 
     // Fallback: crawl internal links from main page (limit to 10 for free)
     if (sitemapUrls.length === 0) {
-      const baseUrl = new URL(url).origin;
+      const baseUrl = new URL(targetUrl).origin;
       $('a[href]').each((_, el) => {
         const href = $(el).attr('href');
         if (!href) return;
         try {
-          const fullUrl = new URL(href, url).href;
+          const fullUrl = new URL(href, targetUrl).href;
           if (fullUrl.startsWith(baseUrl) && sitemapUrls.length < 10) {
             sitemapUrls.push(fullUrl);
           }
@@ -49,7 +55,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Limit to 10 pages for now (can be premium feature to crawl more)
-    sitemapUrls = Array.from(new Set([url, ...sitemapUrls])).slice(0, 10);
+    sitemapUrls = Array.from(new Set([targetUrl, ...sitemapUrls])).slice(0, 10);
 
     // Scrape each page
     const pageContents: Array<{ url: string; title: string; text: string }> = [];
@@ -132,7 +138,7 @@ Svara i JSON-format:
     // Return comprehensive analysis with full page content for embedding
     return NextResponse.json({
       success: true,
-      url,
+      url: targetUrl,
       pagesScraped: pageContents.length,
       pages: pageContents, // Full content: url, title, text (for embeddings)
       analysis,
