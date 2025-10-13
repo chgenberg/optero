@@ -390,6 +390,7 @@ model Bot {
   approvals    ApprovalRequest[]
   versions     BotVersion[]
   evals        BotEval[]
+  actions      BotAction[]
   
   @@index([companyUrl])
 }
@@ -465,6 +466,22 @@ model ApprovalRequest {
 
   @@index([botId])
   @@index([status])
+}
+
+// Internal inbox for vendor‑agnostic actions (lead/support)
+model BotAction {
+  id         String   @id @default(cuid())
+  botId      String
+  type       String   // lead|support
+  payload    Json
+  status     String   @default("stored") // stored|emailed|slacked|webhooked
+  createdAt  DateTime @default(now())
+
+  bot        Bot      @relation(fields: [botId], references: [id])
+
+  @@index([botId])
+  @@index([type])
+  @@index([createdAt])
 }
 
 // Due Diligence entities

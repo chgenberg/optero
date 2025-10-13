@@ -11,7 +11,11 @@
     "prisma:migrate": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "seed:specializations": "node --loader ts-node/esm scripts/seed-specializations.ts",
-    "import:prompts": "tsx scripts/import-prompts-from-json.ts"
+    "import:prompts": "tsx scripts/import-prompts-from-json.ts",
+    "evals:run": "tsx scripts/evals-run.ts",
+    "evals:golden:saas": "tsx scripts/evals-golden-saas.ts",
+    "evals:golden:ecommerce": "tsx scripts/evals-golden-ecommerce.ts",
+    "evals:golden:healthcare": "tsx scripts/evals-golden-healthcare.ts"
   },
   "dependencies": {
     "@mozilla/readability": "^0.4.4",

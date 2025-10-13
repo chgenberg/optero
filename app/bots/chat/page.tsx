@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 function ChatInner() {
   const params = useSearchParams();
-  const botId = params.get("botId") || "";
+  const botId = params?.get("botId") || "";
   type ChatMsg = { role: "user" | "assistant"; content: string };
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");

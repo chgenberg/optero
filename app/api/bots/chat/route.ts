@@ -12,7 +12,16 @@ export async function POST(req: NextRequest) {
     if (!bot) return NextResponse.json({ error: "Bot not found" }, { status: 404 });
 
     const specSafe = JSON.stringify(bot.spec).slice(0, 4000);
-    const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${specSafe}\n\nBottype: ${bot.type}.\nknowledge:\n- svara bara utifrån context.\n- om saknas info: ställ precis en tydlig följdfråga.\nlead:\n- ställ i turordning: problem, mål/KPI (använd spec.kpis om finns), budgetintervall, tidsram, beslutsroll, nästa steg.\n- när allt är insamlat: gör en kort sammanfattning + CALL:WEBHOOK.\nsupport:\n- be om beskrivning, kategori, brådska, tidigare steg, kontaktinfo.\n- föreslå lösning + CALL:WEBHOOK.\n`;
+    const subtype = (bot.spec as any)?.subtype || '';
+    const subtypeHints = {
+      'knowledge.faq': '- svara kort och länka till relevanta delar i context.\n',
+      'knowledge.onboarding': '- presentera steg-för-steg och föreslå nästa modul.\n',
+      'lead.guided_selling': '- guida till rätt paket baserat på mål, budget och tidsram.\n',
+      'support.it_helpdesk': '- samla OS/enhet, nätverk, reproduktionssteg; föreslå fix.\n'
+    } as Record<string,string>;
+    const subKey = subtype ? `${bot.type}.${subtype}` : '';
+    const extra = subtypeHints[subKey] || '';
+    const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${specSafe}\n\nBottype: ${bot.type}.${subtype || ''}\n${extra}knowledge:\n- svara bara utifrån context.\n- om saknas info: ställ precis en tydlig följdfråga.\nlead:\n- ställ i turordning: problem, mål/KPI (använd spec.kpis om finns), budgetintervall, tidsram, beslutsroll, nästa steg.\n- när allt är insamlat: gör en kort sammanfattning + CALL:WEBHOOK.\nsupport:\n- be om beskrivning, kategori, brådska, tidigare steg, kontaktinfo.\n- föreslå lösning + CALL:WEBHOOK.\n`;
 
     const messages = [
       { role: "system", content: system },

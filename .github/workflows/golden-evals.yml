@@ -1,0 +1,34 @@
+name: Golden Evals
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [ saas, ecommerce, healthcare ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install deps
+        run: npm ci
+      - name: Generate Prisma
+        run: npx prisma generate
+      - name: Run Golden Evals
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ "${{ matrix.suite }}" = "saas" ]; then npm run evals:golden:saas; fi
+          if [ "${{ matrix.suite }}" = "ecommerce" ]; then npm run evals:golden:ecommerce; fi
+          if [ "${{ matrix.suite }}" = "healthcare" ]; then npm run evals:golden:healthcare; fi
+

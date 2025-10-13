@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import mammoth from "mammoth";
-// pdf-parse causes build issues when statically imported; lazy-load inside handler
+// pdf-parse ESM bundle imports a worker url; use CommonJS build via createRequire
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 
 export const maxDuration = 60; // 1 minute for file processing
 export const runtime = "nodejs";
@@ -24,7 +26,7 @@ export async function POST(req: NextRequest) {
 
       try {
         if (filename.endsWith('.pdf')) {
-          const { default: pdfParse } = await import('pdf-parse');
+          const pdfParse = require('pdf-parse');
           const data = await pdfParse(buffer);
           parsedContents.push(`\n\n=== ${file.name} ===\n${data.text}`);
         }
