@@ -16,7 +16,8 @@ const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 export async function POST(req: NextRequest) {
   try {
     const form = await req.formData();
-    const file = form.get("file") as File | null;
+    // Accept both 'logo' and 'file' for backward compatibility
+    const file = (form.get("logo") || form.get("file")) as File | null;
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
@@ -42,7 +43,8 @@ export async function POST(req: NextRequest) {
     await fs.writeFile(targetPath, buffer);
 
     const url = `/uploads/${filename}`;
-    return NextResponse.json({ url });
+    // Return both keys so old/new clients work
+    return NextResponse.json({ url, logoUrl: url });
   } catch (err) {
     console.error("Logo upload error:", err);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
