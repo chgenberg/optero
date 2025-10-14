@@ -25,7 +25,7 @@ export default function CustomizeBotPage() {
   const [welcomeMessage, setWelcomeMessage] = useState<string>("");
   const [quickReplies, setQuickReplies] = useState<string[]>([]);
   const [newQuickReply, setNewQuickReply] = useState<string>("");
-  const [ctaLabel, setCtaLabel] = useState<string>("Boka demo");
+  const [ctaLabel, setCtaLabel] = useState<string>("Book a demo");
   const [ctaUrl, setCtaUrl] = useState<string>("");
   // Advanced response controls
   const [responseLength, setResponseLength] = useState<'short'|'normal'|'long'>('normal');
@@ -33,7 +33,7 @@ export default function CustomizeBotPage() {
   // Working hours
   const [startHour, setStartHour] = useState<number>(8);
   const [endHour, setEndHour] = useState<number>(17);
-  const [offHoursMessage, setOffHoursMessage] = useState<string>('Vi är offline just nu. Lämna gärna din e‑post så återkommer vi.');
+  const [offHoursMessage, setOffHoursMessage] = useState<string>('We are offline right now. Please leave your email and we will get back to you.');
   // Custom buttons
   type CustomButton = { label: string; url: string };
   const [customButtons, setCustomButtons] = useState<CustomButton[]>([]);
@@ -154,9 +154,9 @@ export default function CustomizeBotPage() {
 
   const colors = ['#000000', '#1E40AF', '#DC2626', '#059669', '#7C3AED', '#D97706'];
   const tones = [
-    { value: 'professional', label: 'Professionell' },
-    { value: 'casual', label: 'Vardaglig' },
-    { value: 'formal', label: 'Formell' }
+    { value: 'professional', label: 'Professional' },
+    { value: 'casual', label: 'Casual' },
+    { value: 'formal', label: 'Formal' }
   ];
 
   return (
@@ -164,11 +164,11 @@ export default function CustomizeBotPage() {
       <div className="max-w-5xl mx-auto">
         {/* Progress */}
         <div className="flex justify-center mb-12">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-[2px] bg-[#E5E7EB]" />
-            <span className="text-xs font-medium text-[#4B5563] px-3">Steg 3</span>
-            <div className="w-8 h-[2px] bg-[#E5E7EB]" />
-          </div>
+            <div className="flex items-center gap-2">
+          <div className="w-8 h-[2px] bg-[#E5E7EB]" />
+          <span className="text-xs font-medium text-[#4B5563] px-3">Step 3</span>
+          <div className="w-8 h-[2px] bg-[#E5E7EB]" />
+        </div>
         </div>
 
         <motion.div
@@ -177,7 +177,7 @@ export default function CustomizeBotPage() {
           transition={{ duration: 0.5 }}
         >
           <div className="text-center mb-12">
-            <h1>Anpassa din bot</h1>
+            <h1>Customize your bot</h1>
           </div>
 
           <div className="grid md:grid-cols-2 gap-12">
@@ -186,7 +186,7 @@ export default function CustomizeBotPage() {
               {/* Brand */}
               <div className="card relative">
                 <div className="flex items-center justify-between mb-4">
-                  <h3>Varumärke</h3>
+                  <h3>Brand</h3>
                   <button
                     onClick={() => setShowInfo(showInfo === 'brand' ? null : 'brand')}
                     className="p-2 hover:bg-[#F9FAFB] rounded-full transition-colors"
@@ -226,7 +226,7 @@ export default function CustomizeBotPage() {
                 {/* Logo */}
                 <div>
                   <label className="text-xs font-medium text-[#4B5563] block mb-3">
-                    Logotyp
+                    Logo
                   </label>
                   <div
                     onDragOver={(e) => e.preventDefault()}
@@ -253,7 +253,7 @@ export default function CustomizeBotPage() {
                         <Upload className="w-8 h-8 text-[#9CA3AF] mx-auto mb-3" />
                       )}
                       <p className="text-sm font-medium text-[#4B5563]">
-                        {brand.logoUrl ? 'Byt logo' : 'Ladda upp logo'}
+                        {brand.logoUrl ? 'Change logo' : 'Upload logo'}
                       </p>
                     </label>
                   </div>
@@ -262,7 +262,7 @@ export default function CustomizeBotPage() {
 
               {/* Tone */}
               <div className="card">
-                <h3 className="mb-4">Tonalitet</h3>
+                <h3 className="mb-4">Tone</h3>
                 <div className="flex gap-3">
                   {tones.map(tone => (
                     <motion.button
@@ -285,8 +285,8 @@ export default function CustomizeBotPage() {
               {/* Training */}
               <div className="card">
                 <h3 className="mb-4">
-                  Specifik träning
-                  <span className="ml-2 text-[#9CA3AF] font-normal text-sm">(valfritt)</span>
+                  Targeted training
+                  <span className="ml-2 text-[#9CA3AF] font-normal text-sm">(optional)</span>
                 </h3>
                 
                 <div
@@ -306,10 +306,10 @@ export default function CustomizeBotPage() {
                       className="hidden"
                     />
                     <p className="text-sm font-medium text-[#4B5563] mb-1">
-                      Ladda upp dokument
+                      Upload documents
                     </p>
                     <p className="text-xs text-[#9CA3AF]">
-                      FAQ, manualer, prislista
+                      FAQs, manuals, price list
                     </p>
                   </label>
                 </div>
@@ -338,18 +338,18 @@ export default function CustomizeBotPage() {
                 <textarea
                   value={additionalInfo}
                   onChange={(e) => setAdditionalInfo(e.target.value)}
-                  placeholder="Beskriv speciella instruktioner eller vanliga frågor som boten ska kunna svara på..."
+                  placeholder="Describe special instructions or key FAQs the bot should handle..."
                   className="w-full p-4 border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors resize-none h-32 text-sm"
                 />
               </div>
 
               {/* Interaction */}
               <div className="card">
-                <h3 className="mb-4">Interaktion</h3>
+                <h3 className="mb-4">Interaction</h3>
 
                 {/* Welcome message */}
                 <div className="mb-6">
-                  <label className="text-xs font-medium text-[#4B5563] block mb-2">Välkomstmeddelande</label>
+                  <label className="text-xs font-medium text-[#4B5563] block mb-2">Welcome message</label>
                   <input
                     value={welcomeMessage}
                     onChange={(e) => setWelcomeMessage(e.target.value)}
@@ -360,12 +360,12 @@ export default function CustomizeBotPage() {
 
                 {/* Quick replies */}
                 <div className="mb-6">
-                  <label className="text-xs font-medium text-[#4B5563] block mb-2">Föreslagna frågor</label>
+                  <label className="text-xs font-medium text-[#4B5563] block mb-2">Suggested questions</label>
                   <div className="flex gap-2 mb-3">
                     <input
                       value={newQuickReply}
                       onChange={(e) => setNewQuickReply(e.target.value)}
-                      placeholder="Lägg till förslag..."
+                      placeholder="Add suggestion..."
                       className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors text-sm"
                     />
                     <button
@@ -396,16 +396,16 @@ export default function CustomizeBotPage() {
                 {/* CTA / Calendly */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-medium text-[#4B5563] block mb-2">CTA‑text</label>
+                    <label className="text-xs font-medium text-[#4B5563] block mb-2">CTA label</label>
                     <input
                       value={ctaLabel}
                       onChange={(e) => setCtaLabel(e.target.value)}
-                      placeholder="Boka demo"
+                      placeholder="Book a demo"
                       className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors text-sm"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-[#4B5563] block mb-2">CTA‑länk (Calendly)</label>
+                    <label className="text-xs font-medium text-[#4B5563] block mb-2">CTA link (Calendly)</label>
                     <input
                       value={ctaUrl}
                       onChange={(e) => setCtaUrl(e.target.value)}
@@ -418,12 +418,12 @@ export default function CustomizeBotPage() {
 
               {/* Response policy */}
               <div className="card">
-                <h3 className="mb-4">Svarspolicy</h3>
+                <h3 className="mb-4">Response policy</h3>
                 <div className="grid md:grid-cols-3 gap-3 mb-4">
-                  {[
-                    { key: 'short', label: 'Kort' },
+                    {[
+                    { key: 'short', label: 'Short' },
                     { key: 'normal', label: 'Normal' },
-                    { key: 'long', label: 'Lång' }
+                    { key: 'long', label: 'Long' }
                   ].map((opt: any) => (
                     <button
                       key={opt.key}
@@ -434,39 +434,39 @@ export default function CustomizeBotPage() {
                     </button>
                   ))}
                 </div>
-                <label className="text-xs font-medium text-[#4B5563] block mb-2">Fallback‑svar</label>
+                <label className="text-xs font-medium text-[#4B5563] block mb-2">Fallback answer</label>
                 <input
                   value={fallbackText}
                   onChange={(e) => setFallbackText(e.target.value)}
-                  placeholder="Jag är osäker på det. Vill du lämna din e‑post så återkommer vi?"
+                  placeholder="I'm not sure about that. Would you like to leave your email and we'll follow up?"
                   className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors text-sm"
                 />
               </div>
 
               {/* Working hours */}
               <div className="card">
-                <h3 className="mb-4">Öppettider</h3>
+                <h3 className="mb-4">Opening hours</h3>
                 <div className="grid grid-cols-3 gap-3 mb-3">
                   <div>
                     <label className="text-xs font-medium text-[#4B5563] block mb-1">Start</label>
                     <input type="number" min={0} max={23} value={startHour} onChange={(e)=>setStartHour(Number(e.target.value))} className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-[#4B5563] block mb-1">Slut</label>
+                    <label className="text-xs font-medium text-[#4B5563] block mb-1">End</label>
                     <input type="number" min={0} max={23} value={endHour} onChange={(e)=>setEndHour(Number(e.target.value))} className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
                   </div>
                 </div>
-                <label className="text-xs font-medium text-[#4B5563] block mb-2">Meddelande utanför öppettider</label>
+                <label className="text-xs font-medium text-[#4B5563] block mb-2">Off‑hours message</label>
                 <input value={offHoursMessage} onChange={(e)=>setOffHoursMessage(e.target.value)} className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
               </div>
 
               {/* Custom buttons */}
               <div className="card">
-                <h3 className="mb-4">Chat‑knappar</h3>
+                <h3 className="mb-4">Chat buttons</h3>
                 <div className="flex gap-2 mb-3">
-                  <input value={newBtnLabel} onChange={(e)=>setNewBtnLabel(e.target.value)} placeholder="Etikett (t.ex. Priser)" className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
+                  <input value={newBtnLabel} onChange={(e)=>setNewBtnLabel(e.target.value)} placeholder="Label (e.g. Pricing)" className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
                   <input value={newBtnUrl} onChange={(e)=>setNewBtnUrl(e.target.value)} placeholder="https://..." className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
-                  <button onClick={()=>{ if(!newBtnLabel||!newBtnUrl) return; setCustomButtons(prev=>[...prev, {label:newBtnLabel, url:newBtnUrl}]); setNewBtnLabel(''); setNewBtnUrl(''); }} className="px-3 py-2 border border-[#E5E7EB] rounded-xl hover:border-black">Lägg till</button>
+                  <button onClick={()=>{ if(!newBtnLabel||!newBtnUrl) return; setCustomButtons(prev=>[...prev, {label:newBtnLabel, url:newBtnUrl}]); setNewBtnLabel(''); setNewBtnUrl(''); }} className="px-3 py-2 border border-[#E5E7EB] rounded-xl hover:border-black">Add</button>
                 </div>
                 {customButtons.length>0 && (
                   <div className="flex flex-wrap gap-2">
@@ -484,7 +484,7 @@ export default function CustomizeBotPage() {
             {/* Right - Preview */}
             <div>
               <div className="sticky top-6">
-                <h3 className="mb-4">Förhandsvisning</h3>
+                <h3 className="mb-4">Preview</h3>
                 
                 <div className="border border-[#E5E7EB] rounded-xl overflow-hidden shadow-sm">
                   <div 
@@ -497,7 +497,7 @@ export default function CustomizeBotPage() {
                       )}
                       <div>
                         <p className="font-semibold text-sm">Support</p>
-                        <p className="text-xs opacity-80">Alltid aktiv</p>
+                        <p className="text-xs opacity-80">Always on</p>
                       </div>
                     </div>
                   </div>
@@ -508,8 +508,8 @@ export default function CustomizeBotPage() {
                         {brand.tone === 'formal' 
                           ? 'God dag! Hur kan jag bistå er idag?'
                           : brand.tone === 'casual'
-                          ? 'Hej! Vad kan jag hjälpa till med?'
-                          : 'Hej! Hur kan jag hjälpa dig idag?'}
+                          ? 'Hi! How can I help you?'
+                          : 'Hi! How can I assist you today?'}
                       </p>
                     </div>
                   </div>
@@ -517,7 +517,7 @@ export default function CustomizeBotPage() {
                   <div className="p-4 border-t border-[#E5E7EB]">
                     <input
                       type="text"
-                      placeholder="Skriv ett meddelande..."
+                      placeholder="Type a message..."
                       className="w-full px-4 py-2 bg-white border border-[#E5E7EB] rounded-full text-sm"
                       disabled
                     />
@@ -535,7 +535,7 @@ export default function CustomizeBotPage() {
               whileTap={{ scale: 0.98 }}
               className="btn-secondary"
             >
-              Tillbaka
+              Back
             </motion.button>
             <motion.button
               onClick={handleContinue}
@@ -543,7 +543,7 @@ export default function CustomizeBotPage() {
               whileTap={{ scale: 0.98 }}
               className="btn-primary"
             >
-              Bygg bot
+              Build bot
             </motion.button>
           </div>
         </motion.div>

@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
             signal: ctrl.signal,
             headers: {
               'User-Agent': 'Mozilla/5.0 (compatible; MendioPremiumCrawler/1.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123 Safari/537.36',
-              'Accept-Language': 'sv-SE,sv;q=0.9,en;q=0.8',
+              'Accept-Language': 'en-US,en;q=0.9,sv;q=0.4',
               ...(init.headers || {})
             }
           } as any);
@@ -193,23 +193,23 @@ export async function POST(req: NextRequest) {
     // AI Analysis: extract company info, problems, USP, customer type (include documents)
     const combinedText = pageContents.map(p => `${p.title}\n${p.text}`).join('\n\n').slice(0, 12000);
     const docText = (documentContent || "").slice(0, 8000);
-    const fullContext = docText ? `${combinedText}\n\n=== DOKUMENT ===\n${docText}` : combinedText;
+    const fullContext = docText ? `${combinedText}\n\n=== DOCUMENTS ===\n${docText}` : combinedText;
     
-    const analysisPrompt = `Analysera följande webbplats OCH dokument (om tillgängligt) och extrahera:
+    const analysisPrompt = `Analyze the following website AND documents (if available) and extract:
 
-1. **Företagsbeskrivning**: Vad gör företaget? (1-2 meningar)
-2. **Målgrupp**: Vem är deras kund? (B2B/B2C, bransch, storlek)
-3. **Huvudproblem de löser**: Top 3 problem deras produkt/tjänst löser
-4. **USP (Unique Selling Points)**: Vad gör dem unika? (top 3)
-5. **Vanliga objections/frågor**: Vad funderar kunder på innan de köper?
-6. **Content gaps**: Vad saknas på webbplatsen som skulle hjälpa besökare?
-7. **Bot use case**: Vilken typ av bot skulle hjälpa dem mest? (lead qualification, FAQ support, booking, etc)
-8. **Dolda möjligheter** (från dokument): Vilka problem kan en chatbot lösa som kunden kanske inte tänkt på? (produktrekommendationer, upsell, workflow-automation)
+1. Company description (1–2 sentences): What do they do?
+2. Audience: Who is their customer? (B2B/B2C, industry, size)
+3. Main problems solved: Top 3 problems their product/service solves
+4. Unique selling points (Top 3)
+5. Common objections/questions before purchase
+6. Content gaps on the website that would help visitors
+7. Best bot use case: Which bot type would help most? (lead qualification, FAQ support, booking, etc.)
+8. Hidden opportunities (from documents): Problems a chatbot can solve that they may not have considered (recommendations, upsell, workflow automation)
 
-Webbplats + Dokument:
+Website + Documents:
 ${fullContext}
 
-Svara i JSON-format:
+Answer in strict JSON:
 {
   "description": "...",
   "audience": { "type": "B2B/B2C", "industry": "...", "size": "..." },
@@ -238,7 +238,7 @@ Svara i JSON-format:
     } catch (err) {
       console.error('Failed to parse AI analysis:', err);
       analysis = {
-        description: "Kunde inte analysera",
+        description: "Could not analyze",
         audience: { type: "Unknown", industry: "", size: "" },
         problems: [],
         usp: [],

@@ -28,22 +28,22 @@ export async function POST(req: NextRequest) {
     const specSafe = JSON.stringify(activeSpec).slice(0, 4000);
     const subtype = (activeSpec as any)?.subtype || '';
     const subtypeHints = {
-      'knowledge.faq': '- svara kort och länka till relevanta delar i context.\n',
-      'knowledge.onboarding': '- presentera steg-för-steg och föreslå nästa modul.\n',
-      'lead.guided_selling': '- guida till rätt paket baserat på mål, budget och tidsram.\n',
-      'support.it_helpdesk': '- samla OS/enhet, nätverk, reproduktionssteg; föreslå fix.\n',
-      'workflow.ecommerce': '- produktrekommendationer, orderstatus, returer.\n',
-      'workflow.resource_booking': '- kontrollera kapacitet och konflikter före bekräftelse.\n',
-      'workflow.returns_rma': '- validera garanti, RMA och instruktioner.\n',
-      'workflow.billing_payments': '- visa fakturastatus och betalningslänk.\n',
-      'workflow.nps_feedback': '- samla NPS och fritext, summera teman.\n',
-      'lead.enrichment': '- extrahera fält och fyll CRM.\n',
-      'workflow.churn_prevention': '- identifiera risk och föreslå winback.\n',
-      'knowledge.pro': '- citera alltid källa.\n',
-      'knowledge.sales_internal': '- ge interna säljargument med källor.\n',
-      'knowledge.partner_portal': '- svara på återförsäljarprocesser.\n',
-      'workflow.gdpr': '- hantera export/erase strukturerat och säkert.\n',
-      'knowledge.multilingual': '- svara på samma språk som användaren.\n'
+      'knowledge.faq': '- answer briefly and link to relevant context.\n',
+      'knowledge.onboarding': '- present step-by-step and suggest the next module.\n',
+      'lead.guided_selling': '- guide to the right package based on goals, budget, timeline.\n',
+      'support.it_helpdesk': '- collect OS/device, network, repro steps; suggest a fix.\n',
+      'workflow.ecommerce': '- product recommendations, order status, returns.\n',
+      'workflow.resource_booking': '- check capacity and conflicts before confirming.\n',
+      'workflow.returns_rma': '- validate warranty, RMA, and instructions.\n',
+      'workflow.billing_payments': '- show invoice status and payment link.\n',
+      'workflow.nps_feedback': '- collect NPS and free text, summarize themes.\n',
+      'lead.enrichment': '- extract fields and populate CRM.\n',
+      'workflow.churn_prevention': '- identify risk and propose winback offers.\n',
+      'knowledge.pro': '- always cite sources.\n',
+      'knowledge.sales_internal': '- provide internal sales arguments with sources.\n',
+      'knowledge.partner_portal': '- answer reseller/partner processes.\n',
+      'workflow.gdpr': '- handle export/erase requests in a structured and safe way.\n',
+      'knowledge.multilingual': '- respond in the same language as the user.\n'
     } as Record<string,string>;
     const subKey = subtype ? `${bot.type}.${subtype}` : '';
     const extra = subtypeHints[subKey] || '';
@@ -51,17 +51,17 @@ export async function POST(req: NextRequest) {
     // Type-specific instructions
     let typeInstructions = '';
     if (bot.type === 'knowledge') {
-      typeInstructions = 'KNOWLEDGE BOT:\n- Svara bara utifrån context och RAG-data.\n- Om info saknas: ställ EN tydlig följdfråga.\n- Länka alltid till källa när möjligt.\n';
+      typeInstructions = 'KNOWLEDGE BOT:\n- Answer only from context and RAG data.\n- If info is missing: ask ONE clear follow-up question.\n- Always link to source when possible.\n';
     } else if (bot.type === 'lead') {
-      typeInstructions = 'LEAD BOT:\n- Ställ frågor i ordning: problem → mål/KPI → budget → tidsram → beslutsroll.\n- När allt insamlat: sammanfatta + säg "CALL:WEBHOOK"\n- Om Calendly konfigurerad: erbjud bokning med "CALL:BOOK"\n';
+      typeInstructions = 'LEAD BOT:\n- Ask in order: problem → goals/KPI → budget → timeline → decision role.\n- When collected: summarize + say "CALL:WEBHOOK"\n- If Calendly is configured: offer booking with "CALL:BOOK"\n';
     } else if (bot.type === 'support') {
-      typeInstructions = 'SUPPORT BOT:\n- Samla: beskrivning, kategori, brådska, tidigare steg, kontaktinfo.\n- Försök lösa från KB först.\n- Om ej lösbart: "CALL:TICKET" för eskalering.\n';
+      typeInstructions = 'SUPPORT BOT:\n- Collect: description, category, urgency, previous steps, contact info.\n- Try to solve from KB first.\n- If not solvable: "CALL:TICKET" to escalate.\n';
     } else if (bot.type === 'workflow') {
       const workflowSubtype = subtype || '';
       if (workflowSubtype.includes('booking')) {
-        typeInstructions = 'BOOKING BOT:\n- Samla: typ av bokning, datum, tid, namn, e-post.\n- När komplett: "CALL:BOOK"\n';
+        typeInstructions = 'BOOKING BOT:\n- Collect: type of booking, date, time, name, email.\n- When complete: "CALL:BOOK"\n';
       } else if (workflowSubtype.includes('ecommerce')) {
-        typeInstructions = 'E-COMMERCE BOT:\n- Rekommendera produkter baserat på behov.\n- Svara på order-status, returer, etc.\n- Vid produktfråga: "CALL:PRODUCT"\n';
+        typeInstructions = 'E-COMMERCE BOT:\n- Recommend products based on needs.\n- Answer order status, returns, etc.\n- For product queries: "CALL:PRODUCT"\n';
       }
     }
 
@@ -171,20 +171,20 @@ export async function POST(req: NextRequest) {
     // Response policy from brand
     const brand = (activeSpec as any)?.brand || {};
     const responseLength = brand.responseLength || 'normal';
-    const fallbackText = brand.fallbackText || 'Jag är osäker på det. Vill du lämna din e‑post så återkommer vi?';
+    const fallbackText = brand.fallbackText || "I'm not sure about that. Would you like to leave your email and we'll follow up?";
     const working = brand.workingHours || { startHour: 8, endHour: 17, offHoursMessage: '' };
     const now = new Date();
     const hour = now.getUTCHours();
     const offHoursNote = (typeof working.startHour==='number' && typeof working.endHour==='number' && (hour < working.startHour || hour >= working.endHour))
-      ? (`\n\nOFF HOURS: ${working.offHoursMessage || 'Vi är offline just nu.'}`)
+      ? (`\n\nOFF HOURS: ${working.offHoursMessage || 'We are offline right now.'}`)
       : '';
 
     let lengthInstr = '';
-    if (responseLength === 'short') lengthInstr = '\n- Svara kortfattat i 1-2 meningar.';
-    else if (responseLength === 'long') lengthInstr = '\n- Svara utförligt och pedagogiskt i 4-6 meningar.';
+    if (responseLength === 'short') lengthInstr = '\n- Answer concisely in 1-2 sentences.';
+    else if (responseLength === 'long') lengthInstr = '\n- Answer thoroughly in 4-6 sentences.';
 
     const policies = Array.isArray((activeSpec as any)?.policies) ? `\nPOLICIES:\n- ${((activeSpec as any).policies as string[]).join('\n- ')}` : '';
-    const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${specSafe}\n\nBottype: ${bot.type}.${subtype || ''}${policies}\n${extra}\n${typeInstructions}${lengthInstr}${ragContext}${personalizedGreeting}${toneAdjustment}${offHoursNote}\n\nOm information saknas i context: använd Fallback: ${fallbackText}`;
+    const system = `You are a business chatbot. Follow the specification.\n\nSpec: ${specSafe}\n\nBot type: ${bot.type}.${subtype || ''}${policies}\n${extra}\n${typeInstructions}${lengthInstr}${ragContext}${personalizedGreeting}${toneAdjustment}${offHoursNote}\n\nIf information is missing in context: use Fallback: ${fallbackText}`;
 
     const messages = [
       { role: "system", content: system },
