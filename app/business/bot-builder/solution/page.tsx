@@ -45,6 +45,7 @@ export default function BotBuilderSolution() {
           documentFiles,
           problems: [problemData.problem],
           botType: problemData.botType || 'knowledge',
+          botSubtype: problemData.botSubtype || null,
           userEmail,
           brandConfig: brand,
           integrations,

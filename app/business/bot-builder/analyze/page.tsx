@@ -95,6 +95,167 @@ export default function AnalyzeProblem() {
       metrics: ["Integrerat med kalender", "SMS-påminnelser", "Automatisk bekräftelse"],
       effort: "15 min",
       savings: "80 000 kr/år"
+    },
+    // Nya auto-skapbara bots
+    {
+      id: "ecommerce-assistant",
+      title: "E‑handel",
+      type: "workflow",
+      subtype: "ecommerce",
+      description: "Produktfinnare, orderstatus och returer",
+      metrics: ["+25% konvertering", "Mindre support", "Rekommendationer"],
+      effort: "15 min",
+      savings: "200 000 kr/år"
+    },
+    {
+      id: "cpq-sales",
+      title: "CPQ / Sales‑konfigurator",
+      type: "lead",
+      subtype: "guided_selling",
+      description: "Paket/pris efter behov – genererar offert",
+      metrics: ["Kortare säljcykel", "Högre kvalité", "Mindre fel"],
+      effort: "20 min",
+      savings: "300 000 kr/år"
+    },
+    {
+      id: "onboarding",
+      title: "Onboarding / Customer Success",
+      type: "knowledge",
+      subtype: "onboarding",
+      description: "Första‑gången‑guide och 'how‑to'‑svar",
+      metrics: ["Färre frågor", "Snabbare värde", "Nöjdare kunder"],
+      effort: "10 min",
+      savings: "100 000 kr/år"
+    },
+    {
+      id: "knowledge-pro",
+      title: "Knowledge Pro",
+      type: "knowledge",
+      subtype: "pro",
+      description: "Dokument‑QA med källor och citat",
+      metrics: ["Säkra svar", "Spårbara källor", "Mindre eskalering"],
+      effort: "10 min",
+      savings: "120 000 kr/år"
+    },
+    {
+      id: "hr-recruiting",
+      title: "HR & Rekrytering",
+      type: "workflow",
+      subtype: "hr_screening",
+      description: "Kandidat‑screening och intervjubokning",
+      metrics: ["5x snabbare", "Bättre urval", "Automatisk bokning"],
+      effort: "15 min",
+      savings: "180 000 kr/år"
+    },
+    {
+      id: "it-helpdesk",
+      title: "IT‑Helpdesk",
+      type: "support",
+      subtype: "it_helpdesk",
+      description: "Triage + ticket till rätt team",
+      metrics: ["Snabbare lösning", "Mindre ticket‑volym", "Bättre data"],
+      effort: "10 min",
+      savings: "150 000 kr/år"
+    },
+    {
+      id: "resource-booking",
+      title: "Bokning med kapacitet",
+      type: "workflow",
+      subtype: "resource_booking",
+      description: "Boka resurser/rum med tider och begränsningar",
+      metrics: ["Mindre dubbelbokning", "Automatiska regler", "Smidigt flöde"],
+      effort: "20 min",
+      savings: "80 000 kr/år"
+    },
+    {
+      id: "returns-rma",
+      title: "Retur/RMA",
+      type: "workflow",
+      subtype: "returns_rma",
+      description: "Automatisk retur‑process och garanti‑ärenden",
+      metrics: ["Mindre support", "Spårning", "Bättre upplevelse"],
+      effort: "15 min",
+      savings: "120 000 kr/år"
+    },
+    {
+      id: "billing-payments",
+      title: "Faktura/Betalning",
+      type: "workflow",
+      subtype: "billing_payments",
+      description: "Frågor om fakturor, påminnelse och betalningslänkar",
+      metrics: ["Mindre administration", "Snabbare betalning", "Mindre fel"],
+      effort: "15 min",
+      savings: "90 000 kr/år"
+    },
+    {
+      id: "nps-feedback",
+      title: "NPS/Feedback",
+      type: "workflow",
+      subtype: "nps_feedback",
+      description: "Insamling och sammanställning av feedback",
+      metrics: ["Snabb insikt", "Trendanalys", "Fler svar"],
+      effort: "10 min",
+      savings: "60 000 kr/år"
+    },
+    {
+      id: "lead-enrichment",
+      title: "Lead‑Enrichment",
+      type: "lead",
+      subtype: "enrichment",
+      description: "Fyll på CRM‑fält automatiskt",
+      metrics: ["Bättre data", "Högre kvalité", "Mindre manuellt"],
+      effort: "10 min",
+      savings: "70 000 kr/år"
+    },
+    {
+      id: "churn-prevention",
+      title: "Churn‑prevention",
+      type: "workflow",
+      subtype: "churn_prevention",
+      description: "Fånga risk och föreslå winback‑erbjudanden",
+      metrics: ["Lägre churn", "Högre LTV", "Tidiga signaler"],
+      effort: "20 min",
+      savings: "300 000 kr/år"
+    },
+    {
+      id: "sales-internal",
+      title: "Intern säljassistent",
+      type: "knowledge",
+      subtype: "sales_internal",
+      description: "Dokument + konkurrent‑FAQ internt",
+      metrics: ["Snabbare svar", "Bättre argument", "Mindre söktid"],
+      effort: "10 min",
+      savings: "120 000 kr/år"
+    },
+    {
+      id: "partner-portal",
+      title: "Partner/ÅF‑portal",
+      type: "knowledge",
+      subtype: "partner_portal",
+      description: "Assistent för återförsäljare och partners",
+      metrics: ["Färre mail", "Bättre onboarding", "Aktiv utbildning"],
+      effort: "15 min",
+      savings: "100 000 kr/år"
+    },
+    {
+      id: "gdpr-bot",
+      title: "GDPR‑bot",
+      type: "workflow",
+      subtype: "gdpr",
+      description: "Export/erase‑förfrågningar med spårning",
+      metrics: ["Compliance", "Säker hantering", "Mindre manuell tid"],
+      effort: "15 min",
+      savings: "90 000 kr/år"
+    },
+    {
+      id: "multilingual",
+      title: "Flerspråk",
+      type: "knowledge",
+      subtype: "multilingual",
+      description: "Auto‑detektera och svara på besökarens språk",
+      metrics: ["Bättre upplevelse", "Ökad räckvidd", "Konsistent ton"],
+      effort: "10 min",
+      savings: "—"
     }
   ];
 
@@ -153,6 +314,7 @@ export default function AnalyzeProblem() {
     sessionStorage.setItem("botProblemData", JSON.stringify({
       problem: selectedBot,
       botType: bot?.type,
+      botSubtype: (bot as any)?.subtype || null,
       details: bot
     }));
     

@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
     g.__buildLock.set(key, true);
 
     const botType = consult.botType || 'knowledge';
+    const botSubtype = consult.botSubtype || consult.subtype || consult.problems?.[0] || '';
     const integrationsData = consult.integrations || integrations || {};
 
     // Minimal spec byggd av konsultdata + konversation + brand + integrations
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
       url: consult.url,
       problem: consult.problems?.[0] || "",
       type: botType, // knowledge | lead | support | workflow
-      subtype: consult.problems?.[0] || '', // For specific variants
+      subtype: botSubtype, // specific variant key
       webhookUrl: integrationsData.webhookUrl || null,
       slackWebhook: integrationsData.slackWebhook || null,
       hubspotEnabled: integrationsData.hubspotEnabled || false,
