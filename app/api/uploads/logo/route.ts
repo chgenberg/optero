@@ -45,19 +45,39 @@ export async function POST(req: NextRequest) {
 
     const url = `/uploads/${filename}`;
     // Build absolute URL for environments behind proxies
+    // Prefer serving via API to avoid static file server caching issues
+    const apiLogoUrl = `/api/uploads/logo?f=${encodeURIComponent(filename)}`;
     try {
       const host = req.headers.get('x-forwarded-host') || req.headers.get('host') || '';
       const proto = req.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https');
       const origin = host ? `${proto}://${host}` : '';
-      const absoluteUrl = origin ? `${origin}${url}` : url;
-      return NextResponse.json({ url, logoUrl: absoluteUrl });
+      const absoluteApiUrl = origin ? `${origin}${apiLogoUrl}` : apiLogoUrl;
+      return NextResponse.json({ url, logoUrl: absoluteApiUrl });
     } catch {
-      // Fallback
-      return NextResponse.json({ url, logoUrl: url });
+      return NextResponse.json({ url, logoUrl: apiLogoUrl });
     }
   } catch (err) {
     console.error("Logo upload error:", err);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+  }
+}
+
+// Serve uploaded file to avoid static caching/routing issues on some hosts
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const f = searchParams.get('f');
+    if (!f) return NextResponse.json({ error: 'Missing file' }, { status: 400 });
+    const targetPath = path.join(process.cwd(), 'public', 'uploads', path.basename(f));
+    const data = await fs.readFile(targetPath);
+    const ext = path.extname(f).toLowerCase();
+    const type = ext === '.svg' ? 'image/svg+xml' : ext === '.webp' ? 'image/webp' : ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' : 'image/png';
+    // Convert Node Buffer to ArrayBuffer for NextResponse
+    const arrayBuffer = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
+    return new NextResponse(arrayBuffer as any, { headers: { 'Content-Type': type, 'Cache-Control': 'public, max-age=31536000, immutable' } });
+  } catch (err) {
+    console.error('Logo serve error:', err);
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 }
 
