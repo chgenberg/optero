@@ -18,7 +18,7 @@ export default function Header() {
               href="/business/bot-builder"
               className="text-sm font-medium text-[#4B5563] hover:text-black transition-colors"
             >
-              Bygg bot
+              Build bot
             </a>
             <a
               href="/dashboard"
@@ -30,7 +30,13 @@ export default function Header() {
               href="/kontakt"
               className="text-sm font-medium text-[#4B5563] hover:text-black transition-colors"
             >
-              Kontakt
+              Contact
+            </a>
+            <a
+              href="/sv"
+              className="text-sm font-medium text-[#4B5563] hover:text-black transition-colors"
+            >
+              Svenska
             </a>
           </nav>
         </div>

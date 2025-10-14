@@ -7,20 +7,20 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import FeedbackButton from "@/components/FeedbackButton";
 
 export const metadata: Metadata = {
-  title: "Mendio - Gör vardagen lättare med AI",
-  description: "Hitta AI-verktyg anpassade för ditt yrke. Spara 5-15 timmar varje vecka med smarta lösningar för din arbetsdag.",
-  keywords: ["AI-verktyg", "produktivitet", "automation", "arbetsverktyg", "AI för yrken"],
+  title: "Mendio - Build AI that understands your business",
+  description: "Train a chatbot on your website and documents. Automate support and qualify leads in minutes.",
+  keywords: ["AI", "chatbot", "automation", "support", "lead qualification"],
   authors: [{ name: "Mendio" }],
   openGraph: {
-    title: "Mendio - Gör vardagen lättare med AI",
-    description: "Hitta AI-verktyg anpassade för ditt yrke",
+    title: "Mendio - Build AI that understands your business",
+    description: "Train a chatbot on your website and documents",
     type: "website",
-    locale: "sv_SE",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mendio - Gör vardagen lättare med AI",
-    description: "Hitta AI-verktyg anpassade för ditt yrke",
+    title: "Mendio - Build AI that understands your business",
+    description: "Train a chatbot on your website and documents",
   },
 };
 
@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sv">
+    <html lang="en">
       <head>
         {/* Next.js genererar manifest från app/manifest.ts som /manifest.webmanifest */}
         <link rel="manifest" href="/manifest.webmanifest" />

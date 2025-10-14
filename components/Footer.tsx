@@ -11,19 +11,19 @@ export default function Footer() {
           <div className="md:col-span-2">
             <h2 className="font-bold text-xl mb-3">MENDIO</h2>
             <p className="text-sm text-[#4B5563] leading-relaxed max-w-sm">
-              AI-drivna chatbots som förstår din verksamhet
+              AI chatbots that understand your business
             </p>
           </div>
           
           {/* Product */}
           <div>
             <h3 className="text-xs font-semibold text-[#1F2937] uppercase tracking-wider mb-4">
-              Produkt
+              Product
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/business/bot-builder" className="text-sm text-[#4B5563] hover:text-black transition-colors">
-                  Bygg bot
+                  Build bot
                 </Link>
               </li>
               <li>
@@ -33,7 +33,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/pricing" className="text-sm text-[#4B5563] hover:text-black transition-colors">
-                  Priser
+                  Pricing
                 </Link>
               </li>
             </ul>
@@ -42,17 +42,17 @@ export default function Footer() {
           {/* Legal */}
           <div>
             <h3 className="text-xs font-semibold text-[#1F2937] uppercase tracking-wider mb-4">
-              Juridiskt
+              Legal
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/integritetspolicy" className="text-sm text-[#4B5563] hover:text-black transition-colors">
-                  Integritet
+                  Privacy
                 </Link>
               </li>
               <li>
                 <Link href="/anvandarvillkor" className="text-sm text-[#4B5563] hover:text-black transition-colors">
-                  Villkor
+                  Terms
                 </Link>
               </li>
               <li>

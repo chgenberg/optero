@@ -20,17 +20,17 @@ export default function Home() {
             <div className="inline-flex items-center gap-2 mb-6">
               <div className="w-2 h-2 bg-black rounded-full animate-pulse-dot" />
               <span className="text-xs font-medium text-[#4B5563] uppercase tracking-wider">
-                AI-drivna chatbots
+                AI-powered chatbots
               </span>
             </div>
             
             <h1 className="text-5xl md:text-6xl font-bold text-black mb-6 leading-tight">
-              Bygg en chatbot som<br />förstår ditt företag
+              Build a chatbot that<br />understands your business
             </h1>
             
             <p className="text-lg text-[#4B5563] mb-12 max-w-2xl mx-auto leading-relaxed">
-              Tränad på din webbplats och dokument. Redo att svara på frågor, 
-              kvalificera leads och automatisera support på 5 minuter.
+              Trained on your website and documents. Ready to answer questions,
+              qualify leads and automate support in minutes.
             </p>
             
             <motion.button
@@ -39,21 +39,21 @@ export default function Home() {
               whileTap={{ scale: 0.98 }}
               className="btn-primary text-sm font-medium"
             >
-              Kom igång gratis
+              Get started free
             </motion.button>
             
             <p className="text-xs text-[#4B5563] mt-4">
-              Ingen kodning krävs · Gratis att testa · 5 minuter setup
+              No coding required · Free to try · 5 min setup
             </p>
           </motion.div>
         </div>
 
         {/* Three steps */}
         <div className="grid md:grid-cols-3 gap-8 mb-24">
-          {[
-            { num: "01", title: "Analysera", desc: "Ladda upp URL och dokument. AI skannar hela din verksamhet." },
-            { num: "02", title: "Välj lösning", desc: "Få AI-rekommendationer baserat på dina behov och välj bot-typ." },
-            { num: "03", title: "Lansera", desc: "Din bot är klar. Installera med en kodrad och börja spara tid." }
+            {[
+            { num: "01", title: "Analyze", desc: "Add URL and documents. AI scans your business." },
+            { num: "02", title: "Pick solution", desc: "Get AI recommendations and choose a bot type." },
+            { num: "03", title: "Launch", desc: "Install with one line of code and start saving time." }
           ].map((step, i) => (
             <motion.div
               key={i}
@@ -73,13 +73,13 @@ export default function Home() {
 
         {/* Results */}
         <div className="card max-w-4xl mx-auto text-center">
-          <h2 className="mb-8">Förväntade resultat</h2>
+          <h2 className="mb-8">Expected results</h2>
           <div className="grid md:grid-cols-4 gap-8">
             {[
-              { value: "60%", label: "Färre supportärenden" },
-              { value: "3x", label: "Fler kvalificerade leads" },
-              { value: "24/7", label: "Alltid tillgänglig" },
-              { value: "5 min", label: "Tid att bygga" }
+              { value: "60%", label: "Less support tickets" },
+              { value: "3x", label: "More qualified leads" },
+              { value: "24/7", label: "Always available" },
+              { value: "5 min", label: "Time to build" }
             ].map((stat, i) => (
               <div key={i}>
                 <div className="text-4xl font-bold mb-2">{stat.value}</div>

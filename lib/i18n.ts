@@ -14,8 +14,8 @@ const translations = {
   de,
 };
 
-export function getTranslations(locale: Locale = 'sv') {
-  return translations[locale] || translations.sv;
+export function getTranslations(locale: Locale = 'en') {
+  return translations[locale] || translations.en;
 }
 
 export function getNestedTranslation(obj: any, path: string, params?: Record<string, string>): string {
