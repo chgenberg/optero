@@ -283,27 +283,24 @@ export async function POST(req: NextRequest) {
       }
       
       // Support bot: Create Zendesk ticket
-      if (bot.type === 'support' && spec.zendeskDomain && /CALL:TICKET/i.test(reply)) {
-        // Create inbox action for manual handling (Zendesk API requires auth)
-        await prisma.botAction.create({
-          data: {
-            botId: bot.id,
-            type: 'support',
-            payload: { history, reply, zendeskDomain: spec.zendeskDomain }
-          }
-        });
+      if (bot.type === 'support' && /CALL:TICKET/i.test(reply)) {
+        try {
+          const subject = 'Support request from chat';
+          const description = history.filter((m: any) => m.role === 'user').slice(-1)[0]?.content || 'Support request';
+          await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/integrations/zendesk/ticket`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ botId: bot.id, subject, description })
+          }).catch(()=>{});
+        } catch {}
       }
       
-      // E-commerce bot: Shopify integration placeholder
-      if (bot.type === 'workflow' && spec.shopifyDomain && /CALL:PRODUCT/i.test(reply)) {
-        // For now, just log the intent - full Shopify API requires OAuth
-        await prisma.botAction.create({
-          data: {
-            botId: bot.id,
-            type: 'ecommerce',
-            payload: { history, reply, action: 'product_recommendation' }
-          }
-        });
+      // E-commerce bot: Shopify product lookup
+      if (bot.type === 'workflow' && /CALL:PRODUCT/i.test(reply)) {
+        try {
+          const lastUser = history.filter((m: any) => m.role === 'user').slice(-1)[0]?.content || '';
+          await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/integrations/shopify/products?botId=${bot.id}&q=${encodeURIComponent(lastUser.slice(0,64))}`)
+            .catch(()=>{});
+        } catch {}
       }
     } catch {}
 

@@ -19,12 +19,12 @@ export default function BotBuilderLanding() {
           transition={{ duration: 0.5 }}
         >
           <h1 className="text-5xl md:text-6xl font-bold text-black mb-6">
-            Bygg en bot på 5 minuter
+            Build a bot in 5 minutes
           </h1>
           
           <p className="text-lg text-[#4B5563] mb-12 max-w-2xl mx-auto leading-relaxed">
-            Vår AI analyserar din verksamhet och bygger en skräddarsydd chatbot 
-            som börjar ge värde direkt.
+            Our AI analyzes your business and builds a tailored chatbot
+            that starts delivering value immediately.
           </p>
           
           <motion.button
@@ -33,7 +33,7 @@ export default function BotBuilderLanding() {
             whileTap={{ scale: 0.98 }}
             className="btn-primary inline-flex items-center gap-2"
           >
-            Starta analys
+            Start analysis
             <ArrowRight className="w-4 h-4" />
           </motion.button>
         </motion.div>
@@ -41,9 +41,9 @@ export default function BotBuilderLanding() {
         {/* Process */}
         <div className="grid md:grid-cols-3 gap-8 mb-20">
           {[
-            { num: 1, title: "Analysera", desc: "Ladda upp din URL och dokument. Vår AI går igenom allt material." },
-            { num: 2, title: "Välj lösning", desc: "Få rekommendationer baserat på din verksamhet. Välj den som passar bäst." },
-            { num: 3, title: "Lansera", desc: "Din bot är klar. Installera med en kodrad och börja spara tid direkt." }
+            { num: 1, title: "Analyze", desc: "Add your URL and documents. Our AI scans everything." },
+            { num: 2, title: "Choose solution", desc: "Get recommendations based on your business. Pick what fits best." },
+            { num: 3, title: "Launch", desc: "Your bot is ready. Install with one line of code and start saving time." }
           ].map((step, i) => (
             <motion.div
               key={i}
@@ -63,13 +63,13 @@ export default function BotBuilderLanding() {
 
         {/* Results */}
         <div className="card text-center mb-20">
-          <h2 className="mb-8">Förväntade resultat</h2>
+          <h2 className="mb-8">Expected results</h2>
           <div className="grid md:grid-cols-4 gap-8">
             {[
-              { value: "60%", label: "Färre supportärenden" },
-              { value: "3x", label: "Fler kvalificerade leads" },
-              { value: "24/7", label: "Alltid tillgänglig" },
-              { value: "5 min", label: "Tid att bygga" }
+              { value: "60%", label: "Less support tickets" },
+              { value: "3x", label: "More qualified leads" },
+              { value: "24/7", label: "Always available" },
+              { value: "5 min", label: "Time to build" }
             ].map((stat, i) => (
               <div key={i}>
                 <div className="text-4xl font-bold mb-2">{stat.value}</div>
@@ -82,7 +82,7 @@ export default function BotBuilderLanding() {
         {/* CTA */}
         <div className="text-center">
           <p className="text-sm text-[#4B5563] mb-6">
-            Ingen kodning krävs. Gratis att testa. Redo på minuter.
+            No coding required. Free to try. Ready in minutes.
           </p>
           <motion.button
             onClick={() => router.push('/business/bot-builder/identify')}
@@ -90,7 +90,7 @@ export default function BotBuilderLanding() {
             whileTap={{ scale: 0.98 }}
             className="btn-secondary"
           >
-            Kom igång
+            Get started
           </motion.button>
         </div>
 

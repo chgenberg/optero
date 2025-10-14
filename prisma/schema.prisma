@@ -398,6 +398,7 @@ model Bot {
   versions     BotVersion[]
   evals        BotEval[]
   actions      BotAction[]
+  integration  BotIntegration?
   knowledge    BotKnowledge[]
   sessions     BotSession[]
   ratings      BotRating[]
@@ -486,6 +487,31 @@ model BotUsage {
   
   @@index([botId])
   @@index([createdAt])
+}
+
+// Encrypted integration credentials per bot
+model BotIntegration {
+  id                   String   @id @default(cuid())
+  botId                String   @unique
+
+  // Zendesk
+  zendeskDomain        String?
+  zendeskEmail         String?
+  zendeskApiTokenEnc   String?  // AES-GCM encrypted
+
+  // HubSpot
+  hubspotTokenEnc      String?
+
+  // Shopify
+  shopifyDomain        String?
+  shopifyAccessTokenEnc String?
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  bot                  Bot      @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  @@index([botId])
 }
 
 model BotVersion {

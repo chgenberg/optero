@@ -37,4 +37,30 @@ export async function createZendeskTicketStub(payload: { subject: string; descri
   return { ok: true };
 }
 
+// Simple AES-GCM encryption helpers for secrets at rest
+// NOTE: For production, prefer KMS or environment-level secret management
+import crypto from 'crypto';
 
+const ENC_ALGO = 'aes-256-gcm';
+const ENC_KEY = (process.env.SECRET_ENC_KEY || '').padEnd(32, '0').slice(0, 32);
+
+export function encryptSecret(plain: string | null | undefined): string | null {
+  if (!plain) return null;
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv(ENC_ALGO, Buffer.from(ENC_KEY), iv);
+  const enc = Buffer.concat([cipher.update(plain, 'utf8'), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return Buffer.concat([iv, tag, enc]).toString('base64');
+}
+
+export function decryptSecret(encB64: string | null | undefined): string | null {
+  if (!encB64) return null;
+  const buf = Buffer.from(encB64, 'base64');
+  const iv = buf.subarray(0, 12);
+  const tag = buf.subarray(12, 28);
+  const data = buf.subarray(28);
+  const decipher = crypto.createDecipheriv(ENC_ALGO, Buffer.from(ENC_KEY), iv);
+  decipher.setAuthTag(tag);
+  const dec = Buffer.concat([decipher.update(data), decipher.final()]);
+  return dec.toString('utf8');
+}
