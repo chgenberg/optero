@@ -21,6 +21,9 @@ export default function CustomizeBotPage() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [showInfo, setShowInfo] = useState<string | null>(null);
+  // Bot type
+  const [botType, setBotType] = useState<string>('knowledge');
+  const [botSubtype, setBotSubtype] = useState<string>('');
   // Interaction config
   const [welcomeMessage, setWelcomeMessage] = useState<string>("");
   const [quickReplies, setQuickReplies] = useState<string[]>([]);
@@ -39,6 +42,31 @@ export default function CustomizeBotPage() {
   const [customButtons, setCustomButtons] = useState<CustomButton[]>([]);
   const [newBtnLabel, setNewBtnLabel] = useState<string>('');
   const [newBtnUrl, setNewBtnUrl] = useState<string>('');
+  // Type-specific settings
+  // Lead
+  const [leadRequireEmail, setLeadRequireEmail] = useState<boolean>(true);
+  const [leadRequirePhone, setLeadRequirePhone] = useState<boolean>(false);
+  const [leadRequireName, setLeadRequireName] = useState<boolean>(true);
+  const [leadRequireCompany, setLeadRequireCompany] = useState<boolean>(false);
+  const [leadQuestions, setLeadQuestions] = useState<string[]>([]);
+  const [newLeadQuestion, setNewLeadQuestion] = useState<string>('');
+  // Support
+  const [supportCategories, setSupportCategories] = useState<string[]>(['General']);
+  const [newSupportCategory, setNewSupportCategory] = useState<string>('');
+  const [supportCollectPriority, setSupportCollectPriority] = useState<boolean>(true);
+  const [supportRequireEmail, setSupportRequireEmail] = useState<boolean>(true);
+  // Booking (workflow)
+  const [bookingServices, setBookingServices] = useState<string[]>([]);
+  const [newBookingService, setNewBookingService] = useState<string>('');
+  const [bookingDefaultDuration, setBookingDefaultDuration] = useState<number>(30);
+  const [bookingTimezone, setBookingTimezone] = useState<string>('UTC');
+  const [bookingRequireEmail, setBookingRequireEmail] = useState<boolean>(true);
+  // Ecommerce (workflow)
+  const [ecomRecommend, setEcomRecommend] = useState<boolean>(true);
+  const [ecomOrderLookupMode, setEcomOrderLookupMode] = useState<'email_order'|'order_only'>('email_order');
+  const [ecomReturnsPolicy, setEcomReturnsPolicy] = useState<string>('');
+  // Knowledge
+  const [knowledgeCiteSources, setKnowledgeCiteSources] = useState<boolean>(true);
 
   useEffect(() => {
     const problemData = sessionStorage.getItem("botProblemData");
@@ -48,6 +76,12 @@ export default function CustomizeBotPage() {
       router.push("/business/bot-builder");
       return;
     }
+
+    try {
+      const parsed = JSON.parse(problemData);
+      if (parsed?.botType) setBotType(parsed.botType);
+      if (parsed?.botSubtype) setBotSubtype(parsed.botSubtype);
+    } catch {}
 
     detectBrand(url);
   }, [router]);
@@ -120,6 +154,44 @@ export default function CustomizeBotPage() {
       buttons: customButtons
     };
     sessionStorage.setItem("botBrandConfig", JSON.stringify(brandWithInteraction));
+
+    // Save type-specific settings
+    const typeSettings: any = { botType, botSubtype };
+    if (botType === 'lead') {
+      typeSettings.lead = {
+        requiredFields: {
+          email: leadRequireEmail,
+          phone: leadRequirePhone,
+          name: leadRequireName,
+          company: leadRequireCompany
+        },
+        qualificationQuestions: leadQuestions
+      };
+    } else if (botType === 'support') {
+      typeSettings.support = {
+        categories: supportCategories,
+        collectPriority: supportCollectPriority,
+        requireEmail: supportRequireEmail
+      };
+    } else if (botType === 'workflow' && (botSubtype || '').includes('booking')) {
+      typeSettings.booking = {
+        services: bookingServices,
+        defaultDuration: bookingDefaultDuration,
+        timezone: bookingTimezone,
+        requireEmail: bookingRequireEmail
+      };
+    } else if (botType === 'workflow' && (botSubtype || '').includes('ecommerce')) {
+      typeSettings.ecommerce = {
+        recommend: ecomRecommend,
+        orderLookupMode: ecomOrderLookupMode,
+        returnsPolicy: ecomReturnsPolicy
+      };
+    } else if (botType === 'knowledge') {
+      typeSettings.knowledge = {
+        citeSources: knowledgeCiteSources
+      };
+    }
+    sessionStorage.setItem('botTypeSettings', JSON.stringify(typeSettings));
     
     if (uploadedFiles.length > 0) {
       const fd = new FormData();
@@ -458,6 +530,149 @@ export default function CustomizeBotPage() {
                 </div>
                 <label className="text-xs font-medium text-[#4B5563] block mb-2">Off‑hours message</label>
                 <input value={offHoursMessage} onChange={(e)=>setOffHoursMessage(e.target.value)} className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
+              </div>
+
+              {/* Bot-specific settings */}
+              <div className="card">
+                <h3 className="mb-4">Bot-specific settings</h3>
+                {botType === 'lead' && (
+                  <div className="space-y-4">
+                    <p className="text-xs text-[#4B5563]">Required lead fields</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <label className="flex items-center gap-2 text-sm">
+                        <input type="checkbox" checked={leadRequireEmail} onChange={(e)=>setLeadRequireEmail(e.target.checked)} className="w-4 h-4" /> Email
+                      </label>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input type="checkbox" checked={leadRequirePhone} onChange={(e)=>setLeadRequirePhone(e.target.checked)} className="w-4 h-4" /> Phone
+                      </label>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input type="checkbox" checked={leadRequireName} onChange={(e)=>setLeadRequireName(e.target.checked)} className="w-4 h-4" /> Name
+                      </label>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input type="checkbox" checked={leadRequireCompany} onChange={(e)=>setLeadRequireCompany(e.target.checked)} className="w-4 h-4" /> Company
+                      </label>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-[#4B5563] block mb-2">Qualification questions</label>
+                      <div className="flex gap-2 mb-2">
+                        <input value={newLeadQuestion} onChange={(e)=>setNewLeadQuestion(e.target.value)} placeholder="Add a question (e.g. What is your timeline?)" className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
+                        <button onClick={()=>{ if(!newLeadQuestion) return; setLeadQuestions(prev=>[...prev, newLeadQuestion]); setNewLeadQuestion(''); }} className="px-3 py-2 border border-[#E5E7EB] rounded-xl hover:border-black">Add</button>
+                      </div>
+                      {leadQuestions.length>0 && (
+                        <ul className="space-y-2">
+                          {leadQuestions.map((q,i)=> (
+                            <li key={i} className="flex items-center justify-between text-sm bg-[#F9FAFB] rounded-lg px-3 py-2">
+                              <span>{q}</span>
+                              <button onClick={()=> setLeadQuestions(prev=> prev.filter((_,idx)=> idx!==i))} className="p-1 hover:bg-[#E5E7EB] rounded">
+                                <X className="w-4 h-4" />
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {botType === 'support' && (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      <label className="flex items-center gap-2 text-sm">
+                        <input type="checkbox" checked={supportCollectPriority} onChange={(e)=>setSupportCollectPriority(e.target.checked)} className="w-4 h-4" /> Collect priority
+                      </label>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input type="checkbox" checked={supportRequireEmail} onChange={(e)=>setSupportRequireEmail(e.target.checked)} className="w-4 h-4" /> Require email
+                      </label>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-[#4B5563] block mb-2">Categories</label>
+                      <div className="flex gap-2 mb-2">
+                        <input value={newSupportCategory} onChange={(e)=>setNewSupportCategory(e.target.value)} placeholder="Add category (e.g. Billing)" className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
+                        <button onClick={()=>{ if(!newSupportCategory) return; setSupportCategories(prev=>[...prev, newSupportCategory]); setNewSupportCategory(''); }} className="px-3 py-2 border border-[#E5E7EB] rounded-xl hover:border-black">Add</button>
+                      </div>
+                      {supportCategories.length>0 && (
+                        <ul className="flex flex-wrap gap-2">
+                          {supportCategories.map((c,i)=> (
+                            <li key={i} className="text-xs bg-[#F3F4F6] rounded-full px-3 py-1 flex items-center gap-2">
+                              <span>{c}</span>
+                              <button onClick={()=> setSupportCategories(prev=> prev.filter((_,idx)=> idx!==i))} className="hover:text-black text-[#6B7280]">
+                                <X className="w-3 h-3" />
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {botType === 'workflow' && (botSubtype || '').includes('booking') && (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-medium text-[#4B5563] block mb-2">Default duration (min)</label>
+                        <input type="number" min={10} max={240} value={bookingDefaultDuration} onChange={(e)=> setBookingDefaultDuration(parseInt(e.target.value||'30'))} className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-[#4B5563] block mb-2">Timezone</label>
+                        <input value={bookingTimezone} onChange={(e)=> setBookingTimezone(e.target.value)} placeholder="UTC or Europe/Stockholm" className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
+                      </div>
+                    </div>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input type="checkbox" checked={bookingRequireEmail} onChange={(e)=> setBookingRequireEmail(e.target.checked)} className="w-4 h-4" /> Require email
+                    </label>
+                    <div>
+                      <label className="text-xs font-medium text-[#4B5563] block mb-2">Services</label>
+                      <div className="flex gap-2 mb-2">
+                        <input value={newBookingService} onChange={(e)=>setNewBookingService(e.target.value)} placeholder="Add service (e.g. Demo 30m)" className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
+                        <button onClick={()=>{ if(!newBookingService) return; setBookingServices(prev=>[...prev, newBookingService]); setNewBookingService(''); }} className="px-3 py-2 border border-[#E5E7EB] rounded-xl hover:border-black">Add</button>
+                      </div>
+                      {bookingServices.length>0 && (
+                        <ul className="flex flex-wrap gap-2">
+                          {bookingServices.map((s,i)=> (
+                            <li key={i} className="text-xs bg-[#F3F4F6] rounded-full px-3 py-1 flex items-center gap-2">
+                              <span>{s}</span>
+                              <button onClick={()=> setBookingServices(prev=> prev.filter((_,idx)=> idx!==i))} className="hover:text-black text-[#6B7280]">
+                                <X className="w-3 h-3" />
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {botType === 'workflow' && (botSubtype || '').includes('ecommerce') && (
+                  <div className="space-y-4">
+                    <label className="flex items-center gap-2 text-sm">
+                      <input type="checkbox" checked={ecomRecommend} onChange={(e)=> setEcomRecommend(e.target.checked)} className="w-4 h-4" /> Enable recommendations
+                    </label>
+                    <div>
+                      <label className="text-xs font-medium text-[#4B5563] block mb-2">Order lookup</label>
+                      <div className="flex gap-3 text-sm">
+                        <label className="flex items-center gap-2">
+                          <input type="radio" name="orderLookup" checked={ecomOrderLookupMode==='email_order'} onChange={()=> setEcomOrderLookupMode('email_order')} /> Email + order number
+                        </label>
+                        <label className="flex items-center gap-2">
+                          <input type="radio" name="orderLookup" checked={ecomOrderLookupMode==='order_only'} onChange={()=> setEcomOrderLookupMode('order_only')} /> Order number only
+                        </label>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-[#4B5563] block mb-2">Returns policy (summary)</label>
+                      <textarea value={ecomReturnsPolicy} onChange={(e)=> setEcomReturnsPolicy(e.target.value)} placeholder="Summarize your returns policy to guide the bot" className="w-full h-24 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm"></textarea>
+                    </div>
+                  </div>
+                )}
+
+                {botType === 'knowledge' && (
+                  <div className="space-y-4">
+                    <label className="flex items-center gap-2 text-sm">
+                      <input type="checkbox" checked={knowledgeCiteSources} onChange={(e)=> setKnowledgeCiteSources(e.target.checked)} className="w-4 h-4" /> Always cite sources
+                    </label>
+                  </div>
+                )}
               </div>
 
               {/* Custom buttons */}

@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
     const botType = consult.botType || 'knowledge';
     const botSubtype = consult.botSubtype || consult.subtype || consult.problems?.[0] || '';
     const integrationsData = consult.integrations || integrations || {};
+    const typeSettings = consult.typeSettings || {};
 
     // Minimal spec byggd av konsultdata + konversation + brand + integrations
     const documentContent = consult.documentsContent || "";
@@ -118,7 +119,8 @@ export async function POST(req: NextRequest) {
         logoOffset: brandConfig?.logoOffset || { x: 20, y: 20 },
         fontUrl: brandConfig?.fontUrl || null
       },
-      policies: defaultPolicies
+      policies: defaultPolicies,
+      typeSettings
     };
 
     // Get userId from request or lookup by email

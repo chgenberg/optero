@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
 
     const specSafe = JSON.stringify(activeSpec).slice(0, 4000);
     const subtype = (activeSpec as any)?.subtype || '';
+    const typeSettings = (activeSpec as any)?.typeSettings || {};
     const subtypeHints = {
       'knowledge.faq': '- answer briefly and link to relevant context.\n',
       'knowledge.onboarding': '- present step-by-step and suggest the next module.\n',
@@ -51,17 +52,31 @@ export async function POST(req: NextRequest) {
     // Type-specific instructions
     let typeInstructions = '';
     if (bot.type === 'knowledge') {
-      typeInstructions = 'KNOWLEDGE BOT:\n- Answer only from context and RAG data.\n- If info is missing: ask ONE clear follow-up question.\n- Always link to source when possible.\n';
+      const cite = typeSettings?.knowledge?.citeSources ? '\n- Always cite sources.' : '';
+      typeInstructions = 'KNOWLEDGE BOT:\n- Answer only from context and RAG data.\n- If info is missing: ask ONE clear follow-up question.' + cite + '\n';
     } else if (bot.type === 'lead') {
-      typeInstructions = 'LEAD BOT:\n- Ask in order: problem → goals/KPI → budget → timeline → decision role.\n- When collected: summarize + say "CALL:WEBHOOK"\n- If Calendly is configured: offer booking with "CALL:BOOK"\n';
+      const req = typeSettings?.lead?.requiredFields || {};
+      const required = Object.entries(req).filter(([k,v])=>v).map(([k])=>k).join(', ') || 'email';
+      const qs = (typeSettings?.lead?.qualificationQuestions || []).slice(0,6).map((q:string)=>`- ${q}`).join('\n');
+      typeInstructions = 'LEAD BOT:\n- Collect required fields: ' + required + '.\n- Ask in order: problem → goals/KPI → budget → timeline → decision role.\n- When collected: summarize + say "CALL:WEBHOOK"\n- If Calendly is configured: offer booking with "CALL:BOOK"\n' + (qs? ('- Qualification questions:\n' + qs + '\n') : '');
     } else if (bot.type === 'support') {
-      typeInstructions = 'SUPPORT BOT:\n- Collect: description, category, urgency, previous steps, contact info.\n- Try to solve from KB first.\n- If not solvable: "CALL:TICKET" to escalate.\n';
+      const cats = (typeSettings?.support?.categories || []).join(', ');
+      const pri = typeSettings?.support?.collectPriority ? '\n- Ask for ticket priority (low/normal/high).' : '';
+      const reqEmail = typeSettings?.support?.requireEmail ? '\n- Require email for ticket creation.' : '';
+      typeInstructions = 'SUPPORT BOT:\n- Collect: description, category, urgency, previous steps, contact info.\n' + (cats? ('- Categories: ' + cats + '.\n') : '') + '- Try to solve from KB first.\n- If not solvable: "CALL:TICKET" to escalate.' + pri + reqEmail + '\n';
     } else if (bot.type === 'workflow') {
       const workflowSubtype = subtype || '';
       if (workflowSubtype.includes('booking')) {
-        typeInstructions = 'BOOKING BOT:\n- Collect: type of booking, date, time, name, email.\n- When complete: "CALL:BOOK"\n';
+        const tz = typeSettings?.booking?.timezone || 'UTC';
+        const dur = typeSettings?.booking?.defaultDuration || 30;
+        const reqEmail = typeSettings?.booking?.requireEmail ? '\n- Require email for booking.' : '';
+        const services = (typeSettings?.booking?.services || []).join(', ');
+        typeInstructions = 'BOOKING BOT:\n- Collect: service, date, time, name' + (reqEmail? ', email' : '') + `.\n- Default duration: ${dur} minutes. Timezone: ${tz}.\n` + (services? ('- Services: ' + services + '.\n') : '') + '- When complete: "CALL:BOOK"\n';
       } else if (workflowSubtype.includes('ecommerce')) {
-        typeInstructions = 'E-COMMERCE BOT:\n- Recommend products based on needs.\n- Answer order status, returns, etc.\n- For product queries: "CALL:PRODUCT"\n';
+        const recommend = typeSettings?.ecommerce?.recommend !== false;
+        const mode = typeSettings?.ecommerce?.orderLookupMode || 'email_order';
+        const returns = typeSettings?.ecommerce?.returnsPolicy ? (`\n- Returns policy: ${typeSettings.ecommerce.returnsPolicy}`) : '';
+        typeInstructions = 'E-COMMERCE BOT:\n' + (recommend? '- Recommend products based on needs.\n' : '') + '- Answer order status, returns, etc.\n- For product queries: "CALL:PRODUCT"\n- Order lookup mode: ' + (mode==='order_only' ? 'order number only' : 'email + order number') + returns + '\n';
       }
     }
 

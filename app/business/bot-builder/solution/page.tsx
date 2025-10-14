@@ -31,6 +31,7 @@ export default function BotBuilderSolution() {
         const problemData = JSON.parse(problem);
         const brand = JSON.parse(brandConfig);
         const deepAnalysis = JSON.parse(sessionStorage.getItem("botDeepAnalysis") || '{}');
+        const typeSettings = JSON.parse(sessionStorage.getItem("botTypeSettings") || '{}');
         const integrations = JSON.parse(sessionStorage.getItem("botIntegrations") || '{}');
         const documentContent = sessionStorage.getItem("botDocuments") || "";
         const documentFiles = JSON.parse(sessionStorage.getItem("botDocumentFiles") || '[]');
@@ -49,6 +50,7 @@ export default function BotBuilderSolution() {
           userEmail,
           brandConfig: brand,
           integrations,
+          typeSettings,
           pages: deepAnalysis.pages || []
         } as any;
 
