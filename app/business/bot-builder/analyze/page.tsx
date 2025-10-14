@@ -10,6 +10,7 @@ export default function AnalyzeProblem() {
   const [result, setResult] = useState<any>(null);
   const [selectedBot, setSelectedBot] = useState("");
   const [showInfoFor, setShowInfoFor] = useState<string | null>(null);
+  const [showAdvancedInfo, setShowAdvancedInfo] = useState<string | null>(null);
 
   useEffect(() => {
     const analyzeWebsite = async () => {
@@ -83,17 +84,47 @@ export default function AnalyzeProblem() {
     {
       title: "PROCESS AUTOMATION",
       description: "Automatisera hela arbetsflöden med AI",
-      complexity: "Kräver konsultation"
+      complexity: "Kräver konsultation",
+      details: {
+        what: "Skräddarsydda AI-agenter som automatiserar komplexa affärsprocesser från början till slut. Kan hantera allt från fakturagodkännanden till komplex databearbetning.",
+        benefits: [
+          "Minska manuellt arbete med upp till 80%",
+          "Eliminera flaskhalsar i processer",
+          "Säkerställ konsekvent kvalitet",
+          "Frigör tid för strategiskt arbete"
+        ],
+        examples: "Automatisk fakturakontroll, dynamisk prisoptimering, smart dokumenthantering"
+      }
     },
     {
       title: "KNOWLEDGE MANAGEMENT",
       description: "AI som förstår alla era dokument och processer",
-      complexity: "Kräver konsultation"
+      complexity: "Kräver konsultation",
+      details: {
+        what: "Enterprise-grade kunskapshanteringssystem där AI indexerar, förstår och kan svara på frågor från alla era dokument, wiki-sidor, mail och interna system.",
+        benefits: [
+          "Hitta rätt information på sekunder",
+          "Bevara företagskunskap vid personalbyten",
+          "Automatisk onboarding av nya medarbetare",
+          "Säker delning av intern kompetens"
+        ],
+        examples: "Intern FAQ-assistent, juridisk dokumentsökning, teknisk dokumentation med AI"
+      }
     },
     {
       title: "PREDICTIVE ANALYTICS",
       description: "Förutse problem innan de uppstår",
-      complexity: "Kräver konsultation"
+      complexity: "Kräver konsultation",
+      details: {
+        what: "Prediktiva modeller som analyserar historisk data för att förutspå framtida händelser, identifiera risker och optimera beslut innan problem uppstår.",
+        benefits: [
+          "Förutse kundbortfall 3-6 månader i förväg",
+          "Identifiera kvalitetsproblem innan produktion",
+          "Optimera lager baserat på prognoser",
+          "Upptäck säkerhetsrisker proaktivt"
+        ],
+        examples: "Churn prediction, underhållsprognoser, efterfrågesprognoser, riskbedömning"
+      }
     }
   ];
 
@@ -252,7 +283,14 @@ export default function AnalyzeProblem() {
           
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             {advancedSolutions.map((solution, i) => (
-              <div key={i} className="p-8 bg-gray-50">
+              <button
+                key={i}
+                onClick={() => setShowAdvancedInfo(showAdvancedInfo === solution.title ? null : solution.title)}
+                className="p-8 bg-gray-50 hover:bg-gray-100 transition-colors text-left relative"
+              >
+                <div className="absolute top-4 right-4">
+                  <Info className="w-4 h-4 text-gray-400" />
+                </div>
                 <h3 className="text-lg font-thin uppercase tracking-wider mb-2">
                   {solution.title}
                 </h3>
@@ -262,7 +300,41 @@ export default function AnalyzeProblem() {
                 <p className="text-xs text-gray-500 uppercase tracking-wider">
                   {solution.complexity}
                 </p>
-              </div>
+                
+                {showAdvancedInfo === solution.title && (
+                  <div className="absolute left-0 right-0 top-full mt-4 p-6 bg-white border border-gray-200 shadow-2xl z-50 text-left">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowAdvancedInfo(null);
+                      }}
+                      className="absolute top-4 right-4 text-gray-400 hover:text-black"
+                    >
+                      ✕
+                    </button>
+                    
+                    <h4 className="text-xs uppercase tracking-widest mb-3">Vad är detta?</h4>
+                    <p className="text-sm text-gray-700 mb-4 leading-relaxed">
+                      {solution.details.what}
+                    </p>
+                    
+                    <h4 className="text-xs uppercase tracking-widest mb-3">Fördelar</h4>
+                    <ul className="space-y-2 mb-4">
+                      {solution.details.benefits.map((benefit, j) => (
+                        <li key={j} className="text-sm text-gray-700 flex items-start gap-2">
+                          <span className="text-black mt-1">•</span>
+                          <span>{benefit}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    <h4 className="text-xs uppercase tracking-widest mb-2">Exempel</h4>
+                    <p className="text-sm text-gray-600 italic">
+                      {solution.details.examples}
+                    </p>
+                  </div>
+                )}
+              </button>
             ))}
           </div>
           
