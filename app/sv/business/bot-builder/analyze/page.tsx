@@ -358,7 +358,7 @@ export default function AnalyzeProblem() {
         <div className="flex justify-center mb-12">
           <div className="flex items-center gap-2">
             <div className="w-8 h-[2px] bg-[#E5E7EB]" />
-            <span className="text-xs font-medium text-[#4B5563] px-3">Step 2</span>
+            <span className="text-xs font-medium text-[#4B5563] px-3">Steg 2</span>
             <div className="w-8 h-[2px] bg-[#E5E7EB]" />
           </div>
         </div>
@@ -369,12 +369,12 @@ export default function AnalyzeProblem() {
           transition={{ duration: 0.5 }}
         >
           <div className="text-center mb-12">
-            <h1 className="mb-3">Analysis results</h1>
+            <h1 className="mb-3">Resultat av analysen</h1>
             
             {result?.analysis && (
               <div className="mt-8 space-y-4 max-w-3xl mx-auto">
                 <div className="card">
-                  <p className="text-sm font-medium text-[#1F2937] mb-2">AI insights from your website</p>
+                  <p className="text-sm font-medium text-[#1F2937] mb-2">AI-insikter från din webbplats</p>
                   <p className="text-sm text-[#4B5563] leading-relaxed">
                     {result.analysis.description}
                   </p>
@@ -382,7 +382,7 @@ export default function AnalyzeProblem() {
                 
                 {result.analysis.hiddenOpportunities?.length > 0 && (
                   <div className="card bg-[#F9FAFB]">
-                    <p className="text-sm font-medium text-[#1F2937] mb-3">Hidden opportunities</p>
+                    <p className="text-sm font-medium text-[#1F2937] mb-3">Dolda möjligheter</p>
                     <ul className="space-y-2">
                       {result.analysis.hiddenOpportunities.map((opp: string, i: number) => (
                         <li key={i} className="text-sm text-[#4B5563] flex items-start gap-2">
@@ -399,7 +399,7 @@ export default function AnalyzeProblem() {
 
           {/* Bot Recommendations */}
           <div className="mb-16">
-            <h2 className="text-center mb-8">Recommended solutions</h2>
+            <h2 className="text-center mb-8">Rekommenderade lösningar</h2>
             
             <div className="grid md:grid-cols-3 gap-6">
               {botRecommendations.map((bot, i) => (
@@ -435,8 +435,8 @@ export default function AnalyzeProblem() {
                       className="absolute left-0 right-0 top-full mt-2 p-4 bg-white border border-[#E5E7EB] rounded-xl shadow-lg z-10"
                     >
                       <p className="text-xs text-[#4B5563] leading-relaxed">
-                        This bot can automatically handle FAQs, create support tickets
-                        and escalate complex cases to the right person.
+                        Denna bot kan automatiskt hantera vanliga frågor, skapa supportärenden 
+                        och eskalera komplexa ärenden till rätt person.
                       </p>
                     </motion.div>
                   )}
@@ -454,11 +454,11 @@ export default function AnalyzeProblem() {
                   
                   <div className="flex justify-between items-end pt-4 border-t border-[#E5E7EB]">
                     <div>
-                      <p className="text-xs text-[#9CA3AF] mb-1">Setup</p>
+                      <p className="text-xs text-[#9CA3AF] mb-1">Uppsättning</p>
                       <p className="text-sm font-semibold">{bot.effort}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-[#9CA3AF] mb-1">Savings</p>
+                      <p className="text-xs text-[#9CA3AF] mb-1">Besparing</p>
                       <p className="text-sm font-semibold">{bot.savings}</p>
                     </div>
                   </div>
@@ -474,7 +474,7 @@ export default function AnalyzeProblem() {
                 whileTap={selectedBot ? { scale: 0.98 } : {}}
                 className="btn-primary disabled:bg-[#E5E7EB] disabled:text-[#9CA3AF] disabled:cursor-not-allowed inline-flex items-center gap-2"
               >
-                Build selected bot
+                Bygg vald bot
                 <ArrowRight className="w-4 h-4" />
               </motion.button>
             </div>
@@ -482,7 +482,7 @@ export default function AnalyzeProblem() {
 
           {/* Advanced Solutions */}
           <div className="border-t border-[#E5E7EB] pt-16">
-            <h2 className="text-center mb-8">Advanced solutions</h2>
+            <h2 className="text-center mb-8">Avancerade lösningar</h2>
             
             <div className="grid md:grid-cols-3 gap-6 mb-8">
               {advancedSolutions.map((solution, i) => (
@@ -524,14 +524,14 @@ export default function AnalyzeProblem() {
                       </button>
                       
                       <h4 className="text-xs font-semibold text-[#1F2937] uppercase tracking-wider mb-3">
-                        What is this?
+                        Vad är detta?
                       </h4>
                       <p className="text-sm text-[#4B5563] mb-4 leading-relaxed">
                         {solution.details.what}
                       </p>
                       
                       <h4 className="text-xs font-semibold text-[#1F2937] uppercase tracking-wider mb-3">
-                        Benefits
+                        Fördelar
                       </h4>
                       <ul className="space-y-2 mb-4">
                         {solution.details.benefits.map((benefit, j) => (
@@ -543,7 +543,7 @@ export default function AnalyzeProblem() {
                       </ul>
                       
                       <h4 className="text-xs font-semibold text-[#1F2937] uppercase tracking-wider mb-2">
-                        Examples
+                        Exempel
                       </h4>
                       <p className="text-sm text-[#4B5563] italic">
                         {solution.details.examples}
@@ -561,7 +561,7 @@ export default function AnalyzeProblem() {
                 whileTap={{ scale: 0.98 }}
                 className="btn-secondary"
               >
-                Book consultation
+                Boka konsultation
               </motion.button>
             </div>
           </div>
@@ -572,10 +572,12 @@ export default function AnalyzeProblem() {
             onClick={() => router.push("/business/bot-builder/identify")}
             className="text-sm text-[#4B5563] hover:text-black transition-colors"
           >
-            Back
+            Tillbaka
           </button>
         </div>
       </div>
     </div>
   );
 }
+
+
