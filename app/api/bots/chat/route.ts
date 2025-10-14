@@ -156,7 +156,22 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${specSafe}\n\nBottype: ${bot.type}.${subtype || ''}\n${extra}\n${typeInstructions}${ragContext}${personalizedGreeting}${toneAdjustment}`;
+    // Response policy from brand
+    const brand = (activeSpec as any)?.brand || {};
+    const responseLength = brand.responseLength || 'normal';
+    const fallbackText = brand.fallbackText || 'Jag är osäker på det. Vill du lämna din e‑post så återkommer vi?';
+    const working = brand.workingHours || { startHour: 8, endHour: 17, offHoursMessage: '' };
+    const now = new Date();
+    const hour = now.getUTCHours();
+    const offHoursNote = (typeof working.startHour==='number' && typeof working.endHour==='number' && (hour < working.startHour || hour >= working.endHour))
+      ? (`\n\nOFF HOURS: ${working.offHoursMessage || 'Vi är offline just nu.'}`)
+      : '';
+
+    let lengthInstr = '';
+    if (responseLength === 'short') lengthInstr = '\n- Svara kortfattat i 1-2 meningar.';
+    else if (responseLength === 'long') lengthInstr = '\n- Svara utförligt och pedagogiskt i 4-6 meningar.';
+
+    const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${specSafe}\n\nBottype: ${bot.type}.${subtype || ''}\n${extra}\n${typeInstructions}${lengthInstr}${ragContext}${personalizedGreeting}${toneAdjustment}${offHoursNote}\n\nOm information saknas i context: använd Fallback: ${fallbackText}`;
 
     const messages = [
       { role: "system", content: system },

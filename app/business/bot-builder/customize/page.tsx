@@ -27,6 +27,18 @@ export default function CustomizeBotPage() {
   const [newQuickReply, setNewQuickReply] = useState<string>("");
   const [ctaLabel, setCtaLabel] = useState<string>("Boka demo");
   const [ctaUrl, setCtaUrl] = useState<string>("");
+  // Advanced response controls
+  const [responseLength, setResponseLength] = useState<'short'|'normal'|'long'>('normal');
+  const [fallbackText, setFallbackText] = useState<string>("");
+  // Working hours
+  const [startHour, setStartHour] = useState<number>(8);
+  const [endHour, setEndHour] = useState<number>(17);
+  const [offHoursMessage, setOffHoursMessage] = useState<string>('Vi är offline just nu. Lämna gärna din e‑post så återkommer vi.');
+  // Custom buttons
+  type CustomButton = { label: string; url: string };
+  const [customButtons, setCustomButtons] = useState<CustomButton[]>([]);
+  const [newBtnLabel, setNewBtnLabel] = useState<string>('');
+  const [newBtnUrl, setNewBtnUrl] = useState<string>('');
 
   useEffect(() => {
     const problemData = sessionStorage.getItem("botProblemData");
@@ -98,7 +110,15 @@ export default function CustomizeBotPage() {
 
   const handleContinue = async () => {
     // Save brand + interaction config
-    const brandWithInteraction = { ...brand, welcomeMessage, quickReplies };
+    const brandWithInteraction = { 
+      ...brand, 
+      welcomeMessage, 
+      quickReplies,
+      responseLength,
+      fallbackText,
+      workingHours: { startHour, endHour, offHoursMessage },
+      buttons: customButtons
+    };
     sessionStorage.setItem("botBrandConfig", JSON.stringify(brandWithInteraction));
     
     if (uploadedFiles.length > 0) {
@@ -394,6 +414,70 @@ export default function CustomizeBotPage() {
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Response policy */}
+              <div className="card">
+                <h3 className="mb-4">Svarspolicy</h3>
+                <div className="grid md:grid-cols-3 gap-3 mb-4">
+                  {[
+                    { key: 'short', label: 'Kort' },
+                    { key: 'normal', label: 'Normal' },
+                    { key: 'long', label: 'Lång' }
+                  ].map((opt: any) => (
+                    <button
+                      key={opt.key}
+                      onClick={() => setResponseLength(opt.key)}
+                      className={`px-4 py-2 border-2 rounded-xl text-sm font-medium ${responseLength===opt.key ? 'border-black bg-black text-white' : 'border-[#E5E7EB] hover:border-[#4B5563]'}`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                <label className="text-xs font-medium text-[#4B5563] block mb-2">Fallback‑svar</label>
+                <input
+                  value={fallbackText}
+                  onChange={(e) => setFallbackText(e.target.value)}
+                  placeholder="Jag är osäker på det. Vill du lämna din e‑post så återkommer vi?"
+                  className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors text-sm"
+                />
+              </div>
+
+              {/* Working hours */}
+              <div className="card">
+                <h3 className="mb-4">Öppettider</h3>
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  <div>
+                    <label className="text-xs font-medium text-[#4B5563] block mb-1">Start</label>
+                    <input type="number" min={0} max={23} value={startHour} onChange={(e)=>setStartHour(Number(e.target.value))} className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-[#4B5563] block mb-1">Slut</label>
+                    <input type="number" min={0} max={23} value={endHour} onChange={(e)=>setEndHour(Number(e.target.value))} className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
+                  </div>
+                </div>
+                <label className="text-xs font-medium text-[#4B5563] block mb-2">Meddelande utanför öppettider</label>
+                <input value={offHoursMessage} onChange={(e)=>setOffHoursMessage(e.target.value)} className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
+              </div>
+
+              {/* Custom buttons */}
+              <div className="card">
+                <h3 className="mb-4">Chat‑knappar</h3>
+                <div className="flex gap-2 mb-3">
+                  <input value={newBtnLabel} onChange={(e)=>setNewBtnLabel(e.target.value)} placeholder="Etikett (t.ex. Priser)" className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
+                  <input value={newBtnUrl} onChange={(e)=>setNewBtnUrl(e.target.value)} placeholder="https://..." className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
+                  <button onClick={()=>{ if(!newBtnLabel||!newBtnUrl) return; setCustomButtons(prev=>[...prev, {label:newBtnLabel, url:newBtnUrl}]); setNewBtnLabel(''); setNewBtnUrl(''); }} className="px-3 py-2 border border-[#E5E7EB] rounded-xl hover:border-black">Lägg till</button>
+                </div>
+                {customButtons.length>0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {customButtons.map((b, i)=>(
+                      <span key={i} className="px-3 py-1 text-sm border border-[#E5E7EB] rounded-full inline-flex items-center gap-2">
+                        {b.label}
+                        <button onClick={()=>setCustomButtons(prev=>prev.filter((_,idx)=>idx!==i))} className="text-[#9CA3AF] hover:text-black">×</button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 

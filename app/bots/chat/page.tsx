@@ -94,6 +94,7 @@ function ChatInner() {
   };
 
   const calendlyUrl = botInfo?.spec?.calendlyUrl || null;
+  const customButtons = (botInfo?.spec?.brand?.buttons as Array<{label:string;url:string}>) || [];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white" style={{ fontFamily: brand?.fontFamily || 'system-ui' }}>
@@ -156,6 +157,19 @@ function ChatInner() {
             <div ref={endRef} />
           </div>
           
+          {/* Custom Buttons */}
+          {customButtons.length > 0 && (
+            <div className="px-6 py-3 bg-white border-t border-gray-100">
+              <div className="flex flex-wrap gap-2">
+                {customButtons.map((b, i) => (
+                  <a key={i} href={b.url} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-full text-xs text-gray-700 transition-all">
+                    {b.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Suggestions */}
           {suggestions.length > 0 && messages.length === 1 && (
             <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
