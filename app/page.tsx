@@ -34,7 +34,7 @@ export default function Home() {
             </p>
             
             <motion.button
-              onClick={() => router.push('/business/bot-builder')}
+              onClick={() => router.push('/business/bot-builder/identify')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="btn-primary text-sm font-medium"
