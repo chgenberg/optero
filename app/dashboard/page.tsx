@@ -62,7 +62,7 @@ export default function DashboardPage() {
           <div>
             <h1 className="text-4xl font-light text-gray-900 mb-2">Dashboard</h1>
             <p className="text-gray-600">
-              {email ? `Inloggad som: ${email}` : 'Alla botar'}
+              {email ? `Signed in as: ${email}` : 'All bots'}
             </p>
           </div>
           <button
@@ -70,20 +70,20 @@ export default function DashboardPage() {
             className="btn-minimal flex items-center gap-2"
           >
             <MinimalIcons.Bot className="w-5 h-5" />
-            Skapa ny bot
+            Create new bot
           </button>
         </div>
 
         {bots.length === 0 ? (
           <div className="minimal-box text-center py-16">
             <MinimalIcons.Bot className="w-16 h-16 text-gray-300 mx-auto mb-6" />
-            <h2 className="text-2xl font-light text-gray-900 mb-4">Inga botar än</h2>
-            <p className="text-gray-600 mb-8">Skapa din första bot för att komma igång</p>
+            <h2 className="text-2xl font-light text-gray-900 mb-4">No bots yet</h2>
+            <p className="text-gray-600 mb-8">Create your first bot to get started</p>
             <button
               onClick={() => router.push('/business/bot-builder')}
               className="btn-minimal"
             >
-              Skapa bot
+              Create bot
             </button>
           </div>
         ) : (
@@ -100,7 +100,7 @@ export default function DashboardPage() {
                       {bot.name}
                     </h3>
                     <p className="text-sm text-gray-600 truncate">
-                      {bot.companyUrl || 'Ingen URL'}
+                      {bot.companyUrl || 'No URL'}
                     </p>
                   </div>
                   <div className={`w-3 h-3 rounded-full ${bot.isActive ? 'bg-green-500' : 'bg-gray-300'}`} />
@@ -111,13 +111,13 @@ export default function DashboardPage() {
                     <div className="text-2xl font-light text-gray-900">
                       {bot.stats.messages}
                     </div>
-                    <div className="text-xs text-gray-600">Meddelanden</div>
+                    <div className="text-xs text-gray-600">Messages</div>
                   </div>
                   <div>
                     <div className="text-2xl font-light text-gray-900">
                       {bot.stats.sessions}
                     </div>
-                    <div className="text-xs text-gray-600">Sessioner</div>
+                    <div className="text-xs text-gray-600">Sessions</div>
                   </div>
                   <div>
                     <div className="text-2xl font-light text-gray-900">
@@ -132,7 +132,7 @@ export default function DashboardPage() {
                     {new Date(bot.createdAt).toLocaleDateString('sv-SE')}
                   </span>
                   <span className="text-black font-medium">
-                    Visa detaljer →
+                    View details →
                   </span>
                 </div>
               </button>
