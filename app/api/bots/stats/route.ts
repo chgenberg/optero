@@ -39,6 +39,7 @@ export async function GET(req: NextRequest) {
 
       // Calculate stats
       const totalMessages = bot.usages.length;
+      const totalTokens = bot.usages.reduce((acc, u) => acc + (u.tokens || 0), 0);
       const todayMessages = bot.usages.filter(u => {
         const diff = Date.now() - new Date(u.createdAt).getTime();
         return diff < 24 * 60 * 60 * 1000;
@@ -90,7 +91,8 @@ export async function GET(req: NextRequest) {
           todayMessages,
           totalSessions,
           activeSessions,
-          knowledgeChunks: bot.knowledge.length
+          knowledgeChunks: bot.knowledge.length,
+          totalTokens
         },
         topQuestions,
         unansweredQuestions: Array.from(new Set(unanswered)).slice(0, 10),

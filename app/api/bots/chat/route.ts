@@ -185,6 +185,9 @@ export async function POST(req: NextRequest) {
     });
 
     const reply = resp.choices[0]?.message?.content || "";
+    const promptTokens = (resp as any)?.usage?.prompt_tokens || 0;
+    const completionTokens = (resp as any)?.usage?.completion_tokens || 0;
+    const totalTokens = (resp as any)?.usage?.total_tokens || (promptTokens + completionTokens);
 
     // User profiling: Extract name, company, email from conversation
     let userProfile: any = {};
@@ -293,7 +296,7 @@ export async function POST(req: NextRequest) {
 
     // Log usage (message) with masked content summary (optional lightweight)
     try {
-      await prisma.botUsage.create({ data: { botId: bot.id, kind: "message" } });
+      await prisma.botUsage.create({ data: { botId: bot.id, kind: "message", tokens: Number(totalTokens) || 0 } });
     } catch {}
 
     // Simple rate limit for free plan: max 50 messages/day per bot + 20/min per IP
@@ -305,6 +308,17 @@ export async function POST(req: NextRequest) {
         const count = await prisma.botUsage.count({ where: { botId: bot.id, createdAt: { gte: since }, kind: 'message' } });
         if (count > 50) {
           return NextResponse.json({ reply: 'Gratisgränsen är nådd för idag. Uppgradera för mer kapacitet.' });
+        }
+
+        // Token cap per day for free plan
+        const tokensAgg = await prisma.botUsage.aggregate({
+          where: { botId: bot.id, createdAt: { gte: since } },
+          _sum: { tokens: true }
+        });
+        const usedTokens = Number(tokensAgg._sum.tokens || 0);
+        const dailyTokenCap = 100_000; // ~100k tokens/dag för free
+        if (usedTokens > dailyTokenCap) {
+          return NextResponse.json({ reply: 'Token‑gränsen för idag är nådd. Uppgradera för fler samtal.' });
         }
       }
       // naive in-memory IP bucket (best-effort)

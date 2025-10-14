@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { MinimalIcons } from "@/components/MinimalIcons";
 
-interface BotDetailStats {
+  interface BotDetailStats {
   bot: {
     id: string;
     name: string;
@@ -16,7 +16,8 @@ interface BotDetailStats {
     todayMessages: number;
     totalSessions: number;
     activeSessions: number;
-    knowledgeChunks: number;
+      knowledgeChunks: number;
+      totalTokens?: number;
   };
   topQuestions: Array<{ question: string; count: number }>;
   unansweredQuestions: string[];
@@ -277,6 +278,12 @@ export default function BotDetailPage() {
               {stats.stats.knowledgeChunks}
             </div>
             <div className="text-sm text-gray-600">KB chunks</div>
+          </div>
+          <div className="minimal-box text-center col-span-2 md:col-span-1">
+            <div className="text-3xl font-light text-gray-900 mb-1">
+              {((stats.stats.totalTokens || 0)/1000).toFixed(1)}k
+            </div>
+            <div className="text-sm text-gray-600">Tokens (period)</div>
           </div>
         </div>
 
