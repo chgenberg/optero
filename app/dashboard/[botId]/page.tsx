@@ -57,11 +57,20 @@ export default function BotDetailPage() {
   const [trainAnswer, setTrainAnswer] = useState("");
   const [training, setTraining] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  // Integrations
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [slackWebhook, setSlackWebhook] = useState("");
+  const [calendlyUrl, setCalendlyUrl] = useState("");
+  const [hubspotEnabled, setHubspotEnabled] = useState(false);
+  const [zendeskDomain, setZendeskDomain] = useState("");
+  const [shopifyDomain, setShopifyDomain] = useState("");
+  const [savingIntegrations, setSavingIntegrations] = useState(false);
 
   useEffect(() => {
     if (botId) {
       loadStats();
       loadAnalytics();
+      loadIntegrations();
     }
   }, [botId]);
 
@@ -85,6 +94,50 @@ export default function BotDetailPage() {
       setAnalytics(data);
     } catch (error) {
       console.error('Failed to load analytics:', error);
+    }
+  };
+
+  const loadIntegrations = async () => {
+    try {
+      const res = await fetch(`/api/bots/info?botId=${botId}`);
+      const data = await res.json();
+      const spec = (data?.spec || {}) as any;
+      setWebhookUrl(spec.webhookUrl || "");
+      setSlackWebhook(spec.slackWebhook || "");
+      setCalendlyUrl(spec.calendlyUrl || "");
+      setHubspotEnabled(Boolean(spec.hubspotEnabled));
+      setZendeskDomain(spec.zendeskDomain || "");
+      setShopifyDomain(spec.shopifyDomain || "");
+    } catch (e) {
+      console.error('Failed to load integrations', e);
+    }
+  };
+
+  const saveIntegrations = async () => {
+    setSavingIntegrations(true);
+    try {
+      const res = await fetch('/api/bots/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          botId,
+          webhookUrl,
+          slackWebhook,
+          specPatch: {
+            calendlyUrl: calendlyUrl || null,
+            hubspotEnabled,
+            zendeskDomain: zendeskDomain || null,
+            shopifyDomain: shopifyDomain || null
+          }
+        })
+      });
+      if (!res.ok) throw new Error('Update failed');
+      alert('Integreringar sparade');
+    } catch (e) {
+      console.error('Save integrations error:', e);
+      alert('Kunde inte spara integreringar');
+    } finally {
+      setSavingIntegrations(false);
     }
   };
 
@@ -371,6 +424,83 @@ export default function BotDetailPage() {
             </div>
           </div>
         )}
+
+        {/* Integrations */}
+        <div className="minimal-box mb-8">
+          <h2 className="text-xl font-medium text-gray-900 mb-6">Integrationer</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Webhook URL</label>
+              <input
+                type="url"
+                value={webhookUrl}
+                onChange={(e) => setWebhookUrl(e.target.value)}
+                placeholder="https://example.com/webhook"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+              />
+              <p className="text-xs text-gray-500 mt-2">Används för lead/support‑sammanfattningar (CALL:WEBHOOK)</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Slack Webhook</label>
+              <input
+                type="url"
+                value={slackWebhook}
+                onChange={(e) => setSlackWebhook(e.target.value)}
+                placeholder="https://hooks.slack.com/services/..."
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+              />
+              <p className="text-xs text-gray-500 mt-2">Skickar notiser vid t.ex. nya kvalificerade leads</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Calendly URL</label>
+              <input
+                type="url"
+                value={calendlyUrl}
+                onChange={(e) => setCalendlyUrl(e.target.value)}
+                placeholder="https://calendly.com/your-link"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+              />
+              <p className="text-xs text-gray-500 mt-2">Aktiverar boknings‑CTA i chatten</p>
+            </div>
+
+            <div className="flex items-center gap-3 mt-8">
+              <input id="hubspot" type="checkbox" checked={hubspotEnabled} onChange={(e) => setHubspotEnabled(e.target.checked)} />
+              <label htmlFor="hubspot" className="text-sm text-gray-700">Aktivera HubSpot‑sync (enkel upsert på e‑post)</label>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Zendesk domän</label>
+              <input
+                type="text"
+                value={zendeskDomain}
+                onChange={(e) => setZendeskDomain(e.target.value)}
+                placeholder="dittföretag.zendesk.com"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+              />
+              <p className="text-xs text-gray-500 mt-2">Används för att skapa tickets (CALL:TICKET)</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Shopify domän</label>
+              <input
+                type="text"
+                value={shopifyDomain}
+                onChange={(e) => setShopifyDomain(e.target.value)}
+                placeholder="store.myshopify.com"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+              />
+              <p className="text-xs text-gray-500 mt-2">För produktrekommendationer/intent (CALL:PRODUCT)</p>
+            </div>
+          </div>
+
+          <div className="mt-6 flex justify-end">
+            <button onClick={saveIntegrations} disabled={savingIntegrations} className="btn-minimal disabled:opacity-50">
+              {savingIntegrations ? 'Sparar…' : 'Spara integrationer'}
+            </button>
+          </div>
+        </div>
 
         {/* Heatmap */}
         {analytics && (
