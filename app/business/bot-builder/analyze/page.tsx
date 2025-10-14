@@ -12,6 +12,7 @@ export default function AnalyzeProblem() {
   const [selectedBot, setSelectedBot] = useState("");
   const [showInfoFor, setShowInfoFor] = useState<string | null>(null);
   const [showAdvancedInfo, setShowAdvancedInfo] = useState<string | null>(null);
+  const [infoTab, setInfoTab] = useState<'overview'|'setup'|'integrations'|'api'|'security'>('overview');
 
   useEffect(() => {
     const analyzeWebsite = async () => {
@@ -419,25 +420,113 @@ export default function AnalyzeProblem() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+                      setInfoTab('overview');
                       setShowInfoFor(showInfoFor === bot.id ? null : bot.id);
                     }}
+                    aria-label="More info"
                     className="absolute top-4 right-4 p-2 hover:bg-white rounded-full transition-colors"
                   >
                     <Info className="w-4 h-4 text-[#9CA3AF]" />
                   </button>
-                  
+
                   {showInfoFor === bot.id && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      onClick={(e) => e.stopPropagation()}
-                      className="absolute left-0 right-0 top-full mt-2 p-4 bg-white border border-[#E5E7EB] rounded-xl shadow-lg z-10"
+                    <div
+                      onClick={(e) => { e.stopPropagation(); setShowInfoFor(null); }}
+                      className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4"
                     >
-                      <p className="text-xs text-[#4B5563] leading-relaxed">
-                        This bot can automatically handle FAQs, create support tickets
-                        and escalate complex cases to the right person.
-                      </p>
-                    </motion.div>
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        onClick={(e) => e.stopPropagation()}
+                        className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl border border-[#E5E7EB] overflow-hidden"
+                      >
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-[#E5E7EB]">
+                          <div>
+                            <h3 className="text-lg font-semibold">{bot.title}</h3>
+                            <p className="text-xs text-[#6B7280]">Deep dive: how it works, integrations and API</p>
+                          </div>
+                          <button
+                            onClick={() => setShowInfoFor(null)}
+                            className="text-[#9CA3AF] hover:text-black text-xl leading-none"
+                            aria-label="Close"
+                          >
+                            ×
+                          </button>
+                        </div>
+
+                        {/* Tabs */}
+                        <div className="px-5 pt-4">
+                          <div className="flex gap-2 text-sm mb-4">
+                            {(['overview','setup','integrations','api','security'] as const).map(t => (
+                              <button
+                                key={t}
+                                onClick={() => setInfoTab(t)}
+                                className={`px-3 py-1.5 rounded-full border ${infoTab===t ? 'bg-black text-white border-black' : 'border-[#E5E7EB] text-[#374151] hover:border-black'}`}
+                              >
+                                {t === 'overview' ? 'Overview' : t === 'setup' ? 'Setup' : t === 'integrations' ? 'Integrations' : t === 'api' ? 'API' : 'Security'}
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Tab content */}
+                          <div className="pb-5">
+                            {infoTab === 'overview' && (
+                              <div className="space-y-3 text-sm text-[#4B5563]">
+                                <p><strong className="text-black">What it does:</strong> {bot.type === 'support' ? 'Resolves FAQs, triages issues and escalates to the right team.' : bot.type === 'lead' ? 'Qualifies leads with structured questions and offers booking.' : bot.type === 'workflow' ? 'Automates a concrete workflow end-to-end.' : 'Answers accurately using your website and documents.'}</p>
+                                <p><strong className="text-black">When to use:</strong> {bot.type === 'support' ? 'High ticket volume and repeated questions.' : bot.type === 'lead' ? 'Inbound traffic where SDR time is limited.' : bot.type === 'workflow' ? 'You have a standardizable process users repeat.' : 'You have rich documentation or product info.'}</p>
+                                <ul className="space-y-1">
+                                  {bot.metrics.map((m:string, i:number)=> (
+                                    <li key={i}>· {m}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {infoTab === 'setup' && (
+                              <div className="space-y-2 text-sm text-[#4B5563]">
+                                <p><strong className="text-black">Steps (5–15 min):</strong></p>
+                                <ol className="list-decimal pl-5 space-y-1">
+                                  <li>Upload key documents (FAQs, manuals, price lists as needed).</li>
+                                  <li>Customize tone, welcome message and quick replies.</li>
+                                  <li>Configure type‑specific settings in Customize (lead fields, categories, services, etc.).</li>
+                                  <li>Optional: connect integrations (Calendly, Zendesk, HubSpot, Shopify).</li>
+                                  <li>Build the bot and embed the one‑line snippet on your site.</li>
+                                </ol>
+                              </div>
+                            )}
+
+                            {infoTab === 'integrations' && (
+                              <div className="space-y-3 text-sm text-[#4B5563]">
+                                <p><strong className="text-black">Available:</strong> Calendly (booking), Zendesk (tickets), HubSpot (contacts/deals), Slack (alerts){bot.subtype==='ecommerce' ? ', Shopify (products/orders)' : ''}.</p>
+                                <p>Provide API keys in Dashboard → Integrations. We store secrets encrypted and only use them server‑side.</p>
+                                <p>Typical flows:
+                                  <br/>• Support → create Zendesk ticket with summary
+                                  <br/>• Lead → upsert HubSpot contact on qualification
+                                  <br/>• Booking → show Calendly link or internal booking flow
+                                  {bot.subtype==='ecommerce' ? <><br/>• E‑commerce → query Shopify products</> : null}
+                                </p>
+                              </div>
+                            )}
+
+                            {infoTab === 'api' && (
+                              <div className="space-y-3 text-sm text-[#4B5563]">
+                                <p><strong className="text-black">Embed:</strong></p>
+                                <pre className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg p-3 text-xs overflow-x-auto">{`<script src="https://optero-production.up.railway.app/widget.js" data-bot-id="YOUR_BOT_ID"></script>`}</pre>
+                                <p><strong className="text-black">Chat API:</strong> POST <code>/api/bots/chat</code> with <code>{`{ botId, history: [{role, content}] }`}</code>. Returns <code>{`{ reply }`}</code>.</p>
+                                <p><strong className="text-black">Webhook:</strong> Configure <code>webhookUrl</code> in Dashboard to receive qualified leads/support summaries.</p>
+                              </div>
+                            )}
+
+                            {infoTab === 'security' && (
+                              <div className="space-y-3 text-sm text-[#4B5563]">
+                                <p>We mask PII in logs, store secrets encrypted, and respect data minimization. You can delete sources and retrain anytime.</p>
+                                <p>Access controls: restrict embed by domain and add optional JWT session for authenticated portals.</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
                   )}
                   
                   <h3 className="mb-2">{bot.title}</h3>
