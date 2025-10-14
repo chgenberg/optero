@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Upload, X, Info } from "lucide-react";
+import { Upload, X, Info, Plus } from "lucide-react";
 
 export default function CustomizeBotPage() {
   const router = useRouter();
@@ -21,6 +21,12 @@ export default function CustomizeBotPage() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [showInfo, setShowInfo] = useState<string | null>(null);
+  // Interaction config
+  const [welcomeMessage, setWelcomeMessage] = useState<string>("");
+  const [quickReplies, setQuickReplies] = useState<string[]>([]);
+  const [newQuickReply, setNewQuickReply] = useState<string>("");
+  const [ctaLabel, setCtaLabel] = useState<string>("Boka demo");
+  const [ctaUrl, setCtaUrl] = useState<string>("");
 
   useEffect(() => {
     const problemData = sessionStorage.getItem("botProblemData");
@@ -91,7 +97,9 @@ export default function CustomizeBotPage() {
   };
 
   const handleContinue = async () => {
-    sessionStorage.setItem("botBrandConfig", JSON.stringify(brand));
+    // Save brand + interaction config
+    const brandWithInteraction = { ...brand, welcomeMessage, quickReplies };
+    sessionStorage.setItem("botBrandConfig", JSON.stringify(brandWithInteraction));
     
     if (uploadedFiles.length > 0) {
       const fd = new FormData();
@@ -114,6 +122,13 @@ export default function CustomizeBotPage() {
     }
     
     sessionStorage.setItem("botAdditionalInfo", additionalInfo);
+
+    // Save integrations (CTA / Calendly)
+    try {
+      const existing = JSON.parse(sessionStorage.getItem("botIntegrations") || '{}');
+      const merged = { ...existing, calendlyUrl: ctaUrl || null, ctaLabel: ctaLabel || null };
+      sessionStorage.setItem("botIntegrations", JSON.stringify(merged));
+    } catch {}
     router.push("/business/bot-builder/solution");
   };
 
@@ -306,6 +321,79 @@ export default function CustomizeBotPage() {
                   placeholder="Beskriv speciella instruktioner eller vanliga frågor som boten ska kunna svara på..."
                   className="w-full p-4 border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors resize-none h-32 text-sm"
                 />
+              </div>
+
+              {/* Interaction */}
+              <div className="card">
+                <h3 className="mb-4">Interaktion</h3>
+
+                {/* Welcome message */}
+                <div className="mb-6">
+                  <label className="text-xs font-medium text-[#4B5563] block mb-2">Välkomstmeddelande</label>
+                  <input
+                    value={welcomeMessage}
+                    onChange={(e) => setWelcomeMessage(e.target.value)}
+                    placeholder="Hej! Hur kan jag hjälpa dig idag?"
+                    className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors text-sm"
+                  />
+                </div>
+
+                {/* Quick replies */}
+                <div className="mb-6">
+                  <label className="text-xs font-medium text-[#4B5563] block mb-2">Föreslagna frågor</label>
+                  <div className="flex gap-2 mb-3">
+                    <input
+                      value={newQuickReply}
+                      onChange={(e) => setNewQuickReply(e.target.value)}
+                      placeholder="Lägg till förslag..."
+                      className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const v = (newQuickReply || '').trim();
+                        if (!v) return;
+                        setQuickReplies(prev => Array.from(new Set([...prev, v])).slice(0, 6));
+                        setNewQuickReply("");
+                      }}
+                      className="px-3 py-2 border border-[#E5E7EB] rounded-xl hover:border-black transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                  {quickReplies.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {quickReplies.map((q, i) => (
+                        <span key={i} className="px-3 py-1 text-sm border border-[#E5E7EB] rounded-full inline-flex items-center gap-2">
+                          {q}
+                          <button onClick={() => setQuickReplies(prev => prev.filter((_, idx) => idx !== i))} className="text-[#9CA3AF] hover:text-black">×</button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* CTA / Calendly */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-medium text-[#4B5563] block mb-2">CTA‑text</label>
+                    <input
+                      value={ctaLabel}
+                      onChange={(e) => setCtaLabel(e.target.value)}
+                      placeholder="Boka demo"
+                      className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-[#4B5563] block mb-2">CTA‑länk (Calendly)</label>
+                    <input
+                      value={ctaUrl}
+                      onChange={(e) => setCtaUrl(e.target.value)}
+                      placeholder="https://calendly.com/.."
+                      className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors text-sm"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 

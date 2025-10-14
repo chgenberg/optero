@@ -47,19 +47,26 @@ function ChatInner() {
           setCompanyName('Företaget');
         }
         
-        // Welcome message
+        // Welcome message (allow override)
         const tone = data?.spec?.brand?.tone || 'professional';
-        const welcome = tone === 'formal' ?
-          'God dag! Jag hjälper gärna till. Vad vill du veta?' :
-          tone === 'casual' ?
-          'Hej! 👋 Hur kan jag hjälpa dig idag?' :
-          'Hej! Hur kan jag hjälpa dig idag?';
+        const customWelcome = data?.spec?.brand?.welcomeMessage as string | undefined;
+        const welcome = customWelcome ? customWelcome : (
+          tone === 'formal' ?
+            'God dag! Jag hjälper gärna till. Vad vill du veta?' :
+            tone === 'casual' ?
+            'Hej! Hur kan jag hjälpa dig idag?' :
+            'Hej! Hur kan jag hjälpa dig idag?'
+        );
         setMessages([{ role: 'assistant', content: welcome }]);
-        
-        // Suggestions
-        const s = await fetch(`/api/bots/suggest?botId=${encodeURIComponent(botId)}`);
-        const sj = await s.json();
-        if (Array.isArray(sj?.suggestions)) setSuggestions(sj.suggestions);
+
+        // Suggestions (prefer custom quickReplies)
+        const customQuick = Array.isArray(data?.spec?.brand?.quickReplies) ? data.spec.brand.quickReplies : [];
+        if (customQuick.length > 0) setSuggestions(customQuick.slice(0, 3));
+        else {
+          const s = await fetch(`/api/bots/suggest?botId=${encodeURIComponent(botId)}`);
+          const sj = await s.json();
+          if (Array.isArray(sj?.suggestions)) setSuggestions(sj.suggestions);
+        }
       } catch {}
     })();
   }, [botId]);
