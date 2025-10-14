@@ -17,12 +17,15 @@ export async function GET(req: NextRequest) {
     }
 
     const token = decryptSecret(integ.shopifyAccessTokenEnc!);
+    if (!token) {
+      return NextResponse.json({ error: 'shopify_not_configured' }, { status: 400 });
+    }
     const url = `https://${integ.shopifyDomain}/admin/api/2024-10/products.json?limit=5&title=${encodeURIComponent(query)}`;
 
     let items: any[] = [];
     try {
       const res = await fetch(url, {
-        headers: { 'X-Shopify-Access-Token': token, 'Content-Type': 'application/json' }
+        headers: { 'X-Shopify-Access-Token': token, 'Content-Type': 'application/json' } as Record<string, string>
       });
       if (res.ok) {
         const data = await res.json();
