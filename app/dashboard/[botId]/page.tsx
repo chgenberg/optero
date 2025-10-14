@@ -48,6 +48,7 @@ export default function BotDetailPage() {
   const botId = params?.botId as string;
   
   const [stats, setStats] = useState<BotDetailStats | null>(null);
+  const [tokenStats, setTokenStats] = useState<{today:number; last30d:number; dailyCap:number; todayPct:number} | null>(null);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [reindexing, setReindexing] = useState(false);
@@ -69,6 +70,7 @@ export default function BotDetailPage() {
       const res = await fetch(`/api/bots/stats?botId=${botId}`);
       const data = await res.json();
       setStats(data);
+      if (data.tokenStats) setTokenStats(data.tokenStats);
     } catch (error) {
       console.error('Failed to load stats:', error);
     } finally {
@@ -281,11 +283,27 @@ export default function BotDetailPage() {
           </div>
           <div className="minimal-box text-center col-span-2 md:col-span-1">
             <div className="text-3xl font-light text-gray-900 mb-1">
-              {((stats.stats.totalTokens || 0)/1000).toFixed(1)}k
+              {((tokenStats?.today || 0)/1000).toFixed(1)}k
             </div>
-            <div className="text-sm text-gray-600">Tokens (period)</div>
+            <div className="text-sm text-gray-600">Tokens idag</div>
           </div>
         </div>
+
+        {/* Token usage bar + 30d estimate */}
+        {tokenStats && (
+          <div className="minimal-box mb-8">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-700">Dagens token‑förbrukning</span>
+              <span className="text-sm text-gray-700">{tokenStats.todayPct}% av {Math.round(tokenStats.dailyCap/1000)}k</span>
+            </div>
+            <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className={`h-full ${tokenStats.todayPct>=80 ? 'bg-yellow-500' : 'bg-black'}`} style={{ width: `${tokenStats.todayPct}%` }} />
+            </div>
+            <div className="mt-3 text-sm text-gray-600">
+              30 dagar: {(tokenStats.last30d/1000).toFixed(1)}k tokens
+            </div>
+          </div>
+        )}
 
         {/* Analytics Row */}
         {analytics && (

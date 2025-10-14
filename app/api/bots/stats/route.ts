@@ -40,6 +40,15 @@ export async function GET(req: NextRequest) {
       // Calculate stats
       const totalMessages = bot.usages.length;
       const totalTokens = bot.usages.reduce((acc, u) => acc + (u.tokens || 0), 0);
+      // Aggregates for tokens
+      const sinceToday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const since30d = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const aggToday = await prisma.botUsage.aggregate({ where: { botId, createdAt: { gte: sinceToday } }, _sum: { tokens: true } });
+      const agg30d = await prisma.botUsage.aggregate({ where: { botId, createdAt: { gte: since30d } }, _sum: { tokens: true } });
+      const tokensToday = Number(aggToday._sum.tokens || 0);
+      const tokens30d = Number(agg30d._sum.tokens || 0);
+      const dailyCap = 100_000;
+      const todayPct = Math.min(100, Math.round((tokensToday / dailyCap) * 100));
       const todayMessages = bot.usages.filter(u => {
         const diff = Date.now() - new Date(u.createdAt).getTime();
         return diff < 24 * 60 * 60 * 1000;
@@ -93,6 +102,12 @@ export async function GET(req: NextRequest) {
           activeSessions,
           knowledgeChunks: bot.knowledge.length,
           totalTokens
+        },
+        tokenStats: {
+          today: tokensToday,
+          last30d: tokens30d,
+          dailyCap,
+          todayPct
         },
         topQuestions,
         unansweredQuestions: Array.from(new Set(unanswered)).slice(0, 10),
