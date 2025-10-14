@@ -20,6 +20,24 @@ export default function AnalyzeProblem() {
         return;
       }
 
+      // 1) Use cached analysis if still valid for this URL
+      try {
+        const cachedStr = sessionStorage.getItem("botDeepAnalysis");
+        if (cachedStr) {
+          try {
+            const cached = JSON.parse(cachedStr);
+            const ts = cached?._ts as number | undefined;
+            const fresh = !ts || (Date.now() - ts < 45 * 60 * 1000); // 45 min TTL; if no ts, treat as fresh
+            if (cached?.url === url && fresh) {
+              setResult(cached);
+              setAnalyzing(false);
+              return; // skip new analysis
+            }
+          } catch {}
+        }
+      } catch {}
+
+      // 2) Otherwise run analysis
       try {
         const documentContent = sessionStorage.getItem("botDocuments") || "";
         
@@ -36,14 +54,15 @@ export default function AnalyzeProblem() {
         setResult(data);
         
         try { 
-          sessionStorage.setItem("botDeepAnalysis", JSON.stringify(data)); 
-          sessionStorage.setItem("botBuilder_scrape", JSON.stringify(data));
+          const withTs = { ...data, _ts: Date.now() };
+          sessionStorage.setItem("botDeepAnalysis", JSON.stringify(withTs)); 
+          sessionStorage.setItem("botBuilder_scrape", JSON.stringify(withTs));
         } catch {}
       } catch (error) {
         console.error("Analysis error:", error);
       } finally {
         // Extended loading for effect
-        setTimeout(() => setAnalyzing(false), 3000);
+        setTimeout(() => setAnalyzing(false), 1200);
       }
     };
 
