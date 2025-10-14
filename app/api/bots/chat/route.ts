@@ -31,7 +31,19 @@ export async function POST(req: NextRequest) {
       'knowledge.faq': '- svara kort och länka till relevanta delar i context.\n',
       'knowledge.onboarding': '- presentera steg-för-steg och föreslå nästa modul.\n',
       'lead.guided_selling': '- guida till rätt paket baserat på mål, budget och tidsram.\n',
-      'support.it_helpdesk': '- samla OS/enhet, nätverk, reproduktionssteg; föreslå fix.\n'
+      'support.it_helpdesk': '- samla OS/enhet, nätverk, reproduktionssteg; föreslå fix.\n',
+      'workflow.ecommerce': '- produktrekommendationer, orderstatus, returer.\n',
+      'workflow.resource_booking': '- kontrollera kapacitet och konflikter före bekräftelse.\n',
+      'workflow.returns_rma': '- validera garanti, RMA och instruktioner.\n',
+      'workflow.billing_payments': '- visa fakturastatus och betalningslänk.\n',
+      'workflow.nps_feedback': '- samla NPS och fritext, summera teman.\n',
+      'lead.enrichment': '- extrahera fält och fyll CRM.\n',
+      'workflow.churn_prevention': '- identifiera risk och föreslå winback.\n',
+      'knowledge.pro': '- citera alltid källa.\n',
+      'knowledge.sales_internal': '- ge interna säljargument med källor.\n',
+      'knowledge.partner_portal': '- svara på återförsäljarprocesser.\n',
+      'workflow.gdpr': '- hantera export/erase strukturerat och säkert.\n',
+      'knowledge.multilingual': '- svara på samma språk som användaren.\n'
     } as Record<string,string>;
     const subKey = subtype ? `${bot.type}.${subtype}` : '';
     const extra = subtypeHints[subKey] || '';
@@ -171,7 +183,8 @@ export async function POST(req: NextRequest) {
     if (responseLength === 'short') lengthInstr = '\n- Svara kortfattat i 1-2 meningar.';
     else if (responseLength === 'long') lengthInstr = '\n- Svara utförligt och pedagogiskt i 4-6 meningar.';
 
-    const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${specSafe}\n\nBottype: ${bot.type}.${subtype || ''}\n${extra}\n${typeInstructions}${lengthInstr}${ragContext}${personalizedGreeting}${toneAdjustment}${offHoursNote}\n\nOm information saknas i context: använd Fallback: ${fallbackText}`;
+    const policies = Array.isArray((activeSpec as any)?.policies) ? `\nPOLICIES:\n- ${((activeSpec as any).policies as string[]).join('\n- ')}` : '';
+    const system = `Du är en företagsbot. Följ specifikationen.\n\nSpec: ${specSafe}\n\nBottype: ${bot.type}.${subtype || ''}${policies}\n${extra}\n${typeInstructions}${lengthInstr}${ragContext}${personalizedGreeting}${toneAdjustment}${offHoursNote}\n\nOm information saknas i context: använd Fallback: ${fallbackText}`;
 
     const messages = [
       { role: "system", content: system },

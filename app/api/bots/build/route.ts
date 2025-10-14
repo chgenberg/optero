@@ -24,6 +24,66 @@ export async function POST(req: NextRequest) {
     const documentContent = consult.documentsContent || "";
     const documentFiles = consult.documentFiles || [];
 
+    // Default policies per subtype
+    const subtypePolicies: Record<string, string[]> = {
+      'workflow.ecommerce': [
+        'Rekommendera produkter utifrån behov och lagerstatus.',
+        'Svara på orderstatus med ordrenummer.',
+        'Returpolicy: fråga om orsak, ordernummer och returmetod.'
+      ],
+      'lead.guided_selling': [
+        'Ställ frågor i ordning: problem → mål/KPI → budget → tidsram → beslutsroll.',
+        'Sammanfatta och föreslå nästa steg.',
+        'Om möjligt: erbjud bokning.'
+      ],
+      'knowledge.pro': [
+        'Svara endast från källor och citera alltid källa.',
+        'Om osäker: be om förtydligande.'
+      ],
+      'workflow.hr_screening': [
+        'Ställ kravprofilsfrågor och boka intervju vid match.'
+      ],
+      'support.it_helpdesk': [
+        'Samla OS/enhet, nätverk, reproduktionssteg, felmeddelanden innan triage.'
+      ],
+      'workflow.resource_booking': [
+        'Säkerställ kapacitet och konflikter innan bekräftelse.'
+      ],
+      'workflow.returns_rma': [
+        'Validera garanti, samla ordernummer och orsak, ge RMA‑instruktioner.'
+      ],
+      'workflow.billing_payments': [
+        'Ge status för faktura, betalningslänk och påminnelsepolicy.'
+      ],
+      'workflow.nps_feedback': [
+        'Samla NPS och fritext, sammanfatta teman.'
+      ],
+      'lead.enrichment': [
+        'Fyll på CRM‑fält från samtal och offentliga källor.'
+      ],
+      'workflow.churn_prevention': [
+        'Upptäck risksignaler och föreslå winback‑erbjudanden.'
+      ],
+      'knowledge.sales_internal': [
+        'Ge interna säljargument och konkurrensjämförelser med källor.'
+      ],
+      'knowledge.partner_portal': [
+        'Svara på ÅF‑processer: registrering, material, beställning, support.'
+      ],
+      'workflow.gdpr': [
+        'Hantera export/erase‑förfrågningar säkert och spårbart.'
+      ],
+      'knowledge.multilingual': [
+        'Auto‑detektera språk och svara konsekvent på samma språk.'
+      ],
+      'knowledge.onboarding': [
+        'Visa steg‑för‑steg och föreslå nästa steg tills klart.'
+      ]
+    };
+
+    const policyKey = `${botType}.${botSubtype}`;
+    const defaultPolicies = subtypePolicies[policyKey] || [];
+
     const spec = {
       role: "company_bot",
       url: consult.url,
@@ -57,7 +117,8 @@ export async function POST(req: NextRequest) {
         logoPosition: brandConfig?.logoPosition || 'bottom-right',
         logoOffset: brandConfig?.logoOffset || { x: 20, y: 20 },
         fontUrl: brandConfig?.fontUrl || null
-      }
+      },
+      policies: defaultPolicies
     };
 
     // Get userId from request or lookup by email
