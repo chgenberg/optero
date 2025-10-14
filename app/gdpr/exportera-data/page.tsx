@@ -45,28 +45,28 @@ export default function ExporteraDataPage() {
       <div className="max-w-2xl mx-auto px-4">
         <div className="bg-white rounded-2xl shadow-lg p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Exportera mina uppgifter
+            Export my data
           </h1>
           
           <p className="text-gray-600 mb-6">
-            Enligt GDPR har du rätt till dataportabilitet. Ange din e-postadress nedan 
-            så skickar vi all data vi har om dig i ett maskinläsbart format (JSON).
+            Under GDPR you have the right to data portability. Enter your email below
+            and we will send all data we have about you in a machine-readable format (JSON).
           </p>
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <h3 className="font-medium text-blue-800 mb-2">ℹ️ Vad ingår:</h3>
+            <h3 className="font-medium text-blue-800 mb-2">ℹ️ What is included:</h3>
             <ul className="text-sm text-blue-700 space-y-1">
-              <li>• Dina sökningar och valda yrken</li>
-              <li>• Sparade specialiseringar och uppgifter</li>
-              <li>• Feedback du har lämnat</li>
-              <li>• Tidsstämplar för dina aktiviteter</li>
+              <li>• Your searches and selected professions</li>
+              <li>• Saved specializations and tasks</li>
+              <li>• Feedback you have provided</li>
+              <li>• Timestamps for your activities</li>
             </ul>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                E-postadress
+                Email address
               </label>
               <input
                 id="email"
@@ -75,7 +75,7 @@ export default function ExporteraDataPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                placeholder="din@email.se"
+                placeholder="name@example.com"
               />
             </div>
 
@@ -93,38 +93,38 @@ export default function ExporteraDataPage() {
               {loading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Förbereder export...</span>
+                  <span>Preparing export...</span>
                 </>
               ) : (
                 <>
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
-                  <span>Ladda ner mina uppgifter</span>
+                  <span>Download my data</span>
                 </>
               )}
             </button>
           </form>
 
           <div className="mt-8 pt-6 border-t border-gray-200">
-            <h3 className="font-medium text-gray-900 mb-2">Andra GDPR-rättigheter:</h3>
+            <h3 className="font-medium text-gray-900 mb-2">Other GDPR rights:</h3>
             <ul className="text-sm text-gray-600 space-y-2">
               <li>
-                <strong>Rätt att bli glömd:</strong>{" "}
+                <strong>Right to be forgotten:</strong>{" "}
                 <a href="/gdpr/radera-data" className="text-blue-600 hover:underline">
-                  Radera mina uppgifter
+                  Delete my data
                 </a>
               </li>
               <li>
-                <strong>Frågor om dataskydd:</strong>{" "}
+                <strong>Data protection questions:</strong>{" "}
                 <a href="/kontakt" className="text-blue-600 hover:underline">
-                  Kontakta oss
+                  Contact us
                 </a>
               </li>
               <li>
-                <strong>Läs mer:</strong>{" "}
+                <strong>Read more:</strong>{" "}
                 <a href="/integritetspolicy" className="text-blue-600 hover:underline">
-                  Integritetspolicy
+                  Privacy policy
                 </a>
               </li>
             </ul>
