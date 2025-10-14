@@ -25,6 +25,7 @@
     "@stripe/stripe-js": "^8.0.0",
     "@types/cheerio": "^0.22.35",
     "cheerio": "^1.1.2",
+    "framer-motion": "^12.23.24",
     "i18next": "^25.5.3",
     "jsdom": "^24.0.0",
     "lucide-react": "^0.263.1",

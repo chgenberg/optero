@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { Check, Copy } from "lucide-react";
 
 export default function BotBuilderSolution() {
@@ -100,24 +101,22 @@ export default function BotBuilderSolution() {
   if (building) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center p-6">
-        <div className="text-center max-w-md">
-          <div className="w-24 h-24 border border-black mx-auto mb-8 relative">
-            <div 
-              className="absolute inset-0 bg-black transition-all duration-500"
-              style={{ 
-                height: `${progress}%`,
-                bottom: 0,
-                top: 'auto'
-              }}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center max-w-md"
+        >
+          <div className="w-24 h-24 border-2 border-black rounded-full mx-auto mb-8 relative overflow-hidden">
+            <motion.div 
+              className="absolute inset-0 bg-black"
+              initial={{ y: '100%' }}
+              animate={{ y: `-${100 - progress}%` }}
+              transition={{ duration: 0.3 }}
             />
           </div>
-          <h2 className="text-2xl font-thin uppercase tracking-wider mb-4">
-            BYGGER DIN BOT
-          </h2>
-          <p className="text-sm text-gray-600">
-            {buildPhase}
-          </p>
-        </div>
+          <h2 className="text-2xl font-bold mb-3">Bygger din bot</h2>
+          <p className="text-sm text-[#4B5563]">{buildPhase}</p>
+        </motion.div>
       </div>
     );
   }
@@ -125,102 +124,111 @@ export default function BotBuilderSolution() {
   return (
     <div className="min-h-screen bg-white p-6">
       <div className="max-w-4xl mx-auto">
-        {/* Success Icon */}
-        <div className="flex justify-center mb-12">
-          <div className="w-20 h-20 border-2 border-black rounded-full flex items-center justify-center">
-            <Check className="w-10 h-10" />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* Success */}
+          <div className="flex justify-center mb-12">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+              className="w-20 h-20 border-2 border-black rounded-full flex items-center justify-center"
+            >
+              <Check className="w-10 h-10" />
+            </motion.div>
           </div>
-        </div>
 
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-thin uppercase tracking-wider mb-4">
-            DIN BOT ÄR KLAR
-          </h1>
-          <p className="text-lg text-gray-600">
-            Redo att börja hjälpa dina kunder
-          </p>
-        </div>
+          <div className="text-center mb-16">
+            <h1 className="text-4xl font-bold mb-3">Din bot är klar</h1>
+            <p className="text-lg text-[#4B5563]">Redo att börja hjälpa dina kunder</p>
+          </div>
 
-        {/* Bot Stats */}
-        <div className="grid md:grid-cols-4 gap-6 mb-16 max-w-2xl mx-auto">
-          <div className="text-center">
-            <div className="text-3xl font-thin mb-2">98%</div>
-            <div className="text-xs uppercase tracking-widest text-gray-600">Träffsäkerhet</div>
+          {/* Stats */}
+          <div className="grid md:grid-cols-4 gap-6 mb-16">
+            {[
+              { value: "98%", label: "Träffsäkerhet" },
+              { value: "24/7", label: "Tillgänglig" },
+              { value: "< 5s", label: "Svarstid" },
+              { value: "∞", label: "Samtal" }
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="text-center"
+              >
+                <div className="text-3xl font-bold mb-2">{stat.value}</div>
+                <div className="text-xs text-[#9CA3AF] uppercase tracking-wider">{stat.label}</div>
+              </motion.div>
+            ))}
           </div>
-          <div className="text-center">
-            <div className="text-3xl font-thin mb-2">24/7</div>
-            <div className="text-xs uppercase tracking-widest text-gray-600">Tillgänglig</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-thin mb-2">&lt; 5s</div>
-            <div className="text-xs uppercase tracking-widest text-gray-600">Svarstid</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-thin mb-2">∞</div>
-            <div className="text-xs uppercase tracking-widest text-gray-600">Samtal</div>
-          </div>
-        </div>
 
-        {/* Installation Code */}
-        <div className="bg-gray-50 p-8 mb-12">
-          <h3 className="text-xs uppercase tracking-widest mb-4">Installation</h3>
-          <p className="text-sm text-gray-600 mb-6">
-            Klistra in denna kod före &lt;/body&gt; på din webbplats:
-          </p>
-          <div className="bg-white border border-gray-300 p-4 font-mono text-xs relative">
-            <pre className="overflow-x-auto">
+          {/* Installation */}
+          <div className="card bg-[#F9FAFB] mb-12">
+            <h3 className="mb-4">Installation</h3>
+            <p className="text-sm text-[#4B5563] mb-4">
+              Klistra in denna kod före <strong>&lt;/body&gt;</strong> på din webbplats:
+            </p>
+            <div className="bg-white border border-[#E5E7EB] rounded-lg p-4 font-mono text-xs relative">
+              <pre className="overflow-x-auto text-[#1F2937]">
 {`<script src="https://optero-production.up.railway.app/widget.js" 
         data-bot-id="${botId || 'YOUR_BOT_ID'}"></script>`}
-            </pre>
-            <button
-              onClick={copyEmbedCode}
-              className="absolute top-2 right-2 p-2 hover:bg-gray-100 rounded transition-colors"
+              </pre>
+              <button
+                onClick={copyEmbedCode}
+                className="absolute top-2 right-2 p-2 hover:bg-[#F9FAFB] rounded-lg transition-colors"
+              >
+                {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4 text-[#9CA3AF]" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-center gap-4 mb-16">
+            <motion.button
+              onClick={handleTestBot}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="btn-secondary"
             >
-              {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
-            </button>
+              Testa bot
+            </motion.button>
+            <motion.button
+              onClick={() => router.push('/dashboard')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="btn-primary"
+            >
+              Gå till dashboard
+            </motion.button>
           </div>
-        </div>
 
-        {/* Actions */}
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={handleTestBot}
-            className="px-12 py-4 border border-black text-xs uppercase tracking-widest hover:bg-black hover:text-white transition-all"
-          >
-            Testa bot
-          </button>
-          <button
-            onClick={() => router.push('/dashboard')}
-            className="px-12 py-4 bg-black text-white text-xs uppercase tracking-widest hover:bg-gray-900 transition-all"
-          >
-            Gå till dashboard
-          </button>
-        </div>
-
-        {/* Next Steps */}
-        <div className="mt-24 border-t border-gray-200 pt-12">
-          <h3 className="text-xs uppercase tracking-widest text-center mb-8">Nästa steg</h3>
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div>
-              <div className="text-3xl font-thin mb-3">1</div>
-              <p className="text-sm text-gray-600">
-                Testa boten och finjustera svar
-              </p>
-            </div>
-            <div>
-              <div className="text-3xl font-thin mb-3">2</div>
-              <p className="text-sm text-gray-600">
-                Installera på din webbplats
-              </p>
-            </div>
-            <div>
-              <div className="text-3xl font-thin mb-3">3</div>
-              <p className="text-sm text-gray-600">
-                Följ statistik i dashboard
-              </p>
+          {/* Next Steps */}
+          <div className="border-t border-[#E5E7EB] pt-12">
+            <h3 className="text-center mb-8">Nästa steg</h3>
+            <div className="grid md:grid-cols-3 gap-8 text-center">
+              {[
+                { num: "1", text: "Testa boten och finjustera svar" },
+                { num: "2", text: "Installera på din webbplats" },
+                { num: "3", text: "Följ statistik i dashboard" }
+              ].map((step, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 + i * 0.1 }}
+                >
+                  <div className="text-3xl font-bold mb-3">{step.num}</div>
+                  <p className="text-sm text-[#4B5563]">{step.text}</p>
+                </motion.div>
+              ))}
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

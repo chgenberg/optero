@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { ArrowRight, Info } from "lucide-react";
 
 export default function AnalyzeProblem() {
@@ -20,24 +21,23 @@ export default function AnalyzeProblem() {
         return;
       }
 
-      // 1) Use cached analysis if still valid for this URL
+      // Use cached analysis if still valid
       try {
         const cachedStr = sessionStorage.getItem("botDeepAnalysis");
         if (cachedStr) {
           try {
             const cached = JSON.parse(cachedStr);
             const ts = cached?._ts as number | undefined;
-            const fresh = !ts || (Date.now() - ts < 45 * 60 * 1000); // 45 min TTL; if no ts, treat as fresh
+            const fresh = !ts || (Date.now() - ts < 45 * 60 * 1000);
             if (cached?.url === url && fresh) {
               setResult(cached);
               setAnalyzing(false);
-              return; // skip new analysis
+              return;
             }
           } catch {}
         }
       } catch {}
 
-      // 2) Otherwise run analysis
       try {
         const documentContent = sessionStorage.getItem("botDocuments") || "";
         
@@ -61,7 +61,6 @@ export default function AnalyzeProblem() {
       } catch (error) {
         console.error("Analysis error:", error);
       } finally {
-        // Extended loading for effect
         setTimeout(() => setAnalyzing(false), 1200);
       }
     };
@@ -72,36 +71,36 @@ export default function AnalyzeProblem() {
   const botRecommendations = [
     {
       id: "customer-support",
-      title: "KUNDSUPPORT",
+      title: "Kundsupport",
       type: "support",
       description: "Automatisera 60% av supportärenden",
       metrics: ["24/7 tillgänglighet", "< 5 sek svarstid", "90% nöjdhet"],
-      effort: "5 MIN",
+      effort: "5 min",
       savings: "120 000 kr/år"
     },
     {
       id: "lead-qualification",
-      title: "LEADKVALIFICERING",
+      title: "Leadkvalificering",
       type: "lead",
       description: "Kvalificera och boka möten automatiskt",
       metrics: ["3x fler kvalificerade leads", "Automatisk CRM-synk", "Personaliserat"],
-      effort: "10 MIN",
+      effort: "10 min",
       savings: "250 000 kr/år"
     },
     {
       id: "booking",
-      title: "BOKNING",
+      title: "Bokning",
       type: "workflow",
       description: "Eliminera dubbelbokning och manuell hantering",
       metrics: ["Integrerat med kalender", "SMS-påminnelser", "Automatisk bekräftelse"],
-      effort: "15 MIN",
+      effort: "15 min",
       savings: "80 000 kr/år"
     }
   ];
 
   const advancedSolutions = [
     {
-      title: "PROCESS AUTOMATION",
+      title: "Process Automation",
       description: "Automatisera hela arbetsflöden med AI",
       complexity: "Kräver konsultation",
       details: {
@@ -116,7 +115,7 @@ export default function AnalyzeProblem() {
       }
     },
     {
-      title: "KNOWLEDGE MANAGEMENT",
+      title: "Knowledge Management",
       description: "AI som förstår alla era dokument och processer",
       complexity: "Kräver konsultation",
       details: {
@@ -131,7 +130,7 @@ export default function AnalyzeProblem() {
       }
     },
     {
-      title: "PREDICTIVE ANALYTICS",
+      title: "Predictive Analytics",
       description: "Förutse problem innan de uppstår",
       complexity: "Kräver konsultation",
       details: {
@@ -167,18 +166,25 @@ export default function AnalyzeProblem() {
   if (analyzing) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center p-6">
-        <div className="text-center">
-          <div className="w-16 h-16 border border-black rounded-full mx-auto mb-8 relative">
-            <div className="absolute inset-0 border border-black rounded-full animate-ping" />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center max-w-md"
+        >
+          <div className="w-16 h-16 border-2 border-black rounded-full mx-auto mb-8 relative overflow-hidden">
+            <motion.div
+              className="absolute inset-0 bg-black"
+              initial={{ y: '100%' }}
+              animate={{ y: '-100%' }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            />
           </div>
-          <h2 className="text-2xl font-thin uppercase tracking-wider mb-4">
-            ANALYSERAR DIN VERKSAMHET
-          </h2>
-          <p className="text-sm text-gray-600 max-w-md mx-auto">
+          <h2 className="text-2xl font-bold mb-3">Analyserar din verksamhet</h2>
+          <p className="text-sm text-[#4B5563] leading-relaxed">
             Vår AI går igenom all information för att identifiera var automation 
             kan göra din verksamhet mer lönsam och effektiv
           </p>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -187,190 +193,222 @@ export default function AnalyzeProblem() {
     <div className="min-h-screen bg-white p-6">
       <div className="max-w-6xl mx-auto">
         {/* Progress */}
-        <div className="flex justify-center mb-16">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-[1px] bg-gray-300" />
-            <div className="text-xs uppercase tracking-widest">STEG 2</div>
-            <div className="w-8 h-[1px] bg-gray-300" />
+        <div className="flex justify-center mb-12">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-[2px] bg-[#E5E7EB]" />
+            <span className="text-xs font-medium text-[#4B5563] px-3">Steg 2</span>
+            <div className="w-8 h-[2px] bg-[#E5E7EB]" />
           </div>
         </div>
 
-        <div className="text-center mb-12">
-          <h1 className="text-3xl font-thin uppercase tracking-wider mb-4">
-            RESULTAT AV ANALYSEN
-          </h1>
-          
-          {result?.analysis && (
-            <div className="mt-8 p-8 bg-gray-50 max-w-2xl mx-auto">
-              <p className="text-sm text-gray-800 leading-relaxed">
-                {result.analysis.description}
-              </p>
-              {result.analysis.hiddenOpportunities?.length > 0 && (
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <h3 className="text-xs uppercase tracking-widest mb-3">Dolda möjligheter</h3>
-                  <ul className="space-y-2 text-left">
-                    {result.analysis.hiddenOpportunities.map((opp: string, i: number) => (
-                      <li key={i} className="text-sm text-gray-700">— {opp}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Bot Recommendations */}
-        <div className="mb-16">
-          <h2 className="text-xs uppercase tracking-widest text-center mb-8">
-            REKOMMENDERADE LÖSNINGAR
-          </h2>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            {botRecommendations.map((bot) => (
-              <button
-                key={bot.id}
-                onClick={() => setSelectedBot(bot.id)}
-                className={`p-8 border text-left transition-all relative ${
-                  selectedBot === bot.id
-                    ? "border-black bg-gray-50"
-                    : "border-gray-300 hover:border-gray-400"
-                }`}
-              >
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowInfoFor(showInfoFor === bot.id ? null : bot.id);
-                  }}
-                  className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full"
-                >
-                  <Info className="w-4 h-4" />
-                </button>
-                
-                {showInfoFor === bot.id && (
-                  <div className="absolute right-0 top-12 w-64 p-4 bg-white border border-gray-200 shadow-lg z-10">
-                    <p className="text-xs text-gray-600">
-                      Denna bot kan automatiskt hantera vanliga frågor, skapa supportärenden 
-                      och eskalera komplexa ärenden till rätt person.
-                    </p>
-                  </div>
-                )}
-                
-                <h3 className="text-lg font-thin uppercase tracking-wider mb-2">
-                  {bot.title}
-                </h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  {bot.description}
-                </p>
-                
-                <div className="space-y-1 mb-6">
-                  {bot.metrics.map((metric, i) => (
-                    <p key={i} className="text-xs text-gray-500">• {metric}</p>
-                  ))}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="text-center mb-12">
+            <h1 className="mb-3">Resultat av analysen</h1>
+            
+            {result?.analysis && (
+              <div className="mt-8 space-y-4 max-w-3xl mx-auto">
+                <div className="card">
+                  <p className="text-sm font-medium text-[#1F2937] mb-2">AI-insikter från din webbplats</p>
+                  <p className="text-sm text-[#4B5563] leading-relaxed">
+                    {result.analysis.description}
+                  </p>
                 </div>
                 
-                <div className="flex justify-between items-end">
-                  <div>
-                    <p className="text-xs text-gray-500">Uppsättning</p>
-                    <p className="text-sm font-medium">{bot.effort}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-gray-500">Besparing</p>
-                    <p className="text-sm font-medium">{bot.savings}</p>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-          
-          <div className="flex justify-center mt-8">
-            <button
-              onClick={handleContinue}
-              disabled={!selectedBot}
-              className="px-16 py-4 bg-black text-white text-xs uppercase tracking-widest disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-3"
-            >
-              Bygg vald bot
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Advanced Solutions */}
-        <div className="border-t border-gray-200 pt-16">
-          <h2 className="text-xs uppercase tracking-widest text-center mb-8">
-            AVANCERADE LÖSNINGAR
-          </h2>
-          
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            {advancedSolutions.map((solution, i) => (
-              <button
-                key={i}
-                onClick={() => setShowAdvancedInfo(showAdvancedInfo === solution.title ? null : solution.title)}
-                className="p-8 bg-gray-50 hover:bg-gray-100 transition-colors text-left relative"
-              >
-                <div className="absolute top-4 right-4">
-                  <Info className="w-4 h-4 text-gray-400" />
-                </div>
-                <h3 className="text-lg font-thin uppercase tracking-wider mb-2">
-                  {solution.title}
-                </h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  {solution.description}
-                </p>
-                <p className="text-xs text-gray-500 uppercase tracking-wider">
-                  {solution.complexity}
-                </p>
-                
-                {showAdvancedInfo === solution.title && (
-                  <div className="absolute left-0 right-0 top-full mt-4 p-6 bg-white border border-gray-200 shadow-2xl z-50 text-left">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowAdvancedInfo(null);
-                      }}
-                      className="absolute top-4 right-4 text-gray-400 hover:text-black"
-                    >
-                      ✕
-                    </button>
-                    
-                    <h4 className="text-xs uppercase tracking-widest mb-3">Vad är detta?</h4>
-                    <p className="text-sm text-gray-700 mb-4 leading-relaxed">
-                      {solution.details.what}
-                    </p>
-                    
-                    <h4 className="text-xs uppercase tracking-widest mb-3">Fördelar</h4>
-                    <ul className="space-y-2 mb-4">
-                      {solution.details.benefits.map((benefit, j) => (
-                        <li key={j} className="text-sm text-gray-700 flex items-start gap-2">
-                          <span className="text-black mt-1">•</span>
-                          <span>{benefit}</span>
+                {result.analysis.hiddenOpportunities?.length > 0 && (
+                  <div className="card bg-[#F9FAFB]">
+                    <p className="text-sm font-medium text-[#1F2937] mb-3">Dolda möjligheter</p>
+                    <ul className="space-y-2">
+                      {result.analysis.hiddenOpportunities.map((opp: string, i: number) => (
+                        <li key={i} className="text-sm text-[#4B5563] flex items-start gap-2">
+                          <span className="text-black font-bold">·</span>
+                          <span>{opp}</span>
                         </li>
                       ))}
                     </ul>
-                    
-                    <h4 className="text-xs uppercase tracking-widest mb-2">Exempel</h4>
-                    <p className="text-sm text-gray-600 italic">
-                      {solution.details.examples}
-                    </p>
                   </div>
                 )}
-              </button>
-            ))}
+              </div>
+            )}
           </div>
-          
-          <div className="text-center">
-            <button
-              onClick={handleConsultation}
-              className="px-16 py-4 border border-black text-black text-xs uppercase tracking-widest hover:bg-black hover:text-white transition-all"
-            >
-              Boka konsultation
-            </button>
+
+          {/* Bot Recommendations */}
+          <div className="mb-16">
+            <h2 className="text-center mb-8">Rekommenderade lösningar</h2>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              {botRecommendations.map((bot, i) => (
+                <motion.button
+                  key={bot.id}
+                  onClick={() => setSelectedBot(bot.id)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: i * 0.1 }}
+                  className={`p-6 border-2 rounded-xl text-left transition-all relative ${
+                    selectedBot === bot.id
+                      ? "border-black bg-[#F9FAFB]"
+                      : "border-[#E5E7EB] hover:border-[#4B5563]"
+                  }`}
+                >
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowInfoFor(showInfoFor === bot.id ? null : bot.id);
+                    }}
+                    className="absolute top-4 right-4 p-2 hover:bg-white rounded-full transition-colors"
+                  >
+                    <Info className="w-4 h-4 text-[#9CA3AF]" />
+                  </button>
+                  
+                  {showInfoFor === bot.id && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="absolute left-0 right-0 top-full mt-2 p-4 bg-white border border-[#E5E7EB] rounded-xl shadow-lg z-10"
+                    >
+                      <p className="text-xs text-[#4B5563] leading-relaxed">
+                        Denna bot kan automatiskt hantera vanliga frågor, skapa supportärenden 
+                        och eskalera komplexa ärenden till rätt person.
+                      </p>
+                    </motion.div>
+                  )}
+                  
+                  <h3 className="mb-2">{bot.title}</h3>
+                  <p className="text-sm text-[#4B5563] mb-4">
+                    {bot.description}
+                  </p>
+                  
+                  <div className="space-y-1 mb-6">
+                    {bot.metrics.map((metric, j) => (
+                      <p key={j} className="text-xs text-[#9CA3AF]">· {metric}</p>
+                    ))}
+                  </div>
+                  
+                  <div className="flex justify-between items-end pt-4 border-t border-[#E5E7EB]">
+                    <div>
+                      <p className="text-xs text-[#9CA3AF] mb-1">Uppsättning</p>
+                      <p className="text-sm font-semibold">{bot.effort}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-[#9CA3AF] mb-1">Besparing</p>
+                      <p className="text-sm font-semibold">{bot.savings}</p>
+                    </div>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+            
+            <div className="flex justify-center mt-8">
+              <motion.button
+                onClick={handleContinue}
+                disabled={!selectedBot}
+                whileHover={selectedBot ? { scale: 1.02 } : {}}
+                whileTap={selectedBot ? { scale: 0.98 } : {}}
+                className="btn-primary disabled:bg-[#E5E7EB] disabled:text-[#9CA3AF] disabled:cursor-not-allowed inline-flex items-center gap-2"
+              >
+                Bygg vald bot
+                <ArrowRight className="w-4 h-4" />
+              </motion.button>
+            </div>
           </div>
-        </div>
+
+          {/* Advanced Solutions */}
+          <div className="border-t border-[#E5E7EB] pt-16">
+            <h2 className="text-center mb-8">Avancerade lösningar</h2>
+            
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              {advancedSolutions.map((solution, i) => (
+                <motion.button
+                  key={i}
+                  onClick={() => setShowAdvancedInfo(showAdvancedInfo === solution.title ? null : solution.title)}
+                  whileHover={{ scale: 1.02 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.3 + i * 0.1 }}
+                  className="card hover:border-[#4B5563] transition-all text-left relative"
+                >
+                  <div className="absolute top-4 right-4">
+                    <Info className="w-4 h-4 text-[#9CA3AF]" />
+                  </div>
+                  <h3 className="mb-2">{solution.title}</h3>
+                  <p className="text-sm text-[#4B5563] mb-4">
+                    {solution.description}
+                  </p>
+                  <p className="text-xs text-[#9CA3AF] font-medium">
+                    {solution.complexity}
+                  </p>
+                  
+                  {showAdvancedInfo === solution.title && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="absolute left-0 right-0 top-full mt-4 p-6 bg-white border border-[#E5E7EB] rounded-xl shadow-2xl z-50 text-left"
+                    >
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowAdvancedInfo(null);
+                        }}
+                        className="absolute top-4 right-4 text-[#9CA3AF] hover:text-black text-lg"
+                      >
+                        ×
+                      </button>
+                      
+                      <h4 className="text-xs font-semibold text-[#1F2937] uppercase tracking-wider mb-3">
+                        Vad är detta?
+                      </h4>
+                      <p className="text-sm text-[#4B5563] mb-4 leading-relaxed">
+                        {solution.details.what}
+                      </p>
+                      
+                      <h4 className="text-xs font-semibold text-[#1F2937] uppercase tracking-wider mb-3">
+                        Fördelar
+                      </h4>
+                      <ul className="space-y-2 mb-4">
+                        {solution.details.benefits.map((benefit, j) => (
+                          <li key={j} className="text-sm text-[#4B5563] flex items-start gap-2">
+                            <span className="text-black font-bold mt-0.5">·</span>
+                            <span>{benefit}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      
+                      <h4 className="text-xs font-semibold text-[#1F2937] uppercase tracking-wider mb-2">
+                        Exempel
+                      </h4>
+                      <p className="text-sm text-[#4B5563] italic">
+                        {solution.details.examples}
+                      </p>
+                    </motion.div>
+                  )}
+                </motion.button>
+              ))}
+            </div>
+            
+            <div className="text-center">
+              <motion.button
+                onClick={handleConsultation}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="btn-secondary"
+              >
+                Boka konsultation
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
 
         <div className="text-center mt-16">
           <button
             onClick={() => router.push("/business/bot-builder/identify")}
-            className="text-xs text-gray-500 hover:text-black transition-colors"
+            className="text-sm text-[#4B5563] hover:text-black transition-colors"
           >
             Tillbaka
           </button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 export default function BotBuilderLanding() {
@@ -8,96 +9,89 @@ export default function BotBuilderLanding() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-6xl mx-auto px-6 py-20">
+      <div className="max-w-5xl mx-auto px-6 py-20">
         
         {/* Hero */}
-        <div className="text-center mb-20">
-          <h1 className="text-5xl md:text-6xl font-thin text-black mb-6 tracking-tight uppercase">
-            BYGG EN BOT PÅ<br />
-            5 MINUTER
+        <motion.div 
+          className="text-center mb-20"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-5xl md:text-6xl font-bold text-black mb-6">
+            Bygg en bot på 5 minuter
           </h1>
           
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto font-light">
+          <p className="text-lg text-[#4B5563] mb-12 max-w-2xl mx-auto leading-relaxed">
             Vår AI analyserar din verksamhet och bygger en skräddarsydd chatbot 
             som börjar ge värde direkt.
           </p>
           
-          <button
+          <motion.button
             onClick={() => router.push('/business/bot-builder/identify')}
-            className="px-16 py-5 bg-black text-white text-sm uppercase tracking-widest hover:bg-gray-900 transition-all inline-flex items-center gap-3"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="btn-primary inline-flex items-center gap-2"
           >
             Starta analys
             <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
 
         {/* Process */}
-        <div className="grid md:grid-cols-3 gap-12 mb-20">
-          <div className="text-center">
-            <div className="w-16 h-16 border border-black mx-auto mb-6 flex items-center justify-center">
-              <span className="text-2xl font-thin">1</span>
-            </div>
-            <h3 className="text-sm uppercase tracking-widest mb-3">ANALYSERA</h3>
-            <p className="text-sm text-gray-600 font-light">
-              Ladda upp din URL och dokument. Vår AI går igenom allt material.
-            </p>
-          </div>
-          
-          <div className="text-center">
-            <div className="w-16 h-16 border border-black mx-auto mb-6 flex items-center justify-center">
-              <span className="text-2xl font-thin">2</span>
-            </div>
-            <h3 className="text-sm uppercase tracking-widest mb-3">VÄLJ LÖSNING</h3>
-            <p className="text-sm text-gray-600 font-light">
-              Få rekommendationer baserat på din verksamhet. Välj den som passar bäst.
-            </p>
-          </div>
-          
-          <div className="text-center">
-            <div className="w-16 h-16 border border-black mx-auto mb-6 flex items-center justify-center">
-              <span className="text-2xl font-thin">3</span>
-            </div>
-            <h3 className="text-sm uppercase tracking-widest mb-3">LANSERA</h3>
-            <p className="text-sm text-gray-600 font-light">
-              Din bot är klar. Installera med en kodrad och börja spara tid direkt.
-            </p>
-          </div>
+        <div className="grid md:grid-cols-3 gap-8 mb-20">
+          {[
+            { num: 1, title: "Analysera", desc: "Ladda upp din URL och dokument. Vår AI går igenom allt material." },
+            { num: 2, title: "Välj lösning", desc: "Få rekommendationer baserat på din verksamhet. Välj den som passar bäst." },
+            { num: 3, title: "Lansera", desc: "Din bot är klar. Installera med en kodrad och börja spara tid direkt." }
+          ].map((step, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
+              className="text-center"
+            >
+              <div className="w-14 h-14 border-2 border-black rounded-full mx-auto mb-4 flex items-center justify-center">
+                <span className="text-xl font-semibold">{step.num}</span>
+              </div>
+              <h3 className="mb-2">{step.title}</h3>
+              <p className="text-sm text-[#4B5563] leading-relaxed">{step.desc}</p>
+            </motion.div>
+          ))}
         </div>
 
         {/* Results */}
-        <div className="bg-gray-50 p-12 text-center">
-          <h2 className="text-2xl font-thin uppercase tracking-wider mb-8">Förväntade resultat</h2>
+        <div className="card text-center mb-20">
+          <h2 className="mb-8">Förväntade resultat</h2>
           <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="text-4xl font-thin mb-2">60%</div>
-              <p className="text-xs uppercase tracking-widest text-gray-600">Färre supportärenden</p>
-            </div>
-            <div>
-              <div className="text-4xl font-thin mb-2">3x</div>
-              <p className="text-xs uppercase tracking-widest text-gray-600">Fler kvalificerade leads</p>
-            </div>
-            <div>
-              <div className="text-4xl font-thin mb-2">24/7</div>
-              <p className="text-xs uppercase tracking-widest text-gray-600">Alltid tillgänglig</p>
-            </div>
-            <div>
-              <div className="text-4xl font-thin mb-2">5 min</div>
-              <p className="text-xs uppercase tracking-widest text-gray-600">Tid att bygga</p>
-            </div>
+            {[
+              { value: "60%", label: "Färre supportärenden" },
+              { value: "3x", label: "Fler kvalificerade leads" },
+              { value: "24/7", label: "Alltid tillgänglig" },
+              { value: "5 min", label: "Tid att bygga" }
+            ].map((stat, i) => (
+              <div key={i}>
+                <div className="text-4xl font-bold mb-2">{stat.value}</div>
+                <p className="text-xs text-[#4B5563] uppercase tracking-wider">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* CTA */}
-        <div className="text-center mt-20">
-          <p className="text-sm text-gray-600 mb-6">
+        <div className="text-center">
+          <p className="text-sm text-[#4B5563] mb-6">
             Ingen kodning krävs. Gratis att testa. Redo på minuter.
           </p>
-          <button
+          <motion.button
             onClick={() => router.push('/business/bot-builder/identify')}
-            className="px-16 py-5 border border-black text-black text-sm uppercase tracking-widest hover:bg-black hover:text-white transition-all"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="btn-secondary"
           >
             Kom igång
-          </button>
+          </motion.button>
         </div>
 
       </div>
