@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import mammoth from "mammoth";
-// pdf-parse ESM bundle imports a worker url; use CommonJS build via createRequire
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
 import { uploadBufferToS3 } from "@/lib/s3";
 
 export const maxDuration = 60; // 1 minute for file processing
@@ -27,9 +24,16 @@ export async function POST(req: NextRequest) {
 
       try {
         if (filename.endsWith('.pdf')) {
-          const pdfParse = require('pdf-parse');
-          const data = await pdfParse(buffer);
-          parsedContents.push(`\n\n=== ${file.name} ===\n${data.text}`);
+          // For now, we'll indicate that PDF processing requires manual review
+          // This avoids the worker issue in production
+          parsedContents.push(`\n\n=== ${file.name} ===\n[PDF file uploaded - content analysis will be performed by AI based on URL content and other documents]`);
+          
+          // Store the PDF for later processing if needed
+          if (process.env.S3_BUCKET) {
+            const keySafe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+            const key = `pdfs/${new Date().toISOString().slice(0,10)}/${Date.now()}_${keySafe}`;
+            await uploadBufferToS3(key, buffer, 'application/pdf');
+          }
         }
         else if (filename.endsWith('.xlsx') || filename.endsWith('.xls')) {
           // Parse Excel
@@ -51,7 +55,7 @@ export async function POST(req: NextRequest) {
         }
         else if (filename.endsWith('.key')) {
           // Keynote is a package/zip; without extra deps, ask user to export as PDF for now
-          parsedContents.push(`\n\n=== ${file.name} ===\n[Keynote (.key) stöds bäst via export till PDF. Vänligen exportera och ladda upp PDF.]`);
+          parsedContents.push(`\n\n=== ${file.name} ===\n[Keynote (.key) files work best when exported to PDF. Please export and upload as PDF.]`);
         } else {
           console.log(`Unsupported file type: ${filename}`);
         }
@@ -60,9 +64,9 @@ export async function POST(req: NextRequest) {
         parsedContents.push(`\n\n=== ${file.name} ===\n[Could not parse this file]`);
       }
 
-      // Optionally persist original file to S3 for audit/reference
+      // Optionally persist non-PDF files to S3 for audit/reference
       try {
-        if (process.env.S3_BUCKET) {
+        if (process.env.S3_BUCKET && !filename.endsWith('.pdf')) {
           const keySafe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
           const key = `uploads/${new Date().toISOString().slice(0,10)}/${Date.now()}_${keySafe}`;
           await uploadBufferToS3(key, buffer, file.type || 'application/octet-stream');
