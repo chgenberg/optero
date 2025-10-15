@@ -100,7 +100,7 @@ export default function IdentifyProblem() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
       <div className="max-w-2xl w-full">
         {/* Progress Steps */}
         <div className="flex justify-center mb-20">
@@ -109,16 +109,16 @@ export default function IdentifyProblem() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.3 }}
-              className="w-16 h-16 bg-white text-black font-bold text-xl flex items-center justify-center animate-pulse-box"
+              className="w-16 h-16 bg-black text-white font-bold text-xl flex items-center justify-center rounded-2xl shadow-xl"
             >
               01
             </motion.div>
-            <div className="w-24 h-[2px] bg-gray-800" />
-            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+            <div className="w-24 h-[2px] bg-gray-300" />
+            <div className="w-16 h-16 bg-white text-gray-400 font-bold text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
               02
             </div>
-            <div className="w-24 h-[2px] bg-gray-800" />
-            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+            <div className="w-24 h-[2px] bg-gray-300" />
+            <div className="w-16 h-16 bg-white text-gray-400 font-bold text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
               03
             </div>
           </div>
@@ -132,27 +132,27 @@ export default function IdentifyProblem() {
         >
           {/* Header */}
           <div className="text-center relative">
-            <h1 className="text-5xl font-bold uppercase tracking-wider text-white mb-4">
+            <h1 className="text-5xl font-bold uppercase tracking-wider text-black mb-4">
               ANALYZE YOUR BUSINESS
             </h1>
-            <p className="text-gray-500 uppercase tracking-wider text-sm">
+            <p className="text-gray-600 uppercase tracking-wider text-sm">
               STEP 01 — IDENTIFY OPPORTUNITIES
             </p>
             
             <button
               onClick={() => setShowInfo(!showInfo)}
-              className="absolute -right-12 top-0 p-3 hover:bg-gray-900 transition-colors"
+              className="absolute -right-12 top-0 p-3 hover:bg-gray-100 rounded-xl transition-colors"
             >
-              <Info className="w-5 h-5 text-gray-600" />
+              <Info className="w-5 h-5 text-gray-500" />
             </button>
             
             {showInfo && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="absolute right-0 top-16 w-96 p-8 bg-gray-900 border-2 border-gray-800 shadow-2xl text-left z-10"
+                className="absolute right-0 top-16 w-96 p-8 bg-white rounded-2xl shadow-2xl text-left z-10"
               >
-                <p className="text-sm text-gray-400 leading-relaxed">
+                <p className="text-sm text-gray-600 leading-relaxed">
                   We analyze your website and documents to understand your business
                   and identify where AI creates the most value. Our deep analysis
                   finds hidden opportunities for automation.
@@ -162,7 +162,7 @@ export default function IdentifyProblem() {
           </div>
           
           {/* Form Card */}
-          <div className="minimal-card bg-white p-12 space-y-10">
+          <div className="minimal-card animate-pulse-shadow p-12 space-y-10">
             <div>
               <label className="minimal-label">
                 WEBSITE URL
@@ -201,7 +201,7 @@ export default function IdentifyProblem() {
                   e.preventDefault();
                   handleFileSelect(e.dataTransfer.files);
                 }}
-                className="border-2 border-dashed border-gray-300 p-12 text-center hover:border-black transition-all duration-300 cursor-pointer animate-float"
+                className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-black transition-all duration-300 cursor-pointer"
               >
                 <label className="cursor-pointer">
                   <input
@@ -212,7 +212,7 @@ export default function IdentifyProblem() {
                     className="hidden"
                   />
                   <Upload className="w-10 h-10 text-gray-400 mx-auto mb-4" />
-                  <p className="text-sm font-bold uppercase tracking-wider text-black mb-2">
+                  <p className="text-sm font-bold uppercase tracking-wider text-gray-700 mb-2">
                     DRAG & DROP FILES HERE
                   </p>
                   <p className="text-xs text-gray-500 uppercase tracking-wider">
@@ -228,7 +228,7 @@ export default function IdentifyProblem() {
                       key={i}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="flex items-center justify-between p-4 bg-gray-100 border-2 border-black"
+                      className="flex items-center justify-between p-4 bg-gray-100 rounded-xl shadow-sm"
                     >
                       <div>
                         <p className="text-sm font-bold uppercase">{file.name}</p>
@@ -238,7 +238,7 @@ export default function IdentifyProblem() {
                       </div>
                       <button
                         onClick={() => removeFile(i)}
-                        className="p-2 hover:bg-gray-200 transition-colors"
+                        className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
                       >
                         <X className="w-5 h-5 text-black" />
                       </button>
@@ -295,7 +295,7 @@ export default function IdentifyProblem() {
         <div className="text-center mt-16">
           <button
             onClick={() => router.push("/business/bot-builder")}
-            className="text-sm text-gray-600 hover:text-white transition-colors uppercase tracking-wider"
+            className="text-sm text-gray-500 hover:text-black transition-colors uppercase tracking-wider"
           >
             ← BACK
           </button>

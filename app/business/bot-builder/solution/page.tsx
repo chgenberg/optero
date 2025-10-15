@@ -127,7 +127,7 @@ export default function BotBuilderSolution() {
 
   if (building) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -136,7 +136,7 @@ export default function BotBuilderSolution() {
           {/* Animated Build Icon */}
           <div className="relative w-32 h-32 mx-auto mb-12">
             <motion.div
-              className="absolute inset-0 bg-white"
+              className="absolute inset-0 bg-black rounded-2xl shadow-2xl"
               animate={{ 
                 scale: [1, 1.2, 1],
                 rotate: [0, 180, 360]
@@ -148,7 +148,7 @@ export default function BotBuilderSolution() {
               }}
             />
             <motion.div
-              className="absolute inset-4 bg-black"
+              className="absolute inset-4 bg-gray-50 rounded-xl"
               animate={{ 
                 scale: [1, 0.8, 1],
                 rotate: [0, -180, -360]
@@ -161,25 +161,25 @@ export default function BotBuilderSolution() {
             />
           </div>
           
-          <h2 className="text-4xl font-bold uppercase tracking-wider text-white mb-4">
+          <h2 className="text-4xl font-bold uppercase tracking-wider text-black mb-4">
             BUILDING YOUR BOT
           </h2>
           
-          <p className="text-gray-500 uppercase tracking-wider text-sm mb-12">
+          <p className="text-gray-600 uppercase tracking-wider text-sm mb-12">
             {buildPhase}
           </p>
           
           {/* Progress Bar */}
-          <div className="w-full h-2 bg-gray-900 relative overflow-hidden">
+          <div className="w-full h-3 bg-gray-200 rounded-full relative overflow-hidden">
             <motion.div
-              className="absolute inset-y-0 left-0 bg-white"
+              className="absolute inset-y-0 left-0 bg-black rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.5 }}
             />
           </div>
           
-          <p className="text-2xl font-bold text-white mt-6">
+          <p className="text-2xl font-bold text-black mt-6">
             {Math.round(progress)}%
           </p>
         </motion.div>
@@ -188,23 +188,23 @@ export default function BotBuilderSolution() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-8 py-16">
         {/* Progress */}
         <div className="flex justify-center mb-20">
           <div className="flex items-center gap-8">
-            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+            <div className="w-16 h-16 bg-green-500 text-white font-bold text-xl flex items-center justify-center rounded-2xl shadow-xl">
               <Check className="w-6 h-6" />
             </div>
-            <div className="w-24 h-[2px] bg-gray-800" />
-            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+            <div className="w-24 h-[2px] bg-gray-300" />
+            <div className="w-16 h-16 bg-green-500 text-white font-bold text-xl flex items-center justify-center rounded-2xl shadow-xl">
               <Check className="w-6 h-6" />
             </div>
-            <div className="w-24 h-[2px] bg-gray-800" />
+            <div className="w-24 h-[2px] bg-gray-300" />
             <motion.div 
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="w-16 h-16 bg-white text-black font-bold text-xl flex items-center justify-center animate-pulse-box"
+              className="w-16 h-16 bg-green-500 text-white font-bold text-xl flex items-center justify-center rounded-2xl shadow-xl animate-pulse-shadow"
             >
               <Check className="w-6 h-6" />
             </motion.div>
@@ -221,15 +221,15 @@ export default function BotBuilderSolution() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 200 }}
-            className="w-24 h-24 bg-green-500 mx-auto mb-8 flex items-center justify-center"
+            className="w-24 h-24 bg-green-500 mx-auto mb-8 flex items-center justify-center rounded-3xl shadow-2xl"
           >
-            <Check className="w-12 h-12 text-black" />
+            <Check className="w-12 h-12 text-white" />
           </motion.div>
           
-          <h1 className="text-5xl font-bold uppercase tracking-wider mb-4">
+          <h1 className="text-5xl font-bold uppercase tracking-wider text-black mb-4">
             YOUR BOT IS READY!
           </h1>
-          <p className="text-gray-500 uppercase tracking-wider text-sm">
+          <p className="text-gray-600 uppercase tracking-wider text-sm">
             START SAVING TIME AND MONEY IMMEDIATELY
           </p>
         </motion.div>
@@ -239,14 +239,14 @@ export default function BotBuilderSolution() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="minimal-card bg-gray-900 border-gray-800 max-w-3xl mx-auto mb-16"
+          className="minimal-card animate-pulse-shadow max-w-3xl mx-auto mb-16"
         >
-          <h3 className="text-lg font-bold uppercase tracking-wider mb-6">
+          <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">
             ONE-CLICK INSTALLATION
           </h3>
           
           <div className="relative">
-            <pre className="bg-black p-6 text-sm overflow-x-auto border border-gray-800">
+            <pre className="bg-gray-900 rounded-xl p-6 text-sm overflow-x-auto">
               <code className="text-green-400">
 {`<script src="https://optero-production.up.railway.app/widget.js" 
   data-bot-id="${botId}"></script>`}
@@ -255,7 +255,7 @@ export default function BotBuilderSolution() {
             
             <button
               onClick={copyEmbedCode}
-              className="absolute top-4 right-4 p-2 bg-gray-800 hover:bg-gray-700 transition-colors"
+              className="absolute top-4 right-4 p-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
             >
               {copied ? (
                 <Check className="w-5 h-5 text-green-500" />
@@ -265,7 +265,7 @@ export default function BotBuilderSolution() {
             </button>
           </div>
           
-          <p className="text-sm text-gray-500 mt-4 uppercase tracking-wider">
+          <p className="text-sm text-gray-600 mt-4 uppercase tracking-wider">
             ADD THIS CODE BEFORE {`</BODY>`} TAG ON YOUR WEBSITE
           </p>
         </motion.div>
@@ -279,8 +279,8 @@ export default function BotBuilderSolution() {
         >
           {stats.map((stat, i) => (
             <div key={i} className="text-center">
-              <p className="text-3xl font-bold text-white mb-2">{stat.value}</p>
-              <p className="text-xs uppercase tracking-wider text-gray-500">{stat.label}</p>
+              <p className="text-3xl font-bold text-black mb-2">{stat.value}</p>
+              <p className="text-xs uppercase tracking-wider text-gray-600">{stat.label}</p>
             </div>
           ))}
         </motion.div>
@@ -292,7 +292,7 @@ export default function BotBuilderSolution() {
           transition={{ delay: 0.6 }}
           className="mb-16"
         >
-          <h2 className="text-2xl font-bold uppercase tracking-wider text-center mb-12">
+          <h2 className="text-2xl font-bold uppercase tracking-wider text-center text-black mb-12">
             NEXT STEPS
           </h2>
           
@@ -310,11 +310,11 @@ export default function BotBuilderSolution() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8 + i * 0.1 }}
-                className="minimal-card bg-gray-900 border-gray-800 hover:border-gray-700 text-left cursor-pointer"
+                className="minimal-card animate-pulse-shadow hover:scale-105 text-left cursor-pointer"
               >
-                <step.icon className="w-8 h-8 text-gray-500 mb-4" />
-                <h3 className="font-bold uppercase tracking-wider mb-2">{step.title}</h3>
-                <p className="text-sm text-gray-500">{step.desc}</p>
+                <step.icon className="w-8 h-8 text-gray-600 mb-4" />
+                <h3 className="font-bold uppercase tracking-wider text-black mb-2">{step.title}</h3>
+                <p className="text-sm text-gray-600">{step.desc}</p>
               </motion.button>
             ))}
           </div>

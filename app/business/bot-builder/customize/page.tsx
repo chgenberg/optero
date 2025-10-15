@@ -214,24 +214,24 @@ export default function CustomizeBotPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto p-8">
         {/* Progress */}
         <div className="flex justify-center mb-20">
           <div className="flex items-center gap-8">
-            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+            <div className="w-16 h-16 bg-green-500 text-white font-bold text-xl flex items-center justify-center rounded-2xl shadow-xl">
               <Check className="w-6 h-6" />
             </div>
-            <div className="w-24 h-[2px] bg-gray-800" />
+            <div className="w-24 h-[2px] bg-gray-300" />
             <motion.div 
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="w-16 h-16 bg-white text-black font-bold text-xl flex items-center justify-center animate-pulse-box"
+              className="w-16 h-16 bg-black text-white font-bold text-xl flex items-center justify-center rounded-2xl shadow-xl"
             >
               02
             </motion.div>
-            <div className="w-24 h-[2px] bg-gray-800" />
-            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+            <div className="w-24 h-[2px] bg-gray-300" />
+            <div className="w-16 h-16 bg-white text-gray-400 font-bold text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
               03
             </div>
           </div>
@@ -243,25 +243,25 @@ export default function CustomizeBotPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <h1 className="text-5xl font-bold uppercase tracking-wider mb-4">
+          <h1 className="text-5xl font-bold uppercase tracking-wider text-black mb-4">
             CUSTOMIZE YOUR BOT
           </h1>
-          <p className="text-gray-500 uppercase tracking-wider text-sm">
+          <p className="text-gray-600 uppercase tracking-wider text-sm">
             STEP 02 — BRAND & BEHAVIOR
           </p>
         </motion.div>
 
         {/* Tab Navigation */}
         <div className="flex justify-center mb-12">
-          <div className="inline-flex bg-gray-900 p-1">
+          <div className="inline-flex bg-white rounded-xl shadow-sm p-1">
             {(['brand', 'interaction', 'advanced'] as const).map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-8 py-3 uppercase tracking-wider text-sm font-bold transition-all duration-300 ${
+                className={`px-8 py-3 rounded-lg uppercase tracking-wider text-sm font-bold transition-all duration-300 ${
                   activeTab === tab 
-                    ? 'bg-white text-black' 
-                    : 'text-gray-500 hover:text-white'
+                    ? 'bg-black text-white' 
+                    : 'text-gray-500 hover:text-black'
                 }`}
               >
                 {tab === 'brand' && <Palette className="w-4 h-4 inline mr-2" />}
@@ -284,19 +284,19 @@ export default function CustomizeBotPage() {
                 className="space-y-8"
               >
                 {/* Colors */}
-                <div className="minimal-card bg-gray-900 border-gray-800">
-                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">COLORS</h3>
+                <div className="minimal-card animate-pulse-shadow">
+                  <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">COLORS</h3>
                   
                   <div className="space-y-6">
                     <div>
-                      <label className="minimal-label text-gray-400 mb-4">PRESET COLORS</label>
+                      <label className="minimal-label mb-4">PRESET COLORS</label>
                       <div className="flex gap-4">
                         {colorPresets.map(color => (
                           <button
                             key={color.hex}
                             onClick={() => updateHexColor(color.hex)}
-                            className={`w-20 h-20 border-2 transition-all duration-300 ${
-                              brand.primaryColor === color.hex ? 'border-white scale-110' : 'border-gray-700 hover:border-gray-500'
+                            className={`w-20 h-20 rounded-xl border-2 transition-all duration-300 ${
+                              brand.primaryColor === color.hex ? 'border-black scale-110 shadow-lg' : 'border-gray-300 hover:border-gray-500'
                             }`}
                             style={{ backgroundColor: color.hex }}
                           >
@@ -307,7 +307,7 @@ export default function CustomizeBotPage() {
                     </div>
 
                     <div>
-                      <label className="minimal-label text-gray-400">CUSTOM HEX COLOR</label>
+                      <label className="minimal-label">CUSTOM HEX COLOR</label>
                       <div className="flex gap-4 items-center">
                         <input
                           type="text"
@@ -315,10 +315,10 @@ export default function CustomizeBotPage() {
                           onChange={(e) => setCustomHex(e.target.value)}
                           onBlur={(e) => updateHexColor(e.target.value)}
                           placeholder="#000000"
-                          className="minimal-input bg-transparent text-white w-32"
+                          className="minimal-input w-32"
                         />
                         <div 
-                          className="w-20 h-12 border-2 border-gray-700"
+                          className="w-20 h-12 rounded-lg border-2 border-gray-300 shadow-sm"
                           style={{ backgroundColor: customHex }}
                         />
                       </div>
@@ -327,22 +327,22 @@ export default function CustomizeBotPage() {
                 </div>
 
                 {/* Typography */}
-                <div className="minimal-card bg-gray-900 border-gray-800">
-                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">TYPOGRAPHY</h3>
+                <div className="minimal-card animate-pulse-shadow">
+                  <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">TYPOGRAPHY</h3>
                   
                   <div className="grid grid-cols-2 gap-4">
                     {fontPresets.map(font => (
                       <button
                         key={font.value}
                         onClick={() => setBrand({ ...brand, fontFamily: font.value })}
-                        className={`p-6 border-2 transition-all duration-300 ${
+                        className={`p-6 rounded-xl border-2 transition-all duration-300 ${
                           brand.fontFamily === font.value 
-                            ? 'border-white bg-gray-800' 
-                            : 'border-gray-700 hover:border-gray-500'
+                            ? 'border-black bg-gray-100 shadow-lg' 
+                            : 'border-gray-200 hover:border-gray-400'
                         }`}
                       >
-                        <p className="text-sm font-bold uppercase tracking-wider mb-2">{font.name}</p>
-                        <p style={{ fontFamily: font.value }} className="text-2xl">
+                        <p className="text-sm font-bold uppercase tracking-wider mb-2 text-gray-700">{font.name}</p>
+                        <p style={{ fontFamily: font.value }} className="text-2xl text-black">
                           Hello World
                         </p>
                       </button>
@@ -351,8 +351,8 @@ export default function CustomizeBotPage() {
                 </div>
 
                 {/* Logo */}
-                <div className="minimal-card bg-gray-900 border-gray-800">
-                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">LOGO</h3>
+                <div className="minimal-card animate-pulse-shadow">
+                  <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">LOGO</h3>
                   
                   <div
                     onDragOver={(e) => e.preventDefault()}
@@ -360,7 +360,7 @@ export default function CustomizeBotPage() {
                       e.preventDefault();
                       handleFileSelect(e.dataTransfer.files);
                     }}
-                    className="border-2 border-dashed border-gray-700 p-12 text-center hover:border-gray-500 transition-colors cursor-pointer"
+                    className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-gray-500 transition-colors cursor-pointer"
                   >
                     <label className="cursor-pointer">
                       <input
@@ -378,11 +378,11 @@ export default function CustomizeBotPage() {
                         </div>
                       ) : (
                         <>
-                          <Upload className="w-10 h-10 text-gray-600 mx-auto mb-4" />
-                          <p className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-2">
+                          <Upload className="w-10 h-10 text-gray-400 mx-auto mb-4" />
+                          <p className="text-sm font-bold uppercase tracking-wider text-gray-600 mb-2">
                             UPLOAD LOGO
                           </p>
-                          <p className="text-xs text-gray-600 uppercase tracking-wider">
+                          <p className="text-xs text-gray-500 uppercase tracking-wider">
                             PNG • SVG • JPG
                           </p>
                         </>
@@ -392,22 +392,22 @@ export default function CustomizeBotPage() {
                 </div>
 
                 {/* Tone */}
-                <div className="minimal-card bg-gray-900 border-gray-800">
-                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">TONE OF VOICE</h3>
+                <div className="minimal-card animate-pulse-shadow">
+                  <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">TONE OF VOICE</h3>
                   
                   <div className="space-y-4">
                     {tonePresets.map(tone => (
                       <button
                         key={tone.value}
                         onClick={() => setBrand({ ...brand, tone: tone.value })}
-                        className={`w-full p-4 border-2 text-left transition-all duration-300 ${
+                        className={`w-full p-4 rounded-xl border-2 text-left transition-all duration-300 ${
                           brand.tone === tone.value 
-                            ? 'border-white bg-gray-800' 
-                            : 'border-gray-700 hover:border-gray-500'
+                            ? 'border-black bg-gray-100 shadow-lg' 
+                            : 'border-gray-200 hover:border-gray-400'
                         }`}
                       >
-                        <p className="font-bold uppercase tracking-wider mb-1">{tone.name}</p>
-                        <p className="text-sm text-gray-500">
+                        <p className="font-bold uppercase tracking-wider mb-1 text-black">{tone.name}</p>
+                        <p className="text-sm text-gray-600">
                           {tone.value === 'professional' && 'Clear, concise, and business-focused'}
                           {tone.value === 'casual' && 'Friendly, approachable, and conversational'}
                           {tone.value === 'formal' && 'Polite, respectful, and traditional'}
@@ -426,29 +426,29 @@ export default function CustomizeBotPage() {
                 className="space-y-8"
               >
                 {/* Welcome Message */}
-                <div className="minimal-card bg-gray-900 border-gray-800">
-                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">WELCOME MESSAGE</h3>
+                <div className="minimal-card animate-pulse-shadow">
+                  <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">WELCOME MESSAGE</h3>
                   <textarea
                     value={welcomeMessage}
                     onChange={(e) => setWelcomeMessage(e.target.value)}
                     placeholder="Hi! How can I help you today?"
-                    className="w-full h-24 bg-transparent border-2 border-gray-700 p-4 text-white focus:border-white focus:outline-none transition-colors"
+                    className="w-full h-24 bg-white border-2 border-gray-200 rounded-xl p-4 text-gray-800 focus:border-black focus:outline-none transition-colors"
                   />
                 </div>
 
                 {/* Quick Replies */}
-                <div className="minimal-card bg-gray-900 border-gray-800">
-                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">QUICK REPLIES</h3>
+                <div className="minimal-card animate-pulse-shadow">
+                  <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">QUICK REPLIES</h3>
                   
                   <div className="space-y-4">
                     {quickReplies.map((reply, i) => (
                       <div key={i} className="flex items-center gap-4">
-                        <div className="flex-1 p-3 bg-gray-800 border border-gray-700">
+                        <div className="flex-1 p-3 bg-gray-100 border border-gray-200 rounded-xl">
                           {reply}
                         </div>
                         <button
                           onClick={() => setQuickReplies(quickReplies.filter((_, idx) => idx !== i))}
-                          className="p-3 hover:bg-gray-800 transition-colors"
+                          className="p-3 hover:bg-gray-100 rounded-lg transition-colors"
                         >
                           <X className="w-5 h-5 text-gray-500" />
                         </button>
@@ -463,7 +463,7 @@ export default function CustomizeBotPage() {
                           onChange={(e) => setNewQuickReply(e.target.value)}
                           onKeyPress={(e) => e.key === 'Enter' && addQuickReply()}
                           placeholder="Add quick reply..."
-                          className="flex-1 minimal-input bg-transparent text-white"
+                          className="flex-1 minimal-input"
                         />
                         <button
                           onClick={addQuickReply}
@@ -477,29 +477,29 @@ export default function CustomizeBotPage() {
                 </div>
 
                 {/* Call to Action */}
-                <div className="minimal-card bg-gray-900 border-gray-800">
-                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">CALL TO ACTION</h3>
+                <div className="minimal-card animate-pulse-shadow">
+                  <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">CALL TO ACTION</h3>
                   
                   <div className="space-y-4">
                     <div>
-                      <label className="minimal-label text-gray-400">BUTTON TEXT</label>
+                      <label className="minimal-label">BUTTON TEXT</label>
                       <input
                         type="text"
                         value={ctaLabel}
                         onChange={(e) => setCtaLabel(e.target.value)}
                         placeholder="Book a demo"
-                        className="minimal-input bg-transparent text-white"
+                        className="minimal-input"
                       />
                     </div>
                     
                     <div>
-                      <label className="minimal-label text-gray-400">BUTTON URL</label>
+                      <label className="minimal-label">BUTTON URL</label>
                       <input
                         type="url"
                         value={ctaUrl}
                         onChange={(e) => setCtaUrl(e.target.value)}
                         placeholder="https://calendly.com/..."
-                        className="minimal-input bg-transparent text-white"
+                        className="minimal-input"
                       />
                     </div>
                   </div>
@@ -507,8 +507,8 @@ export default function CustomizeBotPage() {
 
                 {/* Type-specific settings */}
                 {botType === 'lead' && (
-                  <div className="minimal-card bg-gray-900 border-gray-800">
-                    <h3 className="text-lg font-bold uppercase tracking-wider mb-6">LEAD CAPTURE FIELDS</h3>
+                  <div className="minimal-card animate-pulse-shadow">
+                    <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">LEAD CAPTURE FIELDS</h3>
                     
                     <div className="space-y-4">
                       {Object.entries(leadRequiredFields).map(([field, required]) => (
@@ -520,9 +520,9 @@ export default function CustomizeBotPage() {
                               ...leadRequiredFields,
                               [field]: e.target.checked
                             })}
-                            className="w-5 h-5 bg-transparent border-2 border-gray-600 text-white focus:ring-white"
+                            className="w-5 h-5 bg-white border-2 border-gray-300 text-black focus:ring-black rounded"
                           />
-                          <span className="uppercase tracking-wider text-sm">
+                          <span className="uppercase tracking-wider text-sm text-gray-700">
                             REQUIRE {field.toUpperCase()}
                           </span>
                         </label>
@@ -532,18 +532,18 @@ export default function CustomizeBotPage() {
                 )}
 
                 {botType === 'support' && (
-                  <div className="minimal-card bg-gray-900 border-gray-800">
-                    <h3 className="text-lg font-bold uppercase tracking-wider mb-6">SUPPORT CATEGORIES</h3>
+                  <div className="minimal-card animate-pulse-shadow">
+                    <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">SUPPORT CATEGORIES</h3>
                     
                     <div className="space-y-2">
                       {supportCategories.map((cat, i) => (
                         <div key={i} className="flex items-center gap-4">
-                          <div className="flex-1 p-3 bg-gray-800 border border-gray-700">
+                          <div className="flex-1 p-3 bg-gray-100 border border-gray-200 rounded-xl">
                             {cat}
                           </div>
                           <button
                             onClick={() => setSupportCategories(supportCategories.filter((_, idx) => idx !== i))}
-                            className="p-3 hover:bg-gray-800 transition-colors"
+                            className="p-3 hover:bg-gray-100 rounded-lg transition-colors"
                           >
                             <X className="w-5 h-5 text-gray-500" />
                           </button>
@@ -554,7 +554,7 @@ export default function CustomizeBotPage() {
                           const cat = prompt("Category name:");
                           if (cat) setSupportCategories([...supportCategories, cat]);
                         }}
-                        className="w-full p-3 border-2 border-dashed border-gray-700 hover:border-gray-500 transition-colors"
+                        className="w-full p-3 border-2 border-dashed border-gray-300 rounded-xl hover:border-gray-500 transition-colors"
                       >
                         <Plus className="w-5 h-5 mx-auto text-gray-500" />
                       </button>
@@ -571,18 +571,18 @@ export default function CustomizeBotPage() {
                 className="space-y-8"
               >
                 {/* Response Length */}
-                <div className="minimal-card bg-gray-900 border-gray-800">
-                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">RESPONSE LENGTH</h3>
+                <div className="minimal-card animate-pulse-shadow">
+                  <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">RESPONSE LENGTH</h3>
                   
                   <div className="grid grid-cols-3 gap-4">
                     {(['short', 'normal', 'long'] as const).map(length => (
                       <button
                         key={length}
                         onClick={() => setResponseLength(length)}
-                        className={`p-4 border-2 uppercase tracking-wider text-sm font-bold transition-all duration-300 ${
+                        className={`p-4 rounded-xl border-2 uppercase tracking-wider text-sm font-bold transition-all duration-300 ${
                           responseLength === length 
-                            ? 'border-white bg-gray-800' 
-                            : 'border-gray-700 hover:border-gray-500'
+                            ? 'border-black bg-gray-100 shadow-lg' 
+                            : 'border-gray-200 hover:border-gray-400'
                         }`}
                       >
                         {length}
@@ -592,30 +592,30 @@ export default function CustomizeBotPage() {
                 </div>
 
                 {/* Fallback */}
-                <div className="minimal-card bg-gray-900 border-gray-800">
-                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">FALLBACK MESSAGE</h3>
+                <div className="minimal-card animate-pulse-shadow">
+                  <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">FALLBACK MESSAGE</h3>
                   <textarea
                     value={fallbackText}
                     onChange={(e) => setFallbackText(e.target.value)}
                     placeholder="I don't have that information. Would you like to speak with someone?"
-                    className="w-full h-24 bg-transparent border-2 border-gray-700 p-4 text-white focus:border-white focus:outline-none transition-colors"
+                    className="w-full h-24 bg-white border-2 border-gray-200 rounded-xl p-4 text-gray-800 focus:border-black focus:outline-none transition-colors"
                   />
                 </div>
 
                 {/* Working Hours */}
-                <div className="minimal-card bg-gray-900 border-gray-800">
-                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">WORKING HOURS</h3>
+                <div className="minimal-card animate-pulse-shadow">
+                  <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">WORKING HOURS</h3>
                   
                   <div className="grid grid-cols-2 gap-6 mb-6">
                     <div>
-                      <label className="minimal-label text-gray-400">START TIME</label>
+                      <label className="minimal-label">START TIME</label>
                       <select
                         value={startHour}
                         onChange={(e) => setStartHour(Number(e.target.value))}
-                        className="w-full bg-transparent border-2 border-gray-700 p-3 text-white focus:border-white focus:outline-none"
+                        className="w-full bg-white border-2 border-gray-200 rounded-xl p-3 text-gray-800 focus:border-black focus:outline-none"
                       >
                         {Array.from({ length: 24 }, (_, i) => (
-                          <option key={i} value={i} className="bg-gray-900">
+                          <option key={i} value={i}>
                             {i.toString().padStart(2, '0')}:00
                           </option>
                         ))}
@@ -623,14 +623,14 @@ export default function CustomizeBotPage() {
                     </div>
                     
                     <div>
-                      <label className="minimal-label text-gray-400">END TIME</label>
+                      <label className="minimal-label">END TIME</label>
                       <select
                         value={endHour}
                         onChange={(e) => setEndHour(Number(e.target.value))}
-                        className="w-full bg-transparent border-2 border-gray-700 p-3 text-white focus:border-white focus:outline-none"
+                        className="w-full bg-white border-2 border-gray-200 rounded-xl p-3 text-gray-800 focus:border-black focus:outline-none"
                       >
                         {Array.from({ length: 24 }, (_, i) => (
-                          <option key={i} value={i} className="bg-gray-900">
+                          <option key={i} value={i}>
                             {i.toString().padStart(2, '0')}:00
                           </option>
                         ))}
@@ -639,29 +639,29 @@ export default function CustomizeBotPage() {
                   </div>
                   
                   <div>
-                    <label className="minimal-label text-gray-400">OFF-HOURS MESSAGE</label>
+                    <label className="minimal-label">OFF-HOURS MESSAGE</label>
                     <textarea
                       value={offHoursMessage}
                       onChange={(e) => setOffHoursMessage(e.target.value)}
-                      className="w-full h-20 bg-transparent border-2 border-gray-700 p-4 text-white focus:border-white focus:outline-none transition-colors"
+                      className="w-full h-20 bg-white border-2 border-gray-200 rounded-xl p-4 text-gray-800 focus:border-black focus:outline-none transition-colors"
                     />
                   </div>
                 </div>
 
                 {/* Custom Buttons */}
-                <div className="minimal-card bg-gray-900 border-gray-800">
-                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">CUSTOM CHAT BUTTONS</h3>
+                <div className="minimal-card animate-pulse-shadow">
+                  <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">CUSTOM CHAT BUTTONS</h3>
                   
                   <div className="space-y-2">
                     {customButtons.map((btn, i) => (
-                      <div key={i} className="flex items-center gap-4 p-3 bg-gray-800 border border-gray-700">
+                      <div key={i} className="flex items-center gap-4 p-3 bg-gray-100 border border-gray-200 rounded-xl">
                         <div className="flex-1">
                           <p className="font-bold">{btn.label}</p>
                           <p className="text-sm text-gray-500">{btn.url}</p>
                         </div>
                         <button
                           onClick={() => setCustomButtons(customButtons.filter((_, idx) => idx !== i))}
-                          className="p-2 hover:bg-gray-700 transition-colors"
+                          className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
                         >
                           <X className="w-5 h-5 text-gray-500" />
                         </button>
@@ -670,7 +670,7 @@ export default function CustomizeBotPage() {
                     
                     <button
                       onClick={addCustomButton}
-                      className="w-full p-4 border-2 border-dashed border-gray-700 hover:border-gray-500 transition-colors"
+                      className="w-full p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-gray-500 transition-colors"
                     >
                       <Plus className="w-5 h-5 mx-auto text-gray-500" />
                     </button>
@@ -682,11 +682,11 @@ export default function CustomizeBotPage() {
 
           {/* Right Column - Preview */}
           <div className="sticky top-8">
-            <div className="minimal-card bg-gray-900 border-gray-800 h-[600px] flex flex-col">
-              <h3 className="text-lg font-bold uppercase tracking-wider mb-6">LIVE PREVIEW</h3>
+            <div className="minimal-card animate-pulse-shadow h-[600px] flex flex-col">
+              <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">LIVE PREVIEW</h3>
               
               <div 
-                className="flex-1 bg-white rounded-lg overflow-hidden flex flex-col"
+                className="flex-1 bg-white rounded-lg overflow-hidden flex flex-col border border-gray-200"
                 style={{ fontFamily: brand.fontFamily }}
               >
                 {/* Chat Header */}
@@ -706,7 +706,7 @@ export default function CustomizeBotPage() {
                 {/* Messages */}
                 <div className="flex-1 p-4 bg-gray-50">
                   <div className="space-y-3">
-                    <div className="bg-white p-3 rounded-lg shadow-sm max-w-[80%]">
+                    <div className="bg-white p-3 rounded-lg shadow-sm max-w-[80%] border border-gray-100">
                       <p className="text-sm text-gray-800">
                         {welcomeMessage || 'Hi! How can I help you today?'}
                       </p>

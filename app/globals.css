@@ -129,20 +129,31 @@
 }
 
 /* Minimalist Bot Builder Design System */
+@keyframes pulse-shadow {
+  0%, 100% { 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+  50% { 
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  }
+}
+
 @keyframes pulse-box {
   0%, 100% { 
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
   }
   50% { 
-    transform: scale(1.02);
-    box-shadow: 0 0 0 8px rgba(0, 0, 0, 0);
+    transform: scale(1.01);
   }
 }
 
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-5px); }
+}
+
+.animate-pulse-shadow { 
+  animation: pulse-shadow 4s infinite ease-in-out; 
 }
 
 .animate-pulse-box { 
@@ -155,36 +166,44 @@
 
 /* Minimalist components */
 .minimal-card {
-  @apply bg-white border-2 border-gray-900 p-8 transition-all duration-300 hover:shadow-2xl;
+  @apply bg-white rounded-2xl p-8 transition-all duration-300;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.minimal-card:hover {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
 .minimal-card-interactive {
-  @apply bg-white border-2 border-gray-900 p-8 transition-all duration-300 hover:shadow-2xl cursor-pointer;
-  animation: pulse-box 3s infinite ease-out;
+  @apply bg-white rounded-2xl p-8 transition-all duration-300 cursor-pointer animate-pulse-shadow;
+}
+
+.minimal-card-interactive:hover {
+  transform: translateY(-2px);
 }
 
 .minimal-input {
-  @apply w-full px-0 py-3 bg-transparent border-b-2 border-gray-300 focus:border-black focus:outline-none transition-colors text-base font-medium placeholder:text-gray-400;
+  @apply w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-black focus:outline-none transition-all text-base font-medium placeholder:text-gray-400;
 }
 
 .minimal-button {
-  @apply px-8 py-4 bg-black text-white font-bold uppercase tracking-wider transition-all duration-300 hover:bg-gray-800 active:scale-95;
+  @apply px-8 py-4 bg-black text-white font-bold uppercase tracking-wider rounded-xl transition-all duration-300 hover:bg-gray-800 hover:shadow-xl active:scale-95;
 }
 
 .minimal-button-outline {
-  @apply px-8 py-4 bg-white text-black border-2 border-black font-bold uppercase tracking-wider transition-all duration-300 hover:bg-black hover:text-white active:scale-95;
+  @apply px-8 py-4 bg-white text-black border-2 border-black font-bold uppercase tracking-wider rounded-xl transition-all duration-300 hover:bg-black hover:text-white hover:shadow-xl active:scale-95;
 }
 
 .minimal-label {
   @apply text-xs font-bold uppercase tracking-wider text-gray-600 mb-2 block;
 }
 
-/* Dark theme elements */
-.dark-section {
-  @apply bg-gray-900 text-white;
+/* Light theme elements */
+.light-bg {
+  @apply bg-gray-50;
 }
 
-.dark-card {
-  @apply bg-gray-800 border-2 border-gray-700 p-8 transition-all duration-300 hover:border-gray-600;
+.card-shadow {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 

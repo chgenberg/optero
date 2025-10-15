@@ -198,7 +198,7 @@ export default function AnalyzeProblem() {
 
   if (analyzing) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -206,25 +206,25 @@ export default function AnalyzeProblem() {
         >
           <div className="relative w-32 h-32 mx-auto mb-8">
             <motion.div 
-              className="absolute inset-0 border-4 border-gray-800"
+              className="absolute inset-0 border-4 border-gray-300 rounded-2xl"
               animate={{ rotate: 360 }}
               transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
             />
             <motion.div 
-              className="absolute inset-4 border-4 border-gray-700"
+              className="absolute inset-4 border-4 border-gray-200 rounded-xl"
               animate={{ rotate: -360 }}
               transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
             />
             <motion.div 
-              className="absolute inset-8 border-4 border-gray-600"
+              className="absolute inset-8 border-4 border-gray-100 rounded-lg"
               animate={{ rotate: 360 }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
             />
           </div>
-          <h2 className="text-3xl font-bold uppercase tracking-wider text-white mb-2">
+          <h2 className="text-3xl font-bold uppercase tracking-wider text-black mb-2">
             ANALYZING YOUR BUSINESS
           </h2>
-          <p className="text-gray-500 uppercase tracking-wider text-sm">
+          <p className="text-gray-600 uppercase tracking-wider text-sm">
             PROCESSING WEBSITE AND DOCUMENTS...
           </p>
         </motion.div>
@@ -233,24 +233,24 @@ export default function AnalyzeProblem() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-8 py-16">
         {/* Progress */}
         <div className="flex justify-center mb-20">
           <div className="flex items-center gap-8">
-            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+            <div className="w-16 h-16 bg-green-500 text-white font-bold text-xl flex items-center justify-center rounded-2xl shadow-xl">
               <Check className="w-6 h-6" />
             </div>
-            <div className="w-24 h-[2px] bg-gray-800" />
+            <div className="w-24 h-[2px] bg-gray-300" />
             <motion.div 
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="w-16 h-16 bg-white text-black font-bold text-xl flex items-center justify-center animate-pulse-box"
+              className="w-16 h-16 bg-black text-white font-bold text-xl flex items-center justify-center rounded-2xl shadow-xl"
             >
               02
             </motion.div>
-            <div className="w-24 h-[2px] bg-gray-800" />
-            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+            <div className="w-24 h-[2px] bg-gray-300" />
+            <div className="w-16 h-16 bg-white text-gray-400 font-bold text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
               03
             </div>
           </div>
@@ -262,10 +262,10 @@ export default function AnalyzeProblem() {
           transition={{ duration: 0.6 }}
         >
           <div className="text-center mb-16">
-            <h1 className="text-5xl font-bold uppercase tracking-wider mb-4">
+            <h1 className="text-5xl font-bold uppercase tracking-wider text-black mb-4">
               SELECT YOUR SOLUTION
             </h1>
-            <p className="text-gray-500 uppercase tracking-wider text-sm">
+            <p className="text-gray-600 uppercase tracking-wider text-sm">
               STEP 02 — CHOOSE YOUR AI AUTOMATION
             </p>
           </div>
@@ -276,23 +276,23 @@ export default function AnalyzeProblem() {
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="minimal-card bg-gray-900 border-gray-800"
+                className="minimal-card animate-pulse-shadow"
               >
-                <p className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-4">
+                <p className="text-sm font-bold uppercase tracking-wider text-gray-600 mb-4">
                   AI INSIGHTS FROM YOUR WEBSITE
                 </p>
-                <p className="text-lg text-white leading-relaxed mb-4">
+                <p className="text-lg text-gray-800 leading-relaxed mb-4">
                   {result.analysis.description || 'Analyzing...'}
                 </p>
                 {result.analysis.problems && result.analysis.problems.length > 0 && (
-                  <div className="pt-4 border-t border-gray-800">
+                  <div className="pt-4 border-t border-gray-200">
                     <p className="text-xs uppercase tracking-wider text-gray-500 mb-3">
                       KEY PROBLEMS WE SOLVE
                     </p>
                     <ul className="space-y-2">
                       {result.analysis.problems.slice(0, 3).map((problem: string, i: number) => (
-                        <li key={i} className="text-sm text-gray-400 flex items-start gap-2">
-                          <span className="text-white">→</span> {problem}
+                        <li key={i} className="text-sm text-gray-600 flex items-start gap-2">
+                          <span className="text-black">→</span> {problem}
                         </li>
                       ))}
                     </ul>
@@ -305,7 +305,7 @@ export default function AnalyzeProblem() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="minimal-card bg-white text-black animate-pulse-box"
+                  className="minimal-card bg-gradient-to-br from-yellow-50 to-orange-50 animate-pulse-shadow"
                 >
                   <p className="text-sm font-bold uppercase tracking-wider mb-4">
                     💡 HIDDEN OPPORTUNITIES DISCOVERED
@@ -325,7 +325,7 @@ export default function AnalyzeProblem() {
 
           {/* Recommended Solutions */}
           <div className="mb-20">
-            <h2 className="text-3xl font-bold uppercase tracking-wider text-center mb-12">
+            <h2 className="text-3xl font-bold uppercase tracking-wider text-center text-black mb-12">
               RECOMMENDED SOLUTIONS
             </h2>
             
@@ -339,8 +339,8 @@ export default function AnalyzeProblem() {
                   transition={{ delay: i * 0.1 }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className={`minimal-card-interactive bg-gray-900 border-gray-800 text-left relative transition-all ${
-                    selectedBot === bot.id ? 'border-white bg-gray-800' : ''
+                  className={`minimal-card-interactive text-left relative transition-all ${
+                    selectedBot === bot.id ? 'ring-4 ring-black ring-offset-4' : ''
                   }`}
                 >
                   <button
@@ -350,33 +350,33 @@ export default function AnalyzeProblem() {
                       setShowInfoFor(showInfoFor === bot.id ? null : bot.id);
                     }}
                     aria-label="More info"
-                    className="absolute top-6 right-6 p-2 hover:bg-gray-800 transition-colors rounded"
+                    className="absolute top-6 right-6 p-2 hover:bg-gray-100 transition-colors rounded-lg"
                   >
-                    <Info className="w-5 h-5 text-gray-600" />
+                    <Info className="w-5 h-5 text-gray-500" />
                   </button>
 
                   {/* Info Modal */}
                   {showInfoFor === bot.id && (
                     <div
                       onClick={(e) => { e.stopPropagation(); setShowInfoFor(null); }}
-                      className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+                      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
                     >
                       <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         onClick={(e) => e.stopPropagation()}
-                        className="max-w-2xl w-full bg-gray-900 border-2 border-gray-800 shadow-2xl overflow-hidden"
+                        className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden"
                       >
-                        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-800">
+                        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
                           <div>
-                            <h3 className="text-xl font-bold uppercase tracking-wider">{bot.title}</h3>
-                            <p className="text-sm text-gray-500 uppercase tracking-wider mt-1">
+                            <h3 className="text-xl font-bold uppercase tracking-wider text-black">{bot.title}</h3>
+                            <p className="text-sm text-gray-600 uppercase tracking-wider mt-1">
                               DEEP DIVE: IMPLEMENTATION & INTEGRATION
                             </p>
                           </div>
                           <button
                             onClick={() => setShowInfoFor(null)}
-                            className="p-2 hover:bg-gray-800 transition-colors rounded"
+                            className="p-2 hover:bg-gray-100 transition-colors rounded-lg"
                           >
                             <X className="w-6 h-6 text-gray-500" />
                           </button>
@@ -389,10 +389,10 @@ export default function AnalyzeProblem() {
                               <button
                                 key={t}
                                 onClick={() => setInfoTab(t)}
-                                className={`px-4 py-2 uppercase tracking-wider font-bold transition-all ${
+                                className={`px-4 py-2 rounded-lg uppercase tracking-wider font-bold transition-all ${
                                   infoTab === t 
-                                    ? 'bg-white text-black' 
-                                    : 'text-gray-500 hover:text-white'
+                                    ? 'bg-black text-white' 
+                                    : 'text-gray-500 hover:text-black'
                                 }`}
                               >
                                 {t}
@@ -401,7 +401,7 @@ export default function AnalyzeProblem() {
                           </div>
 
                           {/* Tab content */}
-                          <div className="pb-8 text-gray-300">
+                          <div className="pb-8 text-gray-700">
                             {infoTab === 'overview' && (
                               <div className="space-y-4">
                                 <div>
@@ -488,8 +488,8 @@ export default function AnalyzeProblem() {
                     </div>
                   )}
                   
-                  <h3 className="text-xl font-bold uppercase tracking-wider mb-3">{bot.title}</h3>
-                  <p className="text-gray-400 mb-6">
+                  <h3 className="text-xl font-bold uppercase tracking-wider text-black mb-3">{bot.title}</h3>
+                  <p className="text-gray-600 mb-6">
                     {bot.description}
                   </p>
                   
@@ -501,9 +501,9 @@ export default function AnalyzeProblem() {
                     ))}
                   </div>
                   
-                  <div className="flex items-center justify-between text-xs uppercase tracking-wider pt-6 border-t border-gray-800">
-                    <span className="text-gray-600">TIME: {bot.effort}</span>
-                    <span className="font-bold text-green-500">SAVE {bot.savings}</span>
+                  <div className="flex items-center justify-between text-xs uppercase tracking-wider pt-6 border-t border-gray-200">
+                    <span className="text-gray-500">TIME: {bot.effort}</span>
+                    <span className="font-bold text-green-600">SAVE {bot.savings}</span>
                   </div>
                 </motion.button>
               ))}
@@ -512,10 +512,10 @@ export default function AnalyzeProblem() {
 
           {/* Advanced Solutions */}
           <div className="mb-16">
-            <h2 className="text-3xl font-bold uppercase tracking-wider text-center mb-4">
+            <h2 className="text-3xl font-bold uppercase tracking-wider text-center text-black mb-4">
               ADVANCED SOLUTIONS
             </h2>
-            <p className="text-center text-gray-500 uppercase tracking-wider text-sm mb-12">
+            <p className="text-center text-gray-600 uppercase tracking-wider text-sm mb-12">
               REQUIRES CONSULTATION AND CUSTOM SETUP
             </p>
             
@@ -529,13 +529,13 @@ export default function AnalyzeProblem() {
                   transition={{ delay: 0.5 + i * 0.1 }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="minimal-card bg-gray-900 border-gray-700 hover:border-gray-600 text-left relative cursor-pointer"
+                  className="minimal-card animate-pulse-shadow bg-gradient-to-br from-gray-50 to-blue-50 text-left relative cursor-pointer"
                 >
                   <div className="absolute top-6 right-6">
                     <Info className="w-5 h-5 text-gray-600" />
                   </div>
                   
-                  <h3 className="text-xl font-bold uppercase tracking-wider mb-3">{solution.title}</h3>
+                  <h3 className="text-xl font-bold uppercase tracking-wider text-black mb-3">{solution.title}</h3>
                   <p className="text-gray-400 mb-6">
                     {solution.description}
                   </p>
@@ -548,32 +548,32 @@ export default function AnalyzeProblem() {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       onClick={(e) => e.stopPropagation()}
-                      className="absolute left-0 right-0 top-full mt-4 p-8 bg-gray-800 border-2 border-gray-700 shadow-2xl z-50 text-left"
+                      className="absolute left-0 right-0 top-full mt-4 p-8 bg-white rounded-2xl shadow-2xl z-50 text-left"
                     >
                       <button
                         onClick={(e) => { e.stopPropagation(); setShowAdvancedInfo(null); }}
-                        className="absolute top-4 right-4 p-2 hover:bg-gray-700 transition-colors rounded"
+                        className="absolute top-4 right-4 p-2 hover:bg-gray-100 transition-colors rounded-lg"
                       >
                         <X className="w-5 h-5 text-gray-500" />
                       </button>
                       
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">WHAT IS THIS?</h4>
-                      <p className="text-sm text-gray-300 mb-6 leading-relaxed">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-gray-600 mb-3">WHAT IS THIS?</h4>
+                      <p className="text-sm text-gray-700 mb-6 leading-relaxed">
                         {solution.details.what}
                       </p>
                       
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">BENEFITS</h4>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-gray-600 mb-3">BENEFITS</h4>
                       <ul className="space-y-2 mb-6">
                         {solution.details.benefits.map((benefit, j) => (
-                          <li key={j} className="text-sm text-gray-300 flex items-start gap-2">
-                            <span className="text-white">→</span>
+                          <li key={j} className="text-sm text-gray-700 flex items-start gap-2">
+                            <span className="text-black">→</span>
                             <span>{benefit}</span>
                           </li>
                         ))}
                       </ul>
                       
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">EXAMPLES</h4>
-                      <p className="text-sm text-gray-400 italic">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-gray-600 mb-2">EXAMPLES</h4>
+                      <p className="text-sm text-gray-500 italic">
                         {solution.details.examples}
                       </p>
                     </motion.div>
