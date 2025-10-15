@@ -7,89 +7,240 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <main className="min-h-screen bg-white">
-      <div className="max-w-6xl mx-auto px-6 py-24">
+    <main className="min-h-screen bg-white relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 py-16 md:py-24 relative">
         
         {/* Hero */}
-        <div className="text-center mb-32">
+        <div className="text-center mb-32 relative">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
+            className="relative z-10"
           >
-            <div className="inline-flex items-center gap-2 mb-6">
-              <div className="w-2 h-2 bg-black rounded-full animate-pulse-dot" />
-              <span className="text-xs font-medium text-[#4B5563] uppercase tracking-wider">
-                AI-powered chatbots
-              </span>
-            </div>
-            
-            <h1 className="text-5xl md:text-6xl font-bold text-black mb-6 leading-tight">
-              Build a chatbot that<br />understands your business
+            <h1 className="text-5xl md:text-7xl font-bold text-black mb-6 leading-tight">
+              AI Bots That Understand<br />Your Business
             </h1>
             
-            <p className="text-lg text-[#4B5563] mb-12 max-w-2xl mx-auto leading-relaxed">
-              Trained on your website and documents. Ready to answer questions,
-              qualify leads and automate support in minutes.
+            <p className="text-xl md:text-2xl text-[#4B5563] mb-12 max-w-3xl mx-auto leading-relaxed">
+              We analyze your company and build custom bots to streamline work, 
+              reduce costs, and free up your team.
             </p>
             
-            <motion.button
-              onClick={() => router.push('/business/bot-builder/identify')}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-primary text-sm font-medium"
-            >
-              Get started free
-            </motion.button>
+            <div className="relative inline-block">
+              {/* Sketch arrows pointing to button */}
+              <svg className="absolute -left-24 -top-8 w-20 h-16 text-gray-400 hidden md:block" viewBox="0 0 80 64">
+                <path d="M5 30 Q 35 15, 65 25 L 58 20 M 65 25 L 60 32" 
+                      stroke="currentColor" strokeWidth="2" fill="none" 
+                      strokeLinecap="round" strokeDasharray="2 4"
+                      className="animate-draw-arrow" />
+              </svg>
+              
+              <svg className="absolute -right-20 -top-10 w-20 h-20 text-gray-400 hidden md:block" viewBox="0 0 80 80">
+                <path d="M75 35 Q 45 20, 15 30 L 22 25 M 15 30 L 20 37" 
+                      stroke="currentColor" strokeWidth="2" fill="none" 
+                      strokeLinecap="round" strokeDasharray="2 4"
+                      className="animate-draw-arrow-delayed" />
+              </svg>
+              
+              <svg className="absolute -left-16 top-16 w-24 h-12 text-gray-400 hidden md:block" viewBox="0 0 96 48">
+                <path d="M10 20 Q 40 35, 70 25 L 63 20 M 70 25 L 65 32" 
+                      stroke="currentColor" strokeWidth="2" fill="none" 
+                      strokeLinecap="round" strokeDasharray="2 4"
+                      className="animate-draw-arrow-delayed-2" />
+              </svg>
+
+              <motion.button
+                onClick={() => router.push('/business/bot-builder/identify')}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative px-12 py-5 bg-black text-white text-lg font-medium rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 animate-pulse-subtle"
+              >
+                Start for free
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+              </motion.button>
+            </div>
             
-            <p className="text-xs text-[#4B5563] mt-4">
-              No coding required · Free to try · 5 min setup
+            <p className="text-sm text-[#4B5563] mt-6 font-medium">
+              5-minute setup · No code · Tailored to you
             </p>
           </motion.div>
         </div>
 
-        {/* Three steps */}
-        <div className="grid md:grid-cols-3 gap-8 mb-24">
+        {/* How it works */}
+        <div className="mb-32">
+          <motion.h2 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-3xl md:text-4xl font-bold text-center mb-16"
+          >
+            How It Works
+          </motion.h2>
+          
+          <div className="grid md:grid-cols-3 gap-12">
             {[
-            { num: "01", title: "Analyze", desc: "Add URL and documents. AI scans your business." },
-            { num: "02", title: "Pick solution", desc: "Get AI recommendations and choose a bot type." },
-            { num: "03", title: "Launch", desc: "Install with one line of code and start saving time." }
-          ].map((step, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="text-center"
-            >
-              <div className="w-12 h-12 border-2 border-black rounded-full mx-auto mb-4 flex items-center justify-center">
-                <span className="text-lg font-semibold">{step.num}</span>
-              </div>
-              <h3 className="mb-2">{step.title}</h3>
-              <p className="text-sm text-[#4B5563]">{step.desc}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Results */}
-        <div className="card max-w-4xl mx-auto text-center">
-          <h2 className="mb-8">Expected results</h2>
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              { value: "60%", label: "Less support tickets" },
-              { value: "3x", label: "More qualified leads" },
-              { value: "24/7", label: "Always available" },
-              { value: "5 min", label: "Time to build" }
-            ].map((stat, i) => (
-              <div key={i}>
-                <div className="text-4xl font-bold mb-2">{stat.value}</div>
-                <p className="text-xs text-[#4B5563] uppercase tracking-wider">{stat.label}</p>
-              </div>
+              { 
+                num: "01", 
+                title: "We Analyze", 
+                desc: "We look at your site, content, and workflows to understand your unique needs." 
+              },
+              { 
+                num: "02", 
+                title: "We Build", 
+                desc: "Your AI bot is trained on your business – not generic data." 
+              },
+              { 
+                num: "03", 
+                title: "You Launch", 
+                desc: "Your bot is live in minutes, helping you save time and money." 
+              }
+            ].map((step, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
+                className="relative"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-16 h-16 bg-black text-white rounded-full flex items-center justify-center font-bold text-xl">
+                    {step.num}
+                  </div>
+                  <div className="pt-2">
+                    <h3 className="text-xl font-bold mb-2">{step.title}</h3>
+                    <p className="text-[#4B5563] leading-relaxed">{step.desc}</p>
+                  </div>
+                </div>
+                {i < 2 && (
+                  <div className="hidden md:block absolute top-8 left-[50%] w-full">
+                    <svg className="w-full h-2" viewBox="0 0 100 8">
+                      <path d="M0 4 L 90 4" stroke="#E5E7EB" strokeWidth="2" strokeDasharray="4 4" />
+                      <path d="M85 1 L 90 4 L 85 7" stroke="#E5E7EB" strokeWidth="2" fill="none" />
+                    </svg>
+                  </div>
+                )}
+              </motion.div>
             ))}
           </div>
         </div>
 
+        {/* Why it works */}
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="bg-gray-50 rounded-3xl p-12 md:p-16 text-center"
+        >
+          <h2 className="text-3xl md:text-4xl font-bold mb-12">Why It Works</h2>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 text-left">
+            {[
+              { 
+                icon: "🎯", 
+                title: "Custom-trained", 
+                desc: "On your content and brand voice" 
+              },
+              { 
+                icon: "💬", 
+                title: "Multi-purpose", 
+                desc: "Answers, support, lead qualification" 
+              },
+              { 
+                icon: "⚡", 
+                title: "Always on", 
+                desc: "Works 24/7 without burnout" 
+              },
+              { 
+                icon: "📈", 
+                title: "Scalable", 
+                desc: "Grows with your business" 
+              }
+            ].map((feature, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.7 + i * 0.05 }}
+                className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="text-3xl mb-4">{feature.icon}</div>
+                <h3 className="font-bold mb-2">{feature.title}</h3>
+                <p className="text-sm text-[#4B5563]">{feature.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Human touch CTA */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="text-center mt-24"
+        >
+          <h3 className="text-2xl md:text-3xl font-bold mb-4">
+            Let AI Take Care of the Repetitive Stuff
+          </h3>
+          <p className="text-lg text-[#4B5563] mb-8 max-w-2xl mx-auto">
+            So your team can focus on what truly matters – creativity, strategy, and human connection.
+          </p>
+          <button
+            onClick={() => router.push('/business/bot-builder/identify')}
+            className="btn-secondary"
+          >
+            Get started – it's free
+          </button>
+        </motion.div>
+
       </div>
+
+      <style jsx>{`
+        @keyframes draw-arrow {
+          0% { stroke-dashoffset: 100; opacity: 0; }
+          50% { opacity: 1; }
+          100% { stroke-dashoffset: 0; opacity: 0.8; }
+        }
+        
+        @keyframes draw-arrow-delayed {
+          0%, 20% { stroke-dashoffset: 100; opacity: 0; }
+          70% { opacity: 1; }
+          100% { stroke-dashoffset: 0; opacity: 0.8; }
+        }
+        
+        @keyframes draw-arrow-delayed-2 {
+          0%, 40% { stroke-dashoffset: 100; opacity: 0; }
+          90% { opacity: 1; }
+          100% { stroke-dashoffset: 0; opacity: 0.8; }
+        }
+        
+        @keyframes pulse-subtle {
+          0%, 100% { 
+            transform: scale(1); 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+          }
+          50% { 
+            transform: scale(1.02); 
+            box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.15), 0 15px 15px -5px rgba(0, 0, 0, 0.06);
+          }
+        }
+        
+        .animate-draw-arrow {
+          animation: draw-arrow 3s ease-out infinite;
+        }
+        
+        .animate-draw-arrow-delayed {
+          animation: draw-arrow-delayed 3s ease-out infinite;
+        }
+        
+        .animate-draw-arrow-delayed-2 {
+          animation: draw-arrow-delayed-2 3s ease-out infinite;
+        }
+        
+        .animate-pulse-subtle {
+          animation: pulse-subtle 3s ease-in-out infinite;
+        }
+      `}</style>
     </main>
   );
 }
