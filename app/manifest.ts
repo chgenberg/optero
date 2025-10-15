@@ -2,9 +2,9 @@ import { MetadataRoute } from 'next'
  
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Mendio - AI för ditt yrke',
+    name: 'Mendio — AI that understands your business',
     short_name: 'Mendio',
-    description: 'Hitta AI-verktyg och prompts anpassade för ditt yrke',
+    description: 'AI chatbots that understand your business',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',
