@@ -13,15 +13,26 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Bot ID required' }, { status: 400 });
     }
 
-    const [bot, botIntegration] = await Promise.all([
-      prisma.bot.findUnique({
-        where: { id: botId },
-        select: { spec: true }
-      }),
-      prisma.botIntegration.findUnique({
+    // Fetch bot
+    const bot = await prisma.bot.findUnique({
+      where: { id: botId },
+      select: { spec: true }
+    });
+    
+    // Try to fetch bot integration, but handle if table doesn't exist
+    let botIntegration = null;
+    try {
+      botIntegration = await prisma.botIntegration.findUnique({
         where: { botId }
-      })
-    ]);
+      });
+    } catch (error: any) {
+      if (error.code === 'P2021') {
+        // Table doesn't exist yet - migration pending
+        console.log('BotIntegration table not found - migration pending');
+      } else {
+        throw error;
+      }
+    }
 
     if (!bot) {
       return NextResponse.json({ error: 'Bot not found' }, { status: 404 });
@@ -51,7 +62,7 @@ export async function GET(req: NextRequest) {
     if (spec.hubspotEnabled || botIntegration?.hubspotTokenEnc) {
       integrations.hubspot = {
         enabled: spec.hubspotEnabled || false,
-        apiKey: botIntegration?.hubspotTokenEnc ? decryptSecret(botIntegration.hubspotTokenEnc) : ''
+        apiKey: botIntegration?.hubspotTokenEnc ? (decryptSecret(botIntegration.hubspotTokenEnc) || '') : ''
       };
     }
 
@@ -60,7 +71,7 @@ export async function GET(req: NextRequest) {
       integrations.zendesk = {
         domain: botIntegration.zendeskDomain || '',
         email: botIntegration.zendeskEmail || '',
-        apiToken: botIntegration.zendeskApiTokenEnc ? decryptSecret(botIntegration.zendeskApiTokenEnc) : ''
+        apiToken: botIntegration.zendeskApiTokenEnc ? (decryptSecret(botIntegration.zendeskApiTokenEnc) || '') : ''
       };
     }
 
@@ -68,7 +79,7 @@ export async function GET(req: NextRequest) {
     if (botIntegration?.shopifyDomain || botIntegration?.shopifyAccessTokenEnc) {
       integrations.shopify = {
         domain: botIntegration.shopifyDomain || '',
-        accessToken: botIntegration.shopifyAccessTokenEnc ? decryptSecret(botIntegration.shopifyAccessTokenEnc) : ''
+        accessToken: botIntegration.shopifyAccessTokenEnc ? (decryptSecret(botIntegration.shopifyAccessTokenEnc) || '') : ''
       };
     }
 

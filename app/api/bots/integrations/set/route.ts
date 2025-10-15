@@ -120,11 +120,30 @@ export async function POST(req: NextRequest) {
 
     // Update or create integration record
     if (Object.keys(integrationData).length > 0) {
-      await prisma.botIntegration.upsert({
-        where: { botId },
-        update: integrationData,
-        create: { botId, ...integrationData },
-      });
+      try {
+        await prisma.botIntegration.upsert({
+          where: { botId },
+          update: integrationData,
+          create: { botId, ...integrationData },
+        });
+      } catch (error: any) {
+        if (error.code === 'P2021') {
+          // Table doesn't exist yet - migration pending
+          console.log('BotIntegration table not found - storing all data in spec temporarily');
+          // Store encrypted values in spec as fallback
+          if (integrationData.zendeskApiTokenEnc) {
+            specUpdate.zendeskApiTokenEnc = integrationData.zendeskApiTokenEnc;
+          }
+          if (integrationData.hubspotTokenEnc) {
+            specUpdate.hubspotTokenEnc = integrationData.hubspotTokenEnc;
+          }
+          if (integrationData.shopifyAccessTokenEnc) {
+            specUpdate.shopifyAccessTokenEnc = integrationData.shopifyAccessTokenEnc;
+          }
+        } else {
+          throw error;
+        }
+      }
     }
 
     return NextResponse.json({ success: true });
