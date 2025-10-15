@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Upload, X, Info, Plus } from "lucide-react";
+import { Upload, X, Info, Plus, Check, Palette, Type, MessageSquare, Clock, Link2 } from "lucide-react";
 
 export default function CustomizeBotPage() {
   const router = useRouter();
@@ -17,750 +17,755 @@ export default function CustomizeBotPage() {
     logoOffset: { x: 20, y: 20 },
     fontUrl: null
   });
+  const [customHex, setCustomHex] = useState('#000000');
   const [loading, setLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [additionalInfo, setAdditionalInfo] = useState("");
-  const [showInfo, setShowInfo] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'brand'|'interaction'|'advanced'>('brand');
+  
   // Bot type
   const [botType, setBotType] = useState<string>('knowledge');
   const [botSubtype, setBotSubtype] = useState<string>('');
+  
   // Interaction config
   const [welcomeMessage, setWelcomeMessage] = useState<string>("");
   const [quickReplies, setQuickReplies] = useState<string[]>([]);
   const [newQuickReply, setNewQuickReply] = useState<string>("");
   const [ctaLabel, setCtaLabel] = useState<string>("Book a demo");
   const [ctaUrl, setCtaUrl] = useState<string>("");
+  
   // Advanced response controls
   const [responseLength, setResponseLength] = useState<'short'|'normal'|'long'>('normal');
   const [fallbackText, setFallbackText] = useState<string>("");
-  // Working hours
-  const [startHour, setStartHour] = useState<number>(8);
+  const [startHour, setStartHour] = useState<number>(9);
   const [endHour, setEndHour] = useState<number>(17);
-  const [offHoursMessage, setOffHoursMessage] = useState<string>('We are offline right now. Please leave your email and we will get back to you.');
+  const [offHoursMessage, setOffHoursMessage] = useState<string>('We are offline right now. Please leave your message.');
+  
   // Custom buttons
   type CustomButton = { label: string; url: string };
   const [customButtons, setCustomButtons] = useState<CustomButton[]>([]);
-  const [newBtnLabel, setNewBtnLabel] = useState<string>('');
-  const [newBtnUrl, setNewBtnUrl] = useState<string>('');
+  
   // Type-specific settings
-  // Lead
-  const [leadRequireEmail, setLeadRequireEmail] = useState<boolean>(true);
-  const [leadRequirePhone, setLeadRequirePhone] = useState<boolean>(false);
-  const [leadRequireName, setLeadRequireName] = useState<boolean>(true);
-  const [leadRequireCompany, setLeadRequireCompany] = useState<boolean>(false);
-  const [leadQuestions, setLeadQuestions] = useState<string[]>([]);
-  const [newLeadQuestion, setNewLeadQuestion] = useState<string>('');
-  // Support
-  const [supportCategories, setSupportCategories] = useState<string[]>(['General']);
-  const [newSupportCategory, setNewSupportCategory] = useState<string>('');
-  const [supportCollectPriority, setSupportCollectPriority] = useState<boolean>(true);
-  const [supportRequireEmail, setSupportRequireEmail] = useState<boolean>(true);
-  // Booking (workflow)
-  const [bookingServices, setBookingServices] = useState<string[]>([]);
-  const [newBookingService, setNewBookingService] = useState<string>('');
-  const [bookingDefaultDuration, setBookingDefaultDuration] = useState<number>(30);
-  const [bookingTimezone, setBookingTimezone] = useState<string>('UTC');
-  const [bookingRequireEmail, setBookingRequireEmail] = useState<boolean>(true);
-  // Ecommerce (workflow)
-  const [ecomRecommend, setEcomRecommend] = useState<boolean>(true);
-  const [ecomOrderLookupMode, setEcomOrderLookupMode] = useState<'email_order'|'order_only'>('email_order');
-  const [ecomReturnsPolicy, setEcomReturnsPolicy] = useState<string>('');
-  // Knowledge
-  const [knowledgeCiteSources, setKnowledgeCiteSources] = useState<boolean>(true);
+  const [leadRequiredFields, setLeadRequiredFields] = useState({
+    email: true,
+    phone: false,
+    name: true,
+    company: false
+  });
+  const [supportCategories, setSupportCategories] = useState<string[]>(['Technical', 'Billing', 'General']);
+  const [bookingServices, setBookingServices] = useState<string[]>(['Consultation', 'Demo']);
+  const [ecommerceRecommendations, setEcommerceRecommendations] = useState(true);
+  const [knowledgeCiteSources, setKnowledgeCiteSources] = useState(false);
 
   useEffect(() => {
-    const problemData = sessionStorage.getItem("botProblemData");
-    const url = sessionStorage.getItem("botWebsiteUrl");
+    const storedType = sessionStorage.getItem("selectedBotType");
+    const storedSubtype = sessionStorage.getItem("selectedBotSubtype");
     
-    if (!problemData || !url) {
-      router.push("/business/bot-builder");
-      return;
+    if (storedType) {
+      setBotType(storedType);
+      setBotSubtype(storedSubtype || '');
+      
+      // Set default welcome messages based on type
+      const welcomeDefaults: Record<string, string> = {
+        'lead': 'Hi! I can help you find the perfect solution for your needs.',
+        'support': 'Hello! How can I assist you today?',
+        'workflow': 'Welcome! I\'m here to help you get things done quickly.',
+        'knowledge': 'Hi there! Ask me anything about our products and services.'
+      };
+      setWelcomeMessage(welcomeDefaults[storedType] || welcomeDefaults.knowledge);
     }
+    
+    detectBrand();
+  }, []);
 
+  const detectBrand = async () => {
+    const url = sessionStorage.getItem("botWebsiteUrl");
+    if (!url) return;
+
+    setLoading(true);
     try {
-      const parsed = JSON.parse(problemData);
-      if (parsed?.botType) setBotType(parsed.botType);
-      if (parsed?.botSubtype) setBotSubtype(parsed.botSubtype);
-    } catch {}
-
-    detectBrand(url);
-  }, [router]);
-
-  const detectBrand = async (url: string) => {
-    try {
-      const res = await fetch('/api/bots/detect-brand', {
+      const response = await fetch('/api/bots/detect-brand', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url })
       });
-      const data = await res.json();
+      
+      const data = await response.json();
       if (data.brand) {
         setBrand({
           ...brand,
           ...data.brand,
           logoOffset: data.brand.logoOffset || { x: 20, y: 20 }
         });
+        setCustomHex(data.brand.primaryColor || '#000000');
       }
     } catch (error) {
-      console.error('Brand detection failed:', error);
-    }
-  };
-
-  const uploadLogo = async (file: File) => {
-    if (!file) return;
-    setLoading(true);
-    const formData = new FormData();
-    formData.append('logo', file);
-
-    try {
-      const res = await fetch('/api/uploads/logo', {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await res.json();
-      if (data.logoUrl) {
-        setBrand(prev => ({ ...prev, logoUrl: data.logoUrl }));
-      }
-    } catch (error) {
-      console.error('Error uploading logo:', error);
+      console.error('Brand detection error:', error);
     } finally {
       setLoading(false);
     }
   };
 
+  const uploadLogo = async (file: File) => {
+    const formData = new FormData();
+    formData.append('logo', file);
+    
+    try {
+      const response = await fetch('/api/uploads/logo', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setBrand({ ...brand, logoUrl: data.url });
+      }
+    } catch (error) {
+      console.error('Logo upload error:', error);
+    }
+  };
+
   const handleFileSelect = (files: FileList | null) => {
     if (!files) return;
-    const allowed = Array.from(files).filter(f => {
-      const n = f.name.toLowerCase();
-      return n.endsWith('.pdf') || n.endsWith('.docx') || n.endsWith('.doc') || 
-             n.endsWith('.xlsx') || n.endsWith('.xls') || n.endsWith('.txt');
-    });
-    setUploadedFiles(prev => [...prev, ...allowed]);
+    const imageFile = Array.from(files).find(f => 
+      f.type.startsWith('image/')
+    );
+    if (imageFile) {
+      uploadLogo(imageFile);
+    }
   };
 
-  const removeFile = (index: number) => {
-    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+  const updateHexColor = (hex: string) => {
+    const validHex = /^#[0-9A-F]{6}$/i.test(hex);
+    if (validHex) {
+      setCustomHex(hex);
+      setBrand({ ...brand, primaryColor: hex });
+    }
   };
 
-  const handleContinue = async () => {
-    // Save brand + interaction config
-    const brandWithInteraction = { 
-      ...brand, 
-      welcomeMessage, 
+  const addQuickReply = () => {
+    if (newQuickReply.trim() && quickReplies.length < 3) {
+      setQuickReplies([...quickReplies, newQuickReply.trim()]);
+      setNewQuickReply("");
+    }
+  };
+
+  const addCustomButton = () => {
+    const label = prompt("Button text:");
+    const url = prompt("Button URL:");
+    if (label && url) {
+      setCustomButtons([...customButtons, { label, url }]);
+    }
+  };
+
+  const handleContinue = () => {
+    sessionStorage.setItem("botBrandConfig", JSON.stringify({
+      ...brand,
+      welcomeMessage,
       quickReplies,
       responseLength,
-      fallbackText,
-      workingHours: { startHour, endHour, offHoursMessage },
-      buttons: customButtons
+      fallbackText: fallbackText || `I don't have information about that. Would you like to speak with our team?`,
+      workingHoursStart: startHour,
+      workingHoursEnd: endHour,
+      offHoursMessage,
+      customButtons
+    }));
+    
+    sessionStorage.setItem("botIntegrations", JSON.stringify({
+      calendlyUrl: ctaUrl || '',
+      ctaLabel: ctaLabel || ''
+    }));
+    
+    const typeSettings = {
+      lead: leadRequiredFields,
+      support: { categories: supportCategories },
+      workflow: { 
+        booking: { services: bookingServices },
+        ecommerce: { recommendations: ecommerceRecommendations }
+      },
+      knowledge: { citeSources: knowledgeCiteSources }
     };
-    sessionStorage.setItem("botBrandConfig", JSON.stringify(brandWithInteraction));
-
-    // Save type-specific settings
-    const typeSettings: any = { botType, botSubtype };
-    if (botType === 'lead') {
-      typeSettings.lead = {
-        requiredFields: {
-          email: leadRequireEmail,
-          phone: leadRequirePhone,
-          name: leadRequireName,
-          company: leadRequireCompany
-        },
-        qualificationQuestions: leadQuestions
-      };
-    } else if (botType === 'support') {
-      typeSettings.support = {
-        categories: supportCategories,
-        collectPriority: supportCollectPriority,
-        requireEmail: supportRequireEmail
-      };
-    } else if (botType === 'workflow' && (botSubtype || '').includes('booking')) {
-      typeSettings.booking = {
-        services: bookingServices,
-        defaultDuration: bookingDefaultDuration,
-        timezone: bookingTimezone,
-        requireEmail: bookingRequireEmail
-      };
-    } else if (botType === 'workflow' && (botSubtype || '').includes('ecommerce')) {
-      typeSettings.ecommerce = {
-        recommend: ecomRecommend,
-        orderLookupMode: ecomOrderLookupMode,
-        returnsPolicy: ecomReturnsPolicy
-      };
-    } else if (botType === 'knowledge') {
-      typeSettings.knowledge = {
-        citeSources: knowledgeCiteSources
-      };
-    }
-    sessionStorage.setItem('botTypeSettings', JSON.stringify(typeSettings));
     
-    if (uploadedFiles.length > 0) {
-      const fd = new FormData();
-      uploadedFiles.forEach(f => fd.append('files', f));
-      
-      try {
-        const res = await fetch('/api/business/upload-documents', {
-          method: 'POST',
-          body: fd
-        });
-        
-        if (res.ok) {
-          const data = await res.json();
-          const existingDocs = sessionStorage.getItem("botDocuments") || "";
-          sessionStorage.setItem("botDocuments", existingDocs + "\n\n" + data.content);
-        }
-      } catch (error) {
-        console.error('Document upload error:', error);
-      }
-    }
+    sessionStorage.setItem("botTypeSettings", JSON.stringify(typeSettings));
+    sessionStorage.setItem("botAdditionalContext", additionalInfo);
     
-    sessionStorage.setItem("botAdditionalInfo", additionalInfo);
-
-    // Save integrations (CTA / Calendly)
-    try {
-      const existing = JSON.parse(sessionStorage.getItem("botIntegrations") || '{}');
-      const merged = { ...existing, calendlyUrl: ctaUrl || null, ctaLabel: ctaLabel || null };
-      sessionStorage.setItem("botIntegrations", JSON.stringify(merged));
-    } catch {}
     router.push("/business/bot-builder/solution");
   };
 
-  const colors = ['#000000', '#1E40AF', '#DC2626', '#059669', '#7C3AED', '#D97706'];
-  const tones = [
-    { value: 'professional', label: 'Professional' },
-    { value: 'casual', label: 'Casual' },
-    { value: 'formal', label: 'Formal' }
+  const colorPresets = [
+    { name: 'BLACK', hex: '#000000' },
+    { name: 'GRAY', hex: '#6B7280' },
+    { name: 'BLUE', hex: '#3B82F6' },
+    { name: 'GREEN', hex: '#10B981' },
+    { name: 'RED', hex: '#EF4444' }
+  ];
+
+  const fontPresets = [
+    { name: 'INTER', value: 'Inter' },
+    { name: 'HELVETICA', value: 'Helvetica' },
+    { name: 'GEORGIA', value: 'Georgia' },
+    { name: 'MONO', value: 'monospace' }
+  ];
+
+  const tonePresets = [
+    { name: 'PROFESSIONAL', value: 'professional' },
+    { name: 'FRIENDLY', value: 'casual' },
+    { name: 'FORMAL', value: 'formal' }
   ];
 
   return (
-    <div className="min-h-screen bg-white p-6">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-6xl mx-auto p-8">
         {/* Progress */}
-        <div className="flex justify-center mb-12">
-            <div className="flex items-center gap-2">
-          <div className="w-8 h-[2px] bg-[#E5E7EB]" />
-          <span className="text-xs font-medium text-[#4B5563] px-3">Step 3</span>
-          <div className="w-8 h-[2px] bg-[#E5E7EB]" />
-        </div>
+        <div className="flex justify-center mb-20">
+          <div className="flex items-center gap-8">
+            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+              <Check className="w-6 h-6" />
+            </div>
+            <div className="w-24 h-[2px] bg-gray-800" />
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="w-16 h-16 bg-white text-black font-bold text-xl flex items-center justify-center animate-pulse-box"
+            >
+              02
+            </motion.div>
+            <div className="w-24 h-[2px] bg-gray-800" />
+            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+              03
+            </div>
+          </div>
         </div>
 
-        <motion.div
+        {/* Header */}
+        <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          className="text-center mb-16"
         >
-          <div className="text-center mb-12">
-            <h1>Customize your bot</h1>
-          </div>
+          <h1 className="text-5xl font-bold uppercase tracking-wider mb-4">
+            CUSTOMIZE YOUR BOT
+          </h1>
+          <p className="text-gray-500 uppercase tracking-wider text-sm">
+            STEP 02 — BRAND & BEHAVIOR
+          </p>
+        </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* Left - Configuration */}
-            <div className="space-y-8">
-              {/* Brand */}
-              <div className="card relative">
-                <div className="flex items-center justify-between mb-4">
-                  <h3>Brand</h3>
-                  <button
-                    onClick={() => setShowInfo(showInfo === 'brand' ? null : 'brand')}
-                    className="p-2 hover:bg-[#F9FAFB] rounded-full transition-colors"
-                  >
-                    <Info className="w-4 h-4 text-[#9CA3AF]" />
-                  </button>
+        {/* Tab Navigation */}
+        <div className="flex justify-center mb-12">
+          <div className="inline-flex bg-gray-900 p-1">
+            {(['brand', 'interaction', 'advanced'] as const).map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-8 py-3 uppercase tracking-wider text-sm font-bold transition-all duration-300 ${
+                  activeTab === tab 
+                    ? 'bg-white text-black' 
+                    : 'text-gray-500 hover:text-white'
+                }`}
+              >
+                {tab === 'brand' && <Palette className="w-4 h-4 inline mr-2" />}
+                {tab === 'interaction' && <MessageSquare className="w-4 h-4 inline mr-2" />}
+                {tab === 'advanced' && <Clock className="w-4 h-4 inline mr-2" />}
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="grid grid-cols-3 gap-8">
+          {/* Left Column - Settings */}
+          <div className="col-span-2 space-y-8">
+            {activeTab === 'brand' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-8"
+              >
+                {/* Colors */}
+                <div className="minimal-card bg-gray-900 border-gray-800">
+                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">COLORS</h3>
+                  
+                  <div className="space-y-6">
+                    <div>
+                      <label className="minimal-label text-gray-400 mb-4">PRESET COLORS</label>
+                      <div className="flex gap-4">
+                        {colorPresets.map(color => (
+                          <button
+                            key={color.hex}
+                            onClick={() => updateHexColor(color.hex)}
+                            className={`w-20 h-20 border-2 transition-all duration-300 ${
+                              brand.primaryColor === color.hex ? 'border-white scale-110' : 'border-gray-700 hover:border-gray-500'
+                            }`}
+                            style={{ backgroundColor: color.hex }}
+                          >
+                            <span className="sr-only">{color.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="minimal-label text-gray-400">CUSTOM HEX COLOR</label>
+                      <div className="flex gap-4 items-center">
+                        <input
+                          type="text"
+                          value={customHex}
+                          onChange={(e) => setCustomHex(e.target.value)}
+                          onBlur={(e) => updateHexColor(e.target.value)}
+                          placeholder="#000000"
+                          className="minimal-input bg-transparent text-white w-32"
+                        />
+                        <div 
+                          className="w-20 h-12 border-2 border-gray-700"
+                          style={{ backgroundColor: customHex }}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                
-                {showInfo === 'brand' && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="absolute left-0 right-0 top-full mt-2 p-4 bg-white border border-[#E5E7EB] rounded-xl shadow-lg z-10"
-                  >
-                    <p className="text-sm text-[#4B5563] leading-relaxed">
-                      Anpassa botens utseende efter ditt varumärke. Vi har automatiskt 
-                      detekterat färger från din webbplats.
-                    </p>
-                  </motion.div>
-                )}
-                
-                <div className="flex gap-3 mb-6">
-                  {colors.map(color => (
-                    <motion.button
-                      key={color}
-                      onClick={() => setBrand({ ...brand, primaryColor: color })}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`w-12 h-12 rounded-full border-2 transition-all ${
-                        brand.primaryColor === color ? 'border-black scale-110' : 'border-[#E5E7EB]'
-                      }`}
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
+
+                {/* Typography */}
+                <div className="minimal-card bg-gray-900 border-gray-800">
+                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">TYPOGRAPHY</h3>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    {fontPresets.map(font => (
+                      <button
+                        key={font.value}
+                        onClick={() => setBrand({ ...brand, fontFamily: font.value })}
+                        className={`p-6 border-2 transition-all duration-300 ${
+                          brand.fontFamily === font.value 
+                            ? 'border-white bg-gray-800' 
+                            : 'border-gray-700 hover:border-gray-500'
+                        }`}
+                      >
+                        <p className="text-sm font-bold uppercase tracking-wider mb-2">{font.name}</p>
+                        <p style={{ fontFamily: font.value }} className="text-2xl">
+                          Hello World
+                        </p>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                
+
                 {/* Logo */}
-                <div>
-                  <label className="text-xs font-medium text-[#4B5563] block mb-3">
-                    Logo
-                  </label>
+                <div className="minimal-card bg-gray-900 border-gray-800">
+                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">LOGO</h3>
+                  
                   <div
                     onDragOver={(e) => e.preventDefault()}
-                    onDrop={async (e) => {
+                    onDrop={(e) => {
                       e.preventDefault();
-                      const file = e.dataTransfer.files?.[0];
-                      if (file) await uploadLogo(file);
+                      handleFileSelect(e.dataTransfer.files);
                     }}
-                    className="border-2 border-dashed border-[#E5E7EB] rounded-xl p-8 text-center hover:border-[#4B5563] transition-colors cursor-pointer"
+                    className="border-2 border-dashed border-gray-700 p-12 text-center hover:border-gray-500 transition-colors cursor-pointer"
                   >
                     <label className="cursor-pointer">
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0];
-                          if (file) await uploadLogo(file);
-                        }}
+                        onChange={(e) => handleFileSelect(e.target.files)}
                         className="hidden"
                       />
                       {brand.logoUrl ? (
-                        <img src={brand.logoUrl} alt="Logo" className="h-16 mx-auto mb-3" />
+                        <div>
+                          <img src={brand.logoUrl} alt="Logo" className="h-16 mx-auto mb-4" />
+                          <p className="text-sm text-gray-500 uppercase tracking-wider">
+                            CLICK TO REPLACE
+                          </p>
+                        </div>
                       ) : (
-                        <Upload className="w-8 h-8 text-[#9CA3AF] mx-auto mb-3" />
+                        <>
+                          <Upload className="w-10 h-10 text-gray-600 mx-auto mb-4" />
+                          <p className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-2">
+                            UPLOAD LOGO
+                          </p>
+                          <p className="text-xs text-gray-600 uppercase tracking-wider">
+                            PNG • SVG • JPG
+                          </p>
+                        </>
                       )}
-                      <p className="text-sm font-medium text-[#4B5563]">
-                        {brand.logoUrl ? 'Change logo' : 'Upload logo'}
-                      </p>
                     </label>
                   </div>
                 </div>
-              </div>
 
-              {/* Tone */}
-              <div className="card">
-                <h3 className="mb-4">Tone</h3>
-                <div className="flex gap-3">
-                  {tones.map(tone => (
-                    <motion.button
-                      key={tone.value}
-                      onClick={() => setBrand({ ...brand, tone: tone.value })}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className={`flex-1 px-4 py-3 border-2 rounded-xl text-sm font-medium transition-all ${
-                        brand.tone === tone.value
-                          ? 'border-black bg-black text-white'
-                          : 'border-[#E5E7EB] hover:border-[#4B5563]'
-                      }`}
-                    >
-                      {tone.label}
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Training */}
-              <div className="card">
-                <h3 className="mb-4">
-                  Targeted training
-                  <span className="ml-2 text-[#9CA3AF] font-normal text-sm">(optional)</span>
-                </h3>
-                
-                <div
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    handleFileSelect(e.dataTransfer.files);
-                  }}
-                  className="border-2 border-dashed border-[#E5E7EB] rounded-xl p-6 text-center hover:border-[#4B5563] transition-colors cursor-pointer mb-4"
-                >
-                  <label className="cursor-pointer">
-                    <input
-                      type="file"
-                      multiple
-                      accept=".pdf,.docx,.doc,.xlsx,.xls,.txt"
-                      onChange={(e) => handleFileSelect(e.target.files)}
-                      className="hidden"
-                    />
-                    <p className="text-sm font-medium text-[#4B5563] mb-1">
-                      Upload documents
-                    </p>
-                    <p className="text-xs text-[#9CA3AF]">
-                      FAQs, manuals, price list
-                    </p>
-                  </label>
-                </div>
-                
-                {uploadedFiles.length > 0 && (
-                  <div className="space-y-2 mb-4">
-                    {uploadedFiles.map((file, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="flex items-center justify-between p-3 bg-[#F9FAFB] rounded-lg"
+                {/* Tone */}
+                <div className="minimal-card bg-gray-900 border-gray-800">
+                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">TONE OF VOICE</h3>
+                  
+                  <div className="space-y-4">
+                    {tonePresets.map(tone => (
+                      <button
+                        key={tone.value}
+                        onClick={() => setBrand({ ...brand, tone: tone.value })}
+                        className={`w-full p-4 border-2 text-left transition-all duration-300 ${
+                          brand.tone === tone.value 
+                            ? 'border-white bg-gray-800' 
+                            : 'border-gray-700 hover:border-gray-500'
+                        }`}
                       >
-                        <span className="text-sm">{file.name}</span>
-                        <button
-                          onClick={() => removeFile(i)}
-                          className="p-1 hover:bg-[#E5E7EB] rounded-full transition-colors"
-                        >
-                          <X className="w-4 h-4 text-[#4B5563]" />
-                        </button>
-                      </motion.div>
+                        <p className="font-bold uppercase tracking-wider mb-1">{tone.name}</p>
+                        <p className="text-sm text-gray-500">
+                          {tone.value === 'professional' && 'Clear, concise, and business-focused'}
+                          {tone.value === 'casual' && 'Friendly, approachable, and conversational'}
+                          {tone.value === 'formal' && 'Polite, respectful, and traditional'}
+                        </p>
+                      </button>
                     ))}
                   </div>
-                )}
-                
-                <textarea
-                  value={additionalInfo}
-                  onChange={(e) => setAdditionalInfo(e.target.value)}
-                  placeholder="Describe special instructions or key FAQs the bot should handle..."
-                  className="w-full p-4 border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors resize-none h-32 text-sm"
-                />
-              </div>
+                </div>
+              </motion.div>
+            )}
 
-              {/* Interaction */}
-              <div className="card">
-                <h3 className="mb-4">Interaction</h3>
-
-                {/* Welcome message */}
-                <div className="mb-6">
-                  <label className="text-xs font-medium text-[#4B5563] block mb-2">Welcome message</label>
-                  <input
+            {activeTab === 'interaction' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-8"
+              >
+                {/* Welcome Message */}
+                <div className="minimal-card bg-gray-900 border-gray-800">
+                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">WELCOME MESSAGE</h3>
+                  <textarea
                     value={welcomeMessage}
                     onChange={(e) => setWelcomeMessage(e.target.value)}
-                    placeholder="Hej! Hur kan jag hjälpa dig idag?"
-                    className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors text-sm"
+                    placeholder="Hi! How can I help you today?"
+                    className="w-full h-24 bg-transparent border-2 border-gray-700 p-4 text-white focus:border-white focus:outline-none transition-colors"
                   />
                 </div>
 
-                {/* Quick replies */}
-                <div className="mb-6">
-                  <label className="text-xs font-medium text-[#4B5563] block mb-2">Suggested questions</label>
-                  <div className="flex gap-2 mb-3">
-                    <input
-                      value={newQuickReply}
-                      onChange={(e) => setNewQuickReply(e.target.value)}
-                      placeholder="Add suggestion..."
-                      className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors text-sm"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const v = (newQuickReply || '').trim();
-                        if (!v) return;
-                        setQuickReplies(prev => Array.from(new Set([...prev, v])).slice(0, 6));
-                        setNewQuickReply("");
-                      }}
-                      className="px-3 py-2 border border-[#E5E7EB] rounded-xl hover:border-black transition-colors"
-                    >
-                      <Plus className="w-4 h-4" />
-                    </button>
-                  </div>
-                  {quickReplies.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {quickReplies.map((q, i) => (
-                        <span key={i} className="px-3 py-1 text-sm border border-[#E5E7EB] rounded-full inline-flex items-center gap-2">
-                          {q}
-                          <button onClick={() => setQuickReplies(prev => prev.filter((_, idx) => idx !== i))} className="text-[#9CA3AF] hover:text-black">×</button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* CTA / Calendly */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-xs font-medium text-[#4B5563] block mb-2">CTA label</label>
-                    <input
-                      value={ctaLabel}
-                      onChange={(e) => setCtaLabel(e.target.value)}
-                      placeholder="Book a demo"
-                      className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-medium text-[#4B5563] block mb-2">CTA link (Calendly)</label>
-                    <input
-                      value={ctaUrl}
-                      onChange={(e) => setCtaUrl(e.target.value)}
-                      placeholder="https://calendly.com/.."
-                      className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors text-sm"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Response policy */}
-              <div className="card">
-                <h3 className="mb-4">Response policy</h3>
-                <div className="grid md:grid-cols-3 gap-3 mb-4">
-                    {[
-                    { key: 'short', label: 'Short' },
-                    { key: 'normal', label: 'Normal' },
-                    { key: 'long', label: 'Long' }
-                  ].map((opt: any) => (
-                    <button
-                      key={opt.key}
-                      onClick={() => setResponseLength(opt.key)}
-                      className={`px-4 py-2 border-2 rounded-xl text-sm font-medium ${responseLength===opt.key ? 'border-black bg-black text-white' : 'border-[#E5E7EB] hover:border-[#4B5563]'}`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-                <label className="text-xs font-medium text-[#4B5563] block mb-2">Fallback answer</label>
-                <input
-                  value={fallbackText}
-                  onChange={(e) => setFallbackText(e.target.value)}
-                  placeholder="I'm not sure about that. Would you like to leave your email and we'll follow up?"
-                  className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors text-sm"
-                />
-              </div>
-
-              {/* Working hours */}
-              <div className="card">
-                <h3 className="mb-4">Opening hours</h3>
-                <div className="grid grid-cols-3 gap-3 mb-3">
-                  <div>
-                    <label className="text-xs font-medium text-[#4B5563] block mb-1">Start</label>
-                    <input type="number" min={0} max={23} value={startHour} onChange={(e)=>setStartHour(Number(e.target.value))} className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
-                  </div>
-                  <div>
-                    <label className="text-xs font-medium text-[#4B5563] block mb-1">End</label>
-                    <input type="number" min={0} max={23} value={endHour} onChange={(e)=>setEndHour(Number(e.target.value))} className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
-                  </div>
-                </div>
-                <label className="text-xs font-medium text-[#4B5563] block mb-2">Off‑hours message</label>
-                <input value={offHoursMessage} onChange={(e)=>setOffHoursMessage(e.target.value)} className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
-              </div>
-
-              {/* Bot-specific settings */}
-              <div className="card">
-                <h3 className="mb-4">Bot-specific settings</h3>
-                {botType === 'lead' && (
+                {/* Quick Replies */}
+                <div className="minimal-card bg-gray-900 border-gray-800">
+                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">QUICK REPLIES</h3>
+                  
                   <div className="space-y-4">
-                    <p className="text-xs text-[#4B5563]">Required lead fields</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <label className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={leadRequireEmail} onChange={(e)=>setLeadRequireEmail(e.target.checked)} className="w-4 h-4" /> Email
-                      </label>
-                      <label className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={leadRequirePhone} onChange={(e)=>setLeadRequirePhone(e.target.checked)} className="w-4 h-4" /> Phone
-                      </label>
-                      <label className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={leadRequireName} onChange={(e)=>setLeadRequireName(e.target.checked)} className="w-4 h-4" /> Name
-                      </label>
-                      <label className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={leadRequireCompany} onChange={(e)=>setLeadRequireCompany(e.target.checked)} className="w-4 h-4" /> Company
-                      </label>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-[#4B5563] block mb-2">Qualification questions</label>
-                      <div className="flex gap-2 mb-2">
-                        <input value={newLeadQuestion} onChange={(e)=>setNewLeadQuestion(e.target.value)} placeholder="Add a question (e.g. What is your timeline?)" className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
-                        <button onClick={()=>{ if(!newLeadQuestion) return; setLeadQuestions(prev=>[...prev, newLeadQuestion]); setNewLeadQuestion(''); }} className="px-3 py-2 border border-[#E5E7EB] rounded-xl hover:border-black">Add</button>
+                    {quickReplies.map((reply, i) => (
+                      <div key={i} className="flex items-center gap-4">
+                        <div className="flex-1 p-3 bg-gray-800 border border-gray-700">
+                          {reply}
+                        </div>
+                        <button
+                          onClick={() => setQuickReplies(quickReplies.filter((_, idx) => idx !== i))}
+                          className="p-3 hover:bg-gray-800 transition-colors"
+                        >
+                          <X className="w-5 h-5 text-gray-500" />
+                        </button>
                       </div>
-                      {leadQuestions.length>0 && (
-                        <ul className="space-y-2">
-                          {leadQuestions.map((q,i)=> (
-                            <li key={i} className="flex items-center justify-between text-sm bg-[#F9FAFB] rounded-lg px-3 py-2">
-                              <span>{q}</span>
-                              <button onClick={()=> setLeadQuestions(prev=> prev.filter((_,idx)=> idx!==i))} className="p-1 hover:bg-[#E5E7EB] rounded">
-                                <X className="w-4 h-4" />
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                    ))}
+                    
+                    {quickReplies.length < 3 && (
+                      <div className="flex gap-4">
+                        <input
+                          type="text"
+                          value={newQuickReply}
+                          onChange={(e) => setNewQuickReply(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && addQuickReply()}
+                          placeholder="Add quick reply..."
+                          className="flex-1 minimal-input bg-transparent text-white"
+                        />
+                        <button
+                          onClick={addQuickReply}
+                          className="minimal-button-outline px-6"
+                        >
+                          ADD
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Call to Action */}
+                <div className="minimal-card bg-gray-900 border-gray-800">
+                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">CALL TO ACTION</h3>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="minimal-label text-gray-400">BUTTON TEXT</label>
+                      <input
+                        type="text"
+                        value={ctaLabel}
+                        onChange={(e) => setCtaLabel(e.target.value)}
+                        placeholder="Book a demo"
+                        className="minimal-input bg-transparent text-white"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="minimal-label text-gray-400">BUTTON URL</label>
+                      <input
+                        type="url"
+                        value={ctaUrl}
+                        onChange={(e) => setCtaUrl(e.target.value)}
+                        placeholder="https://calendly.com/..."
+                        className="minimal-input bg-transparent text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Type-specific settings */}
+                {botType === 'lead' && (
+                  <div className="minimal-card bg-gray-900 border-gray-800">
+                    <h3 className="text-lg font-bold uppercase tracking-wider mb-6">LEAD CAPTURE FIELDS</h3>
+                    
+                    <div className="space-y-4">
+                      {Object.entries(leadRequiredFields).map(([field, required]) => (
+                        <label key={field} className="flex items-center gap-4 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={required}
+                            onChange={(e) => setLeadRequiredFields({
+                              ...leadRequiredFields,
+                              [field]: e.target.checked
+                            })}
+                            className="w-5 h-5 bg-transparent border-2 border-gray-600 text-white focus:ring-white"
+                          />
+                          <span className="uppercase tracking-wider text-sm">
+                            REQUIRE {field.toUpperCase()}
+                          </span>
+                        </label>
+                      ))}
                     </div>
                   </div>
                 )}
 
                 {botType === 'support' && (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-3">
-                      <label className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={supportCollectPriority} onChange={(e)=>setSupportCollectPriority(e.target.checked)} className="w-4 h-4" /> Collect priority
-                      </label>
-                      <label className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={supportRequireEmail} onChange={(e)=>setSupportRequireEmail(e.target.checked)} className="w-4 h-4" /> Require email
-                      </label>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-[#4B5563] block mb-2">Categories</label>
-                      <div className="flex gap-2 mb-2">
-                        <input value={newSupportCategory} onChange={(e)=>setNewSupportCategory(e.target.value)} placeholder="Add category (e.g. Billing)" className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
-                        <button onClick={()=>{ if(!newSupportCategory) return; setSupportCategories(prev=>[...prev, newSupportCategory]); setNewSupportCategory(''); }} className="px-3 py-2 border border-[#E5E7EB] rounded-xl hover:border-black">Add</button>
-                      </div>
-                      {supportCategories.length>0 && (
-                        <ul className="flex flex-wrap gap-2">
-                          {supportCategories.map((c,i)=> (
-                            <li key={i} className="text-xs bg-[#F3F4F6] rounded-full px-3 py-1 flex items-center gap-2">
-                              <span>{c}</span>
-                              <button onClick={()=> setSupportCategories(prev=> prev.filter((_,idx)=> idx!==i))} className="hover:text-black text-[#6B7280]">
-                                <X className="w-3 h-3" />
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {botType === 'workflow' && (botSubtype || '').includes('booking') && (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-xs font-medium text-[#4B5563] block mb-2">Default duration (min)</label>
-                        <input type="number" min={10} max={240} value={bookingDefaultDuration} onChange={(e)=> setBookingDefaultDuration(parseInt(e.target.value||'30'))} className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-[#4B5563] block mb-2">Timezone</label>
-                        <input value={bookingTimezone} onChange={(e)=> setBookingTimezone(e.target.value)} placeholder="UTC or Europe/Stockholm" className="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
-                      </div>
-                    </div>
-                    <label className="flex items-center gap-2 text-sm">
-                      <input type="checkbox" checked={bookingRequireEmail} onChange={(e)=> setBookingRequireEmail(e.target.checked)} className="w-4 h-4" /> Require email
-                    </label>
-                    <div>
-                      <label className="text-xs font-medium text-[#4B5563] block mb-2">Services</label>
-                      <div className="flex gap-2 mb-2">
-                        <input value={newBookingService} onChange={(e)=>setNewBookingService(e.target.value)} placeholder="Add service (e.g. Demo 30m)" className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
-                        <button onClick={()=>{ if(!newBookingService) return; setBookingServices(prev=>[...prev, newBookingService]); setNewBookingService(''); }} className="px-3 py-2 border border-[#E5E7EB] rounded-xl hover:border-black">Add</button>
-                      </div>
-                      {bookingServices.length>0 && (
-                        <ul className="flex flex-wrap gap-2">
-                          {bookingServices.map((s,i)=> (
-                            <li key={i} className="text-xs bg-[#F3F4F6] rounded-full px-3 py-1 flex items-center gap-2">
-                              <span>{s}</span>
-                              <button onClick={()=> setBookingServices(prev=> prev.filter((_,idx)=> idx!==i))} className="hover:text-black text-[#6B7280]">
-                                <X className="w-3 h-3" />
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                  <div className="minimal-card bg-gray-900 border-gray-800">
+                    <h3 className="text-lg font-bold uppercase tracking-wider mb-6">SUPPORT CATEGORIES</h3>
+                    
+                    <div className="space-y-2">
+                      {supportCategories.map((cat, i) => (
+                        <div key={i} className="flex items-center gap-4">
+                          <div className="flex-1 p-3 bg-gray-800 border border-gray-700">
+                            {cat}
+                          </div>
+                          <button
+                            onClick={() => setSupportCategories(supportCategories.filter((_, idx) => idx !== i))}
+                            className="p-3 hover:bg-gray-800 transition-colors"
+                          >
+                            <X className="w-5 h-5 text-gray-500" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => {
+                          const cat = prompt("Category name:");
+                          if (cat) setSupportCategories([...supportCategories, cat]);
+                        }}
+                        className="w-full p-3 border-2 border-dashed border-gray-700 hover:border-gray-500 transition-colors"
+                      >
+                        <Plus className="w-5 h-5 mx-auto text-gray-500" />
+                      </button>
                     </div>
                   </div>
                 )}
+              </motion.div>
+            )}
 
-                {botType === 'workflow' && (botSubtype || '').includes('ecommerce') && (
-                  <div className="space-y-4">
-                    <label className="flex items-center gap-2 text-sm">
-                      <input type="checkbox" checked={ecomRecommend} onChange={(e)=> setEcomRecommend(e.target.checked)} className="w-4 h-4" /> Enable recommendations
-                    </label>
-                    <div>
-                      <label className="text-xs font-medium text-[#4B5563] block mb-2">Order lookup</label>
-                      <div className="flex gap-3 text-sm">
-                        <label className="flex items-center gap-2">
-                          <input type="radio" name="orderLookup" checked={ecomOrderLookupMode==='email_order'} onChange={()=> setEcomOrderLookupMode('email_order')} /> Email + order number
-                        </label>
-                        <label className="flex items-center gap-2">
-                          <input type="radio" name="orderLookup" checked={ecomOrderLookupMode==='order_only'} onChange={()=> setEcomOrderLookupMode('order_only')} /> Order number only
-                        </label>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-[#4B5563] block mb-2">Returns policy (summary)</label>
-                      <textarea value={ecomReturnsPolicy} onChange={(e)=> setEcomReturnsPolicy(e.target.value)} placeholder="Summarize your returns policy to guide the bot" className="w-full h-24 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm"></textarea>
-                    </div>
-                  </div>
-                )}
-
-                {botType === 'knowledge' && (
-                  <div className="space-y-4">
-                    <label className="flex items-center gap-2 text-sm">
-                      <input type="checkbox" checked={knowledgeCiteSources} onChange={(e)=> setKnowledgeCiteSources(e.target.checked)} className="w-4 h-4" /> Always cite sources
-                    </label>
-                  </div>
-                )}
-              </div>
-
-              {/* Custom buttons */}
-              <div className="card">
-                <h3 className="mb-4">Chat buttons</h3>
-                <div className="flex gap-2 mb-3">
-                  <input value={newBtnLabel} onChange={(e)=>setNewBtnLabel(e.target.value)} placeholder="Label (e.g. Pricing)" className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
-                  <input value={newBtnUrl} onChange={(e)=>setNewBtnUrl(e.target.value)} placeholder="https://..." className="flex-1 px-3 py-2 bg-white border border-[#E5E7EB] rounded-xl focus:border-black outline-none text-sm" />
-                  <button onClick={()=>{ if(!newBtnLabel||!newBtnUrl) return; setCustomButtons(prev=>[...prev, {label:newBtnLabel, url:newBtnUrl}]); setNewBtnLabel(''); setNewBtnUrl(''); }} className="px-3 py-2 border border-[#E5E7EB] rounded-xl hover:border-black">Add</button>
-                </div>
-                {customButtons.length>0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {customButtons.map((b, i)=>(
-                      <span key={i} className="px-3 py-1 text-sm border border-[#E5E7EB] rounded-full inline-flex items-center gap-2">
-                        {b.label}
-                        <button onClick={()=>setCustomButtons(prev=>prev.filter((_,idx)=>idx!==i))} className="text-[#9CA3AF] hover:text-black">×</button>
-                      </span>
+            {activeTab === 'advanced' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-8"
+              >
+                {/* Response Length */}
+                <div className="minimal-card bg-gray-900 border-gray-800">
+                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">RESPONSE LENGTH</h3>
+                  
+                  <div className="grid grid-cols-3 gap-4">
+                    {(['short', 'normal', 'long'] as const).map(length => (
+                      <button
+                        key={length}
+                        onClick={() => setResponseLength(length)}
+                        className={`p-4 border-2 uppercase tracking-wider text-sm font-bold transition-all duration-300 ${
+                          responseLength === length 
+                            ? 'border-white bg-gray-800' 
+                            : 'border-gray-700 hover:border-gray-500'
+                        }`}
+                      >
+                        {length}
+                      </button>
                     ))}
                   </div>
-                )}
-              </div>
-            </div>
+                </div>
 
-            {/* Right - Preview */}
-            <div>
-              <div className="sticky top-6">
-                <h3 className="mb-4">Preview</h3>
-                
-                <div className="border border-[#E5E7EB] rounded-xl overflow-hidden shadow-sm">
-                  <div 
-                    className="p-4 text-white"
-                    style={{ backgroundColor: brand.primaryColor }}
-                  >
-                    <div className="flex items-center gap-3">
-                      {brand.logoUrl && (
-                        <img src={brand.logoUrl} alt="Logo" className="h-8 brightness-0 invert" />
-                      )}
-                      <div>
-                        <p className="font-semibold text-sm">Support</p>
-                        <p className="text-xs opacity-80">Always on</p>
-                      </div>
+                {/* Fallback */}
+                <div className="minimal-card bg-gray-900 border-gray-800">
+                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">FALLBACK MESSAGE</h3>
+                  <textarea
+                    value={fallbackText}
+                    onChange={(e) => setFallbackText(e.target.value)}
+                    placeholder="I don't have that information. Would you like to speak with someone?"
+                    className="w-full h-24 bg-transparent border-2 border-gray-700 p-4 text-white focus:border-white focus:outline-none transition-colors"
+                  />
+                </div>
+
+                {/* Working Hours */}
+                <div className="minimal-card bg-gray-900 border-gray-800">
+                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">WORKING HOURS</h3>
+                  
+                  <div className="grid grid-cols-2 gap-6 mb-6">
+                    <div>
+                      <label className="minimal-label text-gray-400">START TIME</label>
+                      <select
+                        value={startHour}
+                        onChange={(e) => setStartHour(Number(e.target.value))}
+                        className="w-full bg-transparent border-2 border-gray-700 p-3 text-white focus:border-white focus:outline-none"
+                      >
+                        {Array.from({ length: 24 }, (_, i) => (
+                          <option key={i} value={i} className="bg-gray-900">
+                            {i.toString().padStart(2, '0')}:00
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="minimal-label text-gray-400">END TIME</label>
+                      <select
+                        value={endHour}
+                        onChange={(e) => setEndHour(Number(e.target.value))}
+                        className="w-full bg-transparent border-2 border-gray-700 p-3 text-white focus:border-white focus:outline-none"
+                      >
+                        {Array.from({ length: 24 }, (_, i) => (
+                          <option key={i} value={i} className="bg-gray-900">
+                            {i.toString().padStart(2, '0')}:00
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                   
-                  <div className="p-4 bg-[#F9FAFB] min-h-[300px]">
-                    <div className="bg-white border border-[#E5E7EB] rounded-xl p-4 inline-block shadow-sm">
-                      <p className="text-sm" style={{ fontFamily: brand.fontFamily }}>
-                        {brand.tone === 'formal' 
-                          ? 'God dag! Hur kan jag bistå er idag?'
-                          : brand.tone === 'casual'
-                          ? 'Hi! How can I help you?'
-                          : 'Hi! How can I assist you today?'}
+                  <div>
+                    <label className="minimal-label text-gray-400">OFF-HOURS MESSAGE</label>
+                    <textarea
+                      value={offHoursMessage}
+                      onChange={(e) => setOffHoursMessage(e.target.value)}
+                      className="w-full h-20 bg-transparent border-2 border-gray-700 p-4 text-white focus:border-white focus:outline-none transition-colors"
+                    />
+                  </div>
+                </div>
+
+                {/* Custom Buttons */}
+                <div className="minimal-card bg-gray-900 border-gray-800">
+                  <h3 className="text-lg font-bold uppercase tracking-wider mb-6">CUSTOM CHAT BUTTONS</h3>
+                  
+                  <div className="space-y-2">
+                    {customButtons.map((btn, i) => (
+                      <div key={i} className="flex items-center gap-4 p-3 bg-gray-800 border border-gray-700">
+                        <div className="flex-1">
+                          <p className="font-bold">{btn.label}</p>
+                          <p className="text-sm text-gray-500">{btn.url}</p>
+                        </div>
+                        <button
+                          onClick={() => setCustomButtons(customButtons.filter((_, idx) => idx !== i))}
+                          className="p-2 hover:bg-gray-700 transition-colors"
+                        >
+                          <X className="w-5 h-5 text-gray-500" />
+                        </button>
+                      </div>
+                    ))}
+                    
+                    <button
+                      onClick={addCustomButton}
+                      className="w-full p-4 border-2 border-dashed border-gray-700 hover:border-gray-500 transition-colors"
+                    >
+                      <Plus className="w-5 h-5 mx-auto text-gray-500" />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </div>
+
+          {/* Right Column - Preview */}
+          <div className="sticky top-8">
+            <div className="minimal-card bg-gray-900 border-gray-800 h-[600px] flex flex-col">
+              <h3 className="text-lg font-bold uppercase tracking-wider mb-6">LIVE PREVIEW</h3>
+              
+              <div 
+                className="flex-1 bg-white rounded-lg overflow-hidden flex flex-col"
+                style={{ fontFamily: brand.fontFamily }}
+              >
+                {/* Chat Header */}
+                <div 
+                  className="p-4 text-white flex items-center gap-3"
+                  style={{ backgroundColor: brand.primaryColor }}
+                >
+                  {brand.logoUrl && (
+                    <img src={brand.logoUrl} alt="Logo" className="w-8 h-8 object-contain rounded" />
+                  )}
+                  <div>
+                    <p className="font-bold">Support Bot</p>
+                    <p className="text-xs opacity-80">Always active</p>
+                  </div>
+                </div>
+                
+                {/* Messages */}
+                <div className="flex-1 p-4 bg-gray-50">
+                  <div className="space-y-3">
+                    <div className="bg-white p-3 rounded-lg shadow-sm max-w-[80%]">
+                      <p className="text-sm text-gray-800">
+                        {welcomeMessage || 'Hi! How can I help you today?'}
                       </p>
                     </div>
                   </div>
                   
-                  <div className="p-4 border-t border-[#E5E7EB]">
+                  {/* Quick Replies */}
+                  {quickReplies.length > 0 && (
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {quickReplies.map((reply, i) => (
+                        <button
+                          key={i}
+                          className="px-3 py-1 bg-white border border-gray-300 rounded-full text-xs hover:bg-gray-100"
+                        >
+                          {reply}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Input */}
+                <div className="p-4 border-t border-gray-200">
+                  <div className="flex gap-2">
                     <input
                       type="text"
                       placeholder="Type a message..."
-                      className="w-full px-4 py-2 bg-white border border-[#E5E7EB] rounded-full text-sm"
+                      className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none"
                       disabled
                     />
+                    <button 
+                      className="p-2 rounded-full text-white"
+                      style={{ backgroundColor: brand.primaryColor }}
+                      disabled
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Actions */}
-          <div className="flex justify-center gap-4 mt-12">
-            <motion.button
-              onClick={() => router.push("/business/bot-builder/analyze")}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-secondary"
-            >
-              Back
-            </motion.button>
-            <motion.button
-              onClick={handleContinue}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-primary"
-            >
-              Build bot
-            </motion.button>
-          </div>
+        {/* Continue Button */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="flex justify-center mt-16"
+        >
+          <button
+            onClick={handleContinue}
+            className="minimal-button"
+          >
+            CONTINUE TO BUILD
+          </button>
         </motion.div>
       </div>
     </div>

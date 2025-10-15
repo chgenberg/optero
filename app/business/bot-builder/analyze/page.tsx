@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowRight, Info } from "lucide-react";
+import { ArrowRight, Info, Check, X } from "lucide-react";
 
 export default function AnalyzeProblem() {
   const router = useRouter();
@@ -62,7 +62,7 @@ export default function AnalyzeProblem() {
       } catch (error) {
         console.error("Analysis error:", error);
       } finally {
-        setTimeout(() => setAnalyzing(false), 1200);
+        setTimeout(() => setAnalyzing(false), 1500);
       }
     };
 
@@ -72,279 +72,160 @@ export default function AnalyzeProblem() {
   const botRecommendations = [
     {
       id: "customer-support",
-      title: "Customer support",
+      title: "CUSTOMER SUPPORT",
       type: "support",
-      description: "Automate 60% of support tickets",
+      description: "Automate 60% of support tickets with AI",
       metrics: ["24/7 availability", "< 5s response time", "90% CSAT"],
       effort: "5 min",
-      savings: "120,000 SEK/yr"
+      savings: "120K/yr"
     },
     {
       id: "lead-qualification",
-      title: "Lead qualification",
+      title: "LEAD QUALIFICATION",
       type: "lead",
       description: "Qualify leads and book meetings automatically",
       metrics: ["3x more qualified leads", "Automatic CRM sync", "Personalized"],
       effort: "10 min",
-      savings: "250,000 SEK/yr"
+      savings: "250K/yr"
     },
     {
       id: "booking",
-      title: "Booking",
+      title: "BOOKING SYSTEM",
       type: "workflow",
+      subtype: "booking",
       description: "Eliminate double booking and manual handling",
       metrics: ["Calendar integration", "SMS reminders", "Automatic confirmation"],
       effort: "15 min",
-      savings: "80,000 SEK/yr"
+      savings: "80K/yr"
     },
-    // Nya auto-skapbara bots
+    {
+      id: "knowledge-base",
+      title: "KNOWLEDGE BASE",
+      type: "knowledge",
+      description: "Answer product questions instantly",
+      metrics: ["RAG-powered answers", "Source citations", "Always up-to-date"],
+      effort: "5 min",
+      savings: "150K/yr"
+    },
     {
       id: "ecommerce-assistant",
-      title: "E‑commerce",
+      title: "E-COMMERCE ASSISTANT",
       type: "workflow",
       subtype: "ecommerce",
-      description: "Product finder, order status and returns",
-      metrics: ["+25% conversion", "Less support", "Recommendations"],
-      effort: "15 min",
-      savings: "200,000 SEK/yr"
-    },
-    {
-      id: "cpq-sales",
-      title: "CPQ / Sales configurator",
-      type: "lead",
-      subtype: "guided_selling",
-      description: "Package/price by need – generates quote",
-      metrics: ["Shorter sales cycle", "Higher quality", "Fewer errors"],
+      description: "Help customers find products and track orders",
+      metrics: ["Product recommendations", "Order tracking", "Return handling"],
       effort: "20 min",
-      savings: "300,000 SEK/yr"
+      savings: "200K/yr"
     },
     {
-      id: "onboarding",
-      title: "Onboarding / Customer Success",
-      type: "knowledge",
-      subtype: "onboarding",
-      description: "First‑time guide and how‑to answers",
-      metrics: ["Fewer questions", "Faster time‑to‑value", "Happier customers"],
-      effort: "10 min",
-      savings: "100,000 SEK/yr"
-    },
-    {
-      id: "knowledge-pro",
-      title: "Knowledge Pro",
-      type: "knowledge",
-      subtype: "pro",
-      description: "Document QA with sources and citations",
-      metrics: ["Accurate answers", "Traceable sources", "Fewer escalations"],
-      effort: "10 min",
-      savings: "120,000 SEK/yr"
-    },
-    {
-      id: "hr-recruiting",
-      title: "HR & Recruiting",
+      id: "hr-screening",
+      title: "HR SCREENING",
       type: "workflow",
       subtype: "hr_screening",
-      description: "Candidate screening and interview booking",
-      metrics: ["5x faster", "Better selection", "Auto‑booking"],
+      description: "Pre-screen candidates and schedule interviews",
+      metrics: ["Automated screening", "Interview scheduling", "Candidate scoring"],
       effort: "15 min",
-      savings: "180,000 SEK/yr"
-    },
-    {
-      id: "it-helpdesk",
-      title: "IT Helpdesk",
-      type: "support",
-      subtype: "it_helpdesk",
-      description: "Triage + ticket to the right team",
-      metrics: ["Faster resolution", "Lower ticket volume", "Better data"],
-      effort: "10 min",
-      savings: "150,000 SEK/yr"
-    },
-    {
-      id: "resource-booking",
-      title: "Resource booking",
-      type: "workflow",
-      subtype: "resource_booking",
-      description: "Book resources/rooms with time constraints",
-      metrics: ["Fewer double bookings", "Automatic rules", "Smooth flow"],
-      effort: "20 min",
-      savings: "80,000 SEK/yr"
-    },
-    {
-      id: "returns-rma",
-      title: "Returns / RMA",
-      type: "workflow",
-      subtype: "returns_rma",
-      description: "Automated returns process and warranty cases",
-      metrics: ["Less support", "Tracking", "Better experience"],
-      effort: "15 min",
-      savings: "120,000 SEK/yr"
-    },
-    {
-      id: "billing-payments",
-      title: "Billing / Payments",
-      type: "workflow",
-      subtype: "billing_payments",
-      description: "Questions about invoices, reminders and payment links",
-      metrics: ["Less admin", "Faster payments", "Fewer errors"],
-      effort: "15 min",
-      savings: "90,000 SEK/yr"
-    },
-    {
-      id: "nps-feedback",
-      title: "NPS / Feedback",
-      type: "workflow",
-      subtype: "nps_feedback",
-      description: "Collect and summarize feedback",
-      metrics: ["Faster insight", "Trend analysis", "More responses"],
-      effort: "10 min",
-      savings: "60,000 SEK/yr"
-    },
-    {
-      id: "lead-enrichment",
-      title: "Lead enrichment",
-      type: "lead",
-      subtype: "enrichment",
-      description: "Auto‑populate CRM fields",
-      metrics: ["Better data", "Higher quality", "Less manual work"],
-      effort: "10 min",
-      savings: "70,000 SEK/yr"
-    },
-    {
-      id: "churn-prevention",
-      title: "Churn prevention",
-      type: "workflow",
-      subtype: "churn_prevention",
-      description: "Detect risk and propose winback offers",
-      metrics: ["Lower churn", "Higher LTV", "Early signals"],
-      effort: "20 min",
-      savings: "300,000 SEK/yr"
-    },
-    {
-      id: "sales-internal",
-      title: "Internal sales assistant",
-      type: "knowledge",
-      subtype: "sales_internal",
-      description: "Documents + competitor FAQ internally",
-      metrics: ["Faster answers", "Better arguments", "Less search time"],
-      effort: "10 min",
-      savings: "120,000 SEK/yr"
-    },
-    {
-      id: "partner-portal",
-      title: "Partner / reseller portal",
-      type: "knowledge",
-      subtype: "partner_portal",
-      description: "Assistant for resellers and partners",
-      metrics: ["Fewer emails", "Better onboarding", "Active enablement"],
-      effort: "15 min",
-      savings: "100,000 SEK/yr"
-    },
-    {
-      id: "gdpr-bot",
-      title: "GDPR bot",
-      type: "workflow",
-      subtype: "gdpr",
-      description: "Export/erase requests with tracking",
-      metrics: ["Compliance", "Secure handling", "Less manual time"],
-      effort: "15 min",
-      savings: "90,000 SEK/yr"
-    },
-    {
-      id: "multilingual",
-      title: "Flerspråk",
-      type: "knowledge",
-      subtype: "multilingual",
-      description: "Auto‑detektera och svara på besökarens språk",
-      metrics: ["Bättre upplevelse", "Ökad räckvidd", "Konsistent ton"],
-      effort: "10 min",
-      savings: "—"
+      savings: "180K/yr"
     }
   ];
 
   const advancedSolutions = [
     {
-      title: "Process Automation",
-      description: "Automatisera hela arbetsflöden med AI",
-      complexity: "Kräver konsultation",
+      title: "VOICE AI AGENT",
+      description: "Phone support with natural conversations",
+      complexity: "2-4 WEEKS SETUP",
       details: {
-        what: "Skräddarsydda AI-agenter som automatiserar komplexa affärsprocesser från början till slut. Kan hantera allt från fakturagodkännanden till komplex databearbetning.",
+        what: "An AI that handles phone calls like a human agent. Understands context, handles interruptions, and transfers to humans when needed.",
         benefits: [
-          "Minska manuellt arbete med upp till 80%",
-          "Eliminera flaskhalsar i processer",
-          "Säkerställ konsekvent kvalitet",
-          "Frigör tid för strategiskt arbete"
+          "Handle 80% of phone calls automatically",
+          "24/7 availability in multiple languages",
+          "Natural conversations with emotion detection",
+          "Seamless handoff to human agents"
         ],
-        examples: "Automatisk fakturakontroll, dynamisk prisoptimering, smart dokumenthantering"
+        examples: "Restaurant bookings, appointment confirmations, first-line support, order status inquiries."
       }
     },
     {
-      title: "Knowledge Management",
-      description: "AI som förstår alla era dokument och processer",
-      complexity: "Kräver konsultation",
+      title: "WORKFLOW AUTOMATION",
+      description: "Connect all your business systems",
+      complexity: "1-3 WEEKS SETUP",
       details: {
-        what: "Enterprise-grade kunskapshanteringssystem där AI indexerar, förstår och kan svara på frågor från alla era dokument, wiki-sidor, mail och interna system.",
+        what: "Custom AI workflows that connect your CRM, ERP, email, and other systems. Automates complex multi-step processes.",
         benefits: [
-          "Hitta rätt information på sekunder",
-          "Bevara företagskunskap vid personalbyten",
-          "Automatisk onboarding av nya medarbetare",
-          "Säker delning av intern kompetens"
+          "Eliminate manual data entry",
+          "Automatic task routing and assignment",
+          "Real-time sync across all systems",
+          "Custom business logic implementation"
         ],
-        examples: "Intern FAQ-assistent, juridisk dokumentsökning, teknisk dokumentation med AI"
+        examples: "Quote-to-cash automation, employee onboarding, contract processing, inventory management."
       }
     },
     {
-      title: "Predictive Analytics",
-      description: "Förutse problem innan de uppstår",
-      complexity: "Kräver konsultation",
+      title: "AI DATA ANALYST",
+      description: "Ask questions about your data in plain language",
+      complexity: "2-3 WEEKS SETUP",
       details: {
-        what: "Prediktiva modeller som analyserar historisk data för att förutspå framtida händelser, identifiera risker och optimera beslut innan problem uppstår.",
+        what: "Connect your databases and ask questions in natural language. Get instant insights, reports, and visualizations.",
         benefits: [
-          "Förutse kundbortfall 3-6 månader i förväg",
-          "Identifiera kvalitetsproblem innan produktion",
-          "Optimera lager baserat på prognoser",
-          "Upptäck säkerhetsrisker proaktivt"
+          "No SQL knowledge required",
+          "Real-time data analysis",
+          "Automatic report generation",
+          "Predictive analytics and trends"
         ],
-        examples: "Churn prediction, underhållsprognoser, efterfrågesprognoser, riskbedömning"
+        examples: "Sales performance analysis, customer behavior insights, financial reporting, inventory optimization."
       }
     }
   ];
 
+  const handleSelectBot = (botId: string, botType: string, botSubtype?: string) => {
+    setSelectedBot(botId);
+    sessionStorage.setItem("selectedBotId", botId);
+    sessionStorage.setItem("selectedBotType", botType);
+    if (botSubtype) {
+      sessionStorage.setItem("selectedBotSubtype", botSubtype);
+    }
+  };
+
   const handleContinue = () => {
-    if (!selectedBot) return;
-    
-    const bot = botRecommendations.find(b => b.id === selectedBot);
-    sessionStorage.setItem("botProblemData", JSON.stringify({
-      problem: selectedBot,
-      botType: bot?.type,
-      botSubtype: (bot as any)?.subtype || null,
-      details: bot
-    }));
-    
-    router.push("/business/bot-builder/customize");
+    if (selectedBot) {
+      router.push("/business/bot-builder/customize");
+    }
   };
 
   const handleConsultation = () => {
-    router.push("/business/bot-builder/enterprise");
+    router.push("/contact");
   };
 
   if (analyzing) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-6">
-        <motion.div
+      <div className="min-h-screen bg-black flex items-center justify-center p-6">
+        <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center max-w-md"
+          className="text-center"
         >
-          <div className="w-16 h-16 border-2 border-black rounded-full mx-auto mb-8 relative overflow-hidden">
-            <motion.div
-              className="absolute inset-0 bg-black"
-              initial={{ y: '100%' }}
-              animate={{ y: '-100%' }}
+          <div className="relative w-32 h-32 mx-auto mb-8">
+            <motion.div 
+              className="absolute inset-0 border-4 border-gray-800"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+            />
+            <motion.div 
+              className="absolute inset-4 border-4 border-gray-700"
+              animate={{ rotate: -360 }}
               transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
             />
+            <motion.div 
+              className="absolute inset-8 border-4 border-gray-600"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+            />
           </div>
-          <h2 className="text-2xl font-bold mb-3">Analyzing your business</h2>
-          <p className="text-sm text-[#4B5563] leading-relaxed">
-            Our AI reviews your material to identify where automation can make your business more profitable and efficient.
+          <h2 className="text-3xl font-bold uppercase tracking-wider text-white mb-2">
+            ANALYZING YOUR BUSINESS
+          </h2>
+          <p className="text-gray-500 uppercase tracking-wider text-sm">
+            PROCESSING WEBSITE AND DOCUMENTS...
           </p>
         </motion.div>
       </div>
@@ -352,69 +233,114 @@ export default function AnalyzeProblem() {
   }
 
   return (
-    <div className="min-h-screen bg-white p-6">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-7xl mx-auto px-8 py-16">
         {/* Progress */}
-        <div className="flex justify-center mb-12">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-[2px] bg-[#E5E7EB]" />
-            <span className="text-xs font-medium text-[#4B5563] px-3">Step 2</span>
-            <div className="w-8 h-[2px] bg-[#E5E7EB]" />
+        <div className="flex justify-center mb-20">
+          <div className="flex items-center gap-8">
+            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+              <Check className="w-6 h-6" />
+            </div>
+            <div className="w-24 h-[2px] bg-gray-800" />
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="w-16 h-16 bg-white text-black font-bold text-xl flex items-center justify-center animate-pulse-box"
+            >
+              02
+            </motion.div>
+            <div className="w-24 h-[2px] bg-gray-800" />
+            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+              03
+            </div>
           </div>
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
         >
-          <div className="text-center mb-12">
-            <h1 className="mb-3">Analysis results</h1>
-            
-            {result?.analysis && (
-              <div className="mt-8 space-y-4 max-w-3xl mx-auto">
-                <div className="card">
-                  <p className="text-sm font-medium text-[#1F2937] mb-2">AI insights from your website</p>
-                  <p className="text-sm text-[#4B5563] leading-relaxed">
-                    {result.analysis.description}
-                  </p>
-                </div>
-                
-                {result.analysis.hiddenOpportunities?.length > 0 && (
-                  <div className="card bg-[#F9FAFB]">
-                    <p className="text-sm font-medium text-[#1F2937] mb-3">Hidden opportunities</p>
+          <div className="text-center mb-16">
+            <h1 className="text-5xl font-bold uppercase tracking-wider mb-4">
+              SELECT YOUR SOLUTION
+            </h1>
+            <p className="text-gray-500 uppercase tracking-wider text-sm">
+              STEP 02 — CHOOSE YOUR AI AUTOMATION
+            </p>
+          </div>
+
+          {/* AI Insights */}
+          {result?.analysis && (
+            <div className="mb-16 grid md:grid-cols-2 gap-8">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="minimal-card bg-gray-900 border-gray-800"
+              >
+                <p className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-4">
+                  AI INSIGHTS FROM YOUR WEBSITE
+                </p>
+                <p className="text-lg text-white leading-relaxed mb-4">
+                  {result.analysis.description || 'Analyzing...'}
+                </p>
+                {result.analysis.problems && result.analysis.problems.length > 0 && (
+                  <div className="pt-4 border-t border-gray-800">
+                    <p className="text-xs uppercase tracking-wider text-gray-500 mb-3">
+                      KEY PROBLEMS WE SOLVE
+                    </p>
                     <ul className="space-y-2">
-                      {result.analysis.hiddenOpportunities.map((opp: string, i: number) => (
-                        <li key={i} className="text-sm text-[#4B5563] flex items-start gap-2">
-                          <span className="text-black font-bold">·</span>
-                          <span>{opp}</span>
+                      {result.analysis.problems.slice(0, 3).map((problem: string, i: number) => (
+                        <li key={i} className="text-sm text-gray-400 flex items-start gap-2">
+                          <span className="text-white">→</span> {problem}
                         </li>
                       ))}
                     </ul>
                   </div>
                 )}
-              </div>
-            )}
-          </div>
+              </motion.div>
 
-          {/* Bot Recommendations */}
-          <div className="mb-16">
-            <h2 className="text-center mb-8">Recommended solutions</h2>
+              {result.analysis.hiddenOpportunities && result.analysis.hiddenOpportunities.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="minimal-card bg-white text-black animate-pulse-box"
+                >
+                  <p className="text-sm font-bold uppercase tracking-wider mb-4">
+                    💡 HIDDEN OPPORTUNITIES DISCOVERED
+                  </p>
+                  <ul className="space-y-3">
+                    {result.analysis.hiddenOpportunities.map((opp: string, i: number) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <span className="text-2xl leading-none">→</span>
+                        <span className="text-base">{opp}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              )}
+            </div>
+          )}
+
+          {/* Recommended Solutions */}
+          <div className="mb-20">
+            <h2 className="text-3xl font-bold uppercase tracking-wider text-center mb-12">
+              RECOMMENDED SOLUTIONS
+            </h2>
             
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-8">
               {botRecommendations.map((bot, i) => (
                 <motion.button
                   key={bot.id}
-                  onClick={() => setSelectedBot(bot.id)}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleSelectBot(bot.id, bot.type, bot.subtype)}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: i * 0.1 }}
-                  className={`p-6 border-2 rounded-xl text-left transition-all relative ${
-                    selectedBot === bot.id
-                      ? "border-black bg-[#F9FAFB]"
-                      : "border-[#E5E7EB] hover:border-[#4B5563]"
+                  transition={{ delay: i * 0.1 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`minimal-card-interactive bg-gray-900 border-gray-800 text-left relative transition-all ${
+                    selectedBot === bot.id ? 'border-white bg-gray-800' : ''
                   }`}
                 >
                   <button
@@ -424,103 +350,136 @@ export default function AnalyzeProblem() {
                       setShowInfoFor(showInfoFor === bot.id ? null : bot.id);
                     }}
                     aria-label="More info"
-                    className="absolute top-4 right-4 p-2 hover:bg-white rounded-full transition-colors"
+                    className="absolute top-6 right-6 p-2 hover:bg-gray-800 transition-colors rounded"
                   >
-                    <Info className="w-4 h-4 text-[#9CA3AF]" />
+                    <Info className="w-5 h-5 text-gray-600" />
                   </button>
 
+                  {/* Info Modal */}
                   {showInfoFor === bot.id && (
                     <div
                       onClick={(e) => { e.stopPropagation(); setShowInfoFor(null); }}
-                      className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4"
+                      className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
                     >
                       <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
                         onClick={(e) => e.stopPropagation()}
-                        className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl border border-[#E5E7EB] overflow-hidden"
+                        className="max-w-2xl w-full bg-gray-900 border-2 border-gray-800 shadow-2xl overflow-hidden"
                       >
-                        <div className="flex items-center justify-between px-5 py-4 border-b border-[#E5E7EB]">
+                        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-800">
                           <div>
-                            <h3 className="text-lg font-semibold">{bot.title}</h3>
-                            <p className="text-xs text-[#6B7280]">Deep dive: how it works, integrations and API</p>
+                            <h3 className="text-xl font-bold uppercase tracking-wider">{bot.title}</h3>
+                            <p className="text-sm text-gray-500 uppercase tracking-wider mt-1">
+                              DEEP DIVE: IMPLEMENTATION & INTEGRATION
+                            </p>
                           </div>
                           <button
                             onClick={() => setShowInfoFor(null)}
-                            className="text-[#9CA3AF] hover:text-black text-xl leading-none"
-                            aria-label="Close"
+                            className="p-2 hover:bg-gray-800 transition-colors rounded"
                           >
-                            ×
+                            <X className="w-6 h-6 text-gray-500" />
                           </button>
                         </div>
 
                         {/* Tabs */}
-                        <div className="px-5 pt-4">
-                          <div className="flex gap-2 text-sm mb-4">
+                        <div className="px-8 pt-6">
+                          <div className="flex gap-2 text-sm mb-6">
                             {(['overview','setup','integrations','api','security'] as const).map(t => (
                               <button
                                 key={t}
                                 onClick={() => setInfoTab(t)}
-                                className={`px-3 py-1.5 rounded-full border ${infoTab===t ? 'bg-black text-white border-black' : 'border-[#E5E7EB] text-[#374151] hover:border-black'}`}
+                                className={`px-4 py-2 uppercase tracking-wider font-bold transition-all ${
+                                  infoTab === t 
+                                    ? 'bg-white text-black' 
+                                    : 'text-gray-500 hover:text-white'
+                                }`}
                               >
-                                {t === 'overview' ? 'Overview' : t === 'setup' ? 'Setup' : t === 'integrations' ? 'Integrations' : t === 'api' ? 'API' : 'Security'}
+                                {t}
                               </button>
                             ))}
                           </div>
 
                           {/* Tab content */}
-                          <div className="pb-5">
+                          <div className="pb-8 text-gray-300">
                             {infoTab === 'overview' && (
-                              <div className="space-y-3 text-sm text-[#4B5563]">
-                                <p><strong className="text-black">What it does:</strong> {bot.type === 'support' ? 'Resolves FAQs, triages issues and escalates to the right team.' : bot.type === 'lead' ? 'Qualifies leads with structured questions and offers booking.' : bot.type === 'workflow' ? 'Automates a concrete workflow end-to-end.' : 'Answers accurately using your website and documents.'}</p>
-                                <p><strong className="text-black">When to use:</strong> {bot.type === 'support' ? 'High ticket volume and repeated questions.' : bot.type === 'lead' ? 'Inbound traffic where SDR time is limited.' : bot.type === 'workflow' ? 'You have a standardizable process users repeat.' : 'You have rich documentation or product info.'}</p>
-                                <ul className="space-y-1">
-                                  {bot.metrics.map((m:string, i:number)=> (
-                                    <li key={i}>· {m}</li>
-                                  ))}
-                                </ul>
+                              <div className="space-y-4">
+                                <div>
+                                  <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">WHAT IT DOES</p>
+                                  <p>{bot.type === 'support' ? 'Resolves FAQs, triages issues and escalates to the right team.' : bot.type === 'lead' ? 'Qualifies leads with structured questions and offers booking.' : bot.type === 'workflow' ? 'Automates a concrete workflow end-to-end.' : 'Answers accurately using your website and documents.'}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">WHEN TO USE</p>
+                                  <p>{bot.type === 'support' ? 'High ticket volume and repeated questions.' : bot.type === 'lead' ? 'Inbound traffic where SDR time is limited.' : bot.type === 'workflow' ? 'You have a standardizable process users repeat.' : 'You have rich documentation or product info.'}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">KEY METRICS</p>
+                                  <ul className="space-y-1">
+                                    {bot.metrics.map((m:string, i:number) => (
+                                      <li key={i}>→ {m}</li>
+                                    ))}
+                                  </ul>
+                                </div>
                               </div>
                             )}
 
                             {infoTab === 'setup' && (
-                              <div className="space-y-2 text-sm text-[#4B5563]">
-                                <p><strong className="text-black">Steps (5–15 min):</strong></p>
-                                <ol className="list-decimal pl-5 space-y-1">
-                                  <li>Upload key documents (FAQs, manuals, price lists as needed).</li>
-                                  <li>Customize tone, welcome message and quick replies.</li>
-                                  <li>Configure type‑specific settings in Customize (lead fields, categories, services, etc.).</li>
-                                  <li>Optional: connect integrations (Calendly, Zendesk, HubSpot, Shopify).</li>
-                                  <li>Build the bot and embed the one‑line snippet on your site.</li>
+                              <div className="space-y-4">
+                                <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">STEPS (5–15 MIN)</p>
+                                <ol className="list-decimal pl-5 space-y-2">
+                                  <li>Upload key documents (FAQs, manuals, price lists as needed)</li>
+                                  <li>Customize tone, welcome message and quick replies</li>
+                                  <li>Configure type-specific settings (lead fields, categories, etc.)</li>
+                                  <li>Optional: connect integrations (Calendly, Zendesk, HubSpot)</li>
+                                  <li>Build the bot and embed the one-line snippet on your site</li>
                                 </ol>
                               </div>
                             )}
 
                             {infoTab === 'integrations' && (
-                              <div className="space-y-3 text-sm text-[#4B5563]">
-                                <p><strong className="text-black">Available:</strong> Calendly (booking), Zendesk (tickets), HubSpot (contacts/deals), Slack (alerts){bot.subtype==='ecommerce' ? ', Shopify (products/orders)' : ''}.</p>
-                                <p>Provide API keys in Dashboard → Integrations. We store secrets encrypted and only use them server‑side.</p>
-                                <p>Typical flows:
-                                  <br/>• Support → create Zendesk ticket with summary
-                                  <br/>• Lead → upsert HubSpot contact on qualification
-                                  <br/>• Booking → show Calendly link or internal booking flow
-                                  {bot.subtype==='ecommerce' ? <><br/>• E‑commerce → query Shopify products</> : null}
-                                </p>
+                              <div className="space-y-4">
+                                <div>
+                                  <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">AVAILABLE INTEGRATIONS</p>
+                                  <p>Calendly (booking), Zendesk (tickets), HubSpot (contacts/deals), Slack (alerts){bot.subtype === 'ecommerce' ? ', Shopify (products/orders)' : ''}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">TYPICAL FLOWS</p>
+                                  <ul className="space-y-1">
+                                    <li>→ Support: create Zendesk ticket with summary</li>
+                                    <li>→ Lead: upsert HubSpot contact on qualification</li>
+                                    <li>→ Booking: show Calendly link or internal booking</li>
+                                    {bot.subtype === 'ecommerce' && <li>→ E-commerce: query Shopify products</li>}
+                                  </ul>
+                                </div>
                               </div>
                             )}
 
                             {infoTab === 'api' && (
-                              <div className="space-y-3 text-sm text-[#4B5563]">
-                                <p><strong className="text-black">Embed:</strong></p>
-                                <pre className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg p-3 text-xs overflow-x-auto">{`<script src="https://optero-production.up.railway.app/widget.js" data-bot-id="YOUR_BOT_ID"></script>`}</pre>
-                                <p><strong className="text-black">Chat API:</strong> POST <code>/api/bots/chat</code> with <code>{`{ botId, history: [{role, content}] }`}</code>. Returns <code>{`{ reply }`}</code>.</p>
-                                <p><strong className="text-black">Webhook:</strong> Configure <code>webhookUrl</code> in Dashboard to receive qualified leads/support summaries.</p>
+                              <div className="space-y-4">
+                                <div>
+                                  <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">EMBED CODE</p>
+                                  <pre className="bg-black p-4 text-xs overflow-x-auto border border-gray-800">
+{`<script src="https://optero.ai/widget.js" 
+  data-bot-id="YOUR_BOT_ID"></script>`}
+                                  </pre>
+                                </div>
+                                <div>
+                                  <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">CHAT API</p>
+                                  <p className="font-mono text-sm">POST /api/bots/chat</p>
+                                  <p className="text-sm mt-1">Body: {`{ botId, history: [{role, content}] }`}</p>
+                                </div>
                               </div>
                             )}
 
                             {infoTab === 'security' && (
-                              <div className="space-y-3 text-sm text-[#4B5563]">
-                                <p>We mask PII in logs, store secrets encrypted, and respect data minimization. You can delete sources and retrain anytime.</p>
-                                <p>Access controls: restrict embed by domain and add optional JWT session for authenticated portals.</p>
+                              <div className="space-y-4">
+                                <ul className="space-y-2">
+                                  <li>→ PII masking in all logs</li>
+                                  <li>→ Encrypted secret storage</li>
+                                  <li>→ Domain-restricted embedding</li>
+                                  <li>→ Optional JWT authentication</li>
+                                  <li>→ Data deletion on request</li>
+                                </ul>
                               </div>
                             )}
                           </div>
@@ -529,68 +488,58 @@ export default function AnalyzeProblem() {
                     </div>
                   )}
                   
-                  <h3 className="mb-2">{bot.title}</h3>
-                  <p className="text-sm text-[#4B5563] mb-4">
+                  <h3 className="text-xl font-bold uppercase tracking-wider mb-3">{bot.title}</h3>
+                  <p className="text-gray-400 mb-6">
                     {bot.description}
                   </p>
                   
-                  <div className="space-y-1 mb-6">
+                  <div className="space-y-2 mb-8">
                     {bot.metrics.map((metric, j) => (
-                      <p key={j} className="text-xs text-[#9CA3AF]">· {metric}</p>
+                      <p key={j} className="text-sm text-gray-500 flex items-start gap-2">
+                        <span>→</span> {metric}
+                      </p>
                     ))}
                   </div>
                   
-                  <div className="flex justify-between items-end pt-4 border-t border-[#E5E7EB]">
-                    <div>
-                      <p className="text-xs text-[#9CA3AF] mb-1">Setup</p>
-                      <p className="text-sm font-semibold">{bot.effort}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-[#9CA3AF] mb-1">Savings</p>
-                      <p className="text-sm font-semibold">{bot.savings}</p>
-                    </div>
+                  <div className="flex items-center justify-between text-xs uppercase tracking-wider pt-6 border-t border-gray-800">
+                    <span className="text-gray-600">TIME: {bot.effort}</span>
+                    <span className="font-bold text-green-500">SAVE {bot.savings}</span>
                   </div>
                 </motion.button>
               ))}
             </div>
-            
-            <div className="flex justify-center mt-8">
-              <motion.button
-                onClick={handleContinue}
-                disabled={!selectedBot}
-                whileHover={selectedBot ? { scale: 1.02 } : {}}
-                whileTap={selectedBot ? { scale: 0.98 } : {}}
-                className="btn-primary disabled:bg-[#E5E7EB] disabled:text-[#9CA3AF] disabled:cursor-not-allowed inline-flex items-center gap-2"
-              >
-                Build selected bot
-                <ArrowRight className="w-4 h-4" />
-              </motion.button>
-            </div>
           </div>
 
           {/* Advanced Solutions */}
-          <div className="border-t border-[#E5E7EB] pt-16">
-            <h2 className="text-center mb-8">Advanced solutions</h2>
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold uppercase tracking-wider text-center mb-4">
+              ADVANCED SOLUTIONS
+            </h2>
+            <p className="text-center text-gray-500 uppercase tracking-wider text-sm mb-12">
+              REQUIRES CONSULTATION AND CUSTOM SETUP
+            </p>
             
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <div className="grid md:grid-cols-3 gap-8">
               {advancedSolutions.map((solution, i) => (
                 <motion.button
                   key={i}
                   onClick={() => setShowAdvancedInfo(showAdvancedInfo === solution.title ? null : solution.title)}
-                  whileHover={{ scale: 1.02 }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.3 + i * 0.1 }}
-                  className="card hover:border-[#4B5563] transition-all text-left relative"
+                  transition={{ delay: 0.5 + i * 0.1 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="minimal-card bg-gray-900 border-gray-700 hover:border-gray-600 text-left relative cursor-pointer"
                 >
-                  <div className="absolute top-4 right-4">
-                    <Info className="w-4 h-4 text-[#9CA3AF]" />
+                  <div className="absolute top-6 right-6">
+                    <Info className="w-5 h-5 text-gray-600" />
                   </div>
-                  <h3 className="mb-2">{solution.title}</h3>
-                  <p className="text-sm text-[#4B5563] mb-4">
+                  
+                  <h3 className="text-xl font-bold uppercase tracking-wider mb-3">{solution.title}</h3>
+                  <p className="text-gray-400 mb-6">
                     {solution.description}
                   </p>
-                  <p className="text-xs text-[#9CA3AF] font-medium">
+                  <p className="text-xs text-gray-600 font-bold uppercase tracking-wider">
                     {solution.complexity}
                   </p>
                   
@@ -599,41 +548,32 @@ export default function AnalyzeProblem() {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       onClick={(e) => e.stopPropagation()}
-                      className="absolute left-0 right-0 top-full mt-4 p-6 bg-white border border-[#E5E7EB] rounded-xl shadow-2xl z-50 text-left"
+                      className="absolute left-0 right-0 top-full mt-4 p-8 bg-gray-800 border-2 border-gray-700 shadow-2xl z-50 text-left"
                     >
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowAdvancedInfo(null);
-                        }}
-                        className="absolute top-4 right-4 text-[#9CA3AF] hover:text-black text-lg"
+                        onClick={(e) => { e.stopPropagation(); setShowAdvancedInfo(null); }}
+                        className="absolute top-4 right-4 p-2 hover:bg-gray-700 transition-colors rounded"
                       >
-                        ×
+                        <X className="w-5 h-5 text-gray-500" />
                       </button>
                       
-                      <h4 className="text-xs font-semibold text-[#1F2937] uppercase tracking-wider mb-3">
-                        What is this?
-                      </h4>
-                      <p className="text-sm text-[#4B5563] mb-4 leading-relaxed">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">WHAT IS THIS?</h4>
+                      <p className="text-sm text-gray-300 mb-6 leading-relaxed">
                         {solution.details.what}
                       </p>
                       
-                      <h4 className="text-xs font-semibold text-[#1F2937] uppercase tracking-wider mb-3">
-                        Benefits
-                      </h4>
-                      <ul className="space-y-2 mb-4">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">BENEFITS</h4>
+                      <ul className="space-y-2 mb-6">
                         {solution.details.benefits.map((benefit, j) => (
-                          <li key={j} className="text-sm text-[#4B5563] flex items-start gap-2">
-                            <span className="text-black font-bold mt-0.5">·</span>
+                          <li key={j} className="text-sm text-gray-300 flex items-start gap-2">
+                            <span className="text-white">→</span>
                             <span>{benefit}</span>
                           </li>
                         ))}
                       </ul>
                       
-                      <h4 className="text-xs font-semibold text-[#1F2937] uppercase tracking-wider mb-2">
-                        Examples
-                      </h4>
-                      <p className="text-sm text-[#4B5563] italic">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">EXAMPLES</h4>
+                      <p className="text-sm text-gray-400 italic">
                         {solution.details.examples}
                       </p>
                     </motion.div>
@@ -641,28 +581,34 @@ export default function AnalyzeProblem() {
                 </motion.button>
               ))}
             </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-center gap-6">
+            <motion.button
+              onClick={handleConsultation}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="minimal-button-outline"
+            >
+              BOOK CONSULTATION
+            </motion.button>
             
-            <div className="text-center">
+            {selectedBot && (
               <motion.button
-                onClick={handleConsultation}
+                onClick={handleContinue}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="btn-secondary"
+                className="minimal-button inline-flex items-center gap-3"
               >
-                Book consultation
+                BUILD BOT NOW
+                <ArrowRight className="w-5 h-5" />
               </motion.button>
-            </div>
+            )}
           </div>
         </motion.div>
-
-        <div className="text-center mt-16">
-          <button
-            onClick={() => router.push("/business/bot-builder/identify")}
-            className="text-sm text-[#4B5563] hover:text-black transition-colors"
-          >
-            Back
-          </button>
-        </div>
       </div>
     </div>
   );

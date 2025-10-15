@@ -46,12 +46,12 @@ export default function IdentifyProblem() {
 
   const handleAnalyze = async () => {
     if (!url.trim() || !email.trim() || !consent) {
-      setError("Fyll i alla fält");
+      setError("Please fill in all fields");
       return;
     }
     
     if (!email.includes('@')) {
-      setError("Ogiltig e-post");
+      setError("Invalid email");
       return;
     }
 
@@ -94,86 +94,114 @@ export default function IdentifyProblem() {
       router.push("/business/bot-builder/analyze");
     } catch (error) {
       console.error("Error:", error);
-      setError("Något gick fel");
+      setError("Something went wrong");
       setAnalyzing(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-6">
-      <div className="max-w-xl w-full">
-        {/* Progress */}
-        <div className="flex justify-center mb-12">
-            <div className="flex items-center gap-2">
-            <div className="w-8 h-[2px] bg-black" />
-            <span className="text-xs font-medium text-[#4B5563] px-3">Step 1</span>
-            <div className="w-8 h-[2px] bg-[#E5E7EB]" />
+    <div className="min-h-screen bg-black flex items-center justify-center p-6">
+      <div className="max-w-2xl w-full">
+        {/* Progress Steps */}
+        <div className="flex justify-center mb-20">
+          <div className="flex items-center gap-8">
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.3 }}
+              className="w-16 h-16 bg-white text-black font-bold text-xl flex items-center justify-center animate-pulse-box"
+            >
+              01
+            </motion.div>
+            <div className="w-24 h-[2px] bg-gray-800" />
+            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+              02
+            </div>
+            <div className="w-24 h-[2px] bg-gray-800" />
+            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+              03
+            </div>
           </div>
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="space-y-8"
+          transition={{ duration: 0.6 }}
+          className="space-y-12"
         >
+          {/* Header */}
           <div className="text-center relative">
-            <h1 className="mb-2">Analyze your business</h1>
+            <h1 className="text-5xl font-bold uppercase tracking-wider text-white mb-4">
+              ANALYZE YOUR BUSINESS
+            </h1>
+            <p className="text-gray-500 uppercase tracking-wider text-sm">
+              STEP 01 — IDENTIFY OPPORTUNITIES
+            </p>
+            
             <button
               onClick={() => setShowInfo(!showInfo)}
-              className="absolute -right-8 top-0 p-2 hover:bg-[#F9FAFB] rounded-full transition-colors"
+              className="absolute -right-12 top-0 p-3 hover:bg-gray-900 transition-colors"
             >
-              <Info className="w-4 h-4 text-[#4B5563]" />
+              <Info className="w-5 h-5 text-gray-600" />
             </button>
             
             {showInfo && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="absolute right-0 top-10 w-80 p-4 bg-white border border-[#E5E7EB] rounded-xl shadow-lg text-left z-10"
+                className="absolute right-0 top-16 w-96 p-8 bg-gray-900 border-2 border-gray-800 shadow-2xl text-left z-10"
               >
-                <p className="text-sm text-[#4B5563] leading-relaxed">
+                <p className="text-sm text-gray-400 leading-relaxed">
                   We analyze your website and documents to understand your business
-                  and identify where AI creates the most value.
+                  and identify where AI creates the most value. Our deep analysis
+                  finds hidden opportunities for automation.
                 </p>
               </motion.div>
             )}
           </div>
           
-          <div className="space-y-6">
+          {/* Form Card */}
+          <div className="minimal-card bg-white p-12 space-y-10">
             <div>
-              <label className="text-xs font-medium text-[#4B5563] block mb-2">Website</label>
+              <label className="minimal-label">
+                WEBSITE URL
+              </label>
               <input
                 type="text"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 onBlur={() => setUrl((v) => normalizeUrlInput(v))}
                 placeholder="www.yourcompany.com"
-                className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors"
+                className="minimal-input"
               />
             </div>
 
             <div>
-              <label className="text-xs font-medium text-[#4B5563] block mb-2">Email</label>
+              <label className="minimal-label">
+                EMAIL ADDRESS
+              </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@company.com"
-                className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl focus:border-black focus:outline-none transition-colors"
+                className="minimal-input"
               />
             </div>
             
             {/* Document Upload */}
             <div>
-              <label className="text-xs font-medium text-[#4B5563] block mb-2">Documents <span className="text-[#9CA3AF] font-normal">(optional)</span></label>
+              <label className="minimal-label">
+                UPLOAD DOCUMENTS <span className="font-normal text-gray-400">(OPTIONAL)</span>
+              </label>
               <div
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => {
                   e.preventDefault();
                   handleFileSelect(e.dataTransfer.files);
                 }}
-                className="border-2 border-dashed border-[#E5E7EB] rounded-xl p-8 text-center hover:border-[#4B5563] transition-colors cursor-pointer"
+                className="border-2 border-dashed border-gray-300 p-12 text-center hover:border-black transition-all duration-300 cursor-pointer animate-float"
               >
                 <label className="cursor-pointer">
                   <input
@@ -183,34 +211,36 @@ export default function IdentifyProblem() {
                     onChange={(e) => handleFileSelect(e.target.files)}
                     className="hidden"
                   />
-                  <Upload className="w-8 h-8 text-[#9CA3AF] mx-auto mb-3" />
-                  <p className="text-sm font-medium text-[#4B5563] mb-1">Drag & drop files here</p>
-                  <p className="text-xs text-[#9CA3AF]">
-                    PDF, Word, Excel, PowerPoint
+                  <Upload className="w-10 h-10 text-gray-400 mx-auto mb-4" />
+                  <p className="text-sm font-bold uppercase tracking-wider text-black mb-2">
+                    DRAG & DROP FILES HERE
+                  </p>
+                  <p className="text-xs text-gray-500 uppercase tracking-wider">
+                    PDF • WORD • EXCEL • POWERPOINT
                   </p>
                 </label>
               </div>
               
               {uploadedFiles.length > 0 && (
-                <div className="mt-4 space-y-2">
+                <div className="mt-6 space-y-3">
                   {uploadedFiles.map((file, i) => (
                     <motion.div
                       key={i}
-                      initial={{ opacity: 0, x: -10 }}
+                      initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="flex items-center justify-between p-3 bg-[#F9FAFB] rounded-lg"
+                      className="flex items-center justify-between p-4 bg-gray-100 border-2 border-black"
                     >
                       <div>
-                        <p className="text-sm font-medium">{file.name}</p>
-                        <p className="text-xs text-[#9CA3AF]">
+                        <p className="text-sm font-bold uppercase">{file.name}</p>
+                        <p className="text-xs text-gray-600 uppercase tracking-wider">
                           {(file.size / 1024).toFixed(0)} KB
                         </p>
                       </div>
                       <button
                         onClick={() => removeFile(i)}
-                        className="p-2 hover:bg-[#E5E7EB] rounded-full transition-colors"
+                        className="p-2 hover:bg-gray-200 transition-colors"
                       >
-                        <X className="w-4 h-4 text-[#4B5563]" />
+                        <X className="w-5 h-5 text-black" />
                       </button>
                     </motion.div>
                   ))}
@@ -218,19 +248,19 @@ export default function IdentifyProblem() {
               )}
             </div>
             
-            <label className="flex items-start gap-3 cursor-pointer">
+            <label className="flex items-start gap-4 cursor-pointer">
               <input
                 type="checkbox"
                 checked={consent}
                 onChange={(e) => setConsent(e.target.checked)}
-                className="mt-1 w-4 h-4 border-[#E5E7EB] rounded text-black focus:ring-black"
+                className="mt-1 w-5 h-5 border-2 border-gray-400 text-black focus:ring-black"
               />
-              <span className="text-sm text-[#4B5563]">
+              <span className="text-sm text-gray-700 leading-relaxed">
                 I agree to the{' '}
                 <a 
-                  href="/integritetspolicy-bot-builder" 
+                  href="/privacy-policy-bot-builder" 
                   target="_blank"
-                  className="text-black font-medium hover:underline"
+                  className="text-black font-bold underline hover:no-underline"
                 >
                   privacy policy
                 </a>
@@ -238,29 +268,36 @@ export default function IdentifyProblem() {
             </label>
 
             {error && (
-              <p className="text-xs text-red-600 text-center font-medium">{error}</p>
-            )}
-
-            <div className="flex justify-center pt-4">
-              <motion.button
-                onClick={handleAnalyze}
-                disabled={!url.trim() || !email.trim() || !consent || analyzing}
-                whileHover={!analyzing && url && email && consent ? { scale: 1.02 } : {}}
-                whileTap={!analyzing && url && email && consent ? { scale: 0.98 } : {}}
-                className="btn-primary disabled:bg-[#E5E7EB] disabled:text-[#9CA3AF] disabled:cursor-not-allowed"
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-sm text-red-600 text-center font-bold uppercase"
               >
-                {analyzing ? "Analyzing..." : "Analyze"}
-              </motion.button>
-            </div>
+                {error}
+              </motion.p>
+            )}
+          </div>
+
+          {/* Action Button */}
+          <div className="flex justify-center">
+            <motion.button
+              onClick={handleAnalyze}
+              disabled={!url.trim() || !email.trim() || !consent || analyzing}
+              whileHover={!analyzing && url && email && consent ? { scale: 1.02 } : {}}
+              whileTap={!analyzing && url && email && consent ? { scale: 0.98 } : {}}
+              className="minimal-button disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+            >
+              {analyzing ? "ANALYZING..." : "START ANALYSIS"}
+            </motion.button>
           </div>
         </motion.div>
 
-        <div className="text-center mt-12">
+        <div className="text-center mt-16">
           <button
             onClick={() => router.push("/business/bot-builder")}
-            className="text-sm text-[#4B5563] hover:text-black transition-colors"
+            className="text-sm text-gray-600 hover:text-white transition-colors uppercase tracking-wider"
           >
-            Back
+            ← BACK
           </button>
         </div>
       </div>

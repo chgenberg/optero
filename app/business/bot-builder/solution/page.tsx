@@ -3,40 +3,41 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Bot, Zap, Shield } from "lucide-react";
 
 export default function BotBuilderSolution() {
   const router = useRouter();
   const [building, setBuilding] = useState(true);
   const [progress, setProgress] = useState(0);
   const [botId, setBotId] = useState<string | null>(null);
-  const [buildPhase, setBuildPhase] = useState("Förbereder...");
+  const [buildPhase, setBuildPhase] = useState("INITIALIZING...");
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const problem = sessionStorage.getItem("botProblemData");
+    const selectedBotType = sessionStorage.getItem("selectedBotType");
+    const selectedBotId = sessionStorage.getItem("selectedBotId");
     const url = sessionStorage.getItem("botWebsiteUrl");
     const brandConfig = sessionStorage.getItem("botBrandConfig");
-    const additionalInfo = sessionStorage.getItem("botAdditionalInfo");
+    const additionalInfo = sessionStorage.getItem("botAdditionalContext");
     
-    if (!problem || !url || !brandConfig) {
+    if (!selectedBotType || !url || !brandConfig) {
       router.push("/business/bot-builder");
       return;
     }
 
     (async () => {
       try {
-        setBuildPhase("Analyserar data...");
+        setBuildPhase("ANALYZING DATA...");
+        setProgress(10);
         
-        const problemData = JSON.parse(problem);
         const brand = JSON.parse(brandConfig);
         const deepAnalysis = JSON.parse(sessionStorage.getItem("botDeepAnalysis") || '{}');
         const typeSettings = JSON.parse(sessionStorage.getItem("botTypeSettings") || '{}');
         const integrations = JSON.parse(sessionStorage.getItem("botIntegrations") || '{}');
         const documentContent = sessionStorage.getItem("botDocuments") || "";
         const documentFiles = JSON.parse(sessionStorage.getItem("botDocumentFiles") || '[]');
-        
         const userEmail = sessionStorage.getItem("botUserEmail") || "";
+        const botSubtype = sessionStorage.getItem("selectedBotSubtype") || "";
         
         const consult = {
           url,
@@ -44,194 +45,301 @@ export default function BotBuilderSolution() {
           websiteSummary: {},
           documentsContent: documentContent + (additionalInfo ? `\n\nSpecial instructions: ${additionalInfo}` : ''),
           documentFiles,
-          problems: [problemData.problem],
-          botType: problemData.botType || 'knowledge',
-          botSubtype: problemData.botSubtype || null,
+          problems: [`Build a ${selectedBotType} bot`],
+          botType: selectedBotType,
+          botSubtype: botSubtype || null,
           userEmail,
           brandConfig: brand,
           integrations,
           typeSettings,
           pages: deepAnalysis.pages || []
         } as any;
-
-        setBuildPhase("Tränar AI-modell...");
-        setProgress(30);
         
-        const resp = await fetch('/api/bots/build', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            consult, 
-            conversations: [],
-            brandConfig: brand
-          })
+        // Simulate progress updates
+        const progressTimer = setInterval(() => {
+          setProgress(p => {
+            if (p >= 85) {
+              clearInterval(progressTimer);
+              return 85;
+            }
+            return p + Math.random() * 15;
+          });
+        }, 800);
+        
+        // Update build phases
+        setTimeout(() => setBuildPhase("EXTRACTING KNOWLEDGE..."), 1500);
+        setTimeout(() => setBuildPhase("TRAINING AI MODEL..."), 3000);
+        setTimeout(() => setBuildPhase("CONFIGURING INTEGRATIONS..."), 4500);
+        setTimeout(() => setBuildPhase("FINALIZING BOT..."), 6000);
+        
+        const response = await fetch("/api/bots/build", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ consult })
         });
         
-        setBuildPhase("Optimerar prestanda...");
-        setProgress(60);
+        clearInterval(progressTimer);
         
-        const data = await resp.json();
-        if (data?.botId) {
-          setBotId(data.botId);
-          sessionStorage.setItem('botBuilder_botId', data.botId);
-          setBuildPhase("Slutför...");
-          setProgress(90);
+        if (!response.ok) {
+          throw new Error("Build failed");
         }
-      } catch (e) {
-        console.error('Failed to build bot', e);
-      } finally {
-        setTimeout(() => {
+        
+        const data = await response.json();
+        
+        if (data.botId) {
+          setBotId(data.botId);
+          sessionStorage.setItem("lastBuiltBotId", data.botId);
           setProgress(100);
-          setBuilding(false);
-        }, 1000);
+          setBuildPhase("COMPLETE!");
+          
+          setTimeout(() => {
+            setBuilding(false);
+          }, 1000);
+        }
+      } catch (error) {
+        console.error("Build error:", error);
+        setBuildPhase("ERROR - PLEASE TRY AGAIN");
+        setBuilding(false);
       }
     })();
   }, [router]);
 
-  const handleTestBot = () => {
-    const id = botId || sessionStorage.getItem('botBuilder_botId');
-    if (id) router.push(`/bots/chat?botId=${id}`);
+  const copyEmbedCode = () => {
+    if (!botId) return;
+    const embedCode = `<script src="https://optero-production.up.railway.app/widget.js" data-bot-id="${botId}"></script>`;
+    navigator.clipboard.writeText(embedCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
-  const copyEmbedCode = () => {
-    const id = botId || sessionStorage.getItem('botBuilder_botId');
-    const code = `<script src="https://optero-production.up.railway.app/widget.js" data-bot-id="${id}"></script>`;
-    navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 3000);
-  };
+  const stats = [
+    { label: "RESPONSE TIME", value: "< 2s" },
+    { label: "ACCURACY", value: "95%" },
+    { label: "LANGUAGES", value: "100+" },
+    { label: "UPTIME", value: "99.9%" }
+  ];
+
+  const nextSteps = [
+    { icon: Bot, title: "TEST YOUR BOT", desc: "Try it before going live" },
+    { icon: Zap, title: "CONNECT INTEGRATIONS", desc: "Link CRM, calendar, etc." },
+    { icon: Shield, title: "MONITOR PERFORMANCE", desc: "Track usage and ROI" }
+  ];
 
   if (building) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-6">
+      <div className="min-h-screen bg-black flex items-center justify-center p-6">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center max-w-md"
+          className="text-center max-w-2xl w-full"
         >
-          <div className="w-24 h-24 border-2 border-black rounded-full mx-auto mb-8 relative overflow-hidden">
-            <motion.div 
-              className="absolute inset-0 bg-black"
-              initial={{ y: '100%' }}
-              animate={{ y: `-${100 - progress}%` }}
-              transition={{ duration: 0.3 }}
+          {/* Animated Build Icon */}
+          <div className="relative w-32 h-32 mx-auto mb-12">
+            <motion.div
+              className="absolute inset-0 bg-white"
+              animate={{ 
+                scale: [1, 1.2, 1],
+                rotate: [0, 180, 360]
+              }}
+              transition={{ 
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+            <motion.div
+              className="absolute inset-4 bg-black"
+              animate={{ 
+                scale: [1, 0.8, 1],
+                rotate: [0, -180, -360]
+              }}
+              transition={{ 
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
             />
           </div>
-          <h2 className="text-2xl font-bold mb-3">Bygger din bot</h2>
-          <p className="text-sm text-[#4B5563]">{buildPhase}</p>
+          
+          <h2 className="text-4xl font-bold uppercase tracking-wider text-white mb-4">
+            BUILDING YOUR BOT
+          </h2>
+          
+          <p className="text-gray-500 uppercase tracking-wider text-sm mb-12">
+            {buildPhase}
+          </p>
+          
+          {/* Progress Bar */}
+          <div className="w-full h-2 bg-gray-900 relative overflow-hidden">
+            <motion.div
+              className="absolute inset-y-0 left-0 bg-white"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.5 }}
+            />
+          </div>
+          
+          <p className="text-2xl font-bold text-white mt-6">
+            {Math.round(progress)}%
+          </p>
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white p-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-6xl mx-auto px-8 py-16">
+        {/* Progress */}
+        <div className="flex justify-center mb-20">
+          <div className="flex items-center gap-8">
+            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+              <Check className="w-6 h-6" />
+            </div>
+            <div className="w-24 h-[2px] bg-gray-800" />
+            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+              <Check className="w-6 h-6" />
+            </div>
+            <div className="w-24 h-[2px] bg-gray-800" />
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="w-16 h-16 bg-white text-black font-bold text-xl flex items-center justify-center animate-pulse-box"
+            >
+              <Check className="w-6 h-6" />
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Success Message */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          className="text-center mb-16"
         >
-          {/* Success */}
-          <div className="flex justify-center mb-12">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 200, damping: 15 }}
-              className="w-20 h-20 border-2 border-black rounded-full flex items-center justify-center"
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 200 }}
+            className="w-24 h-24 bg-green-500 mx-auto mb-8 flex items-center justify-center"
+          >
+            <Check className="w-12 h-12 text-black" />
+          </motion.div>
+          
+          <h1 className="text-5xl font-bold uppercase tracking-wider mb-4">
+            YOUR BOT IS READY!
+          </h1>
+          <p className="text-gray-500 uppercase tracking-wider text-sm">
+            START SAVING TIME AND MONEY IMMEDIATELY
+          </p>
+        </motion.div>
+
+        {/* Embed Code */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="minimal-card bg-gray-900 border-gray-800 max-w-3xl mx-auto mb-16"
+        >
+          <h3 className="text-lg font-bold uppercase tracking-wider mb-6">
+            ONE-CLICK INSTALLATION
+          </h3>
+          
+          <div className="relative">
+            <pre className="bg-black p-6 text-sm overflow-x-auto border border-gray-800">
+              <code className="text-green-400">
+{`<script src="https://optero-production.up.railway.app/widget.js" 
+  data-bot-id="${botId}"></script>`}
+              </code>
+            </pre>
+            
+            <button
+              onClick={copyEmbedCode}
+              className="absolute top-4 right-4 p-2 bg-gray-800 hover:bg-gray-700 transition-colors"
             >
-              <Check className="w-10 h-10" />
-            </motion.div>
+              {copied ? (
+                <Check className="w-5 h-5 text-green-500" />
+              ) : (
+                <Copy className="w-5 h-5 text-gray-400" />
+              )}
+            </button>
           </div>
+          
+          <p className="text-sm text-gray-500 mt-4 uppercase tracking-wider">
+            ADD THIS CODE BEFORE {`</BODY>`} TAG ON YOUR WEBSITE
+          </p>
+        </motion.div>
 
-          <div className="text-center mb-16">
-            <h1 className="text-4xl font-bold mb-3">Din bot är klar</h1>
-            <p className="text-lg text-[#4B5563]">Redo att börja hjälpa dina kunder</p>
-          </div>
+        {/* Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16"
+        >
+          {stats.map((stat, i) => (
+            <div key={i} className="text-center">
+              <p className="text-3xl font-bold text-white mb-2">{stat.value}</p>
+              <p className="text-xs uppercase tracking-wider text-gray-500">{stat.label}</p>
+            </div>
+          ))}
+        </motion.div>
 
-          {/* Stats */}
-          <div className="grid md:grid-cols-4 gap-6 mb-16">
-            {[
-              { value: "98%", label: "Träffsäkerhet" },
-              { value: "24/7", label: "Tillgänglig" },
-              { value: "< 5s", label: "Svarstid" },
-              { value: "∞", label: "Samtal" }
-            ].map((stat, i) => (
-              <motion.div
+        {/* Next Steps */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="mb-16"
+        >
+          <h2 className="text-2xl font-bold uppercase tracking-wider text-center mb-12">
+            NEXT STEPS
+          </h2>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {nextSteps.map((step, i) => (
+              <motion.button
                 key={i}
+                onClick={() => {
+                  if (i === 0) router.push(`/bots/chat?botId=${botId}`);
+                  else if (i === 1) router.push('/dashboard');
+                  else router.push('/dashboard');
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="text-center"
+                transition={{ delay: 0.8 + i * 0.1 }}
+                className="minimal-card bg-gray-900 border-gray-800 hover:border-gray-700 text-left cursor-pointer"
               >
-                <div className="text-3xl font-bold mb-2">{stat.value}</div>
-                <div className="text-xs text-[#9CA3AF] uppercase tracking-wider">{stat.label}</div>
-              </motion.div>
+                <step.icon className="w-8 h-8 text-gray-500 mb-4" />
+                <h3 className="font-bold uppercase tracking-wider mb-2">{step.title}</h3>
+                <p className="text-sm text-gray-500">{step.desc}</p>
+              </motion.button>
             ))}
           </div>
-
-          {/* Installation */}
-          <div className="card bg-[#F9FAFB] mb-12">
-            <h3 className="mb-4">Installation</h3>
-            <p className="text-sm text-[#4B5563] mb-4">
-              Klistra in denna kod före <strong>&lt;/body&gt;</strong> på din webbplats:
-            </p>
-            <div className="bg-white border border-[#E5E7EB] rounded-lg p-4 font-mono text-xs relative">
-              <pre className="overflow-x-auto text-[#1F2937]">
-{`<script src="https://optero-production.up.railway.app/widget.js" 
-        data-bot-id="${botId || 'YOUR_BOT_ID'}"></script>`}
-              </pre>
-              <button
-                onClick={copyEmbedCode}
-                className="absolute top-2 right-2 p-2 hover:bg-[#F9FAFB] rounded-lg transition-colors"
-              >
-                {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4 text-[#9CA3AF]" />}
-              </button>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex justify-center gap-4 mb-16">
-            <motion.button
-              onClick={handleTestBot}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-secondary"
-            >
-              Testa bot
-            </motion.button>
-            <motion.button
-              onClick={() => router.push('/dashboard')}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-primary"
-            >
-              Gå till dashboard
-            </motion.button>
-          </div>
-
-          {/* Next Steps */}
-          <div className="border-t border-[#E5E7EB] pt-12">
-            <h3 className="text-center mb-8">Nästa steg</h3>
-            <div className="grid md:grid-cols-3 gap-8 text-center">
-              {[
-                { num: "1", text: "Testa boten och finjustera svar" },
-                { num: "2", text: "Installera på din webbplats" },
-                { num: "3", text: "Följ statistik i dashboard" }
-              ].map((step, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 + i * 0.1 }}
-                >
-                  <div className="text-3xl font-bold mb-3">{step.num}</div>
-                  <p className="text-sm text-[#4B5563]">{step.text}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
         </motion.div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-center gap-6">
+          <motion.button
+            onClick={() => router.push(`/bots/chat?botId=${botId}`)}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="minimal-button"
+          >
+            TEST YOUR BOT
+          </motion.button>
+          
+          <motion.button
+            onClick={() => router.push('/dashboard')}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="minimal-button-outline"
+          >
+            GO TO DASHBOARD
+          </motion.button>
+        </div>
       </div>
     </div>
   );
