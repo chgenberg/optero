@@ -349,7 +349,7 @@ export default function AnalyzeProblem() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className={`minimal-card-interactive text-left relative transition-all ${
-                  selectedBot === bot.id ? 'ring-4 ring-black bg-gray-50' : ''
+                  selectedBot === bot.id ? 'ring-4 ring-black bg-gray-50 shadow-xl' : ''
                 }`}
               >
                 <button

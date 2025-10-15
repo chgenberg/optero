@@ -2,10 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Target, MessageSquare, Zap, TrendingUp } from "lucide-react";
+import { Target, MessageSquare, Zap, TrendingUp, Info, X, Check } from "lucide-react";
+import { useState } from "react";
 
 export default function Home() {
   const router = useRouter();
+  const [showFeatureInfo, setShowFeatureInfo] = useState<string | null>(null);
 
   return (
     <main className="min-h-screen bg-white relative overflow-hidden">
@@ -138,24 +140,68 @@ export default function Home() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 text-left">
             {[
               {
+                id: "custom-trained",
                 icon: <Target className="w-5 h-5 text-black" />, 
                 title: "Custom-trained",
-                desc: "On your content and brand voice"
+                desc: "On your content and brand voice",
+                fullDesc: {
+                  what: "Your bot learns from YOUR specific content - website pages, PDFs, support docs, and brand guidelines. It speaks in your tone and knows your products inside out.",
+                  benefits: [
+                    "Accurate answers specific to your business",
+                    "Consistent brand voice in every interaction",
+                    "No generic AI responses",
+                    "Updates as your content changes"
+                  ],
+                  example: "Instead of generic 'How can I help?', your bot says 'Hey! Looking for our signature products or need help with an order?' - matching YOUR brand personality."
+                }
               },
               {
+                id: "multi-purpose",
                 icon: <MessageSquare className="w-5 h-5 text-black" />, 
                 title: "Multi-purpose",
-                desc: "Answers, support, lead qualification"
+                desc: "Answers, support, lead qualification",
+                fullDesc: {
+                  what: "One bot handles multiple business functions - from answering product questions to qualifying leads and providing support. It adapts based on user intent.",
+                  benefits: [
+                    "Replace multiple tools with one solution",
+                    "Seamless handoff between functions",
+                    "Lower costs than specialized tools",
+                    "Unified customer experience"
+                  ],
+                  example: "A visitor asks about pricing → bot presents options → qualifies their needs → books a demo call → all in one smooth conversation."
+                }
               },
               {
+                id: "always-on",
                 icon: <Zap className="w-5 h-5 text-black" />, 
                 title: "Always on",
-                desc: "Works 24/7 without burnout"
+                desc: "Works 24/7 without burnout",
+                fullDesc: {
+                  what: "Your bot never sleeps, never takes vacation, and maintains peak performance at 3 AM just like at 3 PM. Global customers get instant help anytime.",
+                  benefits: [
+                    "Capture leads outside business hours",
+                    "Support global time zones",
+                    "No overtime costs",
+                    "Consistent quality every interaction"
+                  ],
+                  example: "Weekend visitor from Japan gets instant product recommendations and books a Monday call - opportunity captured instead of lost."
+                }
               },
               {
+                id: "scalable",
                 icon: <TrendingUp className="w-5 h-5 text-black" />, 
                 title: "Scalable",
-                desc: "Grows with your business"
+                desc: "Grows with your business",
+                fullDesc: {
+                  what: "Handle 10 or 10,000 conversations simultaneously without adding staff. As you grow, just add more content - the bot handles the volume.",
+                  benefits: [
+                    "No hiring bottlenecks during growth",
+                    "Maintain quality at any volume",
+                    "Predictable costs",
+                    "Instant scaling for campaigns"
+                  ],
+                  example: "Black Friday traffic spike? Your bot handles 5,000 simultaneous shoppers while your team focuses on high-value customers."
+                }
               }
             ].map((feature, i) => (
               <motion.div
@@ -163,8 +209,15 @@ export default function Home() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.7 + i * 0.05 }}
-                className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
               >
+                <button
+                  onClick={() => setShowFeatureInfo(feature.id)}
+                  className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                  aria-label="More information"
+                >
+                  <Info className="w-4 h-4 text-gray-400" />
+                </button>
                 <div className="w-10 h-10 rounded-full border-2 border-gray-200 flex items-center justify-center mb-4">
                   {feature.icon}
                 </div>
@@ -197,6 +250,140 @@ export default function Home() {
         </motion.div>
 
       </div>
+
+      {/* Feature Info Popup */}
+      {showFeatureInfo && (
+        <div
+          onClick={() => setShowFeatureInfo(null)}
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            onClick={(e) => e.stopPropagation()}
+            className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden"
+          >
+            {(() => {
+              const feature = [
+                {
+                  id: "custom-trained",
+                  icon: <Target className="w-5 h-5 text-black" />, 
+                  title: "Custom-trained",
+                  desc: "On your content and brand voice",
+                  fullDesc: {
+                    what: "Your bot learns from YOUR specific content - website pages, PDFs, support docs, and brand guidelines. It speaks in your tone and knows your products inside out.",
+                    benefits: [
+                      "Accurate answers specific to your business",
+                      "Consistent brand voice in every interaction",
+                      "No generic AI responses",
+                      "Updates as your content changes"
+                    ],
+                    example: "Instead of generic 'How can I help?', your bot says 'Hey! Looking for our signature products or need help with an order?' - matching YOUR brand personality."
+                  }
+                },
+                {
+                  id: "multi-purpose",
+                  icon: <MessageSquare className="w-5 h-5 text-black" />, 
+                  title: "Multi-purpose",
+                  desc: "Answers, support, lead qualification",
+                  fullDesc: {
+                    what: "One bot handles multiple business functions - from answering product questions to qualifying leads and providing support. It adapts based on user intent.",
+                    benefits: [
+                      "Replace multiple tools with one solution",
+                      "Seamless handoff between functions",
+                      "Lower costs than specialized tools",
+                      "Unified customer experience"
+                    ],
+                    example: "A visitor asks about pricing → bot presents options → qualifies their needs → books a demo call → all in one smooth conversation."
+                  }
+                },
+                {
+                  id: "always-on",
+                  icon: <Zap className="w-5 h-5 text-black" />, 
+                  title: "Always on",
+                  desc: "Works 24/7 without burnout",
+                  fullDesc: {
+                    what: "Your bot never sleeps, never takes vacation, and maintains peak performance at 3 AM just like at 3 PM. Global customers get instant help anytime.",
+                    benefits: [
+                      "Capture leads outside business hours",
+                      "Support global time zones",
+                      "No overtime costs",
+                      "Consistent quality every interaction"
+                    ],
+                    example: "Weekend visitor from Japan gets instant product recommendations and books a Monday call - opportunity captured instead of lost."
+                  }
+                },
+                {
+                  id: "scalable",
+                  icon: <TrendingUp className="w-5 h-5 text-black" />, 
+                  title: "Scalable",
+                  desc: "Grows with your business",
+                  fullDesc: {
+                    what: "Handle 10 or 10,000 conversations simultaneously without adding staff. As you grow, just add more content - the bot handles the volume.",
+                    benefits: [
+                      "No hiring bottlenecks during growth",
+                      "Maintain quality at any volume",
+                      "Predictable costs",
+                      "Instant scaling for campaigns"
+                    ],
+                    example: "Black Friday traffic spike? Your bot handles 5,000 simultaneous shoppers while your team focuses on high-value customers."
+                  }
+                }
+              ].find(f => f.id === showFeatureInfo);
+              
+              if (!feature) return null;
+              
+              return (
+                <>
+                  <div className="px-8 py-6 border-b border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                          {feature.icon}
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold">{feature.title}</h3>
+                          <p className="text-sm text-gray-600">{feature.desc}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setShowFeatureInfo(null)}
+                        className="p-2 hover:bg-gray-100 transition-colors rounded-lg"
+                      >
+                        <X className="w-5 h-5 text-gray-500" />
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="px-8 py-6 space-y-6">
+                    <div>
+                      <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-2">HOW IT WORKS</h4>
+                      <p className="text-gray-700 leading-relaxed">{feature.fullDesc.what}</p>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-3">KEY BENEFITS</h4>
+                      <ul className="space-y-2">
+                        {feature.fullDesc.benefits.map((benefit, idx) => (
+                          <li key={idx} className="flex items-start gap-2">
+                            <Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            <span className="text-gray-700">{benefit}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div className="bg-gray-50 rounded-xl p-4">
+                      <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-2">REAL EXAMPLE</h4>
+                      <p className="text-gray-700 italic">{feature.fullDesc.example}</p>
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
+          </motion.div>
+        </div>
+      )}
 
       <style jsx>{`
         @keyframes draw-arrow {
