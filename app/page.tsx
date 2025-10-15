@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { Target, MessageSquare, Zap, TrendingUp } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
@@ -136,25 +137,25 @@ export default function Home() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 text-left">
             {[
-              { 
-                icon: "🎯", 
-                title: "Custom-trained", 
-                desc: "On your content and brand voice" 
+              {
+                icon: <Target className="w-5 h-5 text-black" />, 
+                title: "Custom-trained",
+                desc: "On your content and brand voice"
               },
-              { 
-                icon: "💬", 
-                title: "Multi-purpose", 
-                desc: "Answers, support, lead qualification" 
+              {
+                icon: <MessageSquare className="w-5 h-5 text-black" />, 
+                title: "Multi-purpose",
+                desc: "Answers, support, lead qualification"
               },
-              { 
-                icon: "⚡", 
-                title: "Always on", 
-                desc: "Works 24/7 without burnout" 
+              {
+                icon: <Zap className="w-5 h-5 text-black" />, 
+                title: "Always on",
+                desc: "Works 24/7 without burnout"
               },
-              { 
-                icon: "📈", 
-                title: "Scalable", 
-                desc: "Grows with your business" 
+              {
+                icon: <TrendingUp className="w-5 h-5 text-black" />, 
+                title: "Scalable",
+                desc: "Grows with your business"
               }
             ].map((feature, i) => (
               <motion.div
@@ -164,7 +165,9 @@ export default function Home() {
                 transition={{ delay: 0.7 + i * 0.05 }}
                 className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
               >
-                <div className="text-3xl mb-4">{feature.icon}</div>
+                <div className="w-10 h-10 rounded-full border-2 border-gray-200 flex items-center justify-center mb-4">
+                  {feature.icon}
+                </div>
                 <h3 className="font-bold mb-2">{feature.title}</h3>
                 <p className="text-sm text-[#4B5563]">{feature.desc}</p>
               </motion.div>
