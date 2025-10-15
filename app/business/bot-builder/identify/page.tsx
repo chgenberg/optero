@@ -100,25 +100,25 @@ export default function IdentifyProblem() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 md:p-6">
       <div className="max-w-2xl w-full">
         {/* Progress Steps */}
-        <div className="flex justify-center mb-20">
-          <div className="flex items-center gap-8">
+        <div className="flex justify-center mb-12 md:mb-20">
+          <div className="flex items-center gap-4 md:gap-8">
             <motion.div 
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.3 }}
-              className="w-16 h-16 bg-black text-white font-bold text-xl flex items-center justify-center rounded-2xl shadow-xl"
+              className="w-12 h-12 md:w-16 md:h-16 bg-black text-white font-bold text-lg md:text-xl flex items-center justify-center rounded-2xl shadow-xl"
             >
               01
             </motion.div>
-            <div className="w-24 h-[2px] bg-gray-300" />
-            <div className="w-16 h-16 bg-white text-gray-400 font-bold text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
+            <div className="w-12 md:w-24 h-[2px] bg-gray-300" />
+            <div className="w-12 h-12 md:w-16 md:h-16 bg-white text-gray-400 font-bold text-lg md:text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
               02
             </div>
-            <div className="w-24 h-[2px] bg-gray-300" />
-            <div className="w-16 h-16 bg-white text-gray-400 font-bold text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
+            <div className="w-12 md:w-24 h-[2px] bg-gray-300" />
+            <div className="w-12 h-12 md:w-16 md:h-16 bg-white text-gray-400 font-bold text-lg md:text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
               03
             </div>
           </div>
@@ -132,16 +132,16 @@ export default function IdentifyProblem() {
         >
           {/* Header */}
           <div className="text-center relative">
-            <h1 className="text-5xl font-bold uppercase tracking-wider text-black mb-4">
+            <h1 className="text-3xl md:text-5xl font-bold uppercase tracking-wider text-black mb-4">
               ANALYZE YOUR BUSINESS
             </h1>
-            <p className="text-gray-600 uppercase tracking-wider text-sm">
+            <p className="text-gray-600 uppercase tracking-wider text-xs md:text-sm">
               STEP 01 — IDENTIFY OPPORTUNITIES
             </p>
             
             <button
               onClick={() => setShowInfo(!showInfo)}
-              className="absolute -right-12 top-0 p-3 hover:bg-gray-100 rounded-xl transition-colors"
+              className="absolute right-0 md:-right-12 top-0 p-2 md:p-3 hover:bg-gray-100 rounded-xl transition-colors"
             >
               <Info className="w-5 h-5 text-gray-500" />
             </button>
@@ -150,7 +150,7 @@ export default function IdentifyProblem() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="absolute right-0 top-16 w-96 p-8 bg-white rounded-2xl shadow-2xl text-left z-10"
+                className="absolute right-0 top-12 md:top-16 w-72 md:w-96 p-6 md:p-8 bg-white rounded-2xl shadow-2xl text-left z-10"
               >
                 <p className="text-sm text-gray-600 leading-relaxed">
                   We analyze your website and documents to understand your business
@@ -162,7 +162,7 @@ export default function IdentifyProblem() {
           </div>
           
           {/* Form Card */}
-          <div className="minimal-card animate-pulse-shadow p-12 space-y-10">
+          <div className="minimal-card animate-pulse-shadow p-6 md:p-12 space-y-6 md:space-y-10">
             <div>
               <label className="minimal-label">
                 WEBSITE URL
@@ -201,7 +201,7 @@ export default function IdentifyProblem() {
                   e.preventDefault();
                   handleFileSelect(e.dataTransfer.files);
                 }}
-                className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-black transition-all duration-300 cursor-pointer"
+                className="border-2 border-dashed border-gray-300 rounded-xl p-8 md:p-12 text-center hover:border-black transition-all duration-300 cursor-pointer"
               >
                 <label className="cursor-pointer">
                   <input

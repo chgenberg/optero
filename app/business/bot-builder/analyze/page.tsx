@@ -264,25 +264,25 @@ export default function AnalyzeProblem() {
     <div className="min-h-screen bg-gray-50 text-gray-900 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Progress */}
-        <div className="flex justify-center mb-16">
-          <div className="flex items-center gap-8">
-            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
-              <Check className="w-6 h-6 text-green-500" />
+        <div className="flex justify-center mb-8 md:mb-16">
+          <div className="flex items-center gap-2 sm:gap-4 md:gap-8">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-gray-900 text-gray-600 font-bold text-sm sm:text-lg md:text-xl flex items-center justify-center border-2 border-gray-800">
+              <Check className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-green-500" />
             </div>
-            <div className="w-24 h-[2px] bg-gray-800" />
+            <div className="w-8 sm:w-12 md:w-24 h-[2px] bg-gray-800" />
             <motion.div 
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="w-16 h-16 bg-white text-black font-bold text-xl flex items-center justify-center animate-pulse-box border-2 border-black"
+              className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-white text-black font-bold text-sm sm:text-lg md:text-xl flex items-center justify-center animate-pulse-box border-2 border-black"
             >
               AI
             </motion.div>
-            <div className="w-24 h-[2px] bg-gray-800" />
-            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+            <div className="w-8 sm:w-12 md:w-24 h-[2px] bg-gray-800" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-gray-900 text-gray-600 font-bold text-sm sm:text-lg md:text-xl flex items-center justify-center border-2 border-gray-800">
               02
             </div>
-            <div className="w-24 h-[2px] bg-gray-800" />
-            <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+            <div className="w-8 sm:w-12 md:w-24 h-[2px] bg-gray-800" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-gray-900 text-gray-600 font-bold text-sm sm:text-lg md:text-xl flex items-center justify-center border-2 border-gray-800">
               03
             </div>
           </div>
@@ -294,10 +294,10 @@ export default function AnalyzeProblem() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <h1 className="text-5xl font-bold uppercase tracking-wider text-black mb-4">
+          <h1 className="text-3xl md:text-5xl font-bold uppercase tracking-wider text-black mb-4">
             AI ANALYSIS COMPLETE
           </h1>
-          <p className="text-gray-600 uppercase tracking-wider text-sm mb-8">
+          <p className="text-gray-600 uppercase tracking-wider text-xs md:text-sm mb-8">
             CHOOSE YOUR AI IMPLEMENTATION
           </p>
           
@@ -334,11 +334,11 @@ export default function AnalyzeProblem() {
 
         {/* Bot Recommendations */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold uppercase tracking-wider text-center text-black mb-12">
+          <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-wider text-center text-black mb-8 md:mb-12">
             RECOMMENDED SOLUTIONS
           </h2>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
             {botRecommendations.map((bot, i) => (
               <motion.button
                 key={bot.id}

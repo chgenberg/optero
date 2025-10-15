@@ -215,23 +215,23 @@ export default function CustomizeBotPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto p-8">
+      <div className="max-w-6xl mx-auto p-4 md:p-8">
         {/* Progress */}
-        <div className="flex justify-center mb-20">
-          <div className="flex items-center gap-8">
-            <div className="w-16 h-16 bg-green-500 text-white font-bold text-xl flex items-center justify-center rounded-2xl shadow-xl">
-              <Check className="w-6 h-6" />
+        <div className="flex justify-center mb-12 md:mb-20">
+          <div className="flex items-center gap-4 md:gap-8">
+            <div className="w-12 h-12 md:w-16 md:h-16 bg-green-500 text-white font-bold text-lg md:text-xl flex items-center justify-center rounded-2xl shadow-xl">
+              <Check className="w-5 h-5 md:w-6 md:h-6" />
             </div>
-            <div className="w-24 h-[2px] bg-gray-300" />
+            <div className="w-12 md:w-24 h-[2px] bg-gray-300" />
             <motion.div 
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="w-16 h-16 bg-black text-white font-bold text-xl flex items-center justify-center rounded-2xl shadow-xl"
+              className="w-12 h-12 md:w-16 md:h-16 bg-black text-white font-bold text-lg md:text-xl flex items-center justify-center rounded-2xl shadow-xl"
             >
               02
             </motion.div>
-            <div className="w-24 h-[2px] bg-gray-300" />
-            <div className="w-16 h-16 bg-white text-gray-400 font-bold text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
+            <div className="w-12 md:w-24 h-[2px] bg-gray-300" />
+            <div className="w-12 h-12 md:w-16 md:h-16 bg-white text-gray-400 font-bold text-lg md:text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
               03
             </div>
           </div>
@@ -243,22 +243,22 @@ export default function CustomizeBotPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <h1 className="text-5xl font-bold uppercase tracking-wider text-black mb-4">
+          <h1 className="text-3xl md:text-5xl font-bold uppercase tracking-wider text-black mb-4">
             CUSTOMIZE YOUR BOT
           </h1>
-          <p className="text-gray-600 uppercase tracking-wider text-sm">
+          <p className="text-gray-600 uppercase tracking-wider text-xs md:text-sm">
             STEP 02 — BRAND & BEHAVIOR
           </p>
         </motion.div>
 
         {/* Tab Navigation */}
-        <div className="flex justify-center mb-12">
-          <div className="inline-flex bg-white rounded-xl shadow-sm p-1">
+        <div className="flex justify-center mb-8 md:mb-12 overflow-x-auto">
+          <div className="inline-flex bg-white rounded-xl shadow-sm p-1 min-w-fit">
             {(['brand', 'interaction', 'advanced'] as const).map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-8 py-3 rounded-lg uppercase tracking-wider text-sm font-bold transition-all duration-300 ${
+                className={`px-4 md:px-8 py-2 md:py-3 rounded-lg uppercase tracking-wider text-xs md:text-sm font-bold transition-all duration-300 ${
                   activeTab === tab 
                     ? 'bg-black text-white' 
                     : 'text-gray-500 hover:text-black'
@@ -274,9 +274,9 @@ export default function CustomizeBotPage() {
         </div>
 
         {/* Content */}
-        <div className="grid grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Settings */}
-          <div className="col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6 md:space-y-8">
             {activeTab === 'brand' && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -290,12 +290,12 @@ export default function CustomizeBotPage() {
                   <div className="space-y-6">
                     <div>
                       <label className="minimal-label mb-4">PRESET COLORS</label>
-                      <div className="flex gap-4">
+                      <div className="flex gap-2 md:gap-4 flex-wrap">
                         {colorPresets.map(color => (
                           <button
                             key={color.hex}
                             onClick={() => updateHexColor(color.hex)}
-                            className={`w-20 h-20 rounded-xl border-2 transition-all duration-300 ${
+                            className={`w-16 h-16 md:w-20 md:h-20 rounded-xl border-2 transition-all duration-300 ${
                               brand.primaryColor === color.hex ? 'border-black scale-110 shadow-lg' : 'border-gray-300 hover:border-gray-500'
                             }`}
                             style={{ backgroundColor: color.hex }}
