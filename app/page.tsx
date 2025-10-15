@@ -124,9 +124,9 @@ export default function Home() {
                   </div>
                 )}
               </motion.div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
         {/* Why it works */}
         <motion.div 
@@ -249,7 +249,7 @@ export default function Home() {
           </button>
         </motion.div>
 
-      </div>
+              </div>
 
       {/* Feature Info Popup */}
       {showFeatureInfo && (
@@ -261,7 +261,7 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             onClick={(e) => e.stopPropagation()}
-            className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden"
+            className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
           >
             {(() => {
               const feature = [
@@ -335,32 +335,32 @@ export default function Home() {
               
               return (
                 <>
-                  <div className="px-8 py-6 border-b border-gray-200">
+                  <div className="px-4 sm:px-8 py-4 sm:py-6 border-b border-gray-200">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
                           {feature.icon}
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold">{feature.title}</h3>
-                          <p className="text-sm text-gray-600">{feature.desc}</p>
-                        </div>
-                      </div>
+                          <h3 className="text-lg sm:text-xl font-bold">{feature.title}</h3>
+                          <p className="text-xs sm:text-sm text-gray-600">{feature.desc}</p>
+                </div>
+              </div>
                       <button
                         onClick={() => setShowFeatureInfo(null)}
                         className="p-2 hover:bg-gray-100 transition-colors rounded-lg"
                       >
                         <X className="w-5 h-5 text-gray-500" />
                       </button>
-                    </div>
-                  </div>
-                  
-                  <div className="px-8 py-6 space-y-6">
+            </div>
+          </div>
+
+                  <div className="px-4 sm:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
                     <div>
                       <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-2">HOW IT WORKS</h4>
                       <p className="text-gray-700 leading-relaxed">{feature.fullDesc.what}</p>
-                    </div>
-                    
+              </div>
+
                     <div>
                       <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-3">KEY BENEFITS</h4>
                       <ul className="space-y-2">
@@ -371,13 +371,13 @@ export default function Home() {
                           </li>
                         ))}
                       </ul>
-                    </div>
-                    
+              </div>
+
                     <div className="bg-gray-50 rounded-xl p-4">
                       <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-2">REAL EXAMPLE</h4>
                       <p className="text-gray-700 italic">{feature.fullDesc.example}</p>
-                    </div>
-                  </div>
+              </div>
+            </div>
                 </>
               );
             })()}

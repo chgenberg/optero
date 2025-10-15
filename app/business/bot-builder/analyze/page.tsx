@@ -348,20 +348,29 @@ export default function AnalyzeProblem() {
                 transition={{ delay: i * 0.1 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`minimal-card-interactive text-left relative transition-all ${
-                  selectedBot === bot.id ? 'ring-4 ring-black bg-gray-50 shadow-xl' : ''
+                className={`minimal-card-interactive text-left relative transition-all transform ${
+                  selectedBot === bot.id 
+                    ? 'ring-4 ring-black bg-gray-50 shadow-2xl scale-[1.02] border-black' 
+                    : 'hover:shadow-lg'
                 }`}
               >
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowInfoFor(showInfoFor === bot.id ? null : bot.id);
-                  }}
-                  aria-label="More info"
-                  className="absolute top-6 right-6 p-2 hover:bg-gray-100 transition-colors rounded-lg"
-                >
-                  <Info className="w-5 h-5 text-gray-500" />
-                </button>
+                <div className="absolute top-6 right-6 flex items-center gap-2">
+                  {selectedBot === bot.id && (
+                    <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowInfoFor(showInfoFor === bot.id ? null : bot.id);
+                    }}
+                    aria-label="More info"
+                    className="p-2 hover:bg-gray-100 transition-colors rounded-lg"
+                  >
+                    <Info className="w-5 h-5 text-gray-500" />
+                  </button>
+                </div>
 
                 <h3 className="text-xl font-bold uppercase tracking-wider text-black mb-2">
                   {bot.title}
@@ -469,9 +478,9 @@ export default function AnalyzeProblem() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               onClick={(e) => e.stopPropagation()}
-              className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden"
+              className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
+              <div className="flex items-center justify-between px-4 sm:px-8 py-4 sm:py-6 border-b border-gray-200">
                 <div>
                   <h3 className="text-xl font-bold uppercase tracking-wider text-black">
                     {botRecommendations.find(b => b.id === showInfoFor)?.title}
@@ -489,8 +498,8 @@ export default function AnalyzeProblem() {
               </div>
 
               {/* Tabs */}
-              <div className="px-8 pt-6">
-                <div className="flex gap-2 text-sm mb-6">
+              <div className="px-4 sm:px-8 pt-4 sm:pt-6">
+                <div className="flex gap-2 text-xs sm:text-sm mb-4 sm:mb-6 overflow-x-auto">
                   {(['overview','setup','integrations','api','security'] as const).map(t => (
                     <button
                       key={t}
@@ -507,7 +516,7 @@ export default function AnalyzeProblem() {
                 </div>
 
                 {/* Tab content */}
-                <div className="pb-8 text-gray-700">
+                <div className="pb-4 sm:pb-8 text-gray-700">
                   {infoTab === 'overview' && (
                     <div className="space-y-4">
                       <div>
