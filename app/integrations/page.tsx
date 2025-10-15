@@ -23,6 +23,7 @@ interface Integration {
     help?: string;
   }>;
   enabled?: boolean;
+  comingSoon?: boolean;
 }
 
 const AVAILABLE_INTEGRATIONS: Integration[] = [
@@ -113,6 +114,261 @@ const AVAILABLE_INTEGRATIONS: Integration[] = [
       { key: 'clientSecret', label: 'Client Secret', type: 'password' },
       { key: 'authCode', label: 'Authorization Code', type: 'text' }
     ]
+  },
+  // --- CRM (API key based) ---
+  {
+    id: 'pipedrive',
+    name: 'Pipedrive',
+    description: 'Sync deals and contacts',
+    icon: Database,
+    category: 'crm',
+    fields: [
+      { key: 'apiToken', label: 'API Token', type: 'password', placeholder: 'xxxxxxxxxxxxxxxx' }
+    ],
+    comingSoon: true
+  },
+  // --- Support ---
+  {
+    id: 'intercom',
+    name: 'Intercom',
+    description: 'Create conversations and users',
+    icon: HeadphonesIcon,
+    category: 'support',
+    fields: [
+      { key: 'accessToken', label: 'Access Token', type: 'password', placeholder: 'Bearer token' }
+    ],
+    comingSoon: true
+  },
+  {
+    id: 'freshdesk',
+    name: 'Freshdesk',
+    description: 'Create support tickets',
+    icon: HeadphonesIcon,
+    category: 'support',
+    fields: [
+      { key: 'domain', label: 'Domain', type: 'text', placeholder: 'yourcompany.freshdesk.com' },
+      { key: 'apiKey', label: 'API Key', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  {
+    id: 'gorgias',
+    name: 'Gorgias',
+    description: 'Support for Shopify brands',
+    icon: HeadphonesIcon,
+    category: 'support',
+    fields: [
+      { key: 'domain', label: 'Domain', type: 'text', placeholder: 'yourbrand.gorgias.com' },
+      { key: 'apiKey', label: 'API Key', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  {
+    id: 'crisp',
+    name: 'Crisp',
+    description: 'Send messages and create contacts',
+    icon: HeadphonesIcon,
+    category: 'support',
+    fields: [
+      { key: 'websiteId', label: 'Website ID', type: 'text' },
+      { key: 'token', label: 'REST Token', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  // --- E-commerce ---
+  {
+    id: 'woocommerce',
+    name: 'WooCommerce',
+    description: 'Products, orders & stock',
+    icon: ShoppingCart,
+    category: 'ecommerce',
+    fields: [
+      { key: 'storeUrl', label: 'Store URL', type: 'url', placeholder: 'https://yourstore.com' },
+      { key: 'consumerKey', label: 'Consumer Key', type: 'password' },
+      { key: 'consumerSecret', label: 'Consumer Secret', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  {
+    id: 'magento',
+    name: 'Magento',
+    description: 'Catalog and orders',
+    icon: ShoppingCart,
+    category: 'ecommerce',
+    fields: [
+      { key: 'baseUrl', label: 'Base URL', type: 'url' },
+      { key: 'accessToken', label: 'Access Token', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  {
+    id: 'bigcommerce',
+    name: 'BigCommerce',
+    description: 'Products and customers',
+    icon: ShoppingCart,
+    category: 'ecommerce',
+    fields: [
+      { key: 'storeHash', label: 'Store Hash', type: 'text' },
+      { key: 'clientId', label: 'Client ID', type: 'text' },
+      { key: 'accessToken', label: 'Access Token', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  // --- Marketing ---
+  {
+    id: 'klaviyo',
+    name: 'Klaviyo',
+    description: 'Sync email subscribers and events',
+    icon: Mail,
+    category: 'communication',
+    fields: [
+      { key: 'apiKey', label: 'Private API Key', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  {
+    id: 'brevo',
+    name: 'Brevo (Sendinblue)',
+    description: 'Email & SMS campaigns',
+    icon: Mail,
+    category: 'communication',
+    fields: [
+      { key: 'apiKey', label: 'API Key', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  {
+    id: 'activecampaign',
+    name: 'ActiveCampaign',
+    description: 'Contacts and automations',
+    icon: Mail,
+    category: 'communication',
+    fields: [
+      { key: 'apiUrl', label: 'API URL', type: 'url', placeholder: 'https://youraccount.api-us1.com' },
+      { key: 'apiKey', label: 'API Key', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  // --- Docs / KB ---
+  {
+    id: 'notion',
+    name: 'Notion',
+    description: 'Pull pages for knowledge base',
+    icon: Database,
+    category: 'crm',
+    fields: [
+      { key: 'integrationToken', label: 'Integration Token', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  {
+    id: 'confluence',
+    name: 'Confluence',
+    description: 'Sync spaces/pages',
+    icon: Database,
+    category: 'crm',
+    fields: [
+      { key: 'site', label: 'Site Base URL', type: 'url', placeholder: 'https://yourcompany.atlassian.net/wiki' },
+      { key: 'email', label: 'Atlassian Email', type: 'text' },
+      { key: 'apiToken', label: 'API Token', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  {
+    id: 'airtable',
+    name: 'Airtable',
+    description: 'Use bases as data sources',
+    icon: Database,
+    category: 'crm',
+    fields: [
+      { key: 'accessToken', label: 'Access Token', type: 'password' },
+      { key: 'baseId', label: 'Base ID', type: 'text' }
+    ],
+    comingSoon: true
+  },
+  // --- Project / Tickets ---
+  {
+    id: 'jira',
+    name: 'Jira',
+    description: 'Create issues from chats',
+    icon: Database,
+    category: 'crm',
+    fields: [
+      { key: 'site', label: 'Site Base URL', type: 'url', placeholder: 'https://yourcompany.atlassian.net' },
+      { key: 'email', label: 'Atlassian Email', type: 'text' },
+      { key: 'apiToken', label: 'API Token', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  {
+    id: 'asana',
+    name: 'Asana',
+    description: 'Tasks and projects',
+    icon: Database,
+    category: 'crm',
+    fields: [
+      { key: 'pat', label: 'Personal Access Token', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  {
+    id: 'trello',
+    name: 'Trello',
+    description: 'Boards & cards',
+    icon: Database,
+    category: 'crm',
+    fields: [
+      { key: 'apiKey', label: 'API Key', type: 'password' },
+      { key: 'apiToken', label: 'Token', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  {
+    id: 'monday',
+    name: 'Monday.com',
+    description: 'Boards & items',
+    icon: Database,
+    category: 'crm',
+    fields: [
+      { key: 'apiToken', label: 'API Token', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  // --- Messaging / Payments ---
+  {
+    id: 'twilio',
+    name: 'Twilio',
+    description: 'SMS & WhatsApp via Twilio',
+    icon: MessageSquare,
+    category: 'communication',
+    fields: [
+      { key: 'accountSid', label: 'Account SID', type: 'text' },
+      { key: 'authToken', label: 'Auth Token', type: 'password' },
+      { key: 'fromNumber', label: 'From Number', type: 'text', placeholder: '+1...' }
+    ],
+    comingSoon: true
+  },
+  {
+    id: 'telegram',
+    name: 'Telegram',
+    description: 'Bot API token',
+    icon: MessageSquare,
+    category: 'communication',
+    fields: [
+      { key: 'botToken', label: 'Bot Token', type: 'password' }
+    ],
+    comingSoon: true
+  },
+  {
+    id: 'stripe',
+    name: 'Stripe',
+    description: 'Payments and checkout links',
+    icon: Mail,
+    category: 'communication',
+    fields: [
+      { key: 'secretKey', label: 'Secret Key', type: 'password', placeholder: 'sk_live_...' }
+    ],
+    comingSoon: true
   }
 ];
 
@@ -329,7 +585,11 @@ function IntegrationsContent() {
                       <p className="text-sm text-gray-600">{integration.description}</p>
                     </div>
                   </div>
-                  {isConfigured && (
+                  {integration.comingSoon ? (
+                    <div className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full">
+                      <span className="text-xs font-bold text-gray-600 uppercase">Coming Soon</span>
+                    </div>
+                  ) : isConfigured && (
                     <div className="flex items-center gap-1 px-2 py-1 bg-green-100 rounded-full">
                       <Check className="w-3 h-3 text-green-600" />
                       <span className="text-xs font-bold text-green-600 uppercase">Active</span>
@@ -338,60 +598,67 @@ function IntegrationsContent() {
                 </div>
 
                 <div className="space-y-4">
-                  {integration.fields.map(field => {
-                    const value = integrations[integration.id]?.[field.key] || '';
-                    const passwordKey = `${integration.id}-${field.key}`;
-                    const showPassword = showPasswords[passwordKey];
+                  {integration.comingSoon ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <p className="text-sm mb-2">This integration is coming soon!</p>
+                      <p className="text-xs">Check back later or contact us for priority access.</p>
+                    </div>
+                  ) : (
+                    integration.fields.map(field => {
+                      const value = integrations[integration.id]?.[field.key] || '';
+                      const passwordKey = `${integration.id}-${field.key}`;
+                      const showPassword = showPasswords[passwordKey];
 
-                    return (
-                      <div key={field.key}>
-                        <label className="minimal-label">
-                          {field.label}
-                        </label>
-                        
-                        {field.type === 'toggle' ? (
-                          <label className="flex items-center gap-3 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={Boolean(value)}
-                              onChange={(e) => updateIntegration(integration.id, field.key, e.target.checked)}
-                              className="w-5 h-5 text-black focus:ring-black"
-                            />
-                            <span className="text-sm text-gray-700">Enable integration</span>
+                      return (
+                        <div key={field.key}>
+                          <label className="minimal-label">
+                            {field.label}
                           </label>
-                        ) : field.type === 'password' ? (
-                          <div className="relative">
+                          
+                          {field.type === 'toggle' ? (
+                            <label className="flex items-center gap-3 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(value)}
+                                onChange={(e) => updateIntegration(integration.id, field.key, e.target.checked)}
+                                className="w-5 h-5 text-black focus:ring-black"
+                              />
+                              <span className="text-sm text-gray-700">Enable integration</span>
+                            </label>
+                          ) : field.type === 'password' ? (
+                            <div className="relative">
+                              <input
+                                type={showPassword ? 'text' : 'password'}
+                                value={value}
+                                onChange={(e) => updateIntegration(integration.id, field.key, e.target.value)}
+                                placeholder={field.placeholder}
+                                className="minimal-input pr-12"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => togglePassword(integration.id, field.key)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black"
+                              >
+                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                              </button>
+                            </div>
+                          ) : (
                             <input
-                              type={showPassword ? 'text' : 'password'}
+                              type={field.type}
                               value={value}
                               onChange={(e) => updateIntegration(integration.id, field.key, e.target.value)}
                               placeholder={field.placeholder}
-                              className="minimal-input pr-12"
+                              className="minimal-input"
                             />
-                            <button
-                              type="button"
-                              onClick={() => togglePassword(integration.id, field.key)}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black"
-                            >
-                              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                            </button>
-                          </div>
-                        ) : (
-                          <input
-                            type={field.type}
-                            value={value}
-                            onChange={(e) => updateIntegration(integration.id, field.key, e.target.value)}
-                            placeholder={field.placeholder}
-                            className="minimal-input"
-                          />
-                        )}
-                        
-                        {field.help && (
-                          <p className="text-xs text-gray-500 mt-1">{field.help}</p>
-                        )}
-                      </div>
-                    );
-                  })}
+                          )}
+                          
+                          {field.help && (
+                            <p className="text-xs text-gray-500 mt-1">{field.help}</p>
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               </motion.div>
             );

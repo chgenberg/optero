@@ -53,6 +53,37 @@ export async function POST(req: NextRequest) {
       specUpdate.fortnoxAuthCode = integrations.fortnox.authCode || null;
     }
 
+    // Additional key-based providers -> stored in spec (no special partner app required)
+    const setIf = (id: string, map: Record<string,string>) => {
+      Object.entries(map).forEach(([field, specKey]) => {
+        if (integrations?.[id]?.[field] !== undefined) {
+          specUpdate[specKey] = integrations[id][field] || null;
+        }
+      });
+    };
+
+    setIf('pipedrive', { apiToken: 'pipedriveApiToken' });
+    setIf('intercom', { accessToken: 'intercomAccessToken' });
+    setIf('freshdesk', { domain: 'freshdeskDomain', apiKey: 'freshdeskApiKey' });
+    setIf('gorgias', { domain: 'gorgiasDomain', apiKey: 'gorgiasApiKey' });
+    setIf('crisp', { websiteId: 'crispWebsiteId', token: 'crispRestToken' });
+    setIf('woocommerce', { storeUrl: 'woocommerceStoreUrl', consumerKey: 'woocommerceConsumerKey', consumerSecret: 'woocommerceConsumerSecret' });
+    setIf('magento', { baseUrl: 'magentoBaseUrl', accessToken: 'magentoAccessToken' });
+    setIf('bigcommerce', { storeHash: 'bigcommerceStoreHash', clientId: 'bigcommerceClientId', accessToken: 'bigcommerceAccessToken' });
+    setIf('klaviyo', { apiKey: 'klaviyoApiKey' });
+    setIf('brevo', { apiKey: 'brevoApiKey' });
+    setIf('activecampaign', { apiUrl: 'activecampaignApiUrl', apiKey: 'activecampaignApiKey' });
+    setIf('notion', { integrationToken: 'notionIntegrationToken' });
+    setIf('confluence', { site: 'confluenceSite', email: 'confluenceEmail', apiToken: 'confluenceApiToken' });
+    setIf('airtable', { accessToken: 'airtableAccessToken', baseId: 'airtableBaseId' });
+    setIf('jira', { site: 'jiraSite', email: 'jiraEmail', apiToken: 'jiraApiToken' });
+    setIf('asana', { pat: 'asanaPat' });
+    setIf('trello', { apiKey: 'trelloApiKey', apiToken: 'trelloApiToken' });
+    setIf('monday', { apiToken: 'mondayApiToken' });
+    setIf('twilio', { accountSid: 'twilioAccountSid', authToken: 'twilioAuthToken', fromNumber: 'twilioFromNumber' });
+    setIf('telegram', { botToken: 'telegramBotToken' });
+    setIf('stripe', { secretKey: 'stripeSecretKey' });
+
     // Update bot spec
     await prisma.bot.update({
       where: { id: botId },

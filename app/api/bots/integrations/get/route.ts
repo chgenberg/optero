@@ -90,6 +90,39 @@ export async function GET(req: NextRequest) {
       };
     }
 
+    // Additional key-based providers (stored in spec for now)
+    const specMap = (id: string, keys: string[]) => {
+      const anyPresent = keys.some(k => spec[`${id}_${k}`] || spec[`${id}${k.charAt(0).toUpperCase()+k.slice(1)}`] || spec[`${id}${k}`]);
+      if (!anyPresent) return undefined;
+      const obj: any = {};
+      keys.forEach(k => {
+        obj[k] = spec[`${id}_${k}`] || spec[`${id}${k.charAt(0).toUpperCase()+k.slice(1)}`] || spec[`${id}${k}`] || '';
+      });
+      return obj;
+    };
+
+    integrations.pipedrive = specMap('pipedrive', ['apiToken']);
+    integrations.intercom = specMap('intercom', ['accessToken']);
+    integrations.freshdesk = specMap('freshdesk', ['domain', 'apiKey']);
+    integrations.gorgias = specMap('gorgias', ['domain', 'apiKey']);
+    integrations.crisp = specMap('crisp', ['websiteId', 'token']);
+    integrations.woocommerce = specMap('woocommerce', ['storeUrl', 'consumerKey', 'consumerSecret']);
+    integrations.magento = specMap('magento', ['baseUrl', 'accessToken']);
+    integrations.bigcommerce = specMap('bigcommerce', ['storeHash', 'clientId', 'accessToken']);
+    integrations.klaviyo = specMap('klaviyo', ['apiKey']);
+    integrations.brevo = specMap('brevo', ['apiKey']);
+    integrations.activecampaign = specMap('activecampaign', ['apiUrl', 'apiKey']);
+    integrations.notion = specMap('notion', ['integrationToken']);
+    integrations.confluence = specMap('confluence', ['site', 'email', 'apiToken']);
+    integrations.airtable = specMap('airtable', ['accessToken', 'baseId']);
+    integrations.jira = specMap('jira', ['site', 'email', 'apiToken']);
+    integrations.asana = specMap('asana', ['pat']);
+    integrations.trello = specMap('trello', ['apiKey', 'apiToken']);
+    integrations.monday = specMap('monday', ['apiToken']);
+    integrations.twilio = specMap('twilio', ['accountSid', 'authToken', 'fromNumber']);
+    integrations.telegram = specMap('telegram', ['botToken']);
+    integrations.stripe = specMap('stripe', ['secretKey']);
+
     return NextResponse.json({ integrations });
   } catch (error) {
     console.error('Error fetching integrations:', error);
