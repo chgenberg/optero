@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Upload, X, Info, Plus, Check, Palette, Type, MessageSquare, Clock, Link2 } from "lucide-react";
+import { Upload, X, Info, Plus, Check, Palette, Type, MessageSquare, Clock, Link2, Key, ExternalLink } from "lucide-react";
 
 export default function CustomizeBotPage() {
   const router = useRouter();
@@ -22,6 +22,7 @@ export default function CustomizeBotPage() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [activeTab, setActiveTab] = useState<'brand'|'interaction'|'advanced'>('brand');
+  const [botName, setBotName] = useState<string>('');
   
   // Bot type
   const [botType, setBotType] = useState<string>('knowledge');
@@ -64,6 +65,15 @@ export default function CustomizeBotPage() {
     if (storedType) {
       setBotType(storedType);
       setBotSubtype(storedSubtype || '');
+      
+      // Set default bot names based on type
+      const nameDefaults: Record<string, string> = {
+        'lead': 'Sales Assistant',
+        'support': 'Support Agent',
+        'workflow': 'Process Helper',
+        'knowledge': 'Knowledge Expert'
+      };
+      setBotName(nameDefaults[storedType] || 'AI Assistant');
       
       // Set default welcome messages based on type
       const welcomeDefaults: Record<string, string> = {
@@ -161,6 +171,7 @@ export default function CustomizeBotPage() {
   const handleContinue = () => {
     sessionStorage.setItem("botBrandConfig", JSON.stringify({
       ...brand,
+      botName: botName || 'AI Assistant',
       welcomeMessage,
       quickReplies,
       responseLength,
@@ -241,7 +252,7 @@ export default function CustomizeBotPage() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
+          className="text-center mb-8"
         >
           <h1 className="text-3xl md:text-5xl font-bold uppercase tracking-wider text-black mb-4">
             CUSTOMIZE YOUR BOT
@@ -249,6 +260,30 @@ export default function CustomizeBotPage() {
           <p className="text-gray-600 uppercase tracking-wider text-xs md:text-sm">
             STEP 02 — BRAND & BEHAVIOR
           </p>
+        </motion.div>
+
+        {/* Bot Name */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="max-w-2xl mx-auto mb-12"
+        >
+          <div className="minimal-card">
+            <label className="minimal-label">
+              BOT NAME
+            </label>
+            <input
+              type="text"
+              value={botName}
+              onChange={(e) => setBotName(e.target.value)}
+              placeholder="Give your bot a name..."
+              className="minimal-input text-center text-2xl font-bold"
+            />
+            <p className="text-xs text-gray-500 text-center mt-2">
+              This name will be displayed in the chat header
+            </p>
+          </div>
         </motion.div>
 
         {/* Tab Navigation */}
@@ -674,6 +709,71 @@ export default function CustomizeBotPage() {
                     >
                       <Plus className="w-5 h-5 mx-auto text-gray-500" />
                     </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* CRM Integration for Lead/Support Bots */}
+            {(botType === 'lead' || botType === 'support') && activeTab === 'advanced' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="minimal-card animate-pulse-shadow mt-8"
+              >
+                <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-6">
+                  <Key className="w-5 h-5 inline mr-2" />
+                  CRM INTEGRATION
+                </h3>
+                
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-600">
+                    Connect your CRM to automatically sync leads, analyze customer profiles, and provide data-driven responses.
+                  </p>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {[
+                      { name: 'HubSpot', id: 'hubspot', available: true },
+                      { name: 'Salesforce', id: 'salesforce', available: true },
+                      { name: 'Pipedrive', id: 'pipedrive', available: true },
+                      { name: 'Zendesk', id: 'zendesk', available: true },
+                      { name: 'Intercom', id: 'intercom', available: true },
+                      { name: 'Freshdesk', id: 'freshdesk', available: true }
+                    ].map(crm => (
+                      <button
+                        key={crm.id}
+                        onClick={() => router.push(`/integrations?focus=${crm.id}`)}
+                        className="p-4 bg-gray-50 hover:bg-gray-100 border-2 border-gray-200 hover:border-black rounded-xl transition-all text-center group"
+                      >
+                        <p className="font-bold text-sm">{crm.name}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {crm.available ? 'Click to connect' : 'Coming soon'}
+                        </p>
+                        <ExternalLink className="w-4 h-4 mx-auto mt-2 text-gray-400 group-hover:text-black transition-colors" />
+                      </button>
+                    ))}
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-xl p-4 mt-6">
+                    <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-2">WHAT HAPPENS AFTER CONNECTION</h4>
+                    <ul className="space-y-2 text-sm text-gray-700">
+                      <li className="flex items-start gap-2">
+                        <Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <span>Automatic analysis of your customer database to identify ideal customer profile (ICP)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <span>Bot learns from successful deals and customer interactions</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <span>Real-time lead scoring and qualification based on your data</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <span>Automatic sync of conversations and new contacts</span>
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </motion.div>
