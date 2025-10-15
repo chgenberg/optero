@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Bot, BarChart3, MessageSquare, Database, Plus, Settings, TrendingUp, Clock } from "lucide-react";
+import { Bot, BarChart3, MessageSquare, Database, Plus, Settings, TrendingUp, Clock, Link2 } from "lucide-react";
 
 interface BotStats {
   id: string;
@@ -95,6 +95,15 @@ export default function DashboardPage() {
               <Plus className="w-5 h-5" />
               <span className="hidden sm:inline">CREATE NEW BOT</span>
               <span className="sm:hidden">NEW BOT</span>
+            </motion.button>
+            <motion.button
+              onClick={() => router.push('/integrations')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="minimal-button-outline flex items-center gap-2"
+            >
+              <Link2 className="w-5 h-5" />
+              <span className="hidden sm:inline">INTEGRATIONS</span>
             </motion.button>
           </div>
         </motion.div>

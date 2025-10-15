@@ -6,29 +6,99 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { botId } = body || {};
-    if (!botId) return NextResponse.json({ error: 'botId required' }, { status: 400 });
+    const { botId, integrations } = await req.json();
+    
+    if (!botId) {
+      return NextResponse.json({ error: 'Bot ID required' }, { status: 400 });
+    }
 
-    const data: any = {};
-    if (body.zendeskDomain !== undefined) data.zendeskDomain = body.zendeskDomain || null;
-    if (body.zendeskEmail !== undefined) data.zendeskEmail = body.zendeskEmail || null;
-    if (body.zendeskApiToken !== undefined) data.zendeskApiTokenEnc = encryptSecret(body.zendeskApiToken) || null;
-
-    if (body.hubspotToken !== undefined) data.hubspotTokenEnc = encryptSecret(body.hubspotToken) || null;
-
-    if (body.shopifyDomain !== undefined) data.shopifyDomain = body.shopifyDomain || null;
-    if (body.shopifyAccessToken !== undefined) data.shopifyAccessTokenEnc = encryptSecret(body.shopifyAccessToken) || null;
-
-    const upserted = await prisma.botIntegration.upsert({
-      where: { botId },
-      update: data,
-      create: { botId, ...data },
+    // Get existing bot to update spec
+    const bot = await prisma.bot.findUnique({ 
+      where: { id: botId },
+      select: { spec: true }
     });
-    return NextResponse.json({ ok: true, integrationId: upserted.id });
-  } catch (e: any) {
-    return NextResponse.json({ error: 'failed_to_set_integrations' }, { status: 500 });
+
+    if (!bot) {
+      return NextResponse.json({ error: 'Bot not found' }, { status: 404 });
+    }
+
+    const existingSpec = (bot.spec as any) || {};
+    const specUpdate: any = { ...existingSpec };
+
+    // Update spec with non-sensitive integration data
+    if (integrations.webhook) {
+      specUpdate.webhookUrl = integrations.webhook.url || null;
+    }
+    if (integrations.slack) {
+      specUpdate.slackWebhook = integrations.slack.webhook || null;
+    }
+    if (integrations.calendly) {
+      specUpdate.calendlyUrl = integrations.calendly.url || null;
+    }
+    if (integrations.hubspot) {
+      specUpdate.hubspotEnabled = integrations.hubspot.enabled || false;
+    }
+
+    // Mailchimp - store in spec for now
+    if (integrations.mailchimp) {
+      specUpdate.mailchimpApiKey = integrations.mailchimp.apiKey || null;
+      specUpdate.mailchimpListId = integrations.mailchimp.listId || null;
+      specUpdate.mailchimpDatacenter = integrations.mailchimp.datacenter || null;
+    }
+
+    // Fortnox - store in spec for now
+    if (integrations.fortnox) {
+      specUpdate.fortnoxClientId = integrations.fortnox.clientId || null;
+      specUpdate.fortnoxClientSecret = integrations.fortnox.clientSecret || null;
+      specUpdate.fortnoxAuthCode = integrations.fortnox.authCode || null;
+    }
+
+    // Update bot spec
+    await prisma.bot.update({
+      where: { id: botId },
+      data: { spec: specUpdate }
+    });
+
+    // Prepare sensitive integration data
+    const integrationData: any = {};
+
+    // Zendesk
+    if (integrations.zendesk) {
+      if (integrations.zendesk.domain !== undefined) 
+        integrationData.zendeskDomain = integrations.zendesk.domain || null;
+      if (integrations.zendesk.email !== undefined) 
+        integrationData.zendeskEmail = integrations.zendesk.email || null;
+      if (integrations.zendesk.apiToken !== undefined) 
+        integrationData.zendeskApiTokenEnc = integrations.zendesk.apiToken ? encryptSecret(integrations.zendesk.apiToken) : null;
+    }
+
+    // HubSpot
+    if (integrations.hubspot?.apiKey !== undefined) {
+      integrationData.hubspotTokenEnc = integrations.hubspot.apiKey ? encryptSecret(integrations.hubspot.apiKey) : null;
+    }
+
+    // Shopify
+    if (integrations.shopify) {
+      if (integrations.shopify.domain !== undefined) 
+        integrationData.shopifyDomain = integrations.shopify.domain || null;
+      if (integrations.shopify.accessToken !== undefined) 
+        integrationData.shopifyAccessTokenEnc = integrations.shopify.accessToken ? encryptSecret(integrations.shopify.accessToken) : null;
+    }
+
+    // Note: Mailchimp and Fortnox are stored in spec for now
+
+    // Update or create integration record
+    if (Object.keys(integrationData).length > 0) {
+      await prisma.botIntegration.upsert({
+        where: { botId },
+        update: integrationData,
+        create: { botId, ...integrationData },
+      });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error('Error setting integrations:', error);
+    return NextResponse.json({ error: 'Failed to set integrations' }, { status: 500 });
   }
 }
-
-

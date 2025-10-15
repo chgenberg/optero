@@ -2,9 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { MinimalIcons } from "@/components/MinimalIcons";
+import { motion } from "framer-motion";
+import { 
+  ArrowLeft, MessageSquare, Users, Database, TrendingUp, 
+  Globe, RefreshCw, Plus, Play, Settings, BarChart3, 
+  Calendar, Clock, Zap, Link2, Loader2, Check
+} from "lucide-react";
 
-  interface BotDetailStats {
+interface BotDetailStats {
   bot: {
     id: string;
     name: string;
@@ -16,8 +21,8 @@ import { MinimalIcons } from "@/components/MinimalIcons";
     todayMessages: number;
     totalSessions: number;
     activeSessions: number;
-      knowledgeChunks: number;
-      totalTokens?: number;
+    knowledgeChunks: number;
+    totalTokens?: number;
   };
   topQuestions: Array<{ question: string; count: number }>;
   unansweredQuestions: string[];
@@ -57,20 +62,12 @@ export default function BotDetailPage() {
   const [trainAnswer, setTrainAnswer] = useState("");
   const [training, setTraining] = useState(false);
   const [publishing, setPublishing] = useState(false);
-  // Integrations
-  const [webhookUrl, setWebhookUrl] = useState("");
-  const [slackWebhook, setSlackWebhook] = useState("");
-  const [calendlyUrl, setCalendlyUrl] = useState("");
-  const [hubspotEnabled, setHubspotEnabled] = useState(false);
-  const [zendeskDomain, setZendeskDomain] = useState("");
-  const [shopifyDomain, setShopifyDomain] = useState("");
-  const [savingIntegrations, setSavingIntegrations] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview'|'analytics'|'training'>('overview');
 
   useEffect(() => {
     if (botId) {
       loadStats();
       loadAnalytics();
-      loadIntegrations();
     }
   }, [botId]);
 
@@ -97,52 +94,8 @@ export default function BotDetailPage() {
     }
   };
 
-  const loadIntegrations = async () => {
-    try {
-      const res = await fetch(`/api/bots/info?botId=${botId}`);
-      const data = await res.json();
-      const spec = (data?.spec || {}) as any;
-      setWebhookUrl(spec.webhookUrl || "");
-      setSlackWebhook(spec.slackWebhook || "");
-      setCalendlyUrl(spec.calendlyUrl || "");
-      setHubspotEnabled(Boolean(spec.hubspotEnabled));
-      setZendeskDomain(spec.zendeskDomain || "");
-      setShopifyDomain(spec.shopifyDomain || "");
-    } catch (e) {
-      console.error('Failed to load integrations', e);
-    }
-  };
-
-  const saveIntegrations = async () => {
-    setSavingIntegrations(true);
-    try {
-      const res = await fetch('/api/bots/update', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          botId,
-          webhookUrl,
-          slackWebhook,
-          specPatch: {
-            calendlyUrl: calendlyUrl || null,
-            hubspotEnabled,
-            zendeskDomain: zendeskDomain || null,
-            shopifyDomain: shopifyDomain || null
-          }
-        })
-      });
-      if (!res.ok) throw new Error('Update failed');
-      alert('Integreringar sparade');
-    } catch (e) {
-      console.error('Save integrations error:', e);
-      alert('Kunde inte spara integreringar');
-    } finally {
-      setSavingIntegrations(false);
-    }
-  };
-
   const handleReindex = async () => {
-    if (!confirm('Detta kommer att uppdatera botens kunskapsbas från webbplatsen. Fortsätt?')) return;
+    if (!confirm('This will update the bot\'s knowledge base from the website. Continue?')) return;
     
     setReindexing(true);
     try {
@@ -154,14 +107,14 @@ export default function BotDetailPage() {
       
       const data = await res.json();
       if (data.success) {
-        alert(`✅ Uppdaterat! ${data.pagesScraped} sidor scrapade, ${data.embeddingsCreated} embeddings skapade.`);
-        loadStats(); // Reload to show updated KB count
+        alert(`✅ Updated! ${data.pagesScraped} pages scraped, ${data.embeddingsCreated} embeddings created.`);
+        loadStats();
       } else {
-        alert('❌ Fel vid uppdatering: ' + (data.error || 'Unknown error'));
+        alert('❌ Error updating: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
       console.error('Reindex error:', error);
-      alert('❌ Något gick fel');
+      alert('❌ Something went wrong');
     } finally {
       setReindexing(false);
     }
@@ -169,7 +122,7 @@ export default function BotDetailPage() {
 
   const handleTrain = async () => {
     if (!trainQuestion.trim() || !trainAnswer.trim()) {
-      alert('Fyll i både fråga och svar');
+      alert('Please fill in both question and answer');
       return;
     }
 
@@ -183,24 +136,24 @@ export default function BotDetailPage() {
       
       const data = await res.json();
       if (data.success) {
-        alert('✅ Träning tillagd! Boten kommer nu svara på denna fråga.');
+        alert('✅ Training added! The bot will now answer this question.');
         setShowTrainModal(false);
         setTrainQuestion('');
         setTrainAnswer('');
-        loadStats(); // Reload to show updated KB count
+        loadStats();
       } else {
-        alert('❌ Fel: ' + (data.error || 'Unknown error'));
+        alert('❌ Error: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
       console.error('Training error:', error);
-      alert('❌ Något gick fel');
+      alert('❌ Something went wrong');
     } finally {
       setTraining(false);
     }
   };
 
   const handlePublishToMarketplace = async () => {
-    if (!confirm('Publicera denna bot till marketplace? Du får 20% av alla premium-subscriptions från installs.')) return;
+    if (!confirm('Publish this bot to marketplace? You\'ll get 20% of all premium subscriptions from installs.')) return;
     
     setPublishing(true);
     try {
@@ -212,14 +165,14 @@ export default function BotDetailPage() {
       
       const data = await res.json();
       if (data.success) {
-        alert('✅ Bot publicerad i marketplace! Se den på /marketplace');
+        alert('✅ Bot published to marketplace!');
         router.push('/marketplace');
       } else {
-        alert('❌ Fel: ' + (data.error || 'Unknown error'));
+        alert('❌ Error: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
       console.error('Publish error:', error);
-      alert('❌ Något gick fel');
+      alert('❌ Something went wrong');
     } finally {
       setPublishing(false);
     }
@@ -228,7 +181,11 @@ export default function BotDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <MinimalIcons.Loader className="w-8 h-8 text-gray-400 animate-spin" />
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          className="w-16 h-16 border-4 border-gray-300 border-t-black rounded-full"
+        />
       </div>
     );
   }
@@ -237,9 +194,9 @@ export default function BotDetailPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600 mb-4">Bot hittades inte</p>
-          <button onClick={() => router.push('/dashboard')} className="btn-minimal">
-            Tillbaka till Dashboard
+          <p className="text-gray-600 mb-4">Bot not found</p>
+          <button onClick={() => router.push('/dashboard')} className="minimal-button">
+            Back to Dashboard
           </button>
         </div>
       </div>
@@ -247,403 +204,555 @@ export default function BotDetailPage() {
   }
 
   const maxHourly = Math.max(...(analytics?.heatmap.hourly || [1]));
-  const dayNames = ['Sön', 'Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör'];
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12 px-6">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gray-50 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-12">
-          <div>
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="text-sm text-gray-600 hover:text-gray-900 mb-4 flex items-center gap-2"
-            >
-              ← Tillbaka till Dashboard
-            </button>
-            <h1 className="text-4xl font-light text-gray-900 mb-2">{stats.bot.name}</h1>
-            <p className="text-gray-600">
-              Skapad {new Date(stats.bot.createdAt).toLocaleDateString('sv-SE')}
-            </p>
-          </div>
-          <div className="flex gap-3 flex-wrap">
-            <button
-              onClick={handlePublishToMarketplace}
-              disabled={publishing}
-              className="btn-minimal-outline disabled:opacity-50"
-            >
-              {publishing ? 'Publicerar...' : '🌐 Dela i Marketplace'}
-            </button>
-            <button
-              onClick={handleReindex}
-              disabled={reindexing}
-              className="btn-minimal-outline disabled:opacity-50"
-            >
-              {reindexing ? 'Uppdaterar...' : 'Uppdatera KB'}
-            </button>
-            <button
-              onClick={() => setShowTrainModal(true)}
-              className="btn-minimal-outline"
-            >
-              Lägg till Q&A
-            </button>
-            <button
-              onClick={() => router.push(`/bots/chat?botId=${botId}`)}
-              className="btn-minimal-outline"
-            >
-              Testa bot
-            </button>
-            <button
-              onClick={() => router.push(`/business/bot-builder/deploy?botId=${botId}`)}
-              className="btn-minimal"
-            >
-              Installera
-            </button>
-          </div>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-          <div className="minimal-box text-center">
-            <div className="text-3xl font-light text-gray-900 mb-1">
-              {stats.stats.totalMessages}
-            </div>
-            <div className="text-sm text-gray-600">Totalt meddelanden</div>
-          </div>
-          <div className="minimal-box text-center">
-            <div className="text-3xl font-light text-gray-900 mb-1">
-              {stats.stats.todayMessages}
-            </div>
-            <div className="text-sm text-gray-600">Idag</div>
-          </div>
-          <div className="minimal-box text-center">
-            <div className="text-3xl font-light text-gray-900 mb-1">
-              {stats.stats.totalSessions}
-            </div>
-            <div className="text-sm text-gray-600">Sessioner</div>
-          </div>
-          <div className="minimal-box text-center">
-            <div className="text-3xl font-light text-gray-900 mb-1">
-              {analytics?.conversionRate.toFixed(1) || 0}%
-            </div>
-            <div className="text-sm text-gray-600">Konvertering</div>
-          </div>
-          <div className="minimal-box text-center">
-            <div className="text-3xl font-light text-gray-900 mb-1">
-              {stats.stats.knowledgeChunks}
-            </div>
-            <div className="text-sm text-gray-600">KB chunks</div>
-          </div>
-          <div className="minimal-box text-center col-span-2 md:col-span-1">
-            <div className="text-3xl font-light text-gray-900 mb-1">
-              {((tokenStats?.today || 0)/1000).toFixed(1)}k
-            </div>
-            <div className="text-sm text-gray-600">Tokens idag</div>
-          </div>
-        </div>
-
-        {/* Token usage bar + 30d estimate */}
-        {tokenStats && (
-          <div className="minimal-box mb-8">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-700">Dagens token‑förbrukning</span>
-              <span className="text-sm text-gray-700">{tokenStats.todayPct}% av {Math.round(tokenStats.dailyCap/1000)}k</span>
-            </div>
-            <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div className={`h-full ${tokenStats.todayPct>=80 ? 'bg-yellow-500' : 'bg-black'}`} style={{ width: `${tokenStats.todayPct}%` }} />
-            </div>
-            <div className="mt-3 text-sm text-gray-600">
-              30 dagar: {(tokenStats.last30d/1000).toFixed(1)}k tokens
-            </div>
-          </div>
-        )}
-
-        {/* Analytics Row */}
-        {analytics && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            {/* Wordcloud */}
-            <div className="minimal-box">
-              <h2 className="text-xl font-medium text-gray-900 mb-6">Top Keywords</h2>
-              <div className="flex flex-wrap gap-2">
-                {analytics.wordcloud.slice(0, 20).map((w, i) => {
-                  const size = Math.max(12, Math.min(24, 12 + (w.count / analytics.wordcloud[0].count) * 12));
-                  return (
-                    <span
-                      key={i}
-                      className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full"
-                      style={{ fontSize: `${size}px` }}
-                    >
-                      {w.word}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Sentiment */}
-            <div className="minimal-box">
-              <h2 className="text-xl font-medium text-gray-900 mb-6">Sentiment</h2>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-green-700">😊 Positiv</span>
-                    <span className="font-medium">{analytics.sentiment.positive}</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-green-500 h-2 rounded-full"
-                      style={{ width: `${(analytics.sentiment.positive / analytics.totalSessions) * 100}%` }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-gray-700">😐 Neutral</span>
-                    <span className="font-medium">{analytics.sentiment.neutral}</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-gray-400 h-2 rounded-full"
-                      style={{ width: `${(analytics.sentiment.neutral / analytics.totalSessions) * 100}%` }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-red-700">😞 Negativ</span>
-                    <span className="font-medium">{analytics.sentiment.negative}</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-red-500 h-2 rounded-full"
-                      style={{ width: `${(analytics.sentiment.negative / analytics.totalSessions) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Integrations */}
-        <div className="minimal-box mb-8">
-          <h2 className="text-xl font-medium text-gray-900 mb-6">Integrationer</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-12"
+        >
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="text-sm text-gray-600 hover:text-black transition-colors mb-6 flex items-center gap-2 uppercase tracking-wider"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </button>
+          
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Webhook URL</label>
-              <input
-                type="url"
-                value={webhookUrl}
-                onChange={(e) => setWebhookUrl(e.target.value)}
-                placeholder="https://example.com/webhook"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
-              />
-              <p className="text-xs text-gray-500 mt-2">Används för lead/support‑sammanfattningar (CALL:WEBHOOK)</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Slack Webhook</label>
-              <input
-                type="url"
-                value={slackWebhook}
-                onChange={(e) => setSlackWebhook(e.target.value)}
-                placeholder="https://hooks.slack.com/services/..."
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
-              />
-              <p className="text-xs text-gray-500 mt-2">Skickar notiser vid t.ex. nya kvalificerade leads</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Calendly URL</label>
-              <input
-                type="url"
-                value={calendlyUrl}
-                onChange={(e) => setCalendlyUrl(e.target.value)}
-                placeholder="https://calendly.com/your-link"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
-              />
-              <p className="text-xs text-gray-500 mt-2">Aktiverar boknings‑CTA i chatten</p>
-            </div>
-
-            <div className="flex items-center gap-3 mt-8">
-              <input id="hubspot" type="checkbox" checked={hubspotEnabled} onChange={(e) => setHubspotEnabled(e.target.checked)} />
-              <label htmlFor="hubspot" className="text-sm text-gray-700">Aktivera HubSpot‑sync (enkel upsert på e‑post)</label>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Zendesk domän</label>
-              <input
-                type="text"
-                value={zendeskDomain}
-                onChange={(e) => setZendeskDomain(e.target.value)}
-                placeholder="dittföretag.zendesk.com"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
-              />
-              <p className="text-xs text-gray-500 mt-2">Används för att skapa tickets (CALL:TICKET)</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Shopify domän</label>
-              <input
-                type="text"
-                value={shopifyDomain}
-                onChange={(e) => setShopifyDomain(e.target.value)}
-                placeholder="store.myshopify.com"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
-              />
-              <p className="text-xs text-gray-500 mt-2">För produktrekommendationer/intent (CALL:PRODUCT)</p>
-            </div>
-          </div>
-
-          <div className="mt-6 flex justify-end">
-            <button onClick={saveIntegrations} disabled={savingIntegrations} className="btn-minimal disabled:opacity-50">
-              {savingIntegrations ? 'Sparar…' : 'Spara integrationer'}
-            </button>
-          </div>
-        </div>
-
-        {/* Heatmap */}
-        {analytics && (
-          <div className="minimal-box mb-8">
-            <h2 className="text-xl font-medium text-gray-900 mb-6">Aktivitet per timme</h2>
-            <div className="flex items-end gap-2 h-32">
-              {analytics.heatmap.hourly.map((count, hour) => (
-                <div key={hour} className="flex-1 flex flex-col items-center">
-                  <div 
-                    className="w-full bg-black rounded-t"
-                    style={{ 
-                      height: `${(count / maxHourly) * 100}%`,
-                      minHeight: count > 0 ? '4px' : '0'
-                    }}
-                  />
-                  <span className="text-xs text-gray-500 mt-2">{hour}</span>
-                </div>
-              ))}
+              <h1 className="text-4xl font-bold uppercase tracking-wider text-black mb-2">
+                {stats.bot.name}
+              </h1>
+              <p className="text-gray-600 uppercase tracking-wider text-sm">
+                Created {new Date(stats.bot.createdAt).toLocaleDateString('en-US')}
+              </p>
             </div>
             
-            <h3 className="text-lg font-medium text-gray-900 mt-8 mb-4">Aktivitet per veckodag</h3>
-            <div className="flex gap-3">
-              {analytics.heatmap.daily.map((count, day) => (
-                <div key={day} className="flex-1 text-center">
-                  <div className="text-2xl font-light text-gray-900 mb-1">{count}</div>
-                  <div className="text-xs text-gray-600">{dayNames[day]}</div>
-                </div>
-              ))}
+            <div className="flex flex-wrap gap-3">
+              <motion.button
+                onClick={() => router.push(`/integrations?botId=${botId}`)}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="minimal-button-outline flex items-center gap-2"
+              >
+                <Link2 className="w-4 h-4" />
+                <span className="hidden sm:inline">INTEGRATIONS</span>
+              </motion.button>
+              <motion.button
+                onClick={handlePublishToMarketplace}
+                disabled={publishing}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="minimal-button-outline flex items-center gap-2 disabled:opacity-50"
+              >
+                <Globe className="w-4 h-4" />
+                {publishing ? 'PUBLISHING...' : 'SHARE'}
+              </motion.button>
+              <motion.button
+                onClick={() => router.push(`/bots/chat?botId=${botId}`)}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="minimal-button-outline flex items-center gap-2"
+              >
+                <Play className="w-4 h-4" />
+                TEST
+              </motion.button>
+              <motion.button
+                onClick={() => router.push(`/business/bot-builder/deploy?botId=${botId}`)}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="minimal-button"
+              >
+                INSTALL BOT
+              </motion.button>
             </div>
           </div>
+        </motion.div>
+
+        {/* Stats Cards */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-12"
+        >
+          <div className="minimal-card animate-pulse-shadow">
+            <div className="flex items-center justify-between mb-2">
+              <MessageSquare className="w-5 h-5 text-gray-400" />
+              <TrendingUp className="w-4 h-4 text-green-600" />
+            </div>
+            <div className="text-3xl font-bold text-black mb-1">
+              {stats.stats.totalMessages}
+            </div>
+            <div className="text-xs uppercase tracking-wider text-gray-600">
+              Total Messages
+            </div>
+          </div>
+
+          <div className="minimal-card animate-pulse-shadow">
+            <div className="flex items-center justify-between mb-2">
+              <Clock className="w-5 h-5 text-gray-400" />
+            </div>
+            <div className="text-3xl font-bold text-black mb-1">
+              {stats.stats.todayMessages}
+            </div>
+            <div className="text-xs uppercase tracking-wider text-gray-600">
+              Today
+            </div>
+          </div>
+
+          <div className="minimal-card animate-pulse-shadow">
+            <div className="flex items-center justify-between mb-2">
+              <Users className="w-5 h-5 text-gray-400" />
+            </div>
+            <div className="text-3xl font-bold text-black mb-1">
+              {stats.stats.totalSessions}
+            </div>
+            <div className="text-xs uppercase tracking-wider text-gray-600">
+              Sessions
+            </div>
+          </div>
+
+          <div className="minimal-card animate-pulse-shadow">
+            <div className="flex items-center justify-between mb-2">
+              <BarChart3 className="w-5 h-5 text-gray-400" />
+            </div>
+            <div className="text-3xl font-bold text-black mb-1">
+              {analytics?.conversionRate.toFixed(1) || 0}%
+            </div>
+            <div className="text-xs uppercase tracking-wider text-gray-600">
+              Conversion
+            </div>
+          </div>
+
+          <div className="minimal-card animate-pulse-shadow">
+            <div className="flex items-center justify-between mb-2">
+              <Database className="w-5 h-5 text-gray-400" />
+            </div>
+            <div className="text-3xl font-bold text-black mb-1">
+              {stats.stats.knowledgeChunks}
+            </div>
+            <div className="text-xs uppercase tracking-wider text-gray-600">
+              KB Chunks
+            </div>
+          </div>
+
+          <div className="minimal-card animate-pulse-shadow">
+            <div className="flex items-center justify-between mb-2">
+              <Zap className="w-5 h-5 text-gray-400" />
+            </div>
+            <div className="text-3xl font-bold text-black mb-1">
+              {((tokenStats?.today || 0)/1000).toFixed(1)}k
+            </div>
+            <div className="text-xs uppercase tracking-wider text-gray-600">
+              Tokens Today
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Token Usage Bar */}
+        {tokenStats && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="minimal-card animate-pulse-shadow mb-12"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-black">
+                DAILY TOKEN USAGE
+              </h3>
+              <span className="text-sm font-bold text-black">
+                {tokenStats.todayPct}% OF {Math.round(tokenStats.dailyCap/1000)}K
+              </span>
+            </div>
+            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: `${tokenStats.todayPct}%` }}
+                transition={{ duration: 1 }}
+                className={`h-full ${tokenStats.todayPct >= 80 ? 'bg-yellow-500' : 'bg-black'}`} 
+              />
+            </div>
+            <div className="mt-3 text-sm text-gray-600">
+              Last 30 days: {(tokenStats.last30d/1000).toFixed(1)}k tokens
+            </div>
+          </motion.div>
         )}
 
-        {/* Two column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Top Questions */}
-          <div className="minimal-box">
-            <h2 className="text-xl font-medium text-gray-900 mb-6">
-              Top 10 frågor
-            </h2>
-            {stats.topQuestions.length === 0 ? (
-              <p className="text-gray-600 text-sm">Inga frågor än</p>
-            ) : (
-              <div className="space-y-3">
-                {stats.topQuestions.map((q, i) => (
-                  <div key={i} className="flex justify-between items-start p-3 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-900 flex-1">{q.question}</p>
-                    <span className="text-sm font-medium text-gray-600 ml-3">
-                      {q.count}x
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
+        {/* Tab Navigation */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="flex justify-center mb-12"
+        >
+          <div className="inline-flex bg-white rounded-xl shadow-sm p-1">
+            {[
+              { id: 'overview', label: 'OVERVIEW', icon: BarChart3 },
+              { id: 'analytics', label: 'ANALYTICS', icon: TrendingUp },
+              { id: 'training', label: 'TRAINING', icon: Database }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`px-6 py-3 rounded-lg uppercase tracking-wider text-sm font-bold transition-all duration-300 ${
+                  activeTab === tab.id 
+                    ? 'bg-black text-white' 
+                    : 'text-gray-500 hover:text-black'
+                }`}
+              >
+                <tab.icon className="w-4 h-4 inline mr-2" />
+                {tab.label}
+              </button>
+            ))}
           </div>
+        </motion.div>
 
-          {/* Unanswered Questions */}
-          <div className="minimal-box">
-            <h2 className="text-xl font-medium text-gray-900 mb-6">
-              Obesvarade frågor
-            </h2>
-            {stats.unansweredQuestions.length === 0 ? (
-              <p className="text-gray-600 text-sm">Inga obesvarade frågor 🎉</p>
-            ) : (
-              <div className="space-y-3">
-                {stats.unansweredQuestions.map((q, i) => (
-                  <div key={i} className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-sm text-gray-900 mb-2">{q}</p>
-                    <button 
-                      onClick={() => {
-                        setTrainQuestion(q);
-                        setShowTrainModal(true);
-                      }}
-                      className="text-xs text-red-600 hover:underline"
+        {/* Content based on active tab */}
+        {activeTab === 'overview' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+          >
+            {/* Top Questions */}
+            <div className="minimal-card animate-pulse-shadow">
+              <h2 className="text-xl font-bold uppercase tracking-wider text-black mb-6">
+                TOP QUESTIONS
+              </h2>
+              {stats.topQuestions.length === 0 ? (
+                <p className="text-gray-600">No questions yet</p>
+              ) : (
+                <div className="space-y-3">
+                  {stats.topQuestions.map((q, i) => (
+                    <motion.div 
+                      key={i}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className="flex justify-between items-start p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                     >
-                      Träna bot på denna fråga →
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Recent Sessions */}
-        <div className="minimal-box mt-8">
-          <h2 className="text-xl font-medium text-gray-900 mb-6">
-            Senaste sessioner
-          </h2>
-          {stats.recentSessions.length === 0 ? (
-            <p className="text-gray-600 text-sm">Inga sessioner än</p>
-          ) : (
-            <div className="space-y-3">
-              {stats.recentSessions.map((session) => (
-                <div key={session.id} className="p-4 bg-gray-50 rounded-lg">
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="text-sm font-medium text-gray-900">
-                      {session.messageCount} meddelanden
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {new Date(session.updatedAt).toLocaleString('sv-SE')}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-700">
-                    {session.lastMessage || 'Ingen meddelande'}
-                  </p>
+                      <p className="text-sm text-gray-900 flex-1">{q.question}</p>
+                      <span className="text-sm font-bold text-black ml-3">
+                        {q.count}x
+                      </span>
+                    </motion.div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
-          )}
-        </div>
+
+            {/* Unanswered Questions */}
+            <div className="minimal-card animate-pulse-shadow">
+              <h2 className="text-xl font-bold uppercase tracking-wider text-black mb-6">
+                UNANSWERED QUESTIONS
+              </h2>
+              {stats.unansweredQuestions.length === 0 ? (
+                <div className="text-center py-8">
+                  <Check className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                  <p className="text-gray-600">No unanswered questions!</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {stats.unansweredQuestions.map((q, i) => (
+                    <motion.div 
+                      key={i}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className="p-4 bg-red-50 border-2 border-red-200 rounded-lg"
+                    >
+                      <p className="text-sm text-gray-900 mb-2">{q}</p>
+                      <button 
+                        onClick={() => {
+                          setTrainQuestion(q);
+                          setShowTrainModal(true);
+                        }}
+                        className="text-xs text-red-600 font-bold hover:underline uppercase tracking-wider"
+                      >
+                        TRAIN BOT ON THIS →
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Recent Sessions - Full Width */}
+            <div className="minimal-card animate-pulse-shadow col-span-1 lg:col-span-2">
+              <h2 className="text-xl font-bold uppercase tracking-wider text-black mb-6">
+                RECENT SESSIONS
+              </h2>
+              {stats.recentSessions.length === 0 ? (
+                <p className="text-gray-600 text-center py-8">No sessions yet</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {stats.recentSessions.map((session, i) => (
+                    <motion.div 
+                      key={session.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-sm font-bold uppercase tracking-wider text-black">
+                          {session.messageCount} MESSAGES
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {new Date(session.updatedAt).toLocaleString('en-US')}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-700 line-clamp-2">
+                        {session.lastMessage || 'No message'}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+
+        {activeTab === 'analytics' && analytics && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="space-y-8"
+          >
+            {/* Analytics Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Word Cloud */}
+              <div className="minimal-card animate-pulse-shadow">
+                <h2 className="text-xl font-bold uppercase tracking-wider text-black mb-6">
+                  TOP KEYWORDS
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {analytics.wordcloud.slice(0, 20).map((w, i) => {
+                    const size = Math.max(12, Math.min(24, 12 + (w.count / analytics.wordcloud[0].count) * 12));
+                    return (
+                      <motion.span
+                        key={i}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: i * 0.02 }}
+                        className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full hover:bg-gray-200 transition-colors"
+                        style={{ fontSize: `${size}px` }}
+                      >
+                        {w.word}
+                      </motion.span>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Sentiment */}
+              <div className="minimal-card animate-pulse-shadow">
+                <h2 className="text-xl font-bold uppercase tracking-wider text-black mb-6">
+                  SENTIMENT ANALYSIS
+                </h2>
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="font-bold uppercase tracking-wider">😊 POSITIVE</span>
+                      <span className="font-bold">{analytics.sentiment.positive}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-3">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(analytics.sentiment.positive / analytics.totalSessions) * 100}%` }}
+                        transition={{ duration: 1 }}
+                        className="bg-green-500 h-3 rounded-full"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="font-bold uppercase tracking-wider">😐 NEUTRAL</span>
+                      <span className="font-bold">{analytics.sentiment.neutral}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-3">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(analytics.sentiment.neutral / analytics.totalSessions) * 100}%` }}
+                        transition={{ duration: 1, delay: 0.1 }}
+                        className="bg-gray-400 h-3 rounded-full"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="font-bold uppercase tracking-wider">😞 NEGATIVE</span>
+                      <span className="font-bold">{analytics.sentiment.negative}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-3">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(analytics.sentiment.negative / analytics.totalSessions) * 100}%` }}
+                        transition={{ duration: 1, delay: 0.2 }}
+                        className="bg-red-500 h-3 rounded-full"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Activity Heatmap */}
+            <div className="minimal-card animate-pulse-shadow">
+              <h2 className="text-xl font-bold uppercase tracking-wider text-black mb-6">
+                ACTIVITY HEATMAP
+              </h2>
+              
+              <div className="mb-8">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-gray-600 mb-4">
+                  HOURLY ACTIVITY
+                </h3>
+                <div className="flex items-end gap-1 h-32">
+                  {analytics.heatmap.hourly.map((count, hour) => (
+                    <motion.div 
+                      key={hour} 
+                      className="flex-1 flex flex-col items-center"
+                      initial={{ height: 0 }}
+                      animate={{ height: 'auto' }}
+                      transition={{ delay: hour * 0.02 }}
+                    >
+                      <div 
+                        className="w-full bg-black rounded-t hover:bg-gray-800 transition-colors"
+                        style={{ 
+                          height: `${(count / maxHourly) * 100}%`,
+                          minHeight: count > 0 ? '4px' : '0'
+                        }}
+                      />
+                      <span className="text-xs text-gray-500 mt-2">{hour}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-gray-600 mb-4">
+                  WEEKLY ACTIVITY
+                </h3>
+                <div className="grid grid-cols-7 gap-3">
+                  {analytics.heatmap.daily.map((count, day) => (
+                    <motion.div 
+                      key={day} 
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: day * 0.05 }}
+                      className="text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="text-2xl font-bold text-black mb-1">{count}</div>
+                      <div className="text-xs uppercase tracking-wider text-gray-600">{dayNames[day]}</div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {activeTab === 'training' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="minimal-card animate-pulse-shadow">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-xl font-bold uppercase tracking-wider text-black">
+                  KNOWLEDGE BASE MANAGEMENT
+                </h2>
+                <motion.button
+                  onClick={handleReindex}
+                  disabled={reindexing}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="minimal-button-outline flex items-center gap-2 disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-4 h-4 ${reindexing ? 'animate-spin' : ''}`} />
+                  {reindexing ? 'UPDATING...' : 'UPDATE FROM WEBSITE'}
+                </motion.button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="text-center p-6 bg-gray-50 rounded-lg">
+                  <Database className="w-8 h-8 text-gray-600 mx-auto mb-3" />
+                  <div className="text-2xl font-bold text-black">{stats.stats.knowledgeChunks}</div>
+                  <div className="text-xs uppercase tracking-wider text-gray-600">Total Chunks</div>
+                </div>
+                <div className="text-center p-6 bg-gray-50 rounded-lg">
+                  <MessageSquare className="w-8 h-8 text-gray-600 mx-auto mb-3" />
+                  <div className="text-2xl font-bold text-black">{stats.topQuestions.length}</div>
+                  <div className="text-xs uppercase tracking-wider text-gray-600">Unique Questions</div>
+                </div>
+                <div className="text-center p-6 bg-gray-50 rounded-lg">
+                  <Plus className="w-8 h-8 text-gray-600 mx-auto mb-3" />
+                  <div className="text-2xl font-bold text-black">{stats.unansweredQuestions.length}</div>
+                  <div className="text-xs uppercase tracking-wider text-gray-600">Need Training</div>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <motion.button
+                  onClick={() => setShowTrainModal(true)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="minimal-button"
+                >
+                  ADD MANUAL Q&A
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Training Modal */}
         {showTrainModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="minimal-box max-w-2xl w-full">
-              <h2 className="text-2xl font-light text-gray-900 mb-6">
-                Lägg till manuell träning
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="minimal-card max-w-2xl w-full"
+            >
+              <h2 className="text-2xl font-bold uppercase tracking-wider text-black mb-6">
+                ADD MANUAL TRAINING
               </h2>
               
-              <div className="space-y-4 mb-6">
+              <div className="space-y-6 mb-8">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Fråga
+                  <label className="minimal-label">
+                    QUESTION
                   </label>
                   <input
                     type="text"
                     value={trainQuestion}
                     onChange={(e) => setTrainQuestion(e.target.value)}
-                    placeholder="Vad kostar er tjänst?"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+                    placeholder="What are your prices?"
+                    className="minimal-input"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Svar
+                  <label className="minimal-label">
+                    ANSWER
                   </label>
                   <textarea
                     value={trainAnswer}
                     onChange={(e) => setTrainAnswer(e.target.value)}
-                    placeholder="Våra priser startar på 499 kr/månad. Kontakta oss för en skräddarsydd offert."
+                    placeholder="Our prices start at $99/month. Contact us for a custom quote."
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+                    className="minimal-input resize-none"
                   />
                 </div>
               </div>
@@ -651,19 +760,19 @@ export default function BotDetailPage() {
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setShowTrainModal(false)}
-                  className="btn-minimal-outline"
+                  className="minimal-button-outline"
                 >
-                  Avbryt
+                  CANCEL
                 </button>
                 <button
                   onClick={handleTrain}
                   disabled={training}
-                  className="btn-minimal disabled:opacity-50"
+                  className="minimal-button disabled:opacity-50"
                 >
-                  {training ? 'Sparar...' : 'Lägg till'}
+                  {training ? 'SAVING...' : 'ADD TRAINING'}
                 </button>
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
       </div>
