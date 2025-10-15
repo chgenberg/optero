@@ -46,17 +46,17 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/integritetspolicy" className="text-sm text-[#4B5563] hover:text-black transition-colors">
+                <Link href="/privacy" className="text-sm text-[#4B5563] hover:text-black transition-colors">
                   Privacy
                 </Link>
               </li>
               <li>
-                <Link href="/anvandarvillkor" className="text-sm text-[#4B5563] hover:text-black transition-colors">
+                <Link href="/terms" className="text-sm text-[#4B5563] hover:text-black transition-colors">
                   Terms
                 </Link>
               </li>
               <li>
-                <Link href="/gdpr/exportera-data" className="text-sm text-[#4B5563] hover:text-black transition-colors">
+                <Link href="/gdpr" className="text-sm text-[#4B5563] hover:text-black transition-colors">
                   GDPR
                 </Link>
               </li>

@@ -52,7 +52,7 @@ export default function FeedbackButton({ context }: FeedbackButtonProps) {
       >
         <div className="flex items-center gap-2">
           <span className="text-2xl group-hover:scale-110 transition-transform">💭</span>
-          <span className="text-sm font-medium text-gray-700">Ge feedback</span>
+          <span className="text-sm font-medium text-gray-700">Give feedback</span>
         </div>
       </button>
 
@@ -77,7 +77,7 @@ export default function FeedbackButton({ context }: FeedbackButtonProps) {
                 </button>
 
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                  Var detta hjälpsamt?
+                  Was this helpful?
                 </h3>
 
                 {/* Rating buttons */}
@@ -91,7 +91,7 @@ export default function FeedbackButton({ context }: FeedbackButtonProps) {
                     }`}
                   >
                     <span className="text-4xl mb-2 block">👍</span>
-                    <span className="text-sm font-medium text-gray-700">Ja, absolut!</span>
+                    <span className="text-sm font-medium text-gray-700">Yes, absolutely!</span>
                   </button>
                   
                   <button
@@ -103,7 +103,7 @@ export default function FeedbackButton({ context }: FeedbackButtonProps) {
                     }`}
                   >
                     <span className="text-4xl mb-2 block">👎</span>
-                    <span className="text-sm font-medium text-gray-700">Kan bli bättre</span>
+                    <span className="text-sm font-medium text-gray-700">Could be better</span>
                   </button>
                 </div>
 
@@ -112,8 +112,8 @@ export default function FeedbackButton({ context }: FeedbackButtonProps) {
                   <div className="animate-fade-in">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       {feedback === "positive" 
-                        ? "Vad gillade du mest? (valfritt)"
-                        : "Hur kan vi förbättra? (valfritt)"
+                        ? "What did you like most? (optional)"
+                        : "How can we improve? (optional)"
                       }
                     </label>
                     <textarea
@@ -121,7 +121,7 @@ export default function FeedbackButton({ context }: FeedbackButtonProps) {
                       onChange={(e) => setComment(e.target.value)}
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-100 transition-all resize-none"
                       rows={3}
-                      placeholder="Dela dina tankar..."
+                      placeholder="Share your thoughts..."
                     />
                   </div>
                 )}
@@ -132,7 +132,7 @@ export default function FeedbackButton({ context }: FeedbackButtonProps) {
                     onClick={handleSubmit}
                     className="w-full btn-primary mt-6 animate-fade-in"
                   >
-                    Skicka feedback
+                    Send feedback
                   </button>
                 )}
               </>
@@ -143,8 +143,8 @@ export default function FeedbackButton({ context }: FeedbackButtonProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Tack för din feedback!</h3>
-                <p className="text-gray-600">Den hjälper oss att göra Optero ännu bättre.</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Thanks for your feedback!</h3>
+                <p className="text-gray-600">It helps us make Mendio even better.</p>
               </div>
             )}
           </div>
