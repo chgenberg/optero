@@ -24,10 +24,10 @@ export default function AnvandarvillkorPage() {
         <div className="prose prose-lg max-w-none">
           {/* Introduction */}
           <div className="card p-8 mb-8 animate-fade-in-up">
-            <p className="text-lg text-gray-700 leading-relaxed">
-              Welcome to Optero! These Terms of Service ("Terms") govern your use of our service.
-              By using Optero you agree to these Terms. If you do not agree, please do not use the service.
-            </p>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                Welcome to Mendio! These Terms of Service ("Terms") govern your use of our service.
+                By using Mendio you agree to these Terms. If you do not agree, please do not use the service.
+              </p>
           </div>
 
           {/* Sections */}
@@ -39,8 +39,8 @@ export default function AnvandarvillkorPage() {
               </h2>
               <div className="space-y-4 text-gray-700">
                 <p>
-                  Optero helps users find AI tools tailored to their profession.
-                  We provide personalized recommendations based on your role, specialization and tasks.
+                  Mendio helps businesses design, build and deploy AI chatbots and assistants.
+                  We provide analysis, recommendations, and tools to create customized bots for your use cases.
                 </p>
                 <p>
                   The service is operated by Christopher Genberg AB (reg. no. 559318-7089).
@@ -54,13 +54,12 @@ export default function AnvandarvillkorPage() {
                 Use of the service
               </h2>
               <div className="space-y-4 text-gray-700">
-                <p className="mb-4">When using Optero you agree to:</p>
+                <p className="mb-4">When using Mendio you agree to:</p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Tillhandahålla korrekt information om ditt yrke och arbetsuppgifter</li>
-                  <li>Använda tjänsten för lagliga ändamål</li>
-                  <li>Inte försöka skada, överbelasta eller störa tjänstens funktion</li>
-                  <li>Inte kopiera, modifiera eller distribuera tjänstens innehåll utan tillstånd</li>
-                  <li>Respektera immateriella rättigheter</li>
+                  <li>Provide accurate information and use the service for lawful purposes</li>
+                  <li>Not attempt to harm, overload, or disrupt the service</li>
+                  <li>Not copy, modify, or distribute the service content without permission</li>
+                  <li>Respect intellectual property rights</li>
                 </ul>
               </div>
             </section>
@@ -72,12 +71,12 @@ export default function AnvandarvillkorPage() {
               </h2>
               <div className="space-y-4 text-gray-700">
                 <p>
-                  Allt innehåll på Optero, inklusive text, grafik, logotyper, ikoner och programvara, 
-                  ägs av Christopher Genberg AB eller våra licensgivare och skyddas av svensk och internationell 
-                  upphovsrättslagstiftning.
+                  All content on Mendio, including text, graphics, logos, icons and software, 
+                  is owned by Christopher Genberg AB or our licensors and protected by applicable 
+                  copyright laws.
                 </p>
                 <p>
-                  Du får en begränsad, icke-exklusiv, icke-överlåtbar licens att använda tjänsten för personligt bruk.
+                  You are granted a limited, non-exclusive, non-transferable license to use the service for business use.
                 </p>
               </div>
             </section>
@@ -89,16 +88,16 @@ export default function AnvandarvillkorPage() {
               </h2>
               <div className="space-y-4 text-gray-700">
                 <p>
-                  Optero tillhandahålls "som den är" utan några garantier. Vi garanterar inte att:
+                  Mendio is provided "as is" without warranties. We do not guarantee that:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Tjänsten alltid kommer vara tillgänglig eller felfri</li>
-                  <li>Rekommendationerna passar alla användares specifika behov</li>
-                  <li>Resultaten från AI-verktygen alltid är korrekta eller fullständiga</li>
+                  <li>The service will always be available or error-free</li>
+                  <li>Recommendations fit every user’s specific needs</li>
+                  <li>AI outputs are always accurate or complete</li>
                 </ul>
                 <p className="mt-4">
-                  Christopher Genberg AB ansvarar inte för indirekta skador, förlorad vinst eller andra 
-                  följdskador som uppstår från användningen av tjänsten.
+                  Christopher Genberg AB is not liable for indirect damages, lost profits, or other
+                  consequential damages arising from use of the service.
                 </p>
               </div>
             </section>
@@ -110,17 +109,17 @@ export default function AnvandarvillkorPage() {
               </h2>
               <div className="space-y-4 text-gray-700">
                 <p>
-                  När du tillhandahåller information till Optero (t.ex. yrkesuppgifter, arbetsuppgifter) 
-                  ger du oss rätt att använda denna information för att:
+                  When you provide information to Mendio (e.g., website, documents, bot configuration),
+                  you grant us the right to use this information to:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Generera personliga rekommendationer</li>
-                  <li>Förbättra och utveckla tjänsten</li>
-                  <li>Skapa anonymiserad statistik</li>
+                  <li>Generate personalized recommendations</li>
+                  <li>Improve and develop the service</li>
+                  <li>Create anonymized statistics</li>
                 </ul>
                 <p className="mt-4">
-                  Du behåller alla rättigheter till ditt innehåll och ansvarar för att det inte kränker 
-                  tredje parts rättigheter.
+                  You retain all rights to your content and are responsible that it does not infringe
+                  third-party rights.
                 </p>
               </div>
             </section>
@@ -132,11 +131,11 @@ export default function AnvandarvillkorPage() {
               </h2>
               <div className="space-y-4 text-gray-700">
                 <p>
-                  Vi förbehåller oss rätten att när som helst ändra dessa användarvillkor. 
-                  Väsentliga ändringar meddelas via e-post eller genom en notis på webbplatsen.
+                  We reserve the right to modify these Terms at any time. Material changes will be
+                  notified via email or a notice on the website.
                 </p>
                 <p>
-                  Fortsatt användning av tjänsten efter ändringar innebär att du accepterar de nya villkoren.
+                  Continued use of the service after changes means you accept the new terms.
                 </p>
               </div>
             </section>
@@ -148,9 +147,8 @@ export default function AnvandarvillkorPage() {
               </h2>
               <div className="space-y-4 text-gray-700">
                 <p>
-                  Du kan när som helst sluta använda Optero. Vi förbehåller oss rätten att 
-                  stänga av eller begränsa din åtkomst till tjänsten om vi misstänker att du 
-                  bryter mot dessa villkor.
+                  You may stop using Mendio at any time. We reserve the right to suspend or limit
+                  access if we suspect a breach of these Terms.
                 </p>
               </div>
             </section>
@@ -162,9 +160,8 @@ export default function AnvandarvillkorPage() {
               </h2>
               <div className="space-y-4 text-gray-700">
                 <p>
-                  Dessa villkor regleras av svensk lag. Eventuella tvister ska i första hand 
-                  lösas genom förhandling. Om överenskommelse inte kan nås ska tvisten avgöras 
-                  av svensk domstol.
+                  These Terms are governed by Swedish law. Disputes shall first be attempted to
+                  be resolved amicably. If no agreement is reached, the dispute shall be resolved in Swedish courts.
                 </p>
               </div>
             </section>
@@ -188,7 +185,7 @@ export default function AnvandarvillkorPage() {
             <div className="text-center py-8 animate-fade-in-up" style={{ animationDelay: '1s' }}>
               <p className="text-gray-600 mb-6">Do you have questions about our terms?</p>
               <a
-                href="/kontakt"
+                href="/contact"
                 className="btn-primary inline-flex items-center gap-3"
               >
                 Contact us

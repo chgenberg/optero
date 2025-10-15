@@ -40,16 +40,16 @@ export default function IntegritetspolicyPage() {
               <div className="space-y-4 text-gray-700">
                 <h3 className="font-semibold text-gray-900">Information you provide:</h3>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>E-postadress (när du registrerar dig för att få dina resultat)</li>
-                  <li>Yrkesinformation (profession, specialisering, arbetsuppgifter)</li>
-                  <li>Preferenser och utmaningar i ditt arbete</li>
+                  <li>Email address (when you sign up to receive your results)</li>
+                  <li>Professional information (profession, specialization, responsibilities)</li>
+                  <li>Preferences and challenges in your work</li>
                 </ul>
                 
                 <h3 className="font-semibold text-gray-900 mt-6">Information we collect automatically:</h3>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Teknisk information (IP-adress, webbläsartyp, enhetsinformation)</li>
-                  <li>Användningsdata (vilka sidor du besöker, hur länge du stannar)</li>
-                  <li>Cookies och liknande teknologier</li>
+                  <li>Technical information (IP address, browser type, device information)</li>
+                  <li>Usage data (which pages you visit, how long you stay)</li>
+                  <li>Cookies and similar technologies</li>
                 </ul>
               </div>
             </section>
@@ -62,12 +62,12 @@ export default function IntegritetspolicyPage() {
               <div className="space-y-2 text-gray-700">
                 <p className="mb-4">We use your personal data to:</p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Tillhandahålla personliga AI-rekommendationer för ditt yrke</li>
-                  <li>Förbättra och utveckla vår tjänst baserat på användarmönster</li>
-                  <li>Skicka dig dina resultat via e-post (om du begärt det)</li>
-                  <li>Kommunicera med dig om uppdateringar eller nya funktioner</li>
-                  <li>Analysera användningstrender för att förbättra användarupplevelsen</li>
-                  <li>Uppfylla juridiska skyldigheter</li>
+                  <li>Provide personalized AI recommendations for your profession</li>
+                  <li>Improve and develop our service based on usage patterns</li>
+                  <li>Email your results to you (if requested)</li>
+                  <li>Communicate updates or new features</li>
+                  <li>Analyze usage trends to improve the user experience</li>
+                  <li>Fulfill legal obligations</li>
                 </ul>
               </div>
             </section>
@@ -80,9 +80,9 @@ export default function IntegritetspolicyPage() {
               <div className="space-y-4 text-gray-700">
                 <p>We never sell your personal data. We may share information with:</p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Tjänsteleverantörer:</strong> Som hjälper oss driva tjänsten (t.ex. hosting, analys)</li>
-                  <li><strong>AI-tjänster:</strong> För att generera dina personliga rekommendationer (anonymiserat)</li>
-                  <li><strong>Juridiska krav:</strong> Om lagen kräver det</li>
+                  <li><strong>Service providers:</strong> Who help operate the service (e.g., hosting, analytics)</li>
+                  <li><strong>AI services:</strong> To generate personalized recommendations (anonymized where possible)</li>
+                  <li><strong>Legal requirements:</strong> When required by law</li>
                 </ul>
               </div>
             </section>
@@ -98,10 +98,10 @@ export default function IntegritetspolicyPage() {
                   We use industry-standard security measures to protect your data, including:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Krypterad dataöverföring (HTTPS)</li>
-                  <li>Säker serverlagring hos betrodda leverantörer</li>
-                  <li>Begränsad åtkomst till personuppgifter</li>
-                  <li>Regelbundna säkerhetsuppdateringar</li>
+                  <li>Encrypted data transfer (HTTPS)</li>
+                  <li>Secure server storage with trusted providers</li>
+                  <li>Restricted access to personal data</li>
+                  <li>Regular security updates</li>
                 </ul>
               </div>
             </section>
@@ -114,13 +114,13 @@ export default function IntegritetspolicyPage() {
               <div className="space-y-4 text-gray-700">
                 <p>Under GDPR you have the right to:</p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Få tillgång</strong> till dina personuppgifter</li>
-                  <li><strong>Rätta</strong> felaktiga uppgifter</li>
-                  <li><strong>Radera</strong> dina uppgifter ("rätten att bli glömd")</li>
-                  <li><strong>Begränsa</strong> behandlingen av dina uppgifter</li>
-                  <li><strong>Dataportabilitet</strong> - få dina uppgifter i maskinläsbart format</li>
-                  <li><strong>Invända</strong> mot behandling</li>
-                  <li><strong>Återkalla samtycke</strong> när som helst</li>
+                  <li><strong>Access</strong> your personal data</li>
+                  <li><strong>Rectify</strong> inaccurate information</li>
+                  <li><strong>Erase</strong> your data ("right to be forgotten")</li>
+                  <li><strong>Restrict</strong> processing of your data</li>
+                  <li><strong>Data portability</strong> – receive your data in machine-readable format</li>
+                  <li><strong>Object</strong> to processing</li>
+                  <li><strong>Withdraw consent</strong> at any time</li>
                 </ul>
                 <p className="mt-4">
                   To exercise these rights, contact us at: <a href="mailto:ch.genberg@gmail.com" className="text-gray-900 underline">ch.genberg@gmail.com</a>
@@ -136,9 +136,9 @@ export default function IntegritetspolicyPage() {
               <div className="space-y-4 text-gray-700">
                 <p>We use cookies to:</p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Komma ihåg dina preferenser</li>
-                  <li>Analysera hur tjänsten används</li>
-                  <li>Förbättra användarupplevelsen</li>
+                  <li>Remember your preferences</li>
+                  <li>Analyze how the service is used</li>
+                  <li>Improve the user experience</li>
                 </ul>
                 <p className="mt-4">
                   You can block cookies in your browser, but some features may not work correctly.
@@ -179,10 +179,10 @@ export default function IntegritetspolicyPage() {
                   You can contact our DPO to:
                 </p>
                 <ul className="list-disc pl-6 space-y-1 text-sm text-gray-600">
-                  <li>Ställa frågor om hur vi behandlar dina personuppgifter</li>
-                  <li>Utöva dina rättigheter enligt GDPR</li>
-                  <li>Rapportera eventuella dataskyddsproblem</li>
-                  <li>Få information om våra dataskyddsrutiner</li>
+                  <li>Ask questions about how we process your personal data</li>
+                  <li>Exercise your GDPR rights</li>
+                  <li>Report any data protection issues</li>
+                  <li>Get information about our data protection practices</li>
                 </ul>
               </div>
             </section>
@@ -200,10 +200,10 @@ export default function IntegritetspolicyPage() {
                   <p>Södra Skjutbanevägen 10</p>
                   <p>439 55 Åsa</p>
                   <p className="mt-3">
-                    E-post: <a href="mailto:ch.genberg@gmail.com" className="text-gray-900 underline">ch.genberg@gmail.com</a>
+                    Email: <a href="mailto:ch.genberg@gmail.com" className="text-gray-900 underline">ch.genberg@gmail.com</a>
                   </p>
                   <p>
-                    Telefon: <a href="tel:+46732305521" className="text-gray-900 underline">+46 732 30 55 21</a>
+                    Phone: <a href="tel:+46732305521" className="text-gray-900 underline">+46 732 30 55 21</a>
                   </p>
                 </div>
               </div>
@@ -213,7 +213,7 @@ export default function IntegritetspolicyPage() {
             <div className="text-center py-8 animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
               <p className="text-gray-600 mb-6">Questions about how we handle your data?</p>
               <a
-                href="/kontakt"
+                href="/contact"
                 className="btn-primary inline-flex items-center gap-3"
               >
                 Contact us

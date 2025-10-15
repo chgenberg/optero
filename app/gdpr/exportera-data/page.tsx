@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export default function ExporteraDataPage() {
+export default function ExportDataPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -31,10 +31,10 @@ export default function ExporteraDataPage() {
         document.body.removeChild(a);
       } else {
         const data = await response.json();
-        setError(data.error || "Något gick fel. Försök igen.");
+        setError(data.error || "Something went wrong. Please try again.");
       }
     } catch (err) {
-      setError("Kunde inte ansluta till servern. Försök igen senare.");
+      setError("Could not connect to server. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -117,7 +117,7 @@ export default function ExporteraDataPage() {
               </li>
               <li>
                 <strong>Data protection questions:</strong>{" "}
-                <a href="/kontakt" className="text-blue-600 hover:underline">
+                <a href="/contact" className="text-blue-600 hover:underline">
                   Contact us
                 </a>
               </li>

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Check, Star, Zap, Crown } from "lucide-react";
 import { PRICING_TIERS } from "@/lib/pricing";
 
-export default function PrenumerationPage() {
+export default function SubscriptionPage() {
   const router = useRouter();
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
   const [loading, setLoading] = useState<string | null>(null);
@@ -24,11 +24,10 @@ export default function PrenumerationPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-            Välj din AI-superkraft
+            Choose your AI superpower
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Få tillgång till tusentals AI-prompts som sparar dig timmar varje vecka.
-            Ju fler som använder Mendio, desto bättre blir promptsen.
+            Get access to AI tools that save you hours every week. The more people use Mendio, the better it gets.
           </p>
         </div>
 
@@ -43,7 +42,7 @@ export default function PrenumerationPage() {
                   : "text-gray-500"
               }`}
             >
-              Månadsvis
+              Monthly
             </button>
             <button
               onClick={() => setBillingPeriod("yearly")}
@@ -53,7 +52,7 @@ export default function PrenumerationPage() {
                   : "text-gray-500"
               }`}
             >
-              Årligen <span className="text-green-600">(-17%)</span>
+              Yearly <span className="text-green-600">(-17%)</span>
             </button>
           </div>
         </div>
@@ -69,7 +68,7 @@ export default function PrenumerationPage() {
               <p className="text-gray-600">{PRICING_TIERS.FREE.description}</p>
               <div className="mt-4">
                 <span className="text-4xl font-bold">{PRICING_TIERS.FREE.price} kr</span>
-                <span className="text-gray-500">/månad</span>
+                <span className="text-gray-500">/month</span>
               </div>
             </div>
             
@@ -86,7 +85,7 @@ export default function PrenumerationPage() {
               onClick={() => router.push("/")}
               className="w-full py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
             >
-              Fortsätt med gratis
+              Continue for free
             </button>
           </div>
 
@@ -94,7 +93,7 @@ export default function PrenumerationPage() {
           <div className="bg-white rounded-2xl shadow-xl p-8 relative border-2 border-blue-500 transform scale-105">
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
               <span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-                Mest populär
+                Most popular
               </span>
             </div>
             
@@ -111,10 +110,10 @@ export default function PrenumerationPage() {
                     : Math.round(PRICING_TIERS.PROFESSIONAL.priceYearly / 12)
                   } kr
                 </span>
-                <span className="text-gray-500">/månad</span>
+                <span className="text-gray-500">/month</span>
                 {billingPeriod === "yearly" && (
                   <p className="text-sm text-green-600 mt-1">
-                    Spara {PRICING_TIERS.PROFESSIONAL.price * 12 - PRICING_TIERS.PROFESSIONAL.priceYearly} kr/år
+                    Save {PRICING_TIERS.PROFESSIONAL.price * 12 - PRICING_TIERS.PROFESSIONAL.priceYearly} kr/year
                   </p>
                 )}
               </div>
@@ -134,7 +133,7 @@ export default function PrenumerationPage() {
               disabled={loading === "professional"}
               className="w-full py-3 px-4 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50"
             >
-              {loading === "professional" ? "Laddar..." : "Börja nu"}
+              {loading === "professional" ? "Loading..." : "Start now"}
             </button>
           </div>
 
@@ -153,10 +152,10 @@ export default function PrenumerationPage() {
                     : Math.round(PRICING_TIERS.BUSINESS.priceYearly / 12)
                   } kr
                 </span>
-                <span className="text-gray-500">/månad</span>
+                <span className="text-gray-500">/month</span>
                 {billingPeriod === "yearly" && (
                   <p className="text-sm text-green-600 mt-1">
-                    Spara {PRICING_TIERS.BUSINESS.price * 12 - PRICING_TIERS.BUSINESS.priceYearly} kr/år
+                    Save {PRICING_TIERS.BUSINESS.price * 12 - PRICING_TIERS.BUSINESS.priceYearly} kr/year
                   </p>
                 )}
               </div>
@@ -176,7 +175,7 @@ export default function PrenumerationPage() {
               disabled={loading === "business"}
               className="w-full py-3 px-4 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 transition-colors disabled:opacity-50"
             >
-              {loading === "business" ? "Laddar..." : "Kontakta oss"}
+              {loading === "business" ? "Loading..." : "Contact us"}
             </button>
           </div>
         </div>
@@ -185,7 +184,7 @@ export default function PrenumerationPage() {
         <div className="mt-16 bg-gradient-to-r from-blue-50 to-purple-50 rounded-3xl p-8 md:p-12">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">
-              Föredrar du engångsköp?
+              Prefer a one-time purchase?
             </h2>
             
             <div className="bg-white rounded-2xl shadow-lg p-8 mt-8">
@@ -213,12 +212,12 @@ export default function PrenumerationPage() {
                   <div className="text-4xl font-bold text-gray-900 mb-2">
                     {PRICING_TIERS.ONETIME.PREMIUM_ANALYSIS.price} kr
                   </div>
-                  <p className="text-gray-500 mb-4">Engångsbetalning</p>
+                  <p className="text-gray-500 mb-4">One-time payment</p>
                   <button
                     onClick={() => router.push("/premium")}
                     className="px-8 py-3 bg-yellow-500 text-white rounded-lg font-medium hover:bg-yellow-600 transition-colors"
                   >
-                    Beställ nu
+                    Order now
                   </button>
                 </div>
               </div>
@@ -228,7 +227,7 @@ export default function PrenumerationPage() {
 
         {/* Trust Badges */}
         <div className="mt-16 text-center">
-          <p className="text-gray-600 mb-8">Betalning sker säkert via Stripe</p>
+          <p className="text-gray-600 mb-8">Payments are securely handled by Stripe</p>
           <div className="flex justify-center items-center gap-8">
             <img src="/stripe-badge.png" alt="Stripe" className="h-8 opacity-50" />
             <img src="/visa.png" alt="Visa" className="h-8 opacity-50" />

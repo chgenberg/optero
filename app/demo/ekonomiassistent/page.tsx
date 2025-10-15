@@ -4,18 +4,18 @@ import { useState } from "react";
 import AIRecommendations from "@/components/AIRecommendations";
 import Link from "next/link";
 
-// Mockdata för en ekonomiassistent
+// Mock data for an accounting assistant
 const mockData = {
-  profession: "Ekonomiassistent",
-  specialization: "Redovisning",
+  profession: "Accounting assistant",
+  specialization: "Accounting",
   experience: "intermediate",
   challenges: ["time", "accuracy", "learning"],
   tasks: [
-    { name: "Bokföra leverantörsfakturor", priority: 3 },
-    { name: "Stämma av konton", priority: 2 },
-    { name: "Skapa månadsrapporter", priority: 3 },
-    { name: "Hantera kundfakturor", priority: 2 },
-    { name: "Följa upp betalningar", priority: 1 }
+    { name: "Post supplier invoices", priority: 3 },
+    { name: "Reconcile accounts", priority: 2 },
+    { name: "Create monthly reports", priority: 3 },
+    { name: "Manage customer invoices", priority: 2 },
+    { name: "Follow up on payments", priority: 1 }
   ]
 };
 
@@ -33,13 +33,13 @@ export default function DemoEkonomiassistent() {
       <div className="fixed top-0 left-0 right-0 bg-gray-900 text-white px-4 py-3 text-center z-50">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <span className="text-sm">
-            <strong>Demo-läge:</strong> Detta är ett exempel för yrkesrollen Ekonomiassistent
+            <strong>Demo mode:</strong> This is an example for the role Accounting Assistant
           </span>
           <Link
             href="/"
             className="text-sm underline hover:no-underline"
           >
-            Testa med ditt eget yrke →
+            Try with your own role →
           </Link>
         </div>
       </div>
