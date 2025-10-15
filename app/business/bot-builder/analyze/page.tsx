@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowRight, Info, Check, X } from "lucide-react";
+import { ArrowRight, Info, Check, X, Zap } from "lucide-react";
 
 export default function AnalyzeProblem() {
   const router = useRouter();
@@ -198,28 +198,28 @@ export default function AnalyzeProblem() {
 
   if (analyzing) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="max-w-3xl w-full space-y-16">
           {/* Progress */}
           <div className="flex justify-center">
-            <div className="flex items-center gap-8">
-              <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
-                <Check className="w-6 h-6" />
+            <div className="flex items-center gap-4 md:gap-8">
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-white text-black font-bold text-lg md:text-xl flex items-center justify-center rounded-2xl shadow-lg">
+                <Check className="w-5 h-5 md:w-6 md:h-6 text-green-500" />
               </div>
-              <div className="w-24 h-[2px] bg-gray-800" />
+              <div className="w-12 md:w-24 h-[2px] bg-gray-300" />
               <motion.div 
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="w-16 h-16 bg-white text-black font-bold text-xl flex items-center justify-center animate-pulse-box"
+                className="w-12 h-12 md:w-16 md:h-16 bg-black text-white rounded-2xl flex items-center justify-center animate-pulse-box shadow-xl"
               >
-                ⚡
+                <Zap className="w-6 h-6 md:w-8 md:h-8" />
               </motion.div>
-              <div className="w-24 h-[2px] bg-gray-800" />
-              <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+              <div className="w-12 md:w-24 h-[2px] bg-gray-300" />
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-white text-gray-400 font-bold text-lg md:text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
                 02
               </div>
-              <div className="w-24 h-[2px] bg-gray-800" />
-              <div className="w-16 h-16 bg-gray-900 text-gray-600 font-bold text-xl flex items-center justify-center border-2 border-gray-800">
+              <div className="w-12 md:w-24 h-[2px] bg-gray-300" />
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-white text-gray-400 font-bold text-lg md:text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
                 03
               </div>
             </div>
@@ -230,7 +230,7 @@ export default function AnalyzeProblem() {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-5xl font-bold uppercase tracking-wider"
+              className="text-3xl md:text-5xl font-bold uppercase tracking-wider text-black"
             >
               ANALYZING YOUR BUSINESS
             </motion.h1>
@@ -239,7 +239,7 @@ export default function AnalyzeProblem() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="space-y-4 text-gray-400 uppercase tracking-wider text-sm"
+              className="space-y-4 text-gray-600 uppercase tracking-wider text-sm"
             >
               <motion.p
                 initial={{ opacity: 0 }}
@@ -251,7 +251,7 @@ export default function AnalyzeProblem() {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="w-12 h-12 border-4 border-gray-800 border-t-white rounded-full mx-auto"
+                className="w-16 h-16 border-4 border-gray-300 border-t-black rounded-full mx-auto"
               />
             </motion.div>
           </div>
@@ -266,23 +266,23 @@ export default function AnalyzeProblem() {
         {/* Progress */}
         <div className="flex justify-center mb-8 md:mb-16">
           <div className="flex items-center gap-2 sm:gap-4 md:gap-8">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-gray-900 text-gray-600 font-bold text-sm sm:text-lg md:text-xl flex items-center justify-center border-2 border-gray-800">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-white text-black font-bold text-sm sm:text-lg md:text-xl flex items-center justify-center rounded-2xl shadow-lg">
               <Check className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-green-500" />
             </div>
-            <div className="w-8 sm:w-12 md:w-24 h-[2px] bg-gray-800" />
+            <div className="w-8 sm:w-12 md:w-24 h-[2px] bg-gray-300" />
             <motion.div 
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-white text-black font-bold text-sm sm:text-lg md:text-xl flex items-center justify-center animate-pulse-box border-2 border-black"
+              className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-black text-white font-bold text-sm sm:text-lg md:text-xl flex items-center justify-center rounded-2xl animate-pulse-box shadow-xl"
             >
               AI
             </motion.div>
-            <div className="w-8 sm:w-12 md:w-24 h-[2px] bg-gray-800" />
-            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-gray-900 text-gray-600 font-bold text-sm sm:text-lg md:text-xl flex items-center justify-center border-2 border-gray-800">
+            <div className="w-8 sm:w-12 md:w-24 h-[2px] bg-gray-300" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-white text-gray-400 font-bold text-sm sm:text-lg md:text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
               02
             </div>
-            <div className="w-8 sm:w-12 md:w-24 h-[2px] bg-gray-800" />
-            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-gray-900 text-gray-600 font-bold text-sm sm:text-lg md:text-xl flex items-center justify-center border-2 border-gray-800">
+            <div className="w-8 sm:w-12 md:w-24 h-[2px] bg-gray-300" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-white text-gray-400 font-bold text-sm sm:text-lg md:text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
               03
             </div>
           </div>
