@@ -4,6 +4,7 @@ import mammoth from "mammoth";
 // pdf-parse ESM bundle imports a worker url; use CommonJS build via createRequire
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
+import { uploadBufferToS3 } from "@/lib/s3";
 
 export const maxDuration = 60; // 1 minute for file processing
 export const runtime = "nodejs";
@@ -57,6 +58,17 @@ export async function POST(req: NextRequest) {
       } catch (error) {
         console.error(`Error parsing ${file.name}:`, error);
         parsedContents.push(`\n\n=== ${file.name} ===\n[Could not parse this file]`);
+      }
+
+      // Optionally persist original file to S3 for audit/reference
+      try {
+        if (process.env.S3_BUCKET) {
+          const keySafe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+          const key = `uploads/${new Date().toISOString().slice(0,10)}/${Date.now()}_${keySafe}`;
+          await uploadBufferToS3(key, buffer, file.type || 'application/octet-stream');
+        }
+      } catch (e) {
+        console.warn('S3 store skipped/failed:', e);
       }
     }
 
