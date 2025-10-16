@@ -7,7 +7,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: NextRequest) {
   try {
-    const { botId, history, sessionId } = await req.json();
+    const { botId, history, sessionId, locale } = await req.json();
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
     const userAgent = req.headers.get('user-agent') || '';
     
@@ -199,7 +199,14 @@ export async function POST(req: NextRequest) {
     else if (responseLength === 'long') lengthInstr = '\n- Answer thoroughly in 4-6 sentences.';
 
     const policies = Array.isArray((activeSpec as any)?.policies) ? `\nPOLICIES:\n- ${((activeSpec as any).policies as string[]).join('\n- ')}` : '';
-    const system = `You are a business chatbot. Follow the specification.\n\nSpec: ${specSafe}\n\nBot type: ${bot.type}.${subtype || ''}${policies}\n${extra}\n${typeInstructions}${lengthInstr}${ragContext}${personalizedGreeting}${toneAdjustment}${offHoursNote}\n\nIf information is missing in context: use Fallback: ${fallbackText}`;
+    const languageHint = (() => {
+      const loc = (locale || '').toLowerCase();
+      if (loc.startsWith('sv')) return 'RESPOND IN: Swedish.';
+      if (loc.startsWith('en')) return 'RESPOND IN: English.';
+      return 'RESPOND IN: Match the user\'s language.';
+    })();
+
+    const system = `You are a business chatbot. Follow the specification.\n\nLANGUAGE: ${languageHint}\n\nSpec: ${specSafe}\n\nBot type: ${bot.type}.${subtype || ''}${policies}\n${extra}\n${typeInstructions}${lengthInstr}${ragContext}${personalizedGreeting}${toneAdjustment}${offHoursNote}\n\nIf information is missing in context: use Fallback: ${fallbackText}`;
 
     const messages = [
       { role: "system", content: system },
