@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Send, Loader2, Calendar, Bot, Sparkles, ArrowUp, ArrowLeft } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -10,6 +11,7 @@ function ChatInner() {
   const params = useSearchParams();
   const router = useRouter();
   const botId = params?.get("botId") || "";
+  const { locale } = useLanguage();
   type ChatMsg = { role: "user" | "assistant"; content: string };
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
@@ -58,20 +60,27 @@ function ChatInner() {
         // Welcome message (allow override)
         const tone = data?.spec?.brand?.tone || 'professional';
         const customWelcome = data?.spec?.brand?.welcomeMessage as string | undefined;
-        const welcome = customWelcome ? customWelcome : (
-          tone === 'formal' ?
-            'God dag! Jag hjälper gärna till. Vad vill du veta?' :
-            tone === 'casual' ?
-            'Hej! Hur kan jag hjälpa dig idag?' :
-            'Hej! Hur kan jag hjälpa dig idag?'
-        );
+        const welcomeByLocale: Record<string, { casual: string; formal: string; default: string }> = {
+          en: {
+            casual: "Hi! How can I help you today?",
+            formal: "Good day. How may I assist you?",
+            default: "Hi! How can I help you today?"
+          },
+          sv: {
+            casual: "Hej! Hur kan jag hjälpa dig idag?",
+            formal: "God dag! Jag hjälper gärna till. Vad vill du veta?",
+            default: "Hej! Hur kan jag hjälpa dig idag?"
+          }
+        };
+        const wl = welcomeByLocale[locale] || welcomeByLocale.en;
+        const welcome = customWelcome ? customWelcome : (tone === 'formal' ? wl.formal : tone === 'casual' ? wl.casual : wl.default);
         setMessages([{ role: 'assistant', content: welcome }]);
 
         // Suggestions (prefer custom quickReplies)
         const customQuick = Array.isArray(data?.spec?.brand?.quickReplies) ? data.spec.brand.quickReplies : [];
         if (customQuick.length > 0) setSuggestions(customQuick.slice(0, 3));
         else {
-          const s = await fetch(`/api/bots/suggest?botId=${encodeURIComponent(botId)}`);
+          const s = await fetch(`/api/bots/suggest?botId=${encodeURIComponent(botId)}&lang=${encodeURIComponent(locale)}`);
           const sj = await s.json();
           if (Array.isArray(sj?.suggestions)) setSuggestions(sj.suggestions);
         }
@@ -89,13 +98,21 @@ function ChatInner() {
       const res = await fetch("/api/bots/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ botId, history: next })
+        body: JSON.stringify({ botId, history: next, locale })
       });
       const data = await res.json();
-      const reply = data.reply || "Jag kunde inte svara på det. Prova en annan fråga.";
+      const fallbackByLocale: Record<string, string> = {
+        en: "I couldn't answer that. Please try another question.",
+        sv: "Jag kunde inte svara på det. Prova en annan fråga."
+      };
+      const reply = data.reply || fallbackByLocale[locale] || fallbackByLocale.en;
       setMessages((m) => [...m, { role: "assistant" as const, content: reply }]);
     } catch (err) {
-      setMessages((m) => [...m, { role: "assistant" as const, content: "Tekniskt fel. Försök igen." }]);
+      const errByLocale: Record<string, string> = {
+        en: "Technical error. Please try again.",
+        sv: "Tekniskt fel. Försök igen."
+      };
+      setMessages((m) => [...m, { role: "assistant" as const, content: errByLocale[locale] || errByLocale.en }]);
     } finally {
       setLoading(false);
     }
@@ -221,7 +238,7 @@ function ChatInner() {
           {/* Suggestions */}
           {suggestions.length > 0 && messages.length === 1 && (
             <div className="px-4 md:px-6 py-3 bg-gradient-to-b from-transparent to-gray-50">
-              <p className="text-xs text-gray-500 mb-2 uppercase tracking-wider">Suggested questions</p>
+          <p className="text-xs text-gray-500 mb-2 uppercase tracking-wider">{locale === 'sv' ? 'Förslag på frågor' : 'Suggested questions'}</p>
               <div className="flex flex-wrap gap-2">
                 {suggestions.map((q, i) => (
                   <button 
