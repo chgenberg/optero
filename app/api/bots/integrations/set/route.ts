@@ -84,6 +84,16 @@ export async function POST(req: NextRequest) {
     setIf('telegram', { botToken: 'telegramBotToken' });
     setIf('stripe', { secretKey: 'stripeSecretKey' });
 
+    // Centra (non-sensitive fields into spec)
+    if (integrations.centra) {
+      if (integrations.centra.apiBaseUrl !== undefined) {
+        specUpdate.centraApiBaseUrl = integrations.centra.apiBaseUrl || null;
+      }
+      if (integrations.centra.storeId !== undefined) {
+        specUpdate.centraStoreId = integrations.centra.storeId || null;
+      }
+    }
+
     // Update bot spec
     await prisma.bot.update({
       where: { id: botId },
@@ -116,6 +126,13 @@ export async function POST(req: NextRequest) {
         integrationData.shopifyAccessTokenEnc = integrations.shopify.accessToken ? encryptSecret(integrations.shopify.accessToken) : null;
     }
 
+    // Centra (sensitive)
+    if (integrations.centra) {
+      if (integrations.centra.accessToken !== undefined) {
+        integrationData.centraAccessTokenEnc = integrations.centra.accessToken ? encryptSecret(integrations.centra.accessToken) : null;
+      }
+    }
+
     // Note: Mailchimp and Fortnox are stored in spec for now
 
     // Update or create integration record
@@ -139,6 +156,9 @@ export async function POST(req: NextRequest) {
           }
           if (integrationData.shopifyAccessTokenEnc) {
             specUpdate.shopifyAccessTokenEnc = integrationData.shopifyAccessTokenEnc;
+          }
+          if (integrationData.centraAccessTokenEnc) {
+            specUpdate.centraAccessTokenEnc = integrationData.centraAccessTokenEnc;
           }
         } else {
           throw error;

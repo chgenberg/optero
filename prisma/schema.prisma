@@ -506,6 +506,11 @@ model BotIntegration {
   shopifyDomain        String?
   shopifyAccessTokenEnc String?
 
+  // Centra (Headless Commerce)
+  centraApiBaseUrl     String?
+  centraStoreId        String?
+  centraAccessTokenEnc String?
+
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
