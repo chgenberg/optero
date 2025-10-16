@@ -124,3 +124,28 @@ export async function getCentraProduct(botId: string, productId: string): Promis
   return client.get<CentraProduct>(path);
 }
 
+// Write helpers
+export async function updateCentraOrderStatus(botId: string, orderId: string, status: string) {
+  const cfg = await getCentraConfigForBot(botId);
+  if (!cfg) return { ok: false, error: 'centra_not_configured' };
+  const client = createCentraClient(cfg);
+  const path = withStore(`orders/${encodeURIComponent(orderId)}/status`, cfg.storeId);
+  return client.post<{ ok: boolean }>(path, { status });
+}
+
+export async function adjustCentraInventory(botId: string, productId: string, delta: number) {
+  const cfg = await getCentraConfigForBot(botId);
+  if (!cfg) return { ok: false, error: 'centra_not_configured' };
+  const client = createCentraClient(cfg);
+  const path = withStore(`products/${encodeURIComponent(productId)}/inventory`, cfg.storeId);
+  return client.post<{ ok: boolean }>(path, { delta });
+}
+
+export async function centraSalesReport(botId: string, period: { from: string; to: string }) {
+  const cfg = await getCentraConfigForBot(botId);
+  if (!cfg) return null;
+  const client = createCentraClient(cfg);
+  const path = withStore(`reports/sales?from=${encodeURIComponent(period.from)}&to=${encodeURIComponent(period.to)}`, cfg.storeId);
+  return client.get<any>(path);
+}
+

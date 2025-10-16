@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { z } from "zod";
 import prisma from "@/lib/prisma";
 
 const openai = new OpenAI({
@@ -12,7 +13,16 @@ export const maxDuration = 180; // 3 minutes
 
 export async function POST(req: NextRequest) {
   try {
-    const { url, websiteContent, websiteSummary, documentsContent, problems, conversations } = await req.json();
+    const body = await req.json();
+    const InputSchema = z.object({
+      url: z.string().url().optional().nullable(),
+      websiteContent: z.string().optional().nullable(),
+      websiteSummary: z.any().optional().nullable(),
+      documentsContent: z.string().optional().nullable(),
+      problems: z.array(z.string()).min(1),
+      conversations: z.array(z.object({ problem: z.string(), conversation: z.array(z.object({ role: z.string(), content: z.string() })) })).optional().default([])
+    });
+    const { url, websiteContent, websiteSummary, documentsContent, problems, conversations } = InputSchema.parse(body);
 
     if (!problems || problems.length === 0) {
       return NextResponse.json({ error: "No problems provided" }, { status: 400 });
@@ -92,7 +102,22 @@ VIKTIGT:
         });
 
         const content = completion.choices[0].message.content || "{}";
-        const solution = JSON.parse(content);
+        const raw = JSON.parse(content);
+        const SolutionSchema = z.object({
+          problem: z.string().optional(),
+          analysis: z.string().min(20).optional(),
+          approach: z.enum(["prompt","bot"]).optional(),
+          prompt: z.string().optional(),
+          botInstructions: z.object({
+            overview: z.string().optional(),
+            technicalStack: z.array(z.string()).optional(),
+            implementation: z.array(z.string()).optional(),
+            cost: z.string().optional(),
+            timeline: z.string().optional()
+          }).optional(),
+          expectedOutcomes: z.array(z.string()).optional()
+        });
+        const solution = SolutionSchema.parse(raw);
 
         // Ensure the solution has the correct structure
         const finalSol = {
