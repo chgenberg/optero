@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState, useRef, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { Send, Loader2, Calendar, Bot, Sparkles, ArrowUp } from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Send, Loader2, Calendar, Bot, Sparkles, ArrowUp, ArrowLeft } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 function ChatInner() {
   const params = useSearchParams();
+  const router = useRouter();
   const botId = params?.get("botId") || "";
   type ChatMsg = { role: "user" | "assistant"; content: string };
   const [messages, setMessages] = useState<ChatMsg[]>([]);
@@ -113,6 +114,13 @@ function ChatInner() {
           <div className="bg-gradient-to-r from-gray-900 to-black p-4 md:p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
+                <button
+                  onClick={() => router.push(`/dashboard/${botId}`)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  title="Back to dashboard"
+                >
+                  <ArrowLeft className="w-5 h-5 text-white" />
+                </button>
                 <div className="relative">
                   {brand?.logoUrl ? (
                     <img 

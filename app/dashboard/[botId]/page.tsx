@@ -14,6 +14,7 @@ interface BotDetailStats {
     id: string;
     name: string;
     type: string;
+    spec?: any;
     createdAt: string;
   };
   stats: {
@@ -206,6 +207,13 @@ export default function BotDetailPage() {
   const maxHourly = Math.max(...(analytics?.heatmap.hourly || [1]));
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+  // Check if bot is headless (internal use only, no widget)
+  const isHeadless = stats?.bot?.spec?.isHeadless || 
+    (stats?.bot?.spec?.centraApiBaseUrl || 
+     stats?.bot?.spec?.hubspotEnabled || 
+     stats?.bot?.spec?.zendeskDomain ||
+     stats?.bot?.spec?.shopifyDomain);
+
   return (
     <div className="min-h-screen bg-gray-50 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -234,6 +242,17 @@ export default function BotDetailPage() {
             </div>
             
             <div className="flex flex-wrap gap-3">
+              {isHeadless && (
+                <motion.button
+                  onClick={() => router.push(`/dashboard/${botId}/chat`)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="minimal-button flex items-center gap-2"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  CHAT WITH BOT
+                </motion.button>
+              )}
               <motion.button
                 onClick={() => router.push(`/integrations?botId=${botId}`)}
                 whileHover={{ scale: 1.02 }}
@@ -262,14 +281,16 @@ export default function BotDetailPage() {
                 <Play className="w-4 h-4" />
                 TEST
               </motion.button>
-              <motion.button
-                onClick={() => router.push(`/business/bot-builder/deploy?botId=${botId}`)}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="minimal-button"
-              >
-                INSTALL BOT
-              </motion.button>
+              {!isHeadless && (
+                <motion.button
+                  onClick={() => router.push(`/business/bot-builder/deploy?botId=${botId}`)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="minimal-button"
+                >
+                  INSTALL BOT
+                </motion.button>
+              )}
             </div>
           </div>
         </motion.div>
@@ -381,6 +402,56 @@ export default function BotDetailPage() {
             </div>
             <div className="mt-3 text-sm text-gray-600">
               Last 30 days: {(tokenStats.last30d/1000).toFixed(1)}k tokens
+            </div>
+          </motion.div>
+        )}
+
+        {/* Bot Installation/Usage Section */}
+        {isHeadless && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="minimal-card animate-pulse-shadow mb-12"
+          >
+            <h3 className="text-lg font-bold uppercase tracking-wider text-black mb-4">
+              HOW TO USE THIS BOT
+            </h3>
+            <div className="text-gray-600 space-y-4">
+              <p>
+                This is an internal bot that connects to your business systems. 
+                It doesn't require installation on your website.
+              </p>
+              {stats.bot.spec?.centraApiBaseUrl && (
+                <p>✓ Connected to Centra e-commerce API</p>
+              )}
+              {stats.bot.spec?.hubspotEnabled && (
+                <p>✓ Connected to HubSpot CRM</p>
+              )}
+              {stats.bot.spec?.zendeskDomain && (
+                <p>✓ Connected to Zendesk support</p>
+              )}
+              {stats.bot.spec?.shopifyDomain && (
+                <p>✓ Connected to Shopify store</p>
+              )}
+              <div className="pt-4 flex flex-col sm:flex-row gap-4">
+                <motion.button
+                  onClick={() => router.push(`/dashboard/${botId}/chat`)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="minimal-button"
+                >
+                  START CHATTING →
+                </motion.button>
+                <motion.button
+                  onClick={() => router.push(`/integrations?botId=${botId}`)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="minimal-button-outline"
+                >
+                  MANAGE INTEGRATIONS
+                </motion.button>
+              </div>
             </div>
           </motion.div>
         )}
