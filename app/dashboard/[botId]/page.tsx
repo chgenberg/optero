@@ -263,6 +263,15 @@ export default function BotDetailPage() {
                 <span className="hidden sm:inline">INTEGRATIONS</span>
               </motion.button>
               <motion.button
+                onClick={() => router.push(`/approvals`)}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="minimal-button-outline flex items-center gap-2"
+                title="Pending approvals"
+              >
+                <span>APPROVALS</span>
+              </motion.button>
+              <motion.button
                 onClick={handlePublishToMarketplace}
                 disabled={publishing}
                 whileHover={{ scale: 1.02 }}

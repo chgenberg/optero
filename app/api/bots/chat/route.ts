@@ -266,7 +266,7 @@ export async function POST(req: NextRequest) {
       console.error('Session tracking error:', sesErr);
     }
 
-    // lead/support webhook best-effort
+    // lead/support webhook best-effort + approvals for external actions
     try {
       const spec: any = activeSpec || {};
       const payload = { botId: bot.id, history, reply };
@@ -292,6 +292,19 @@ export async function POST(req: NextRequest) {
             payload
           }
         });
+      }
+
+      // Parse explicit intents to enqueue approvals (Fortnox/HubSpot)
+      const intents = [
+        { key: 'CALL:FORTNOX', system: 'fortnox' },
+        { key: 'CALL:HUBSPOT', system: 'hubspot' }
+      ];
+      for (const it of intents) {
+        if (new RegExp(it.key, 'i').test(reply)) {
+          await prisma.approvalRequest.create({
+            data: { botId: bot.id, type: bot.type, payload: { system: it.system, history, reply } }
+          });
+        }
       }
       
       // Type-specific actions
