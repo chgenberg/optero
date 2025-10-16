@@ -1,0 +1,16 @@
+export default function PrivacyPage() {
+  return (
+    <main className="min-h-screen bg-gray-50 px-4 pt-24 pb-24">
+      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-sm p-8">
+        <h1 className="text-3xl font-bold mb-4">Privacy Policy</h1>
+        <p className="text-gray-600 mb-6">Updated 2025-01-01</p>
+        <p className="text-gray-700 leading-relaxed">
+          We respect your privacy. This placeholder page explains how we handle personal data. 
+          For detailed policies, contact us at ch.genberg@gmail.com.
+        </p>
+      </div>
+    </main>
+  );
+}
+
+
