@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight, Info, Check, X, Zap } from "lucide-react";
@@ -13,6 +13,8 @@ export default function AnalyzeProblem() {
   const [showInfoFor, setShowInfoFor] = useState<string | null>(null);
   const [showAdvancedInfo, setShowAdvancedInfo] = useState<string | null>(null);
   const [infoTab, setInfoTab] = useState<'overview'|'setup'|'integrations'|'api'|'security'>('overview');
+  const [progress, setProgress] = useState(0);
+  const progressInterval = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const analyzeWebsite = async () => {
@@ -21,6 +23,17 @@ export default function AnalyzeProblem() {
         router.push("/business/bot-builder/identify");
         return;
       }
+
+      // Start progress animation
+      let currentProgress = 0;
+      progressInterval.current = setInterval(() => {
+        currentProgress += 100 / 90; // 90 seconds to complete
+        if (currentProgress >= 100) {
+          currentProgress = 100;
+          if (progressInterval.current) clearInterval(progressInterval.current);
+        }
+        setProgress(currentProgress);
+      }, 1000);
 
       // Use cached analysis if still valid
       try {
@@ -32,7 +45,9 @@ export default function AnalyzeProblem() {
             const fresh = !ts || (Date.now() - ts < 45 * 60 * 1000);
             if (cached?.url === url && fresh) {
               setResult(cached);
-              setAnalyzing(false);
+              setProgress(100);
+              if (progressInterval.current) clearInterval(progressInterval.current);
+              setTimeout(() => setAnalyzing(false), 500);
               return;
             }
           } catch {}
@@ -59,14 +74,22 @@ export default function AnalyzeProblem() {
           sessionStorage.setItem("botDeepAnalysis", JSON.stringify(withTs)); 
           sessionStorage.setItem("botBuilder_scrape", JSON.stringify(withTs));
         } catch {}
+        
+        setProgress(100);
+        if (progressInterval.current) clearInterval(progressInterval.current);
       } catch (error) {
         console.error("Analysis error:", error);
+        if (progressInterval.current) clearInterval(progressInterval.current);
       } finally {
         setTimeout(() => setAnalyzing(false), 1500);
       }
     };
 
     analyzeWebsite();
+    
+    return () => {
+      if (progressInterval.current) clearInterval(progressInterval.current);
+    };
   }, [router]);
 
   const botRecommendations = [
@@ -239,20 +262,65 @@ export default function AnalyzeProblem() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="space-y-4 text-gray-600 uppercase tracking-wider text-sm"
+              className="space-y-8"
             >
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
-              >
+              <p className="text-gray-600 uppercase tracking-wider text-sm">
                 PROCESSING WEBSITE AND DOCUMENTS...
-              </motion.p>
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="w-16 h-16 border-4 border-gray-300 border-t-black rounded-full mx-auto"
-              />
+              </p>
+              
+              {/* Progress Bar */}
+              <div className="max-w-md mx-auto space-y-4">
+                <div className="relative">
+                  <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-black relative overflow-hidden"
+                      initial={{ width: "0%" }}
+                      animate={{ width: `${progress}%` }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                        animate={{
+                          x: ["-100%", "100%"]
+                        }}
+                        transition={{
+                          duration: 1.5,
+                          repeat: Infinity,
+                          ease: "linear"
+                        }}
+                      />
+                    </motion.div>
+                  </div>
+                  <motion.div
+                    className="absolute inset-0 rounded-full"
+                    animate={{
+                      boxShadow: [
+                        "0 0 0 0 rgba(0, 0, 0, 0)",
+                        "0 0 0 8px rgba(0, 0, 0, 0.1)",
+                        "0 0 0 0 rgba(0, 0, 0, 0)"
+                      ]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                </div>
+                <motion.p 
+                  className="text-2xl font-bold text-black"
+                  animate={{
+                    opacity: [1, 0.5, 1]
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  {Math.round(progress)}%
+                </motion.p>
+              </div>
             </motion.div>
           </div>
         </div>
