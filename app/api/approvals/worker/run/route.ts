@@ -6,6 +6,15 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: NextRequest) {
   // Lightweight worker: picks up oldest approved, not processed item
   try {
+    // Gate with bearer token if configured
+    const expected = process.env.WORKER_TOKEN;
+    if (expected) {
+      const auth = req.headers.get('authorization') || '';
+      if (auth !== `Bearer ${expected}`) {
+        return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+      }
+    }
+
     const limit = Number(new URL(req.url).searchParams.get('limit') || '3');
     const items = await prisma.approvalRequest.findMany({ where: { status: 'approved' }, orderBy: { approvedAt: 'asc' }, take: Math.min(limit, 10) });
     const results: any[] = [];

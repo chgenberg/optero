@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   description: "Train a chatbot on your website and documents. Automate support and qualify leads in minutes.",
   keywords: ["AI", "chatbot", "automation", "support", "lead qualification"],
   authors: [{ name: "Mendio" }],
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   openGraph: {
     title: "Mendio - Build AI that understands your business",
     description: "Train a chatbot on your website and documents",
