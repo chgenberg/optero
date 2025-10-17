@@ -50,14 +50,14 @@ export default function BotBuilderInterview() {
 
   const getInitialMessage = (problem: string) => {
     const messages: Record<string, string> = {
-      "knowledge": "Hej! Jag hjälper dig bygga en kunskapsbot. Vilka är de vanligaste frågorna era kunder/besökare har?",
-      "lead-qualification": "Hej! Låt oss bygga en leadkvalificeringsbot. Vad är ditt huvudsakliga mål - fler demos, konsultationer eller direktförsäljning?",
-      "customer-support": "Hej! Vi ska skapa en supportbot. Vilka är de 3 vanligaste supportärendena ni får?",
-      "booking": "Hej! Vi bygger en bokningsbot. Vad för typ av bokningar hanterar ni och hur lång tid tar varje bokning?",
-      "ecommerce": "Hej! Låt oss skapa en e-commerce assistant. Vilken typ av produkter säljer ni och vad är era kunders vanligaste frågor?",
-      "hr-recruitment": "Hej! Vi bygger en rekryteringsbot. Vad är de viktigaste kriterierna ni screena kandidater på?"
+      "knowledge": "Hi! I'll help you build a knowledge bot. What are the most common questions your customers/visitors have?",
+      "lead-qualification": "Hi! Let's build a lead qualification bot. What is your primary goal — more demos, consultations, or direct sales?",
+      "customer-support": "Hi! We'll create a support bot. What are the 3 most common support issues you receive?",
+      "booking": "Hi! We're building a booking bot. What kinds of bookings do you handle and how long is each appointment?",
+      "ecommerce": "Hi! Let's create an e-commerce assistant. What products do you sell and what are your customers' most common questions?",
+      "hr-recruitment": "Hi! We're building a recruiting bot. What are the most important criteria you screen candidates on?"
     };
-    return messages[problem] || "Hej! Låt oss börja bygga din bot. Berätta lite om ditt use case.";
+    return messages[problem] || "Hi! Let's start building your bot. Tell me a little about your use case.";
   };
 
   const addBotMessage = (content: string) => {
@@ -90,40 +90,40 @@ export default function BotBuilderInterview() {
     
     const typeQuestions: Record<string, string[]> = {
       "knowledge": [
-        "Perfekt! Har ni några specifika dokument eller FAQ-sidor jag ska fokusera på?",
-        "Förstår. Vilken typ av svar föredrar ni - korta och koncisa eller utförliga förklaringar?",
-        "Bra! Hur formell ska boten vara - professionell eller mer avslappnad?",
-        "Tack! Jag har allt jag behöver. Låt mig konfigurera din kunskapsbot..."
+        "Great! Do you have any specific documents or FAQ pages I should focus on?",
+        "Understood. What response style do you prefer — short and concise or more detailed explanations?",
+        "Got it! What tone should the bot use — professional or more casual?",
+        "Thanks! I have what I need. Let me configure your knowledge bot..."
       ],
       "lead-qualification": [
-        "Bra! Vilken information behöver ni samla in från leads? (Budget, tidsram, beslutsroll, etc)",
-        "Förstår. Vad är en kvalificerad lead för er? Finns det några disqualifiers?",
-        "Perfekt. Vart ska kvalificerade leads skickas - HubSpot, e-post, Slack?",
-        "Utmärkt! Jag skapar nu en leadbot som matchar era behov..."
+        "Great! What information should we collect from leads? (Budget, timeline, decision role, etc)",
+        "Understood. What qualifies a lead for you? Any disqualifiers?",
+        "Perfect. Where should qualified leads be sent — HubSpot, email, Slack?",
+        "Excellent! I'm now creating a lead bot tailored to your needs..."
       ],
       "customer-support": [
-        "Tack! Hur vill ni hantera ärenden boten inte kan lösa - skapa ticket eller e-posta direkt?",
-        "Förstår. Finns det någon prioritering - brådskande ärenden först?",
-        "Bra. Vilka system använder ni - Zendesk, Freshdesk, eller e-post?",
-        "Perfekt! Jag konfigurerar nu en supportbot för er..."
+        "Thanks! How should we handle issues the bot can't resolve — create a ticket or email directly?",
+        "Understood. Any prioritization — urgent cases first?",
+        "Great. Which systems do you use — Zendesk, Freshdesk, or email?",
+        "Perfect! I'm configuring a support bot for you now..."
       ],
       "booking": [
-        "Bra! Vilka tider är ni tillgängliga? (Vardagar 9-17, helger, etc)",
-        "Förstår. Hur mycket tid i förväg ska bokningar göras - samma dag OK eller minst 24h?",
-        "Perfekt. Ska bekräftelse-mail skickas automatiskt?",
-        "Utmärkt! Jag skapar nu en bokningsbot åt er..."
+        "Great! What times are you available? (Weekdays 9–17, weekends, etc)",
+        "Understood. How much notice is required — same day OK or at least 24h?",
+        "Perfect. Should confirmation emails be sent automatically?",
+        "Excellent! I'm creating a booking bot for you now..."
       ],
       "ecommerce": [
-        "Intressant! Använder ni Shopify, WooCommerce eller annan plattform?",
-        "Förstår. Ska boten kunna lägga produkter i kundvagn eller bara rekommendera?",
-        "Bra! Vill ni att boten kan svara på order-status och returer också?",
-        "Perfekt! Jag konfigurerar nu en e-commerce assistant..."
+        "Interesting! Do you use Shopify, WooCommerce, or another platform?",
+        "Understood. Should the bot add products to the cart or only recommend?",
+        "Great! Should the bot also answer order status and returns?",
+        "Perfect! I'm configuring an e-commerce assistant now..."
       ],
       "hr-recruitment": [
-        "Bra! Vilken typ av roller rekryterar ni till? (Tech, sales, admin, etc)",
-        "Förstår. Vilka är era deal-breakers - språk, erfarenhet, plats?",
-        "Perfekt. Ska boten boka intervjuer direkt i er kalender?",
-        "Utmärkt! Jag skapar nu en rekryteringsbot..."
+        "Great! What kinds of roles are you hiring for? (Tech, sales, admin, etc)",
+        "Understood. What are your deal-breakers — language, experience, location?",
+        "Perfect. Should the bot book interviews directly in your calendar?",
+        "Excellent! I'm creating a recruiting bot now..."
       ]
     };
     
@@ -180,7 +180,7 @@ export default function BotBuilderInterview() {
               </div>
               <div>
                 <h3 className="font-medium text-gray-900">Bot Builder Assistant</h3>
-                <p className="text-xs text-gray-500">Alltid aktiv</p>
+                <p className="text-xs text-gray-500">Always active</p>
               </div>
             </div>
           </div>
@@ -221,7 +221,7 @@ export default function BotBuilderInterview() {
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Skriv ditt svar..."
+                  placeholder="Type your answer..."
                   className="chat-input"
                   disabled={loading}
                 />
@@ -230,7 +230,7 @@ export default function BotBuilderInterview() {
                   disabled={!input.trim() || loading}
                   className="px-6 py-3 bg-black text-white rounded-full hover:bg-gray-800 transition-all disabled:opacity-50"
                 >
-                  Skicka
+                  Send
                 </button>
               </form>
             </div>
@@ -243,7 +243,7 @@ export default function BotBuilderInterview() {
             onClick={() => router.push("/business/bot-builder/analyze")}
             className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
           >
-            ← Tillbaka
+            ← Back
           </button>
         </div>
       </div>
