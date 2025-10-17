@@ -228,7 +228,7 @@ export async function POST(req: NextRequest) {
       action: z.string().min(2),
       data: z.record(z.any()).optional()
     });
-    function extractIntent(text: string) {
+    const extractIntent = (text: string) => {
       try {
         const callMatch = text.match(/CALL:([A-Z_]+)/i);
         if (!callMatch) return null;
@@ -240,7 +240,7 @@ export async function POST(req: NextRequest) {
         const system = map[action] as any;
         return IntentSchema.parse({ system, action, data });
       } catch { return null; }
-    }
+    };
     const parsedIntent = extractIntent(reply);
     const promptTokens = (resp as any)?.usage?.prompt_tokens || 0;
     const completionTokens = (resp as any)?.usage?.completion_tokens || 0;
