@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import FeedbackButton from "@/components/FeedbackButton";
+import ClientLocaleBoot from "@/components/ClientLocaleBoot";
 
 export const metadata: Metadata = {
   title: "Mendio - Build AI that understands your business",
@@ -41,6 +42,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased bg-white text-gray-900 min-h-screen flex flex-col">
         <LanguageProvider>
+          <ClientLocaleBoot />
           <Header />
           <main className="pt-16 flex-grow">
             {children}

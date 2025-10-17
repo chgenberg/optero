@@ -32,6 +32,7 @@ export default function LanguageSwitcher() {
       if (!newPath) newPath = '/';
     }
     
+    try { localStorage.setItem('preferredLang', langCode); } catch {}
     router.push(newPath);
     setIsOpen(false);
   };
