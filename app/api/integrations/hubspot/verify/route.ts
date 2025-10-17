@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { fetchWithRetry } from "@/lib/http";
 
 export async function POST(req: NextRequest) {
   try {
@@ -7,7 +8,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "accessToken required" }, { status: 400 });
     }
 
-    const r = await fetch("https://api.hubapi.com/crm/v3/objects/contacts?limit=1", {
+    const r = await fetchWithRetry("https://api.hubapi.com/crm/v3/objects/contacts?limit=1", {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
     if (!r.ok) {

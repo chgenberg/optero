@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { decryptSecret } from '@/lib/integrations';
+import { fetchWithRetry } from '@/lib/http';
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,10 +16,10 @@ export async function GET(req: NextRequest) {
     if (!token) return NextResponse.json({ error: 'hubspot_not_configured' }, { status: 400 });
 
     const [contactsRes, dealsRes] = await Promise.all([
-      fetch('https://api.hubapi.com/crm/v3/objects/contacts?limit=5&properties=firstname,lastname,company,annualrevenue', {
+      fetchWithRetry('https://api.hubapi.com/crm/v3/objects/contacts?limit=5&properties=firstname,lastname,company,annualrevenue', {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      fetch('https://api.hubapi.com/crm/v3/objects/deals?limit=100&properties=dealstage,amount', {
+      fetchWithRetry('https://api.hubapi.com/crm/v3/objects/deals?limit=100&properties=dealstage,amount', {
         headers: { Authorization: `Bearer ${token}` }
       })
     ]);

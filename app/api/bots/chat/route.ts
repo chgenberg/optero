@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import prisma from "@/lib/prisma";
+import { z } from "zod";
 import { upsertHubspotContactStub } from "@/lib/integrations";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -220,6 +221,27 @@ export async function POST(req: NextRequest) {
     });
 
     const reply = resp.choices[0]?.message?.content || "";
+
+    // Intent parser: CALL:ACTION {json}
+    const IntentSchema = z.object({
+      system: z.enum(["zendesk","hubspot","fortnox","shopify","webhook"]).optional(),
+      action: z.string().min(2),
+      data: z.record(z.any()).optional()
+    });
+    function extractIntent(text: string) {
+      try {
+        const callMatch = text.match(/CALL:([A-Z_]+)/i);
+        if (!callMatch) return null;
+        const action = callMatch[1].toUpperCase();
+        const jsonMatch = text.slice(callMatch.index! + callMatch[0].length).match(/\{[\s\S]*\}/);
+        let data: any = undefined;
+        if (jsonMatch) { try { data = JSON.parse(jsonMatch[0]); } catch {} }
+        const map: Record<string,string> = { 'TICKET':'zendesk', 'ZENDESK_TICKET':'zendesk', 'HUBSPOT_CONTACT':'hubspot', 'FORTNOX_INVOICE':'fortnox', 'PRODUCT':'shopify', 'WEBHOOK':'webhook' };
+        const system = map[action] as any;
+        return IntentSchema.parse({ system, action, data });
+      } catch { return null; }
+    }
+    const parsedIntent = extractIntent(reply);
     const promptTokens = (resp as any)?.usage?.prompt_tokens || 0;
     const completionTokens = (resp as any)?.usage?.completion_tokens || 0;
     const totalTokens = (resp as any)?.usage?.total_tokens || (promptTokens + completionTokens);
@@ -294,16 +316,25 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      // Parse explicit intents to enqueue approvals (Fortnox/HubSpot)
-      const intents = [
-        { key: 'CALL:FORTNOX', system: 'fortnox' },
-        { key: 'CALL:HUBSPOT', system: 'hubspot' }
-      ];
-      for (const it of intents) {
-        if (new RegExp(it.key, 'i').test(reply)) {
-          await prisma.approvalRequest.create({
-            data: { botId: bot.id, type: bot.type, payload: { system: it.system, history, reply } }
-          });
+      // Intent approval/dispatch
+      if (parsedIntent) {
+        const intentPayload = { botId: bot.id, intent: parsedIntent, history };
+        if ((activeSpec as any)?.requireApproval) {
+          await prisma.approvalRequest.create({ data: { botId: bot.id, type: 'external_action', payload: intentPayload, status: 'pending' } });
+        } else {
+          try {
+            if (parsedIntent.system === 'zendesk' && /TICKET/.test(parsedIntent.action)) {
+              const lastUserMsg = history.filter((m: any) => m.role === 'user').slice(-1)[0]?.content || 'Support request';
+              await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/integrations/zendesk/ticket`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ botId: bot.id, subject: parsedIntent.data?.subject || 'Support Ticket', description: parsedIntent.data?.description || lastUserMsg })
+              }).catch(()=>{});
+            } else if (parsedIntent.system === 'hubspot' && /CONTACT/.test(parsedIntent.action) && parsedIntent.data?.email) {
+              await upsertHubspotContactStub({ email: parsedIntent.data.email });
+            } else {
+              await prisma.approvalRequest.create({ data: { botId: bot.id, type: 'external_action', payload: intentPayload, status: 'pending' } });
+            }
+          } catch {}
         }
       }
       

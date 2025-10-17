@@ -195,6 +195,16 @@ export default function IntegrationsPage() {
         const res = await fetch('/api/integrations/hubspot/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accessToken: token }) });
         const j = await res.json();
         setVerificationStatus(prev => ({ ...prev, [integrationId]: j.ok ? 'success' : 'error' }));
+      } else if (integrationId === 'zendesk') {
+        const data = integrationData?.zendesk || {};
+        const res = await fetch('/api/integrations/zendesk/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ domain: data.domain, email: data.email, apiToken: data.apiToken }) });
+        const j = await res.json();
+        setVerificationStatus(prev => ({ ...prev, [integrationId]: j.ok ? 'success' : 'error' }));
+      } else if (integrationId === 'shopify') {
+        const data = integrationData?.shopify || {};
+        const res = await fetch('/api/integrations/shopify/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ storeDomain: data.storeDomain, accessToken: data.accessToken }) });
+        const j = await res.json();
+        setVerificationStatus(prev => ({ ...prev, [integrationId]: j.ok ? 'success' : 'error' }));
       } else {
         // For others, mark success if required fields filled
         setVerificationStatus(prev => ({ ...prev, [integrationId]: allFieldsFilled(integrationId) ? 'success' : 'error' }));
