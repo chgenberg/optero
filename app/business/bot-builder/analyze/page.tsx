@@ -210,9 +210,8 @@ export default function AnalyzeProblem() {
   };
 
   const handleContinue = () => {
-    if (selectedBot) {
-      router.push("/business/bot-builder/customize");
-    }
+    // Navigate to overview page instead of directly to customize
+    router.push("/business/bot-builder/overview");
   };
 
   const handleConsultation = () => {

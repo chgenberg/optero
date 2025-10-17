@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Upload, X, Info, Plus, Check, Palette, Type, MessageSquare, Clock, Link2, Key, ExternalLink } from "lucide-react";
+import Stepper from "@/components/Stepper";
 
 export default function CustomizeBotPage() {
   const router = useRouter();
@@ -83,6 +84,16 @@ export default function CustomizeBotPage() {
         'knowledge': 'Hi there! Ask me anything about our products and services.'
       };
       setWelcomeMessage(welcomeDefaults[storedType] || welcomeDefaults.knowledge);
+    } else {
+      // Default to Support Standard
+      setBotType('support');
+      setBotSubtype('it_helpdesk');
+      setBotName('Support Agent');
+      setWelcomeMessage('Hello! How can I assist you today?');
+      sessionStorage.setItem('selectedBotType', 'support');
+      sessionStorage.setItem('selectedBotSubtype', 'it_helpdesk');
+      // Provide sensible support defaults
+      setSupportCategories(['Technical', 'Billing', 'General']);
     }
     
     detectBrand();
@@ -200,7 +211,7 @@ export default function CustomizeBotPage() {
     sessionStorage.setItem("botTypeSettings", JSON.stringify(typeSettings));
     sessionStorage.setItem("botAdditionalContext", additionalInfo);
     
-    router.push("/business/bot-builder/solution");
+    router.push("/business/bot-builder/integrations");
   };
 
   const colorPresets = [
@@ -226,27 +237,9 @@ export default function CustomizeBotPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Stepper currentStep={2} steps={['Overview', 'Choose', 'Customize', 'Integrations', 'Test', 'Launch']} />
+      
       <div className="max-w-6xl mx-auto p-4 md:p-8">
-        {/* Progress */}
-        <div className="flex justify-center mb-12 md:mb-20">
-          <div className="flex items-center gap-4 md:gap-8">
-            <div className="w-12 h-12 md:w-16 md:h-16 bg-green-500 text-white font-bold text-lg md:text-xl flex items-center justify-center rounded-2xl shadow-xl">
-              <Check className="w-5 h-5 md:w-6 md:h-6" />
-            </div>
-            <div className="w-12 md:w-24 h-[2px] bg-gray-300" />
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="w-12 h-12 md:w-16 md:h-16 bg-black text-white font-bold text-lg md:text-xl flex items-center justify-center rounded-2xl shadow-xl"
-            >
-              02
-            </motion.div>
-            <div className="w-12 md:w-24 h-[2px] bg-gray-300" />
-            <div className="w-12 h-12 md:w-16 md:h-16 bg-white text-gray-400 font-bold text-lg md:text-xl flex items-center justify-center rounded-2xl border-2 border-gray-200">
-              03
-            </div>
-          </div>
-        </div>
 
         {/* Header */}
         <motion.div 
