@@ -75,6 +75,10 @@ export default function BotDetailPage() {
   const loadStats = async () => {
     try {
       const res = await fetch(`/api/bots/stats?botId=${botId}`);
+      if (!res.ok) {
+        setStats(null);
+        return;
+      }
       const data = await res.json();
       setStats(data);
       if (data.tokenStats) setTokenStats(data.tokenStats);

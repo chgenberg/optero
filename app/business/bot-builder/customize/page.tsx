@@ -823,7 +823,7 @@ export default function CustomizeBotPage() {
                 
                 {/* Input */}
                 <div className="p-4 border-t border-gray-200">
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-center">
                     <input
                       type="text"
                       placeholder="Type a message..."
@@ -831,7 +831,7 @@ export default function CustomizeBotPage() {
                       disabled
                     />
                     <button 
-                      className="p-2 rounded-full text-white"
+                      className="p-2 rounded-full text-white ml-0"
                       style={{ backgroundColor: brand.primaryColor }}
                       disabled
                     >

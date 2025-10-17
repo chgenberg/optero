@@ -12,8 +12,12 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Copy,
-  ExternalLink
+  ExternalLink,
+  LifeBuoy,
+  Rocket,
+  ShoppingBag,
+  BarChart3,
+  ShoppingCart
 } from "lucide-react";
 import Stepper from "@/components/Stepper";
 
@@ -21,7 +25,7 @@ interface Integration {
   id: string;
   name: string;
   description: string;
-  icon: string;
+  icon: (props: { className?: string }) => JSX.Element;
   fields: {
     name: string;
     label: string;
@@ -37,7 +41,7 @@ const integrations: Integration[] = [
     id: 'zendesk',
     name: 'Zendesk',
     description: 'Connect to create and manage support tickets',
-    icon: '🎫',
+    icon: (props) => <LifeBuoy {...props} />,
     fields: [
       { name: 'domain', label: 'Zendesk Domain', type: 'url', placeholder: 'yourcompany.zendesk.com' },
       { name: 'email', label: 'Agent Email', type: 'text', placeholder: 'agent@yourcompany.com' },
@@ -58,7 +62,7 @@ const integrations: Integration[] = [
     id: 'hubspot',
     name: 'HubSpot',
     description: 'Sync leads and manage CRM data',
-    icon: '🚀',
+    icon: (props) => <Rocket {...props} />,
     fields: [
       { name: 'apiKey', label: 'Private App Access Token', type: 'password', placeholder: 'pat-na1-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' }
     ],
@@ -77,7 +81,7 @@ const integrations: Integration[] = [
     id: 'centra',
     name: 'Centra',
     description: 'E-commerce platform integration',
-    icon: '🛍️',
+    icon: (props) => <ShoppingBag {...props} />,
     fields: [
       { name: 'apiBaseUrl', label: 'API Base URL', type: 'url', placeholder: 'https://api.centra.com' },
       { name: 'storeId', label: 'Store ID', type: 'text', placeholder: 'Your store ID' },
@@ -97,7 +101,7 @@ const integrations: Integration[] = [
     id: 'fortnox',
     name: 'Fortnox',
     description: 'Swedish accounting and invoicing',
-    icon: '📊',
+    icon: (props) => <BarChart3 {...props} />,
     fields: [
       { name: 'clientId', label: 'Client ID', type: 'text', placeholder: 'Your client ID' },
       { name: 'clientSecret', label: 'Client Secret', type: 'password', placeholder: 'Your client secret' }
@@ -116,7 +120,7 @@ const integrations: Integration[] = [
     id: 'shopify',
     name: 'Shopify',
     description: 'E-commerce store integration',
-    icon: '🛒',
+    icon: (props) => <ShoppingCart {...props} />,
     fields: [
       { name: 'storeDomain', label: 'Store Domain', type: 'url', placeholder: 'yourstore.myshopify.com' },
       { name: 'accessToken', label: 'Admin API Access Token', type: 'password', placeholder: 'shpat_xxxxxxxxxxxxxxxx' }
@@ -260,7 +264,7 @@ export default function IntegrationsPage() {
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start gap-4">
-                    <span className="text-3xl">{integration.icon}</span>
+                    <integration.icon className="w-6 h-6 text-black" />
                     <div>
                       <h3 className="text-xl font-bold text-black">{integration.name}</h3>
                       <p className="text-gray-600">{integration.description}</p>
