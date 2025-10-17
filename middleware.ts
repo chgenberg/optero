@@ -1,26 +1,25 @@
 import { NextResponse, NextRequest } from 'next/server';
 
-// Redirect Swedish browser locales to /sv, keep English as default
+// Keep EN as default. Only switch locale when explicitly requested via query (?lang=sv|en).
 export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+  const { pathname, searchParams } = req.nextUrl;
 
-  // Skip API, static, and already localized routes
-  if (
-    pathname.startsWith('/api') ||
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/public') ||
-    pathname.startsWith('/sv')
-  ) {
+  // Skip API/static
+  if (pathname.startsWith('/api') || pathname.startsWith('/_next') || /\.[a-zA-Z0-9]+$/.test(pathname)) {
     return NextResponse.next();
   }
 
-  // Detect Swedish from Accept-Language
-  const acceptLang = req.headers.get('accept-language') || '';
-  const isSwedish = /\bsv(-SE)?\b/i.test(acceptLang);
-
-  if (isSwedish) {
+  const lang = searchParams.get('lang');
+  if (lang === 'sv' && !pathname.startsWith('/sv')) {
     const url = req.nextUrl.clone();
     url.pathname = `/sv${pathname}`;
+    url.searchParams.delete('lang');
+    return NextResponse.redirect(url);
+  }
+  if (lang === 'en' && pathname.startsWith('/sv')) {
+    const url = req.nextUrl.clone();
+    url.pathname = pathname.replace(/^\/sv/, '') || '/';
+    url.searchParams.delete('lang');
     return NextResponse.redirect(url);
   }
 
