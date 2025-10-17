@@ -19,28 +19,22 @@ export default function LaunchBotPage() {
   const router = useRouter();
   const [botType, setBotType] = useState('support');
   const [isHeadless, setIsHeadless] = useState(false);
+  const [hasIntegrations, setHasIntegrations] = useState(false);
   const [copied, setCopied] = useState(false);
   const [botId, setBotId] = useState('');
-  
-  // Mock embed code
-  const embedCode = `<script>
-  (function() {
-    const script = document.createElement('script');
-    script.src = 'https://myaiguy.com/widget.js';
-    script.setAttribute('data-bot-id', '${botId}');
-    script.async = true;
-    document.head.appendChild(script);
-  })();
-</script>`;
+
+  // Build embed code using state only (no window/sessionStorage here)
+  const embedCode = `<script>\n  (function() {\n    const script = document.createElement('script');\n    script.src = 'https://myaiguy.com/widget.js';\n    script.setAttribute('data-bot-id', '${botId}');\n    script.async = true;\n    document.head.appendChild(script);\n  })();\n</script>`;
 
   useEffect(() => {
-    const storedType = sessionStorage.getItem('selectedBotType') || 'support';
+    // Access sessionStorage only on client
+    const storedType = typeof window !== 'undefined' ? (sessionStorage.getItem('selectedBotType') || 'support') : 'support';
     setBotType(storedType);
-    
-    // Check if bot has integrations (making it headless)
-    const hasIntegrations = sessionStorage.getItem('hasIntegrations') === 'true';
-    setIsHeadless(hasIntegrations || storedType === 'workflow');
-    
+
+    const storedHasIntegrations = typeof window !== 'undefined' ? (sessionStorage.getItem('hasIntegrations') === 'true') : false;
+    setHasIntegrations(storedHasIntegrations);
+    setIsHeadless(storedHasIntegrations || storedType === 'workflow');
+
     // Generate mock bot ID
     setBotId('bot_' + Math.random().toString(36).substr(2, 9));
   }, []);
@@ -64,7 +58,7 @@ export default function LaunchBotPage() {
   const checklistItems = [
     { label: 'Bot type selected', completed: true },
     { label: 'Customization complete', completed: true },
-    { label: 'Integrations configured', completed: sessionStorage.getItem('hasIntegrations') === 'true' },
+    { label: 'Integrations configured', completed: hasIntegrations },
     { label: 'Bot tested', completed: true },
     { label: 'Ready to launch', completed: true }
   ];

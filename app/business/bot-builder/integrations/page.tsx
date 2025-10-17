@@ -203,6 +203,9 @@ export default function IntegrationsPage() {
       // In a real app, save to API
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
+    // Persist if any integration is active
+    const anyActive = Object.values(activeIntegrations).some(Boolean);
+    sessionStorage.setItem('hasIntegrations', anyActive ? 'true' : 'false');
     
     router.push('/business/bot-builder/test');
   };
