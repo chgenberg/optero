@@ -313,7 +313,7 @@ export async function POST(req: NextRequest) {
       if (bot.type === 'workflow' && spec.calendlyUrl && /CALL:BOOK/i.test(reply)) {
         // Return Calendly link in reply
         const calendlyLink = spec.calendlyUrl;
-        const enhancedReply = reply.replace(/CALL:BOOK/gi, `Boka här: ${calendlyLink}`);
+        const enhancedReply = reply.replace(/CALL:BOOK/gi, `Book here: ${calendlyLink}`);
         // Update reply (handled below)
       }
       

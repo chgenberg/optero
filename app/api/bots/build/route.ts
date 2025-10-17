@@ -21,64 +21,64 @@ export async function POST(req: NextRequest) {
     const integrationsData = consult.integrations || integrations || {};
     const typeSettings = consult.typeSettings || {};
 
-    // Minimal spec byggd av konsultdata + konversation + brand + integrations
+    // Minimal spec built from consult data + conversation + brand + integrations
     const documentContent = consult.documentsContent || "";
     const documentFiles = consult.documentFiles || [];
 
     // Default policies per subtype
     const subtypePolicies: Record<string, string[]> = {
       'workflow.ecommerce': [
-        'Rekommendera produkter utifrån behov och lagerstatus.',
-        'Svara på orderstatus med ordrenummer.',
-        'Returpolicy: fråga om orsak, ordernummer och returmetod.'
+        'Recommend products based on needs and inventory availability.',
+        'Answer order status with order number.',
+        'Returns policy: ask for reason, order number, and return method.'
       ],
       'lead.guided_selling': [
-        'Ställ frågor i ordning: problem → mål/KPI → budget → tidsram → beslutsroll.',
-        'Sammanfatta och föreslå nästa steg.',
-        'Om möjligt: erbjud bokning.'
+        'Ask in order: problem → goal/KPI → budget → timeline → decision role.',
+        'Summarize and suggest next step.',
+        'If possible: offer booking.'
       ],
       'knowledge.pro': [
-        'Svara endast från källor och citera alltid källa.',
-        'Om osäker: be om förtydligande.'
+        'Answer only from sources and always cite the source.',
+        'If unsure: ask for clarification.'
       ],
       'workflow.hr_screening': [
-        'Ställ kravprofilsfrågor och boka intervju vid match.'
+        'Ask requirement profile questions and book interview on match.'
       ],
       'support.it_helpdesk': [
-        'Samla OS/enhet, nätverk, reproduktionssteg, felmeddelanden innan triage.'
+        'Collect OS/device, network, reproduction steps, error messages before triage.'
       ],
       'workflow.resource_booking': [
-        'Säkerställ kapacitet och konflikter innan bekräftelse.'
+        'Ensure capacity and conflicts before confirmation.'
       ],
       'workflow.returns_rma': [
-        'Validera garanti, samla ordernummer och orsak, ge RMA‑instruktioner.'
+        'Validate warranty, collect order number and reason, provide RMA instructions.'
       ],
       'workflow.billing_payments': [
-        'Ge status för faktura, betalningslänk och påminnelsepolicy.'
+        'Provide invoice status, payment link, and reminder policy.'
       ],
       'workflow.nps_feedback': [
-        'Samla NPS och fritext, sammanfatta teman.'
+        'Collect NPS and free text, summarize themes.'
       ],
       'lead.enrichment': [
-        'Fyll på CRM‑fält från samtal och offentliga källor.'
+        'Enrich CRM fields from conversation and public sources.'
       ],
       'workflow.churn_prevention': [
-        'Upptäck risksignaler och föreslå winback‑erbjudanden.'
+        'Detect risk signals and suggest win-back offers.'
       ],
       'knowledge.sales_internal': [
-        'Ge interna säljargument och konkurrensjämförelser med källor.'
+        'Provide internal sales arguments and competitor comparisons with sources.'
       ],
       'knowledge.partner_portal': [
-        'Svara på ÅF‑processer: registrering, material, beställning, support.'
+        'Answer reseller processes: registration, materials, ordering, support.'
       ],
       'workflow.gdpr': [
-        'Hantera export/erase‑förfrågningar säkert och spårbart.'
+        'Handle export/erase requests securely and with traceability.'
       ],
       'knowledge.multilingual': [
-        'Auto‑detektera språk och svara konsekvent på samma språk.'
+        'Auto-detect language and respond consistently in the same language.'
       ],
       'knowledge.onboarding': [
-        'Visa steg‑för‑steg och föreslå nästa steg tills klart.'
+        'Show step-by-step guidance and suggest next steps until completion.'
       ]
     };
 
@@ -134,7 +134,7 @@ export async function POST(req: NextRequest) {
     } catch {}
 
     // Extract company name from URL for better display
-    let companyName = 'Företaget';
+    let companyName = 'Company';
     try {
       if (consult.url) {
         const hostname = new URL(consult.url).hostname.replace(/^www\./, '');
@@ -182,7 +182,7 @@ export async function POST(req: NextRequest) {
           const chunks = documentContent.split(/={3,}\s*/).filter((c: string) => c.trim().length > 100);
           for (const chunk of chunks.slice(0, 20)) {
             const titleMatch = chunk.match(/^(.+?)===\n/);
-            const title = titleMatch ? titleMatch[1].trim() : 'Dokument';
+            const title = titleMatch ? titleMatch[1].trim() : 'Document';
             const content = chunk.replace(/^.+?===\n/, '').slice(0, 3000);
             
             await prisma.botKnowledge.create({

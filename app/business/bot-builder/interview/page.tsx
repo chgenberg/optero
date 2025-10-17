@@ -128,10 +128,10 @@ export default function BotBuilderInterview() {
     };
     
     const responses = typeQuestions[botTypeId] || [
-      "Intressant! Kan du ge mig ett exempel?",
-      "Förstår. Hur hanterar ni detta idag?",
-      "Bra input. Vad är målet?",
-      "Tack! Jag har vad jag behöver..."
+      "Interesting! Can you give me an example?",
+      "Understood. How do you handle this today?",
+      "Great input. What is the goal?",
+      "Thanks! I have what I need..."
     ];
     
     // Simulate bot response
