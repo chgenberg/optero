@@ -2,11 +2,15 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { Menu, X } from "lucide-react";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const isSwedish = pathname?.startsWith('/sv') || false;
+  const prefix = isSwedish ? '/sv' : '';
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200">
@@ -20,22 +24,22 @@ export default function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <a
-              href="/business/bot-builder"
+              href={`${prefix}/business/bot-builder`}
               className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
             >
-              Build bot
+              {isSwedish ? 'Bygg bot' : 'Build bot'}
             </a>
             <a
-              href="/dashboard"
+              href={`${prefix}/dashboard`}
               className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
             >
               Dashboard
             </a>
             <a
-              href="/contact"
+              href={`${prefix}/contact`}
               className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
             >
-              Contact
+              {isSwedish ? 'Kontakt' : 'Contact'}
             </a>
             <LanguageSwitcher />
           </nav>
@@ -63,22 +67,22 @@ export default function Header() {
           >
             <div className="flex flex-col space-y-4">
               <a
-                href="/business/bot-builder"
+                href={`${prefix}/business/bot-builder`}
                 className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
               >
-                Build bot
+                {isSwedish ? 'Bygg bot' : 'Build bot'}
               </a>
               <a
-                href="/dashboard"
+                href={`${prefix}/dashboard`}
                 className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
               >
                 Dashboard
               </a>
               <a
-                href="/contact"
+                href={`${prefix}/contact`}
                 className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
               >
-                Contact
+                {isSwedish ? 'Kontakt' : 'Contact'}
               </a>
               <div className="pt-2 border-t border-gray-100">
                 <LanguageSwitcher />

@@ -1,8 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathname = usePathname();
+  const isSwedish = pathname?.startsWith('/sv') || false;
+  const prefix = isSwedish ? '/sv' : '';
   return (
     <footer className="mt-auto border-t border-[#E5E7EB] bg-white">
       <div className="max-w-7xl mx-auto px-6 py-16">
@@ -22,18 +26,18 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/business/bot-builder" className="text-sm text-[#4B5563] hover:text-black transition-colors">
-                  Build bot
+                <Link href={`${prefix}/business/bot-builder`} className="text-sm text-[#4B5563] hover:text-black transition-colors">
+                  {isSwedish ? 'Bygg bot' : 'Build bot'}
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard" className="text-sm text-[#4B5563] hover:text-black transition-colors">
+                <Link href={`${prefix}/dashboard`} className="text-sm text-[#4B5563] hover:text-black transition-colors">
                   Dashboard
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="text-sm text-[#4B5563] hover:text-black transition-colors">
-                  Pricing
+                <Link href={`${prefix}/pricing`} className="text-sm text-[#4B5563] hover:text-black transition-colors">
+                  {isSwedish ? 'Priser' : 'Pricing'}
                 </Link>
               </li>
             </ul>
@@ -46,17 +50,17 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/privacy" className="text-sm text-[#4B5563] hover:text-black transition-colors">
-                  Privacy
+                <Link href={`${prefix}/privacy`} className="text-sm text-[#4B5563] hover:text-black transition-colors">
+                  {isSwedish ? 'Integritet' : 'Privacy'}
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-sm text-[#4B5563] hover:text-black transition-colors">
-                  Terms
+                <Link href={`${prefix}/terms`} className="text-sm text-[#4B5563] hover:text-black transition-colors">
+                  {isSwedish ? 'Villkor' : 'Terms'}
                 </Link>
               </li>
               <li>
-                <Link href="/gdpr" className="text-sm text-[#4B5563] hover:text-black transition-colors">
+                <Link href={`${prefix}/gdpr`} className="text-sm text-[#4B5563] hover:text-black transition-colors">
                   GDPR
                 </Link>
               </li>
