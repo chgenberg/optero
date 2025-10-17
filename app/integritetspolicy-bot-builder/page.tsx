@@ -45,12 +45,12 @@ export default function BotBuilderPrivacyPage() {
           <section>
             <h2 className="text-2xl font-medium text-gray-900 mb-4">Data storage and security</h2>
             <p className="mb-3">
-              All data lagras säkert i vår databas med kryptering och åtkomstkontroller. 
-              Vi använder branschstandarder för att skydda din information.
+              All data is stored securely in our database with encryption and access controls. 
+              We use industry standards to protect your information.
             </p>
             <p>
-              <strong>Lagringstid:</strong> Vi lagrar din data så länge ditt konto är aktivt. 
-              Om du raderar ditt konto tas all data bort inom 30 dagar.
+              <strong>Retention:</strong> We store your data as long as your account is active. 
+              If you delete your account, all data is removed within 30 days.
             </p>
           </section>
 
@@ -76,28 +76,28 @@ export default function BotBuilderPrivacyPage() {
           <section>
             <h2 className="text-2xl font-medium text-gray-900 mb-4">Third-party sharing</h2>
             <p>
-              Vi delar <strong>inte</strong> din data med tredje part för marknadsföringsändamål. 
-              Vi kan dela data med:
+              We do <strong>not</strong> share your data with third parties for marketing purposes. 
+              We may share data with:
             </p>
             <ul className="list-disc pl-6 space-y-2 mt-3">
-              <li><strong>OpenAI:</strong> För AI-modellbearbetning (anonymiserad när det är möjligt)</li>
-              <li><strong>Hostingleverantörer:</strong> För datalagring och drift (Railway, Vercel)</li>
-              <li><strong>Analysverktyg:</strong> För att förstå hur tjänsten används (anonymiserad)</li>
+              <li><strong>OpenAI:</strong> For AI model processing (anonymized where possible)</li>
+              <li><strong>Hosting providers:</strong> For data storage and operations (Railway, Vercel)</li>
+              <li><strong>Analytics tools:</strong> To understand usage (anonymized)</li>
             </ul>
           </section>
 
           <section>
             <h2 className="text-2xl font-medium text-gray-900 mb-4">Cookies and tracking</h2>
             <p>
-              Vi använder tekniska cookies för att Bot Builder ska fungera korrekt. 
-              Inga marknadsföringscookies används utan ditt samtycke.
+              We use technical cookies to ensure the Bot Builder functions correctly. 
+              No marketing cookies are used without your consent.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-medium text-gray-900 mb-4">Changes to this policy</h2>
             <p>
-              Vi kan uppdatera denna policy vid behov. Väsentliga ändringar meddelas via e-post.
+              We may update this policy as needed. Material changes will be notified by email.
               <br />
               <strong>Last updated:</strong> {new Date().toLocaleDateString('en-US')}
             </p>
@@ -109,8 +109,8 @@ export default function BotBuilderPrivacyPage() {
               For questions about this privacy policy or your data, contact us:
             </p>
             <div className="mt-3 p-4 bg-gray-50 rounded-lg">
-              <p><strong>E-post:</strong> privacy@mendio.se</p>
-              <p><strong>Webbplats:</strong> mendio.se</p>
+              <p><strong>Email:</strong> privacy@mendio.se</p>
+              <p><strong>Website:</strong> mendio.se</p>
             </div>
           </section>
 
