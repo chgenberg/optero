@@ -185,17 +185,23 @@ export default function IntegrationsPage() {
 
   const handleVerify = async (integrationId: string) => {
     setVerificationStatus(prev => ({ ...prev, [integrationId]: 'verifying' }));
-    
-    // Simulate verification
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // In a real app, this would call the verify endpoint
-    const success = Math.random() > 0.2; // 80% success rate for demo
-    
-    setVerificationStatus(prev => ({
-      ...prev,
-      [integrationId]: success ? 'success' : 'error'
-    }));
+    try {
+      if (integrationId === 'centra') {
+        const res = await fetch(`/api/integrations/centra/verify?botId=${encodeURIComponent(sessionStorage.getItem('currentBotId') || '')}`);
+        const j = await res.json();
+        setVerificationStatus(prev => ({ ...prev, [integrationId]: j.ok ? 'success' : 'error' }));
+      } else if (integrationId === 'hubspot') {
+        const token = integrationData?.hubspot?.apiKey;
+        const res = await fetch('/api/integrations/hubspot/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accessToken: token }) });
+        const j = await res.json();
+        setVerificationStatus(prev => ({ ...prev, [integrationId]: j.ok ? 'success' : 'error' }));
+      } else {
+        // For others, mark success if required fields filled
+        setVerificationStatus(prev => ({ ...prev, [integrationId]: allFieldsFilled(integrationId) ? 'success' : 'error' }));
+      }
+    } catch {
+      setVerificationStatus(prev => ({ ...prev, [integrationId]: 'error' }));
+    }
   };
 
   const handleContinue = async () => {
