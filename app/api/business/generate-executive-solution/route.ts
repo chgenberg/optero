@@ -34,59 +34,59 @@ export async function POST(req: NextRequest) {
       const problem = problems[i];
       const conversation = conversations[i]?.conversation || [];
 
-      const systemPrompt = `Du är en senior AI-konsult med expertis inom affärsprocesser, automation och AI-implementation. 
+      const systemPrompt = `You are a senior AI consultant with expertise in business processes, automation, and AI implementation.
 
-Din uppgift är att analysera företagsproblem djupt och rekommendera den BÄSTA lösningen:
-1. **AI-Prompt**: En färdig, avancerad prompt som löser problemet direkt (för enkla till medelkomplexa problem)
-2. **Bot-implementation**: Detaljerade instruktioner för att bygga en specialiserad AI-bot (för komplexa, återkommande problem)
+Your job is to deeply analyze business problems and recommend the BEST solution:
+1) AI Prompt: A complete, advanced prompt that solves the problem directly (for simple to medium complexity problems)
+2) Bot Implementation: Detailed instructions to build a specialized AI bot (for complex, recurring problems)
 
-Basera ditt val på:
-- Problemets komplexitet
-- Frekvens (engångsproblem vs återkommande)
-- Behov av integration med andra system
-- Kostnadseffektivitet
+Base your choice on:
+- Problem complexity
+- Frequency (one-off vs recurring)
+- Need for integrations with other systems
+- Cost effectiveness
 
-Returnera alltid konkreta, implementerbara lösningar.`;
+Always return concrete, implementable solutions.`;
 
       const userPrompt = `
-FÖRETAG: ${url}
+COMPANY: ${url}
 
-FÖRETAGSINFORMATION:
+COMPANY INFORMATION:
 ${websiteSummary?.mainText?.slice(0, 3000) || websiteContent?.slice(0, 3000) || ""}
 
-DOKUMENT OCH DATA:
-${documentsContent?.slice(0, 5000) || "Inga dokument uppladdade"}
+DOCUMENTS & DATA:
+${documentsContent?.slice(0, 5000) || "No documents uploaded"}
 
 PROBLEM:
 ${problem}
 
-DETALJERAD INTERVJU:
-${conversation.map((m: any) => `${m.role === 'user' ? 'Kund' : 'AI'}: ${m.content}`).join('\n')}
+DETAILED INTERVIEW:
+${conversation.map((m: any) => `${m.role === 'user' ? 'Customer' : 'AI'}: ${m.content}`).join('\n')}
 
-UPPGIFT:
-Analysera detta problem djupt och bestäm den bästa lösningsmetoden.
+TASK:
+Analyze this problem deeply and determine the best solution approach.
 
-Returnera JSON i EXAKT detta format:
+Return JSON in EXACTLY this format:
 {
   "problem": "${problem}",
-  "analysis": "Djupgående analys av problemet, rotorsak, och affärspåverkan (3-5 meningar)",
-  "approach": "prompt" eller "bot",
-  "prompt": "Om approach är 'prompt': En MYCKET DETALJERAD, KOMPLETT prompt som löser hela problemet. Inkludera ROLL, KONTEXT, UPPGIFT, INPUT, OUTPUT, EXEMPEL. Minst 500 ord.",
+  "analysis": "Deep analysis of root cause and business impact (3–5 sentences)",
+  "approach": "prompt" or "bot",
+  "prompt": "If approach is 'prompt': A VERY DETAILED, COMPLETE prompt that solves the entire problem. Include ROLE, CONTEXT, TASK, INPUT, OUTPUT, EXAMPLES. Minimum 500 words.",
   "botInstructions": {
-    "overview": "Om approach är 'bot': Översikt av vad boten ska göra",
-    "technicalStack": ["Lista med teknologier, t.ex. 'Python', 'OpenAI API', 'PostgreSQL'"],
-    "implementation": ["Steg 1 beskrivning", "Steg 2 beskrivning", "...minst 5-8 steg"],
-    "cost": "Uppskattad total kostnad (utveckling + drift/månad)",
-    "timeline": "Uppskattad implementationstid"
+    "overview": "If approach is 'bot': Overview of what the bot will do",
+    "technicalStack": ["List of technologies, e.g. 'Python', 'OpenAI API', 'PostgreSQL'"],
+    "implementation": ["Step 1 description", "Step 2 description", "...at least 5–8 steps"],
+    "cost": "Estimated total cost (development + monthly ops)",
+    "timeline": "Estimated implementation time"
   },
-  "expectedOutcomes": ["Konkret resultat 1", "Konkret resultat 2", "...minst 3-5 resultat med siffror om möjligt"]
+  "expectedOutcomes": ["Concrete outcome 1", "Concrete outcome 2", "...at least 3–5 outcomes with numbers if possible"]
 }
 
-VIKTIGT:
-- Om problemet kan lösas med en prompt: Gör en MYCKET GEDIGEN prompt (minst 500 ord)
-- Om problemet kräver en bot: Ge DETALJERADE implementationssteg
-- Var konkret med siffror: kostnader, tidsbesparingar, ROI
-- Basera rekommendationer på företagets FAKTISKA kontext`;
+IMPORTANT:
+- If the problem can be solved with a prompt: Provide a VERY THOROUGH prompt (min 500 words)
+- If the problem requires a bot: Provide DETAILED implementation steps
+- Be concrete with numbers: costs, time savings, ROI
+- Base recommendations on the company’s ACTUAL context`;
 
       try {
         console.log(`Generating solution for problem ${i + 1}/${problems.length}`);
@@ -122,11 +122,11 @@ VIKTIGT:
         // Ensure the solution has the correct structure
         const finalSol = {
           problem: solution.problem || problem,
-          analysis: solution.analysis || "Djupgående analys krävs för detta problem.",
+          analysis: solution.analysis || "A deeper analysis is required for this problem.",
           approach: solution.approach || "prompt",
           prompt: solution.approach === "prompt" ? solution.prompt : undefined,
           botInstructions: solution.approach === "bot" ? solution.botInstructions : undefined,
-          expectedOutcomes: solution.expectedOutcomes || ["Förbättrad effektivitet", "Minskade kostnader", "Bättre kvalitet"]
+          expectedOutcomes: solution.expectedOutcomes || ["Improved efficiency", "Reduced costs", "Higher quality"]
         } as any;
         solutions.push(finalSol);
 
@@ -152,41 +152,41 @@ VIKTIGT:
         // Fallback solution
         const fallback = {
           problem,
-          analysis: `Detta är ett komplext problem som kräver noggrann analys. Baserat på intervjun identifierar vi flera kritiska faktorer som påverkar er verksamhet.`,
+          analysis: `This is a complex problem that requires careful analysis. Based on the interview, we identify several critical factors impacting your operations.`,
           approach: "prompt",
-          prompt: `**ROLL & KONTEXT:**
-Du är en expert inom ${url} och ska hjälpa till att lösa följande problem: ${problem}
+          prompt: `**ROLE & CONTEXT:**
+You are an expert in ${url} and will help solve the following problem: ${problem}
 
-**UPPGIFT:**
-Analysera situationen och ge konkreta rekommendationer.
+**TASK:**
+Analyze the situation and provide concrete recommendations.
 
-**INPUT - Fyll i detta:**
-[NULÄGE]: Beskriv er nuvarande situation
-[MÅL]: Vad vill ni uppnå
-[RESURSER]: Vilka resurser har ni tillgängliga
+**INPUT – Fill in:**
+[CURRENT STATE]: Describe your current situation
+[GOALS]: What do you want to achieve
+[RESOURCES]: What resources are available
 
-**OUTPUT-FORMAT:**
-Leverera:
-1) Situationsanalys
-2) Rekommenderade åtgärder
-3) Implementationsplan
-4) Förväntade resultat
+**OUTPUT FORMAT:**
+Deliver:
+1) Situation analysis
+2) Recommended actions
+3) Implementation plan
+4) Expected outcomes
 
-**EXEMPEL:**
+**EXAMPLE:**
 Input:
-[NULÄGE]: Vi har manuella processer
-[MÅL]: Automatisera 50%
-[RESURSER]: 2 utvecklare, 3 månader
+[CURRENT STATE]: We have manual processes
+[GOALS]: Automate 50%
+[RESOURCES]: 2 developers, 3 months
 
 Output:
-1. Analys: Identifierade 5 automatiseringsbara processer
-2. Åtgärder: Implementera RPA för process A, B, C
-3. Plan: Fas 1 (månad 1-2), Fas 2 (månad 3)
-4. Resultat: 60% tidsbesparing, ROI på 8 månader`,
+1. Analysis: Identified 5 automatable processes
+2. Actions: Implement RPA for processes A, B, C
+3. Plan: Phase 1 (months 1–2), Phase 2 (month 3)
+4. Result: 60% time savings, ROI in 8 months`,
           expectedOutcomes: [
-            "Förbättrad processeffektivitet",
-            "Minskad manuell arbetsbelastning",
-            "Bättre datakvalitet och insikter"
+            "Improved process efficiency",
+            "Reduced manual workload",
+            "Better data quality and insights"
           ]
         } as any;
         solutions.push(fallback);

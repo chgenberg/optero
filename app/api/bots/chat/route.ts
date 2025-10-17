@@ -177,7 +177,7 @@ export async function POST(req: NextRequest) {
     let toneAdjustment = '';
     if (history.length > 0) {
       const allText = history.map((h: any) => h.content).join(' ');
-      const isB2B = /företag|company|business|b2b|enterprise|organization/i.test(allText);
+      const isB2B = /company|business|b2b|enterprise|organization|företag/i.test(allText);
       if (isB2B) {
         toneAdjustment = '\n\nUSER SEGMENT: B2B. Use slightly more formal and professional tone. Focus on ROI, efficiency, and business value.';
       }
@@ -229,8 +229,8 @@ export async function POST(req: NextRequest) {
     try {
       const allText = history.map((h: any) => h.content).join(' ');
       const emailMatch = allText.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
-      const nameMatch = allText.match(/(?:jag heter|mitt namn är|my name is)\s+([A-Za-zÅÄÖåäö\s]{2,30})/i);
-      const companyMatch = allText.match(/(?:jag jobbar på|arbetar på|från|company is|work at)\s+([A-Za-zÅÄÖåäö\s]{2,50})/i);
+      const nameMatch = allText.match(/(?:my name is|i am|jag heter|mitt namn är)\s+([A-Za-zÅÄÖåäö\s]{2,30})/i);
+      const companyMatch = allText.match(/(?:company is|work at|at\s+|jag jobbar på|arbetar på|från)\s+([A-Za-zÅÄÖåäö\s]{2,50})/i);
       
       if (emailMatch) userProfile.email = emailMatch[0];
       if (nameMatch) userProfile.name = nameMatch[1].trim();
@@ -352,7 +352,7 @@ export async function POST(req: NextRequest) {
         const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
         const count = await prisma.botUsage.count({ where: { botId: bot.id, createdAt: { gte: since }, kind: 'message' } });
         if (count > 50) {
-          return NextResponse.json({ reply: 'Gratisgränsen är nådd för idag. Uppgradera för mer kapacitet.' });
+          return NextResponse.json({ reply: 'The free limit for today has been reached. Upgrade for more capacity.' });
         }
 
         // Token cap per day for free plan
@@ -361,9 +361,9 @@ export async function POST(req: NextRequest) {
           _sum: { tokens: true }
         });
         const usedTokens = Number(tokensAgg._sum.tokens || 0);
-        const dailyTokenCap = 100_000; // ~100k tokens/dag för free
+        const dailyTokenCap = 100_000; // ~100k tokens/day for free
         if (usedTokens > dailyTokenCap) {
-          return NextResponse.json({ reply: 'Token‑gränsen för idag är nådd. Uppgradera för fler samtal.' });
+          return NextResponse.json({ reply: 'The daily token cap has been reached. Please upgrade for more conversations.' });
         }
       }
       // naive in-memory IP bucket (best-effort)
@@ -376,7 +376,7 @@ export async function POST(req: NextRequest) {
       if (now - rec.start > windowMs) { rec.start = now; rec.n = 0; }
       rec.n += 1; g.__rate.set(key, rec);
       if (rec.n > 20) {
-        return NextResponse.json({ reply: 'För många förfrågningar. Vänta en stund och försök igen.' }, { status: 429 });
+        return NextResponse.json({ reply: 'Too many requests. Please wait a moment and try again.' }, { status: 429 });
       }
     } catch {}
 
