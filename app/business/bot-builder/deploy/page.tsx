@@ -29,7 +29,7 @@ export default function DeployBot() {
       <div className="max-w-2xl w-full">
         <div className="minimal-box">
           <h2 className="text-2xl font-light text-gray-900 mb-8">
-            Installera på din webbplats
+            Install on your website
           </h2>
 
           <div className="space-y-8">
@@ -39,7 +39,7 @@ export default function DeployBot() {
                 <div className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center text-sm font-medium">
                   1
                 </div>
-                <h3 className="font-medium text-gray-900">Kopiera koden</h3>
+                <h3 className="font-medium text-gray-900">Copy the code</h3>
               </div>
               
               <div className="relative">
@@ -50,7 +50,7 @@ export default function DeployBot() {
                   onClick={handleCopy}
                   className="absolute top-4 right-4 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition-colors"
                 >
-                  {copied ? "Kopierad!" : "Kopiera"}
+                  {copied ? "Copied!" : "Copy"}
                 </button>
               </div>
             </div>
@@ -61,11 +61,11 @@ export default function DeployBot() {
                 <div className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center text-sm font-medium">
                   2
                 </div>
-                <h3 className="font-medium text-gray-900">Klistra in före &lt;/head&gt;</h3>
+                <h3 className="font-medium text-gray-900">Paste before &lt;/head&gt;</h3>
               </div>
               
               <p className="text-gray-600">
-                Öppna din webbplats HTML och klistra in koden precis innan den stängande <code className="bg-gray-100 px-2 py-1 rounded text-sm">&lt;/head&gt;</code> taggen.
+                Open your website HTML and paste the code just before the closing <code className="bg-gray-100 px-2 py-1 rounded text-sm">&lt;/head&gt;</code> tag.
               </p>
             </div>
 
@@ -75,17 +75,17 @@ export default function DeployBot() {
                 <div className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center text-sm font-medium">
                   3
                 </div>
-                <h3 className="font-medium text-gray-900">Klart!</h3>
+                <h3 className="font-medium text-gray-900">All set!</h3>
               </div>
               
               <p className="text-gray-600">
-                Din bot kommer automatiskt visas på alla sidor. Besökare kan chatta genom att klicka på bot-ikonen.
+                Your bot will automatically appear on all pages. Visitors can chat by clicking the bot icon.
               </p>
             </div>
 
             {/* Platform specific guides */}
             <div className="border-t pt-8">
-              <h3 className="font-medium text-gray-900 mb-4">Behöver du hjälp?</h3>
+              <h3 className="font-medium text-gray-900 mb-4">Need help?</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <InstallationGuideButton platform="wordpress" snippet={installSnippet} />
                 <InstallationGuideButton platform="wix" snippet={installSnippet} />
@@ -100,7 +100,7 @@ export default function DeployBot() {
               onClick={() => router.push("/business/bot-builder/solution")}
               className="btn-minimal-outline"
             >
-              Tillbaka
+              Back
             </button>
           </div>
         </div>
