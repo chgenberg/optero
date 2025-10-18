@@ -54,7 +54,7 @@ export default function Home() {
               </svg>
 
               <motion.button
-                onClick={() => router.push('/business/bot-builder/identify')}
+                onClick={() => router.push('/bot')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="relative px-12 py-5 bg-black text-white text-lg font-medium rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 animate-pulse-subtle"

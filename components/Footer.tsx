@@ -26,7 +26,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href={`${prefix}/business/bot-builder`} className="text-sm text-[#4B5563] hover:text-black transition-colors">
+                <Link href="/bot" className="text-sm text-[#4B5563] hover:text-black transition-colors">
                   {isSwedish ? 'Bygg bot' : 'Build bot'}
                 </Link>
               </li>

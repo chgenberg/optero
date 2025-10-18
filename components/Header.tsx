@@ -24,7 +24,7 @@ export default function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <a
-              href={`${prefix}/business/bot-builder`}
+              href="/bot"
               className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
             >
               {isSwedish ? 'Bygg bot' : 'Build bot'}
@@ -67,7 +67,7 @@ export default function Header() {
           >
             <div className="flex flex-col space-y-4">
               <a
-                href={`${prefix}/business/bot-builder`}
+                href="/bot"
                 className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
               >
                 {isSwedish ? 'Bygg bot' : 'Build bot'}
