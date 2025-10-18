@@ -6,38 +6,23 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   try {
     const sessionId = req.nextUrl.searchParams.get("sessionId");
-    
     if (!sessionId) {
       return NextResponse.json({ error: "sessionId required" }, { status: 400 });
     }
-    
-    const session = await prisma.botSession.findFirst({
-      where: { 
-        externalId: sessionId,
-        status: "active"
-      },
-      include: {
-        bot: {
-          select: {
-            id: true,
-            name: true
-          }
-        }
-      }
+
+    const session = await prisma.botSession.findUnique({
+      where: { id: sessionId }
     });
-    
+
     if (!session) {
       return NextResponse.json({ session: null });
     }
-    
-    // Parse messages from metadata
-    const messages = session.metadata?.messages || [];
-    
+
     return NextResponse.json({
       session: {
         id: session.id,
         botId: session.botId,
-        messages,
+        messages: session.messages || [],
         createdAt: session.createdAt
       }
     });
@@ -50,33 +35,27 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const { sessionId, botId, messages } = await req.json();
-    
     if (!sessionId || !botId) {
       return NextResponse.json({ error: "sessionId and botId required" }, { status: 400 });
     }
-    
-    // Upsert session
+
     const session = await prisma.botSession.upsert({
-      where: {
-        externalId: sessionId
-      },
+      where: { id: sessionId },
       update: {
+        messages: messages ?? [],
         metadata: {
-          messages,
+          ...(typeof (await prisma.botSession.findUnique({ where: { id: sessionId } }))?.metadata === 'object' ? (await prisma.botSession.findUnique({ where: { id: sessionId } }))?.metadata as any : {}),
           lastActivity: new Date().toISOString()
         }
       },
       create: {
+        id: sessionId,
         botId,
-        externalId: sessionId,
-        status: "active",
-        metadata: {
-          messages,
-          source: "agent_chat"
-        }
+        messages: messages ?? [],
+        metadata: { source: "agent_chat" }
       }
     });
-    
+
     return NextResponse.json({ success: true, sessionId: session.id });
   } catch (error) {
     console.error("Session save error:", error);
