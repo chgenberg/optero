@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { z } from "zod";
 import { upsertHubspotContactStub } from "@/lib/integrations";
 import { listCentraProducts } from "@/lib/centra";
+import * as cheerio from "cheerio";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -67,7 +68,58 @@ export async function POST(req: NextRequest) {
       } catch {}
 
       if (!forcedReply) {
-        forcedReply = 'I don\'t have access to your product system yet. Connect Shopify or Centra in Integrations, then ask me again.';
+        // Website-based estimation from sitemap/homepage
+        try {
+          const companyUrl = (bot.companyUrl || (typeof activeSpec?.url === 'string' ? activeSpec.url : '')) as string;
+          if (companyUrl) {
+            const ensureUrl = (u: string) => /^https?:\/\//i.test(u) ? u : `https://${u}`;
+            const origin = new URL(ensureUrl(companyUrl)).origin;
+
+            // Try sitemap.xml first
+            let countFromSitemap: number | null = null;
+            try {
+              const sm = await fetch(`${origin}/sitemap.xml`, { headers: { 'Accept': 'application/xml,text/xml' } as any });
+              if (sm.ok) {
+                const xml = await sm.text();
+                const $x = cheerio.load(xml, { xmlMode: true });
+                const locs: string[] = [];
+                $x('url > loc').each((_, el) => { const t = $x(el).text(); if (t) locs.push(t); });
+                const productLike = locs.filter(u => /\/(products?|product|shop|collection|kategori|produkter)\//i.test(u));
+                if (productLike.length > 0) countFromSitemap = productLike.length;
+              }
+            } catch {}
+
+            if (typeof countFromSitemap === 'number') {
+              forcedReply = `Approximately ${countFromSitemap} products (estimated from sitemap).`;
+            } else {
+              // Fallback: parse homepage links
+              try {
+                const home = await fetch(origin);
+                if (home.ok) {
+                  const html = await home.text();
+                  const $h = cheerio.load(html);
+                  const hrefs = new Set<string>();
+                  $h('a[href]').each((_, a) => {
+                    const href = $h(a).attr('href') || '';
+                    try {
+                      const full = new URL(href, origin).href;
+                      if (/\/(products?|product|shop|collection|kategori|produkter)\//i.test(full)) {
+                        hrefs.add(full);
+                      }
+                    } catch {}
+                  });
+                  if (hrefs.size > 0) {
+                    forcedReply = `At least ${hrefs.size} products (estimated from visible links on homepage).`;
+                  }
+                }
+              } catch {}
+            }
+          }
+        } catch {}
+
+        if (!forcedReply) {
+          forcedReply = 'I don\'t have access to your product system yet. Connect Shopify or Centra in Integrations, or ensure your sitemap lists product URLs.';
+        }
       }
     }
     const subtype = (activeSpec as any)?.subtype || '';
