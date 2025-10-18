@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Paperclip, Menu, X, LogOut, Settings, Bot, User } from "lucide-react";
-import prisma from "@/lib/prisma";
 
 interface Message {
   id: string;
