@@ -14,7 +14,27 @@ export async function POST(req: NextRequest) {
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
     const userAgent = req.headers.get('user-agent') || '';
     
-    const bot = await prisma.bot.findUnique({ where: { id: botId }, include: { versions: true } });
+    const bot = await prisma.bot.findUnique({ 
+      where: { id: botId }, 
+      include: { versions: true },
+      select: {
+        id: true,
+        name: true,
+        type: true,
+        spec: true,
+        metadata: true,
+        companyUrl: true,
+        createdAt: true,
+        updatedAt: true,
+        userId: true,
+        isActive: true,
+        usageCount: true,
+        lastUsedAt: true,
+        isHeadless: true,
+        cloneCount: true,
+        versions: true
+      }
+    });
     if (!bot) return NextResponse.json({ error: "Bot not found" }, { status: 404 });
 
     // A/B: pick latest version or previous version with 10% traffic if exists
