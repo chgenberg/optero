@@ -2,7 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import mammoth from "mammoth";
 import { uploadBufferToS3 } from "@/lib/s3";
-import pdf from "pdf-parse";
+// Use dynamic import for pdf-parse to avoid ESM default export issues in build
+let parsePdf: any;
+async function getPdfParser() {
+  if (!parsePdf) {
+    const mod: any = await import("pdf-parse");
+    parsePdf = mod.default || mod; // support both ESM/CJS
+  }
+  return parsePdf;
+}
 import Papa from "papaparse";
 
 export const maxDuration = 60; // 1 minute for file processing
@@ -28,6 +36,7 @@ export async function POST(req: NextRequest) {
         if (filename.endsWith('.pdf')) {
           try {
             // Parse PDF content
+            const pdf = await getPdfParser();
             const pdfData = await pdf(buffer);
             const pdfText = pdfData.text.trim();
             
