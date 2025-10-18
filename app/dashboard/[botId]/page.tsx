@@ -68,9 +68,15 @@ export default function BotDetailPage() {
   useEffect(() => {
     if (botId) {
       loadStats();
-      loadAnalytics();
     }
   }, [botId]);
+
+  // Load analytics only after stats (and thus bot existence) is confirmed
+  useEffect(() => {
+    if (botId && stats) {
+      loadAnalytics();
+    }
+  }, [botId, stats]);
 
   const loadStats = async () => {
     try {
@@ -92,6 +98,10 @@ export default function BotDetailPage() {
   const loadAnalytics = async () => {
     try {
       const res = await fetch(`/api/bots/analytics?botId=${botId}`);
+      if (!res.ok) {
+        setAnalytics(null);
+        return;
+      }
       const data = await res.json();
       setAnalytics(data);
     } catch (error) {

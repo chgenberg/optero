@@ -213,6 +213,18 @@ export async function POST(req: NextRequest) {
       }
     } catch {}
 
+    // Create/attach user by email if missing
+    try {
+      const email = consult.userEmail || brandConfig?.userEmail;
+      if (email) {
+        let user = await prisma.user.findUnique({ where: { email } });
+        if (!user) user = await prisma.user.create({ data: { email } });
+        if (!bot.userId) {
+          await prisma.bot.update({ where: { id: bot.id }, data: { userId: user.id } });
+        }
+      }
+    } catch {}
+
     return NextResponse.json({ botId: bot.id });
   } catch (e: any) {
     console.error("Bot build failed", e);

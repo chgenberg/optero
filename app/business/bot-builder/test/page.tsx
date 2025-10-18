@@ -121,6 +121,7 @@ export default function TestBotPage() {
   const [botType, setBotType] = useState('support');
   const [pendingApprovals, setPendingApprovals] = useState<any[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const storedType = sessionStorage.getItem('selectedBotType') || 'support';
@@ -134,7 +135,11 @@ export default function TestBotPage() {
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    } else {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages]);
 
   const handleQuickTest = async (test: QuickTest) => {
@@ -260,7 +265,7 @@ export default function TestBotPage() {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.map((message, index) => (
                   <motion.div
                     key={index}

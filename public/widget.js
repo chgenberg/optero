@@ -2,6 +2,9 @@
   try {
     var script = document.currentScript;
     var botId = script && script.getAttribute('data-bot-id');
+    var position = (script && (script.getAttribute('data-position') || '').toLowerCase()) || 'bottom-right';
+    var offsetX = parseInt(script && script.getAttribute('data-offset-x') || '20', 10);
+    var offsetY = parseInt(script && script.getAttribute('data-offset-y') || '20', 10);
     if (!botId) return;
 
     // Fetch bot config to get brand settings
@@ -48,9 +51,9 @@
       // Build CSS with brand colors and fonts
       var css = [];
       var btnTextColor = bestTextColor(primaryColor);
-      css.push('.mendio-bot-btn{position:fixed;bottom:20px;right:20px;background:' + primaryColor + ';color:' + btnTextColor + ';border-radius:9999px;padding:12px 16px;font-family:' + fontFamily + ';font-weight:700;box-shadow:0 10px 25px rgba(0,0,0,.2);cursor:pointer;z-index:2147483000;transition:all 0.3s}');
+      css.push('.mendio-bot-btn{position:fixed;background:' + primaryColor + ';color:' + btnTextColor + ';border-radius:9999px;padding:12px 16px;font-family:' + fontFamily + ';font-weight:700;box-shadow:0 10px 25px rgba(0,0,0,.2);cursor:pointer;z-index:2147483000;transition:all 0.3s}');
       css.push('.mendio-bot-btn:hover{transform:scale(1.05);box-shadow:0 15px 35px rgba(0,0,0,.3)}');
-      css.push('.mendio-bot-panel{position:fixed;bottom:80px;right:20px;width:340px;max-width:calc(100vw - 32px);height:480px;background:#fff;border:2px solid ' + primaryColor + ';border-radius:16px;box-shadow:0 20px 40px rgba(0,0,0,.25);overflow:hidden;display:none;flex-direction:column;z-index:2147483001;font-family:' + fontFamily + '}');
+      css.push('.mendio-bot-panel{position:fixed;width:340px;max-width:calc(100vw - 32px);height:480px;background:#fff;border:2px solid ' + primaryColor + ';border-radius:16px;box-shadow:0 20px 40px rgba(0,0,0,.25);overflow:hidden;display:none;flex-direction:column;z-index:2147483001;font-family:' + fontFamily + '}');
       var headerTextColor = bestTextColor(primaryColor);
       css.push('.mendio-bot-header{padding:12px 16px;background:' + primaryColor + ';color:' + headerTextColor + ';font-weight:800;display:flex;align-items:center;justify-content:space-between}');
       css.push('.mendio-bot-body{padding:12px;height:100%;display:flex;flex-direction:column;gap:8px;background:#f6f6f6}');
@@ -71,17 +74,24 @@
       var btn = document.createElement('button');
       btn.className = 'mendio-bot-btn';
       var isPremium = brand.isPremium || false;
-      btn.textContent = isPremium ? 'Chatta med oss' : 'Chatta med oss · by Mendio';
+      btn.textContent = isPremium ? 'Chat with us' : 'Chat with us · by Mendio';
 
       var panel = document.createElement('div');
       panel.className = 'mendio-bot-panel';
 
       var header = document.createElement('div');
       header.className = 'mendio-bot-header';
-      var headerTitle = isPremium ? 'Chatt' : 'Chatt · Mendio';
-      header.innerHTML = '<span>' + headerTitle + '</span><button style="background:transparent;color:' + headerTextColor + ';font-weight:700;border:none;cursor:pointer;font-size:20px">×</button>';
-      var closeBtn = header.querySelector('button');
-      closeBtn.addEventListener('click', function(){ panel.style.display='none'; });
+      var headerTitle = isPremium ? 'Chat' : 'Chat · Mendio';
+      header.innerHTML = '<span>' + headerTitle + '</span>' +
+        '<div style="display:flex;gap:8px;align-items:center">' +
+        '<button class="mendio-minimize" style="background:transparent;color:' + headerTextColor + ';font-weight:700;border:none;cursor:pointer;font-size:18px" title="Minimize">–</button>' +
+        '<button class="mendio-close" style="background:transparent;color:' + headerTextColor + ';font-weight:700;border:none;cursor:pointer;font-size:20px" title="Close">×</button>' +
+        '</div>';
+      var closeBtn = header.querySelector('.mendio-close');
+      var minimizeBtn = header.querySelector('.mendio-minimize');
+      var minimized = false;
+      closeBtn.addEventListener('click', function(){ panel.style.display='none'; minimized=false; panel.style.height=panelFullHeight; body.style.display='flex'; });
+      minimizeBtn.addEventListener('click', function(){ minimized = !minimized; if(minimized){ panel.style.height='56px'; body.style.display='none'; } else { panel.style.height=panelFullHeight; body.style.display='flex'; } });
 
       var body = document.createElement('div');
       body.className = 'mendio-bot-body';
@@ -92,7 +102,7 @@
       var input = document.createElement('input');
       input.placeholder = getPlaceholder(tone);
       var send = document.createElement('button');
-      send.textContent = 'Skicka';
+      send.textContent = 'Send';
       inputRow.appendChild(input);
       inputRow.appendChild(send);
       body.appendChild(messages);
@@ -115,15 +125,15 @@
       });
 
       function getPlaceholder(tone) {
-        if (tone === 'formal') return 'Skriv ert meddelande här...';
-        if (tone === 'casual') return 'Skriv något här...';
-        return 'Skriv ett meddelande...';
+        if (tone === 'formal') return 'Type your message here...';
+        if (tone === 'casual') return 'Type something here...';
+        return 'Type a message...';
       }
 
       function getWelcomeMessage(tone) {
-        if (tone === 'formal') return 'God dag! Hur kan jag bistå er idag?';
-        if (tone === 'casual') return 'Hej där! Vad kan jag hjälpa till med? 😊';
-        return 'Hej! Hur kan jag hjälpa dig idag?';
+        if (tone === 'formal') return 'Good day! How can I assist you today?';
+        if (tone === 'casual') return 'Hi there! How can I help?';
+        return 'Hi! How can I help you today?';
       }
 
       function addBubble(text, role){
@@ -164,7 +174,7 @@
           history.push({ role: 'assistant', content: reply });
         } catch (e) {
           messages.removeChild(typing);
-          addBubble('Tekniskt fel. Försök igen.', 'assistant');
+          addBubble('Technical error. Please try again.', 'assistant');
         }
       }
       
@@ -186,14 +196,14 @@
         if (!triggers.timeOnPage && messages.children.length === 0) {
           triggers.timeOnPage = true;
           var pageUrl = window.location.pathname;
-          var contextMsg = 'Hej! Jag såg att du är på vår sida. Kan jag hjälpa dig med något?';
+          var contextMsg = 'Hi! I saw you are browsing. Can I help with anything?';
           
           if (pageUrl.includes('pric') || pageUrl.includes('price')) {
-            contextMsg = 'Har du några frågor om våra priser?';
+            contextMsg = 'Do you have any questions about our pricing?';
           } else if (pageUrl.includes('product') || pageUrl.includes('tjanst')) {
-            contextMsg = 'Vill du veta mer om våra produkter?';
+            contextMsg = 'Would you like to know more about our products?';
           } else if (pageUrl.includes('kontakt') || pageUrl.includes('contact')) {
-            contextMsg = 'Behöver du hjälp att komma i kontakt med oss?';
+            contextMsg = 'Need help getting in touch with us?';
           }
           
           panel.style.display = 'flex';
@@ -210,7 +220,7 @@
             if (messages.children.length === 0) {
               panel.style.display = 'flex';
               setTimeout(function() { 
-                addBubble('Du har läst igenom sidan - har du några frågor?', 'assistant'); 
+                addBubble('You have read most of the page — any questions?', 'assistant'); 
               }, 300);
             }
           }
@@ -224,7 +234,7 @@
           if (messages.children.length === 0) {
             panel.style.display = 'flex';
             setTimeout(function() { 
-              addBubble('Vänta! Kan jag hjälpa dig hitta något innan du går?', 'assistant'); 
+              addBubble('Wait! Can I help you find something before you go?', 'assistant'); 
             }, 300);
           }
         }
@@ -248,6 +258,39 @@
         if (logoPosition === 'top-left')     { logo.style.left  = (20 + x) + 'px'; logo.style.top    = (20 + y) + 'px'; }
         document.body.appendChild(logo);
       }
+
+      // Apply initial positions based on data-position and offsets
+      var panelFullHeight = '480px';
+      function applyPosition(){
+        if (position === 'bottom-left') {
+          btn.style.left = offsetX + 'px';
+          btn.style.bottom = offsetY + 'px';
+          panel.style.left = offsetX + 'px';
+          panel.style.bottom = (offsetY + 60) + 'px';
+          panel.style.right = '';
+        } else if (position === 'top-right') {
+          btn.style.right = offsetX + 'px';
+          btn.style.top = offsetY + 'px';
+          btn.style.bottom = '';
+          panel.style.right = offsetX + 'px';
+          panel.style.top = (offsetY + 60) + 'px';
+          panel.style.bottom = '';
+        } else if (position === 'top-left') {
+          btn.style.left = offsetX + 'px';
+          btn.style.top = offsetY + 'px';
+          btn.style.bottom = '';
+          panel.style.left = offsetX + 'px';
+          panel.style.top = (offsetY + 60) + 'px';
+          panel.style.bottom = '';
+        } else { // bottom-right default
+          btn.style.right = offsetX + 'px';
+          btn.style.bottom = offsetY + 'px';
+          panel.style.right = offsetX + 'px';
+          panel.style.bottom = (offsetY + 60) + 'px';
+          panel.style.left = '';
+        }
+      }
+      applyPosition();
     }
   } catch(e) { 
     console.error('Mendio widget error:', e);
