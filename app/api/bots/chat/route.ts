@@ -10,7 +10,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: NextRequest) {
   try {
-    const { botId, history, sessionId, locale } = await req.json();
+    const { botId, history, sessionId, locale, tone } = await req.json();
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
     const userAgent = req.headers.get('user-agent') || '';
     
@@ -356,7 +356,19 @@ Keep answers concise and helpful.`;
 
     // Adaptive tone based on user segment
     let toneAdjustment = '';
-    if (history.length > 0) {
+    
+    // Use tone from request or bot metadata
+    const requestedTone = tone || (bot.metadata as any)?.tone;
+    if (requestedTone) {
+      const toneMap: Record<string, string> = {
+        'Professional': '\n\nTONE: Professional and business-focused. Be clear, concise, and authoritative while remaining helpful.',
+        'Friendly': '\n\nTONE: Warm and approachable. Use a conversational style while maintaining professionalism.',
+        'Casual': '\n\nTONE: Relaxed and informal. Feel free to use contractions and conversational language.',
+        'Formal': '\n\nTONE: Highly formal and polished. Use proper grammar and avoid contractions or colloquialisms.'
+      };
+      toneAdjustment = toneMap[requestedTone] || '';
+    } else if (history.length > 0) {
+      // Fallback to auto-detection
       const allText = history.map((h: any) => h.content).join(' ');
       const isB2B = /company|business|b2b|enterprise|organization|företag/i.test(allText);
       if (isB2B) {

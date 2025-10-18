@@ -47,6 +47,20 @@ export default function PersonalAgentLanding() {
     logo: null as string | null
   });
 
+  // Load bot settings when bot is created
+  useEffect(() => {
+    if (botId) {
+      fetch(`/api/bots/settings?botId=${botId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.settings) {
+            setBotSettings(data.settings);
+          }
+        })
+        .catch(console.error);
+    }
+  }, [botId]);
+
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -180,7 +194,12 @@ export default function PersonalAgentLanding() {
       const res = await fetch("/api/bots/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ botId, history: [...chatMessages, { role: "user", content: msg }] })
+        body: JSON.stringify({ 
+          botId, 
+          history: [...chatMessages, { role: "user", content: msg }],
+          locale: botSettings.language,
+          tone: botSettings.tone
+        })
       });
       const data = await res.json();
       const reply = data?.reply || "I couldn't answer that. Please try another question.";
@@ -317,7 +336,22 @@ export default function PersonalAgentLanding() {
                 </div>
 
                 <button
-                  onClick={() => setShowSettings(false)}
+                  onClick={async () => {
+                    if (botId) {
+                      try {
+                        const res = await fetch('/api/bots/settings', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ botId, settings: botSettings })
+                        });
+                        if (res.ok) {
+                          setShowSettings(false);
+                        }
+                      } catch (e) {
+                        console.error('Failed to save settings:', e);
+                      }
+                    }
+                  }}
                   className="w-full mt-8 px-6 py-3 bg-black text-white rounded-2xl font-medium hover:bg-gray-800 transition-colors"
                 >
                   Save Settings
