@@ -37,6 +37,7 @@ export default function PersonalAgentLanding() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const uploadInChatRef = useRef<HTMLInputElement>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [settingsTab, setSettingsTab] = useState<'general' | 'integrations'>('general');
   
   // Bot settings state
   const [botSettings, setBotSettings] = useState({
@@ -45,6 +46,14 @@ export default function PersonalAgentLanding() {
     color: "#000000",
     language: "en",
     logo: null as string | null
+  });
+
+  // Integration settings state
+  const [integrations, setIntegrations] = useState({
+    shopify: { domain: '', accessToken: '', enabled: false },
+    hubspot: { accessToken: '', enabled: false },
+    zendesk: { domain: '', email: '', apiToken: '', enabled: false },
+    centra: { apiBaseUrl: '', storeId: '', accessToken: '', enabled: false }
   });
 
   // Load bot settings when bot is created
@@ -240,7 +249,32 @@ export default function PersonalAgentLanding() {
                   </button>
                 </div>
 
-                <div className="space-y-6">
+                {/* Tabs */}
+                <div className="flex gap-2 mb-6 border-b border-gray-200">
+                  <button
+                    onClick={() => setSettingsTab('general')}
+                    className={`px-4 py-2 font-medium transition-colors border-b-2 ${
+                      settingsTab === 'general'
+                        ? 'border-black text-black'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    General
+                  </button>
+                  <button
+                    onClick={() => setSettingsTab('integrations')}
+                    className={`px-4 py-2 font-medium transition-colors border-b-2 ${
+                      settingsTab === 'integrations'
+                        ? 'border-black text-black'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    Integrations
+                  </button>
+                </div>
+
+                {settingsTab === 'general' && (
+                  <div className="space-y-6">
                   {/* Bot Name */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -342,31 +376,263 @@ export default function PersonalAgentLanding() {
                     </div>
                   </div>
 
-                  {/* Logo Upload */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Bot Logo
-                    </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-gray-400 transition-colors cursor-pointer">
-                      <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600">Click to upload logo</p>
-                      <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 2MB</p>
+                    {/* Logo Upload */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Bot Logo
+                      </label>
+                      <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-gray-400 transition-colors cursor-pointer">
+                        <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600">Click to upload logo</p>
+                        <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 2MB</p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+
+                {settingsTab === 'integrations' && (
+                  <div className="space-y-6">
+                    <p className="text-sm text-gray-600 mb-4">
+                      Connect your business tools to enable your bot to fetch real-time data and provide better answers.
+                    </p>
+
+                    {/* Shopify */}
+                    <div className="border border-gray-200 rounded-2xl p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">S</span>
+                          </div>
+                          <div>
+                            <h3 className="font-semibold">Shopify</h3>
+                            <p className="text-xs text-gray-500">E-commerce platform</p>
+                          </div>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={integrations.shopify.enabled}
+                            onChange={(e) => setIntegrations({
+                              ...integrations,
+                              shopify: { ...integrations.shopify, enabled: e.target.checked }
+                            })}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-black rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
+                        </label>
+                      </div>
+                      {integrations.shopify.enabled && (
+                        <div className="space-y-3 mt-3">
+                          <input
+                            type="text"
+                            placeholder="Store domain (e.g., mystore.myshopify.com)"
+                            value={integrations.shopify.domain}
+                            onChange={(e) => setIntegrations({
+                              ...integrations,
+                              shopify: { ...integrations.shopify, domain: e.target.value }
+                            })}
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                          />
+                          <input
+                            type="password"
+                            placeholder="Access Token"
+                            value={integrations.shopify.accessToken}
+                            onChange={(e) => setIntegrations({
+                              ...integrations,
+                              shopify: { ...integrations.shopify, accessToken: e.target.value }
+                            })}
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* HubSpot */}
+                    <div className="border border-gray-200 rounded-2xl p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">H</span>
+                          </div>
+                          <div>
+                            <h3 className="font-semibold">HubSpot</h3>
+                            <p className="text-xs text-gray-500">CRM & Marketing</p>
+                          </div>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={integrations.hubspot.enabled}
+                            onChange={(e) => setIntegrations({
+                              ...integrations,
+                              hubspot: { ...integrations.hubspot, enabled: e.target.checked }
+                            })}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-black rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
+                        </label>
+                      </div>
+                      {integrations.hubspot.enabled && (
+                        <div className="space-y-3 mt-3">
+                          <input
+                            type="password"
+                            placeholder="API Access Token"
+                            value={integrations.hubspot.accessToken}
+                            onChange={(e) => setIntegrations({
+                              ...integrations,
+                              hubspot: { ...integrations.hubspot, accessToken: e.target.value }
+                            })}
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Zendesk */}
+                    <div className="border border-gray-200 rounded-2xl p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">Z</span>
+                          </div>
+                          <div>
+                            <h3 className="font-semibold">Zendesk</h3>
+                            <p className="text-xs text-gray-500">Customer Support</p>
+                          </div>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={integrations.zendesk.enabled}
+                            onChange={(e) => setIntegrations({
+                              ...integrations,
+                              zendesk: { ...integrations.zendesk, enabled: e.target.checked }
+                            })}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-black rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
+                        </label>
+                      </div>
+                      {integrations.zendesk.enabled && (
+                        <div className="space-y-3 mt-3">
+                          <input
+                            type="text"
+                            placeholder="Subdomain (e.g., company.zendesk.com)"
+                            value={integrations.zendesk.domain}
+                            onChange={(e) => setIntegrations({
+                              ...integrations,
+                              zendesk: { ...integrations.zendesk, domain: e.target.value }
+                            })}
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                          />
+                          <input
+                            type="email"
+                            placeholder="Email"
+                            value={integrations.zendesk.email}
+                            onChange={(e) => setIntegrations({
+                              ...integrations,
+                              zendesk: { ...integrations.zendesk, email: e.target.value }
+                            })}
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                          />
+                          <input
+                            type="password"
+                            placeholder="API Token"
+                            value={integrations.zendesk.apiToken}
+                            onChange={(e) => setIntegrations({
+                              ...integrations,
+                              zendesk: { ...integrations.zendesk, apiToken: e.target.value }
+                            })}
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Centra */}
+                    <div className="border border-gray-200 rounded-2xl p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">C</span>
+                          </div>
+                          <div>
+                            <h3 className="font-semibold">Centra</h3>
+                            <p className="text-xs text-gray-500">Headless Commerce</p>
+                          </div>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={integrations.centra.enabled}
+                            onChange={(e) => setIntegrations({
+                              ...integrations,
+                              centra: { ...integrations.centra, enabled: e.target.checked }
+                            })}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-black rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
+                        </label>
+                      </div>
+                      {integrations.centra.enabled && (
+                        <div className="space-y-3 mt-3">
+                          <input
+                            type="text"
+                            placeholder="API Base URL"
+                            value={integrations.centra.apiBaseUrl}
+                            onChange={(e) => setIntegrations({
+                              ...integrations,
+                              centra: { ...integrations.centra, apiBaseUrl: e.target.value }
+                            })}
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Store ID"
+                            value={integrations.centra.storeId}
+                            onChange={(e) => setIntegrations({
+                              ...integrations,
+                              centra: { ...integrations.centra, storeId: e.target.value }
+                            })}
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                          />
+                          <input
+                            type="password"
+                            placeholder="Access Token"
+                            value={integrations.centra.accessToken}
+                            onChange={(e) => setIntegrations({
+                              ...integrations,
+                              centra: { ...integrations.centra, accessToken: e.target.value }
+                            })}
+                            className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 <button
                   onClick={async () => {
                     if (botId) {
                       try {
-                        const res = await fetch('/api/bots/settings', {
+                        // Save general settings
+                        await fetch('/api/bots/settings', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({ botId, settings: botSettings })
                         });
-                        if (res.ok) {
-                          setShowSettings(false);
+
+                        // Save integrations
+                        if (settingsTab === 'integrations') {
+                          await fetch('/api/integrations/save', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ botId, integrations })
+                          });
                         }
+
+                        setShowSettings(false);
                       } catch (e) {
                         console.error('Failed to save settings:', e);
                       }
@@ -374,7 +640,7 @@ export default function PersonalAgentLanding() {
                   }}
                   className="w-full mt-8 px-6 py-3 bg-black text-white rounded-2xl font-medium hover:bg-gray-800 transition-colors"
                 >
-                  Save Settings
+                  Save {settingsTab === 'integrations' ? 'Integrations' : 'Settings'}
                 </button>
               </motion.div>
             </motion.div>
