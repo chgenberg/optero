@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, X, Upload, Loader2, CheckCircle2, Bot, ArrowRight, Paperclip } from "lucide-react";
+import { Send, X, Upload, Loader2, CheckCircle2, Bot, ArrowRight, Paperclip, Star, Zap, Shield } from "lucide-react";
 
 interface ScrapeResult {
   success?: boolean;
@@ -376,9 +376,9 @@ export default function PersonalAgentLanding() {
             {/* Features */}
             <div className="flex justify-center gap-8 mt-12">
               {[
-                { icon: "✨", text: "Free" },
-                { icon: "⚡", text: "Easy setup" },
-                { icon: "🔒", text: "Super safe" }
+                { Icon: Star, text: "Free" },
+                { Icon: Zap, text: "Easy setup" },
+                { Icon: Shield, text: "Super safe" }
               ].map((item, i) => (
                 <motion.div
                   key={i}
@@ -387,7 +387,7 @@ export default function PersonalAgentLanding() {
                   transition={{ delay: 0.3 + i * 0.1 }}
                   className="flex items-center gap-2"
                 >
-                  <span className="text-2xl">{item.icon}</span>
+                  <item.Icon className="w-5 h-5 text-black" />
                   <span className="font-medium">{item.text}</span>
                 </motion.div>
               ))}

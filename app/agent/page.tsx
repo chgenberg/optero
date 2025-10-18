@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Bot, Mail, Building2, ArrowRight, Lock } from "lucide-react";
+import { Bot, Mail, Building2, ArrowRight, Lock, Star, Zap, Shield } from "lucide-react";
 
 export default function AgentLandingPage() {
   const router = useRouter();
@@ -138,17 +138,17 @@ export default function AgentLandingPage() {
             {
               title: "Instant Setup",
               description: "AI learns from your website and documents in minutes",
-              icon: "⚡"
+              Icon: Zap
             },
             {
               title: "Always Learning",
               description: "Upload new documents anytime to expand knowledge",
-              icon: "🧠"
+              Icon: Star
             },
             {
               title: "Secure & Private",
               description: "Your data stays yours. Enterprise-grade security",
-              icon: "🔒"
+              Icon: Shield
             }
           ].map((feature, i) => (
             <motion.div
@@ -158,7 +158,7 @@ export default function AgentLandingPage() {
               transition={{ delay: 0.4 + i * 0.1 }}
               className="text-center"
             >
-              <div className="text-3xl mb-3">{feature.icon}</div>
+              <feature.Icon className="w-6 h-6 mx-auto mb-3 text-black" />
               <h3 className="font-semibold mb-2">{feature.title}</h3>
               <p className="text-sm text-gray-600">{feature.description}</p>
             </motion.div>
