@@ -18,6 +18,7 @@ export default function PersonalAgentLanding() {
   const [email, setEmail] = useState("");
   const [url, setUrl] = useState("");
   const [consent, setConsent] = useState(false);
+  const [isEmbedded, setIsEmbedded] = useState(false);
   const [scraping, setScraping] = useState(false);
   const [scrapeProgress, setScrapeProgress] = useState(0);
   const [scrapeResult, setScrapeResult] = useState<ScrapeResult | null>(null);
@@ -57,6 +58,15 @@ export default function PersonalAgentLanding() {
   });
 
   // Load bot settings when bot is created
+  useEffect(() => {
+    // Check if embedded and auto-open modal
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('embedded') === 'true') {
+      setIsEmbedded(true);
+      setOpen(true);
+    }
+  }, []);
+
   useEffect(() => {
     if (botId) {
       fetch(`/api/bots/settings?botId=${botId}`)
@@ -810,21 +820,23 @@ export default function PersonalAgentLanding() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="absolute top-0 left-0 right-0 px-8 py-6 z-10">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold tracking-tight">MENDIO</h1>
-          <button
-            onClick={() => window.location.href = "/"}
-            className="text-sm text-gray-600 hover:text-black transition-colors"
-          >
-            Back to home
-          </button>
+      {/* Header - only show if not embedded */}
+      {!isEmbedded && (
+        <div className="absolute top-0 left-0 right-0 px-8 py-6 z-10">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-bold tracking-tight">MENDIO</h1>
+            <button
+              onClick={() => window.location.href = "/"}
+              className="text-sm text-gray-600 hover:text-black transition-colors"
+            >
+              Back to home
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Landing */}
-      {!open && (
+      {!open && !isEmbedded && (
         <div className="min-h-screen flex items-center justify-center px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

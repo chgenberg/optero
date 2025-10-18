@@ -8,6 +8,11 @@ import { useState } from "react";
 export default function Home() {
   const router = useRouter();
   const [showFeatureInfo, setShowFeatureInfo] = useState<string | null>(null);
+  const [showBotModal, setShowBotModal] = useState(false);
+
+  const handleStartHere = () => {
+    setShowBotModal(true);
+  };
 
   return (
     <main className="min-h-screen bg-white relative overflow-hidden">
@@ -63,7 +68,7 @@ export default function Home() {
               
               {/* CTA Button */}
               <motion.button
-                onClick={() => router.push('/bot')}
+                onClick={handleStartHere}
                 className="bg-black text-white px-10 py-4 rounded-full font-medium text-lg inline-flex items-center gap-3 group"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -412,6 +417,23 @@ export default function Home() {
               );
             })()}
           </motion.div>
+        </div>
+      )}
+
+      {/* Bot Modal - embedded from /bot page */}
+      {showBotModal && (
+        <div className="fixed inset-0 z-50">
+          <iframe
+            src="/bot?embedded=true"
+            className="w-full h-full border-0"
+            title="Create your bot"
+          />
+          <button
+            onClick={() => setShowBotModal(false)}
+            className="absolute top-4 right-4 p-3 bg-black hover:bg-gray-800 text-white rounded-full shadow-lg transition-colors z-10"
+          >
+            <X className="w-6 h-6" />
+          </button>
         </div>
       )}
 
