@@ -34,6 +34,9 @@ export async function POST(req: NextRequest) {
     const lastUserMsg = (history.filter((h: any) => h.role === 'user').slice(-1)[0]?.content || '').toLowerCase();
     const asksProductCount = /(how\s+many\s+(products|items)\b|products?\s+count\b|antal\s+produkter|hur\s+många\s+produkter)/i.test(lastUserMsg);
 
+    // RAG context, computed later but referenced for fallbacks
+    let ragContext: string = '';
+
     const getShopifyProductCountForBot = async (bId: string): Promise<number | null> => {
       try {
         const integ = await prisma.botIntegration.findUnique({ where: { botId: bId } });
