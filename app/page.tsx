@@ -14,59 +14,89 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-6 py-16 md:py-24 relative">
         
         {/* Hero */}
-        <div className="text-center mb-32 relative">
+        <div className="flex items-center justify-center mb-32 relative min-h-[60vh]">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="relative z-10"
+            className="max-w-3xl w-full"
           >
-            <h1 className="text-5xl md:text-7xl font-bold text-black mb-6 leading-tight">
-              AI Bots That Understand<br />Your Business
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-[#4B5563] mb-12 max-w-3xl mx-auto leading-relaxed">
-              We analyze your company and build custom bots to streamline work, 
-              reduce costs, and free up your team.
-            </p>
-            
-            <div className="relative inline-block">
-              {/* Sketch arrows pointing to button */}
-              <svg className="absolute -left-24 -top-8 w-20 h-16 text-gray-400 hidden md:block" viewBox="0 0 80 64">
-                <path d="M5 30 Q 35 15, 65 25 L 58 20 M 65 25 L 60 32" 
-                      stroke="currentColor" strokeWidth="2" fill="none" 
-                      strokeLinecap="round" strokeDasharray="2 4"
-                      className="animate-draw-arrow" />
-              </svg>
-              
-              <svg className="absolute -right-20 -top-10 w-20 h-20 text-gray-400 hidden md:block" viewBox="0 0 80 80">
-                <path d="M75 35 Q 45 20, 15 30 L 22 25 M 15 30 L 20 37" 
-                      stroke="currentColor" strokeWidth="2" fill="none" 
-                      strokeLinecap="round" strokeDasharray="2 4"
-                      className="animate-draw-arrow-delayed" />
-              </svg>
-              
-              <svg className="absolute -left-16 top-16 w-24 h-12 text-gray-400 hidden md:block" viewBox="0 0 96 48">
-                <path d="M10 20 Q 40 35, 70 25 L 63 20 M 70 25 L 65 32" 
-                      stroke="currentColor" strokeWidth="2" fill="none" 
-                      strokeLinecap="round" strokeDasharray="2 4"
-                      className="animate-draw-arrow-delayed-2" />
-              </svg>
+            {/* Box with pulsating shadow */}
+            <motion.div
+              className="relative bg-white border-2 border-black rounded-2xl p-8 md:p-12 text-center"
+              animate={{
+                boxShadow: [
+                  "0 0 20px rgba(0,0,0,0.1)",
+                  "0 0 40px rgba(0,0,0,0.15)",
+                  "0 0 20px rgba(0,0,0,0.1)"
+                ]
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              {/* Icon */}
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", duration: 0.6 }}
+                className="w-20 h-20 bg-black rounded-full mx-auto mb-6 flex items-center justify-center relative"
+              >
+                <MessageSquare className="w-10 h-10 text-white" />
+                <motion.div
+                  className="absolute inset-0 bg-black rounded-full"
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+              </motion.div>
 
+              {/* Title */}
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+                Create your personal agent
+              </h1>
+              
+              <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                Transform your company knowledge into an intelligent AI assistant. 
+                Upload documents, connect your website, and start chatting in minutes.
+              </p>
+              
+              {/* CTA Button */}
               <motion.button
                 onClick={() => router.push('/bot')}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="relative px-12 py-5 bg-black text-white text-lg font-medium rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 animate-pulse-subtle"
+                className="bg-black text-white px-10 py-4 rounded-full font-medium text-lg inline-flex items-center gap-3 group"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                Start for free
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                Start here
+                <motion.span
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  →
+                </motion.span>
               </motion.button>
-            </div>
-            
-            <p className="text-sm text-[#4B5563] mt-6 font-medium">
-              5-minute setup · No code · Tailored to you
-            </p>
+              
+              {/* Features */}
+              <div className="flex justify-center gap-8 mt-8">
+                {[
+                  { Icon: Zap, text: "Free" },
+                  { Icon: Target, text: "Easy setup" },
+                  { Icon: Check, text: "Super safe" }
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + i * 0.1 }}
+                    className="flex items-center gap-2"
+                  >
+                    <item.Icon className="w-5 h-5 text-black" />
+                    <span className="font-medium text-sm md:text-base">{item.text}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
           </motion.div>
         </div>
 
