@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     const lastUserMsg = (history.filter((h: any) => h.role === 'user').slice(-1)[0]?.content || '').toLowerCase();
     const asksProductCount = /(how\s+many\s+(products|items)\b|products?\s+count\b|antal\s+produkter|hur\s+många\s+produkter)/i.test(lastUserMsg);
 
-    async function getShopifyProductCountForBot(bId: string): Promise<number | null> {
+    const getShopifyProductCountForBot = async (bId: string): Promise<number | null> => {
       try {
         const integ = await prisma.botIntegration.findUnique({ where: { botId: bId } });
         if (!integ || !integ.shopifyDomain || !integ.shopifyAccessTokenEnc) return null;
@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Helper: Smart website-based answer using deep-scrape + GPT if no integrations and no RAG
-    async function websiteSmartAnswer(question: string, companyUrl: string): Promise<string | null> {
+    const websiteSmartAnswer = async (question: string, companyUrl: string): Promise<string | null> => {
       try {
         const siteUrl = companyUrl && /^https?:\/\//i.test(companyUrl) ? companyUrl : `https://${companyUrl}`;
         const base = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
