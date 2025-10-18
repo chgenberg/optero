@@ -33,6 +33,7 @@ export default function PersonalAgentLanding() {
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const uploadInChatRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -262,9 +263,26 @@ export default function PersonalAgentLanding() {
                       )}
                     </div>
                     <div className="p-3 border-t">
-                      <div className="relative flex items-center">
-                        <input value={chatInput} onChange={(e)=>setChatInput(e.target.value)} onKeyDown={(e)=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendChat(); } }} placeholder="Ask anything about your company…" className="w-full border rounded-full px-4 py-2 pr-10" />
-                        <button onClick={sendChat} disabled={!chatInput.trim() || chatLoading} className="absolute right-1 p-2 bg-black text-white rounded-full disabled:opacity-40"><Send className="w-4 h-4"/></button>
+                      <div className="flex items-center gap-2">
+                        <button onClick={()=>uploadInChatRef.current?.click()} className="px-3 py-2 border rounded-lg text-sm">Attach</button>
+                        <input ref={uploadInChatRef} type="file" multiple className="hidden" onChange={async (e)=>{
+                          const files = e.target.files; if (!files || !botId) return;
+                          // reuse upload-documents to parse, then ingest
+                          const fd = new FormData(); Array.from(files).forEach(f=>fd.append('files', f));
+                          try {
+                            const up = await fetch('/api/business/upload-documents', { method: 'POST', body: fd });
+                            const upj = await up.json();
+                            if (upj?.content) {
+                              await fetch('/api/bots/ingest', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ botId, title: 'Chat upload', content: upj.content, source: 'chat' }) });
+                              setChatMessages((m)=>[...m, { role: 'assistant', content: 'Thanks! I learned from your files and will use them in my answers.' }]);
+                            }
+                          } catch {}
+                          e.currentTarget.value = '';
+                        }} />
+                        <div className="relative flex-1">
+                          <input value={chatInput} onChange={(e)=>setChatInput(e.target.value)} onKeyDown={(e)=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendChat(); } }} placeholder="Ask anything about your company…" className="w-full border rounded-full px-4 py-2 pr-10" />
+                          <button onClick={sendChat} disabled={!chatInput.trim() || chatLoading} className="absolute right-1 top-1/2 -translate-y-1/2 p-2 bg-black text-white rounded-full disabled:opacity-40"><Send className="w-4 h-4"/></button>
+                        </div>
                       </div>
                     </div>
                   </div>
