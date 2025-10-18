@@ -122,6 +122,52 @@ export async function POST(req: NextRequest) {
         }
       }
     }
+
+    // Helper: Smart website-based answer using deep-scrape + GPT if no integrations and no RAG
+    async function websiteSmartAnswer(question: string, companyUrl: string): Promise<string | null> {
+      try {
+        const siteUrl = companyUrl && /^https?:\/\//i.test(companyUrl) ? companyUrl : `https://${companyUrl}`;
+        const base = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        const dsRes = await fetch(`${base}/api/business/deep-scrape`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: siteUrl })
+        });
+        if (!dsRes.ok) return null;
+        const ds = await dsRes.json().catch(() => ({}));
+        const pages: Array<{ title?: string; text?: string }> = Array.isArray(ds?.pages) ? ds.pages : [];
+        if (!pages.length) return null;
+        // Build compact website context
+        const context = pages
+          .slice(0, 6)
+          .map((p: any) => `${(p.title || 'Page').slice(0,80)}\n${String(p.text||'').slice(0,2000)}`)
+          .join('\n\n---\n\n')
+          .slice(0, 12000);
+
+        const systemSite = `You are an assistant answering strictly from the provided Website Context.\nIf the answer is uncertain or not present, say you cannot confirm from the site.\nKeep answers concise and factual.`;
+        const siteMessages: any[] = [
+          { role: 'system', content: systemSite },
+          { role: 'user', content: `Question: ${question}\n\nWebsite Context:\n${context}` }
+        ];
+        const siteResp = await openai.chat.completions.create({ model: 'gpt-5-mini', messages: siteMessages, max_completion_tokens: 300 });
+        const siteReply = siteResp.choices[0]?.message?.content?.trim() || '';
+        if (siteReply) return `${siteReply}`;
+      } catch {}
+      return null;
+    }
+
+    // Proactive website fallback if no integrations and RAG is empty
+    if (!forcedReply) {
+      try {
+        const integ = await prisma.botIntegration.findUnique({ where: { botId: bot.id } });
+        const hasCommerce = !!(integ && (integ.shopifyDomain || integ.shopifyAccessTokenEnc || integ.centraAccessTokenEnc));
+        const userMsgRaw = history.filter((h: any) => h.role === 'user').slice(-1)[0]?.content || '';
+        if (!hasCommerce && !ragContext && bot.companyUrl) {
+          const siteAns = await websiteSmartAnswer(userMsgRaw, bot.companyUrl);
+          if (siteAns) forcedReply = siteAns;
+        }
+      } catch {}
+    }
     const subtype = (activeSpec as any)?.subtype || '';
     const typeSettings = (activeSpec as any)?.typeSettings || {};
     const subtypeHints = {
