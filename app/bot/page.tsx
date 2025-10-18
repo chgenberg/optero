@@ -788,7 +788,6 @@ export default function PersonalAgentLanding() {
                     onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }}}
                     placeholder="Type a message..."
                     className="w-full bg-gray-100 text-gray-900 rounded-full px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-offset-2 placeholder-gray-500"
-                    style={{ focusRingColor: botSettings.color }}
                   />
                   <button
                     onClick={sendChat}
