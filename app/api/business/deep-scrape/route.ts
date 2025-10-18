@@ -12,10 +12,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "URL required" }, { status: 400 });
     }
 
-    // Normalize URL: ensure protocol
-    let targetUrl = String(url).trim();
+    // Normalize URL: ensure protocol, remove trailing dots, normalize whitespace
+    let targetUrl = String(url).trim().replace(/\.+$/g, ''); // Remove trailing dots
     if (!/^https?:\/\//i.test(targetUrl)) {
       targetUrl = `https://${targetUrl}`;
+    }
+    
+    // Validate URL format
+    try {
+      const parsed = new URL(targetUrl);
+      targetUrl = parsed.href; // Use canonical URL
+    } catch (e) {
+      return NextResponse.json({ error: "Invalid URL format" }, { status: 400 });
     }
 
     // Helper: resilient fetch with retry/backoff
