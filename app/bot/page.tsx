@@ -281,17 +281,37 @@ export default function PersonalAgentLanding() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Accent Color
                     </label>
-                    <div className="flex gap-2">
-                      {['#000000', '#FF0000', '#00FF00', '#0000FF', '#FF00FF', '#00FFFF'].map((color) => (
-                        <button
-                          key={color}
-                          onClick={() => setBotSettings({ ...botSettings, color })}
-                          className={`w-12 h-12 rounded-2xl border-2 hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black ${
-                            botSettings.color === color ? 'border-black ring-2 ring-black ring-offset-2' : 'border-gray-200'
-                          }`}
-                          style={{ backgroundColor: color }}
+                    <div className="space-y-3">
+                      <div className="flex gap-2">
+                        {['#000000', '#0084FF', '#44BEC7', '#FA3C4C', '#7646FF', '#20CE66'].map((color) => (
+                          <button
+                            key={color}
+                            onClick={() => setBotSettings({ ...botSettings, color })}
+                            className={`w-10 h-10 rounded-full border-2 hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black ${
+                              botSettings.color.toUpperCase() === color ? 'border-black ring-2 ring-black ring-offset-2' : 'border-gray-200'
+                            }`}
+                            style={{ backgroundColor: color }}
+                          />
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={botSettings.color}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (/^#[0-9A-Fa-f]{0,6}$/.test(value) || value === '') {
+                              setBotSettings({ ...botSettings, color: value });
+                            }
+                          }}
+                          placeholder="#000000"
+                          className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-mono text-sm"
                         />
-                      ))}
+                        <div 
+                          className="w-10 h-10 rounded-xl border-2 border-gray-200"
+                          style={{ backgroundColor: /^#[0-9A-Fa-f]{6}$/.test(botSettings.color) ? botSettings.color : '#000000' }}
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -361,144 +381,161 @@ export default function PersonalAgentLanding() {
           )}
         </AnimatePresence>
 
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 md:p-8">
-        <div className="w-full max-w-2xl bg-black rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[85vh] md:h-[600px]">
-          {/* Header */}
-          <div className="bg-black border-b border-gray-800 px-4 md:px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                  <Bot className="w-6 h-6 text-black" />
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+          <div className="w-full h-screen md:max-w-4xl md:h-[700px] bg-white md:rounded-xl shadow-xl overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="bg-white border-b border-gray-200 px-4 py-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div 
+                    className="w-10 h-10 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: botSettings.color }}
+                  >
+                    <Bot className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="font-semibold text-gray-900">{botSettings.name}</h1>
+                    <p className="text-xs text-gray-500">Active now</p>
+                  </div>
                 </div>
-                <div>
-                  <h1 className="font-semibold text-white">{botSettings.name}</h1>
-                  <p className="text-sm text-gray-400">Always ready to help</p>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setShowSettings(true)}
+                    className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    <Settings className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => window.location.href = "/"}
+                    className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setShowSettings(true)}
-                  className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-800"
-                >
-                  <Settings className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => window.location.href = "/"}
-                  className="text-sm text-gray-400 hover:text-white transition-colors"
-                >
-                  Exit
-                </button>
               </div>
             </div>
-          </div>
 
-          {/* Messages */}
-          <div ref={chatContainerRef} className="flex-1 overflow-y-auto px-4 md:px-6 py-6 bg-white">
-            <div className="space-y-4">
-              {chatMessages.map((msg, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`flex gap-3 ${msg.role === "user" ? "justify-end" : ""}`}
-              >
-                {msg.role === "assistant" && (
-                  <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center flex-shrink-0">
-                    <Bot className="w-5 h-5 text-white" />
-                  </div>
-                )}
-                <div className={`max-w-[80%] ${msg.role === "user" ? "order-1" : ""}`}>
-                  <div className={`rounded-2xl px-4 py-3 ${
-                    msg.role === "user" 
-                      ? "bg-gray-100" 
-                      : "bg-white border border-gray-200"
-                  }`}>
-                    <p className="whitespace-pre-wrap">{msg.content}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-            {chatLoading && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex gap-3"
-              >
-                <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-white" />
-                </div>
-                <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
-                  <motion.div className="flex gap-1">
-                    {[0, 1, 2].map((i) => (
-                      <motion.div
-                        key={i}
-                        className="w-2 h-2 bg-gray-400 rounded-full"
-                        animate={{ y: [0, -8, 0] }}
-                        transition={{
-                          duration: 0.5,
-                          repeat: Infinity,
-                          delay: i * 0.1
-                        }}
-                      />
-                    ))}
+            {/* Messages */}
+            <div ref={chatContainerRef} className="flex-1 overflow-y-auto px-4 py-4 bg-gray-50">
+              <div className="space-y-2">
+                {chatMessages.map((msg, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`flex gap-2 ${msg.role === "user" ? "justify-end" : ""}`}
+                  >
+                    {msg.role === "assistant" && (
+                      <div 
+                        className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                        style={{ backgroundColor: botSettings.color }}
+                      >
+                        <Bot className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                    <div className={`max-w-[70%] ${msg.role === "user" ? "order-1" : ""}`}>
+                      <div 
+                        className={`rounded-2xl px-4 py-2 ${
+                          msg.role === "user" 
+                            ? "text-white" 
+                            : "bg-gray-200 text-gray-900"
+                        }`}
+                        style={msg.role === "user" ? { backgroundColor: botSettings.color } : {}}
+                      >
+                        <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                      </div>
+                    </div>
                   </motion.div>
-                </div>
-              </motion.div>
-            )}
+                ))}
+                {chatLoading && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex gap-2"
+                  >
+                    <div 
+                      className="w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: botSettings.color }}
+                    >
+                      <Bot className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="bg-gray-200 rounded-2xl px-4 py-2">
+                      <motion.div className="flex gap-1">
+                        {[0, 1, 2].map((i) => (
+                          <motion.div
+                            key={i}
+                            className="w-2 h-2 bg-gray-500 rounded-full"
+                            animate={{ opacity: [0.4, 1, 0.4] }}
+                            transition={{
+                              duration: 1.4,
+                              repeat: Infinity,
+                              delay: i * 0.2
+                            }}
+                          />
+                        ))}
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                )}
           </div>
             </div>
           </div>
 
-          {/* Input */}
-          <div className="bg-black border-t border-gray-800 px-4 md:px-6 py-4">
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={() => uploadInChatRef.current?.click()} 
-                className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-              >
-                <Paperclip className="w-5 h-5 text-white" />
-            </button>
-            <input 
-              ref={uploadInChatRef} 
-              type="file" 
-              multiple 
-              className="hidden" 
-              onChange={async (e) => {
-                const files = e.target.files;
-                if (!files || !botId) return;
-                const fd = new FormData();
-                Array.from(files).forEach(f => fd.append('files', f));
-                try {
-                  const up = await fetch('/api/business/upload-documents', { method: 'POST', body: fd });
-                  const upj = await up.json();
-                  if (upj?.content) {
-                    await fetch('/api/bots/ingest', { 
-                      method: 'POST', 
-                      headers: { 'Content-Type': 'application/json' }, 
-                      body: JSON.stringify({ botId, title: 'Chat upload', content: upj.content, source: 'chat' }) 
-                    });
-                    setChatMessages((m) => [...m, { role: 'assistant', content: 'Thanks! I learned from your files and will use them in my answers.' }]);
-                  }
-                } catch {}
-                e.currentTarget.value = '';
-              }} 
-            />
-              <div className="relative flex-1">
-                <input
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }}}
-                  placeholder="Ask anything about your company…"
-                  className="w-full bg-gray-900 text-white border border-gray-700 rounded-full px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent placeholder-gray-500"
-                />
-                <button
-                  onClick={sendChat}
-                  disabled={!chatInput.trim() || chatLoading}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 p-2 bg-white text-black rounded-full disabled:opacity-40 transition-opacity hover:bg-gray-200"
+            {/* Input */}
+            <div className="bg-white border-t border-gray-200 px-4 py-3">
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => uploadInChatRef.current?.click()} 
+                  className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <Send className="w-4 h-4" />
+                  <Paperclip className="w-5 h-5" />
                 </button>
-              </div>
+                <input 
+                  ref={uploadInChatRef} 
+                  type="file" 
+                  multiple 
+                  className="hidden" 
+                  onChange={async (e) => {
+                    const files = e.target.files;
+                    if (!files || !botId) return;
+                    const fd = new FormData();
+                    Array.from(files).forEach(f => fd.append('files', f));
+                    try {
+                      const up = await fetch('/api/business/upload-documents', { method: 'POST', body: fd });
+                      const upj = await up.json();
+                      if (upj?.content) {
+                        await fetch('/api/bots/ingest', { 
+                          method: 'POST', 
+                          headers: { 'Content-Type': 'application/json' }, 
+                          body: JSON.stringify({ botId, title: 'Chat upload', content: upj.content, source: 'chat' }) 
+                        });
+                        setChatMessages((m) => [...m, { role: 'assistant', content: 'Thanks! I learned from your files and will use them in my answers.' }]);
+                      }
+                    } catch {}
+                    e.currentTarget.value = '';
+                  }} 
+                />
+                <div className="relative flex-1">
+                  <input
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }}}
+                    placeholder="Type a message..."
+                    className="w-full bg-gray-100 text-gray-900 rounded-full px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-offset-2 placeholder-gray-500"
+                    style={{ focusRingColor: botSettings.color }}
+                  />
+                  <button
+                    onClick={sendChat}
+                    disabled={!chatInput.trim() || chatLoading}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 p-2 rounded-full disabled:opacity-40 transition-all hover:scale-110"
+                    style={{ 
+                      backgroundColor: chatInput.trim() && !chatLoading ? botSettings.color : '#e5e7eb',
+                      color: chatInput.trim() && !chatLoading ? 'white' : '#9ca3af'
+                    }}
+                  >
+                    <Send className="w-4 h-4" />
+                  </button>
+                </div>
             </div>
           </div>
         </div>
