@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
 import { upsertHubspotContactStub } from "@/lib/integrations";
+import { listCentraProducts } from "@/lib/centra";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -27,6 +28,48 @@ export async function POST(req: NextRequest) {
     } catch {}
 
     const specSafe = JSON.stringify(activeSpec).slice(0, 4000);
+
+    // Quick intent: product count (Shopify or Centra)
+    const lastUserMsg = (history.filter((h: any) => h.role === 'user').slice(-1)[0]?.content || '').toLowerCase();
+    const asksProductCount = /(how\s+many\s+(products|items)\b|products?\s+count\b|antal\s+produkter|hur\s+många\s+produkter)/i.test(lastUserMsg);
+
+    async function getShopifyProductCountForBot(bId: string): Promise<number | null> {
+      try {
+        const integ = await prisma.botIntegration.findUnique({ where: { botId: bId } });
+        if (!integ || !integ.shopifyDomain || !integ.shopifyAccessTokenEnc) return null;
+        const { decryptSecret } = await import('@/lib/integrations');
+        const token = decryptSecret(integ.shopifyAccessTokenEnc!);
+        if (!token) return null;
+        const domain = integ.shopifyDomain.replace(/^https?:\/\//,'');
+        const url = `https://${domain}/admin/api/2024-10/products/count.json`;
+        const res = await fetch(url, { headers: { 'X-Shopify-Access-Token': token } as any });
+        if (!res.ok) return null;
+        const j = await res.json().catch(() => ({}));
+        const c = Number(j?.count);
+        return Number.isFinite(c) ? c : null;
+      } catch { return null; }
+    }
+
+    let forcedReply: string | null = null;
+    if (asksProductCount) {
+      try {
+        // Try Shopify first
+        const shopifyCount = await getShopifyProductCountForBot(bot.id);
+        if (typeof shopifyCount === 'number') {
+          forcedReply = `${shopifyCount} products.`;
+        } else {
+          // Try Centra fallback
+          const centra = await listCentraProducts(bot.id);
+          if (Array.isArray(centra)) {
+            forcedReply = `${centra.length} products.`;
+          }
+        }
+      } catch {}
+
+      if (!forcedReply) {
+        forcedReply = 'I don\'t have access to your product system yet. Connect Shopify or Centra in Integrations, then ask me again.';
+      }
+    }
     const subtype = (activeSpec as any)?.subtype || '';
     const typeSettings = (activeSpec as any)?.typeSettings || {};
     const subtypeHints = {
@@ -215,13 +258,23 @@ export async function POST(req: NextRequest) {
       ...history.map((m: any) => ({ role: m.role, content: maskPII(m.content) }))
     ] as any[];
 
-    const resp = await openai.chat.completions.create({
-      model: "gpt-5-mini",
-      messages,
-      max_completion_tokens: 500
-    });
-
-    const reply = resp.choices[0]?.message?.content || "";
+    let reply = "";
+    let promptTokens = 0;
+    let completionTokens = 0;
+    let totalTokens = 0;
+    if (forcedReply) {
+      reply = forcedReply;
+    } else {
+      const resp = await openai.chat.completions.create({
+        model: "gpt-5-mini",
+        messages,
+        max_completion_tokens: 500
+      });
+      reply = resp.choices[0]?.message?.content || "";
+      promptTokens = (resp as any)?.usage?.prompt_tokens || 0;
+      completionTokens = (resp as any)?.usage?.completion_tokens || 0;
+      totalTokens = (resp as any)?.usage?.total_tokens || (promptTokens + completionTokens);
+    }
 
     // Intent parser: CALL:ACTION {json}
     const IntentSchema = z.object({
@@ -243,9 +296,6 @@ export async function POST(req: NextRequest) {
       } catch { return null; }
     };
     const parsedIntent = extractIntent(reply);
-    const promptTokens = (resp as any)?.usage?.prompt_tokens || 0;
-    const completionTokens = (resp as any)?.usage?.completion_tokens || 0;
-    const totalTokens = (resp as any)?.usage?.total_tokens || (promptTokens + completionTokens);
 
     // User profiling: Extract name, company, email from conversation
     let userProfile: any = {};
