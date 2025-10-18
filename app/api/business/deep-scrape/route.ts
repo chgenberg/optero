@@ -88,19 +88,36 @@ export async function POST(req: NextRequest) {
       }
     } catch {}
 
-    // Fallback: crawl internal links from main page (limit to 10 for free)
+    // Fallback: crawl internal links from main page (limit to 20 for better coverage)
     if (sitemapUrls.length === 0) {
       const baseUrl = new URL(targetUrl).origin;
+      const internalLinks = new Set<string>();
+      
+      // Look for navigation, footer links, and important pages
+      $('nav a[href], header a[href], footer a[href], a[href*="about"], a[href*="product"], a[href*="service"], a[href*="contact"], a[href*="pricing"], a[href*="features"], a[href*="team"], a[href*="blog"], a[href*="faq"]').each((_, el) => {
+        const href = $(el).attr('href');
+        if (!href) return;
+        try {
+          const fullUrl = new URL(href, targetUrl).href;
+          if (fullUrl.startsWith(baseUrl) && !fullUrl.includes('#') && !fullUrl.match(/\.(jpg|jpeg|png|gif|svg|ico)$/i)) {
+            internalLinks.add(fullUrl);
+          }
+        } catch {}
+      });
+      
+      // Also get any other internal links
       $('a[href]').each((_, el) => {
         const href = $(el).attr('href');
         if (!href) return;
         try {
           const fullUrl = new URL(href, targetUrl).href;
-          if (fullUrl.startsWith(baseUrl) && sitemapUrls.length < 10) {
-            sitemapUrls.push(fullUrl);
+          if (fullUrl.startsWith(baseUrl) && internalLinks.size < 20 && !fullUrl.includes('#') && !fullUrl.match(/\.(jpg|jpeg|png|gif|svg|ico)$/i)) {
+            internalLinks.add(fullUrl);
           }
         } catch {}
       });
+      
+      sitemapUrls = Array.from(internalLinks);
     }
 
     // Premium: crawl up to 20 pages
@@ -178,17 +195,37 @@ export async function POST(req: NextRequest) {
         $page('h2').each((_, el) => headings.h2.push($page(el).text().trim()));
         $page('h3').each((_, el) => headings.h3.push($page(el).text().trim()));
 
-        // Links & PDFs
+        // Links, PDFs, emails, phone numbers
         const links: string[] = [];
         const pdfs: string[] = [];
+        const emails = new Set<string>();
+        const phones = new Set<string>();
+        
         $page('a[href]').each((_, el) => {
           const href = $page(el).attr('href') || '';
           try {
-            const full = new URL(href, pageUrl).href;
-            if (/\.pdf(\?|#|$)/i.test(full)) pdfs.push(full);
-            else links.push(full);
+            if (href.startsWith('mailto:')) {
+              emails.add(href.replace('mailto:', '').split('?')[0]);
+            } else if (href.startsWith('tel:')) {
+              phones.add(href.replace('tel:', ''));
+            } else {
+              const full = new URL(href, pageUrl).href;
+              if (/\.pdf(\?|#|$)/i.test(full)) pdfs.push(full);
+              else links.push(full);
+            }
           } catch {}
         });
+        
+        // Extract emails and phones from text
+        const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+        const phoneRegex = /[\+]?[(]?[0-9]{1,3}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,4}[-\s\.]?[0-9]{1,9}/g;
+        
+        const pageText = $page('body').text();
+        const foundEmails = pageText.match(emailRegex) || [];
+        const foundPhones = pageText.match(phoneRegex) || [];
+        
+        foundEmails.forEach(e => emails.add(e));
+        foundPhones.forEach(p => phones.add(p.replace(/\s+/g, '')));
 
         // Text with basic structure
         const text = $page('body').text().replace(/\s+/g, ' ').trim().slice(0, 6000);

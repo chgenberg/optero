@@ -1,175 +1,85 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function POST(request: NextRequest) {
+export const dynamic = "force-dynamic";
+
+export async function GET(req: NextRequest) {
   try {
-    const data = await request.json();
-    const {
-      sessionId,
-      profession,
-      specialization,
-      experience,
-      selectedTasks,
-      challenges,
-      viewedTools,
-      copiedPrompts,
-      timeSpent,
-      completedSteps,
-      clickedPremium,
-    } = data;
-
-    // Get user agent and referrer from headers
-    const userAgent = request.headers.get("user-agent") || undefined;
-    const referrer = request.headers.get("referer") || undefined;
-
-    if (sessionId) {
-      // Update existing session
-      await prisma.userSession.update({
-        where: { id: sessionId },
-        data: {
-          specialization,
-          experience,
-          selectedTasks,
-          challenges,
-          viewedTools,
-          copiedPrompts,
-          timeSpent,
-          completedSteps,
-          clickedPremium,
-        },
-      });
-
-      return NextResponse.json({ sessionId, updated: true });
-    } else {
-      // Create new session
-      const session = await prisma.userSession.create({
-        data: {
-          profession,
-          specialization,
-          experience,
-          selectedTasks,
-          challenges,
-          viewedTools,
-          copiedPrompts,
-          timeSpent,
-          completedSteps: completedSteps || 1,
-          clickedPremium: clickedPremium || false,
-          userAgent,
-          referrer,
-        },
-      });
-
-      return NextResponse.json({ sessionId: session.id, created: true });
+    const sessionId = req.nextUrl.searchParams.get("sessionId");
+    
+    if (!sessionId) {
+      return NextResponse.json({ error: "sessionId required" }, { status: 400 });
     }
+    
+    const session = await prisma.botSession.findFirst({
+      where: { 
+        externalId: sessionId,
+        status: "active"
+      },
+      include: {
+        bot: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
+    });
+    
+    if (!session) {
+      return NextResponse.json({ session: null });
+    }
+    
+    // Parse messages from metadata
+    const messages = session.metadata?.messages || [];
+    
+    return NextResponse.json({
+      session: {
+        id: session.id,
+        botId: session.botId,
+        messages,
+        createdAt: session.createdAt
+      }
+    });
   } catch (error) {
-    console.error("Error saving session:", error);
-    
-    // More detailed error response for debugging
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    const errorDetails = {
-      error: "Failed to save session",
-      message: errorMessage,
-      type: error?.constructor?.name || "UnknownError"
-    };
-    
-    // Check if it's a Prisma connection error
-    if (errorMessage.includes("P1001") || errorMessage.includes("connection")) {
-      errorDetails.error = "Database connection failed";
-    }
-    
-    return NextResponse.json(errorDetails, { status: 500 });
+    console.error("Session load error:", error);
+    return NextResponse.json({ error: "Failed to load session" }, { status: 500 });
   }
 }
 
-// Get analytics data
-export async function GET(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const type = searchParams.get("type");
-
-    if (type === "popular-professions") {
-      // Get most searched professions
-      const professions = await prisma.userSession.groupBy({
-        by: ["profession"],
-        _count: {
-          profession: true,
-        },
-        orderBy: {
-          _count: {
-            profession: "desc",
-          },
-        },
-        take: 10,
-      });
-
-      return NextResponse.json({ professions });
+    const { sessionId, botId, messages } = await req.json();
+    
+    if (!sessionId || !botId) {
+      return NextResponse.json({ error: "sessionId and botId required" }, { status: 400 });
     }
-
-    if (type === "popular-combinations") {
-      // Get most common profession + specialization combinations
-      const combinations = await prisma.userSession.groupBy({
-        by: ["profession", "specialization"],
-        _count: {
-          profession: true,
-        },
-        where: {
-          specialization: {
-            not: null,
-          },
-        },
-        orderBy: {
-          _count: {
-            profession: "desc",
-          },
-        },
-        take: 20,
-      });
-
-      return NextResponse.json({ combinations });
-    }
-
-    if (type === "conversion-rate") {
-      // Calculate conversion rate to premium
-      const total = await prisma.userSession.count();
-      const converted = await prisma.userSession.count({
-        where: { clickedPremium: true },
-      });
-
-      return NextResponse.json({
-        total,
-        converted,
-        rate: total > 0 ? (converted / total) * 100 : 0,
-      });
-    }
-
-    // Default: return summary stats
-    const totalSessions = await prisma.userSession.count();
-    const completedSessions = await prisma.userSession.count({
-      where: { completedSteps: 4 },
-    });
-    const avgTimeSpent = await prisma.userSession.aggregate({
-      _avg: {
-        timeSpent: true,
-      },
+    
+    // Upsert session
+    const session = await prisma.botSession.upsert({
       where: {
-        timeSpent: {
-          not: null,
-        },
+        externalId: sessionId
       },
+      update: {
+        metadata: {
+          messages,
+          lastActivity: new Date().toISOString()
+        }
+      },
+      create: {
+        botId,
+        externalId: sessionId,
+        status: "active",
+        metadata: {
+          messages,
+          source: "agent_chat"
+        }
+      }
     });
-
-    return NextResponse.json({
-      totalSessions,
-      completedSessions,
-      completionRate:
-        totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0,
-      avgTimeSpent: avgTimeSpent._avg.timeSpent || 0,
-    });
+    
+    return NextResponse.json({ success: true, sessionId: session.id });
   } catch (error) {
-    console.error("Error fetching analytics:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch analytics" },
-      { status: 500 }
-    );
+    console.error("Session save error:", error);
+    return NextResponse.json({ error: "Failed to save session" }, { status: 500 });
   }
 }

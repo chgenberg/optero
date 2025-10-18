@@ -15,16 +15,17 @@ async function main() {
   console.log("Clearing all bots and related data…");
 
   // Delete in safe order (children -> parent)
-  await prisma.botKnowledge.deleteMany({});
-  await prisma.botSession.deleteMany({});
-  await prisma.botUsage.deleteMany({});
-  await prisma.approvalRequest.deleteMany({});
-  await prisma.botAction.deleteMany({});
-  await prisma.botVersion.deleteMany({});
-  await prisma.botEval.deleteMany({});
-  await prisma.botIntegration.deleteMany({});
-  await prisma.botRating.deleteMany({});
-  await prisma.botSource.deleteMany({});
+  // Handle potentially missing tables gracefully
+  try { await prisma.botKnowledge.deleteMany({}); } catch (e) { console.log("Skipping BotKnowledge"); }
+  try { await prisma.botSession.deleteMany({}); } catch (e) { console.log("Skipping BotSession"); }
+  try { await prisma.botUsage.deleteMany({}); } catch (e) { console.log("Skipping BotUsage"); }
+  try { await prisma.approvalRequest.deleteMany({}); } catch (e) { console.log("Skipping ApprovalRequest"); }
+  try { await prisma.botAction.deleteMany({}); } catch (e) { console.log("Skipping BotAction"); }
+  try { await prisma.botVersion.deleteMany({}); } catch (e) { console.log("Skipping BotVersion"); }
+  try { await prisma.botEval.deleteMany({}); } catch (e) { console.log("Skipping BotEval"); }
+  try { await prisma.botIntegration.deleteMany({}); } catch (e) { console.log("Skipping BotIntegration"); }
+  try { await prisma.botRating.deleteMany({}); } catch (e) { console.log("Skipping BotRating"); }
+  try { await prisma.botSource.deleteMany({}); } catch (e) { console.log("Skipping BotSource"); }
 
   const result = await prisma.bot.deleteMany({});
   console.log(`Deleted ${result.count} bots.`);

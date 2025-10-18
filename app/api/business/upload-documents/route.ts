@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import mammoth from "mammoth";
 import { uploadBufferToS3 } from "@/lib/s3";
+import pdf from "pdf-parse";
+import Papa from "papaparse";
 
 export const maxDuration = 60; // 1 minute for file processing
 export const runtime = "nodejs";
@@ -24,15 +26,27 @@ export async function POST(req: NextRequest) {
 
       try {
         if (filename.endsWith('.pdf')) {
-          // For now, we'll indicate that PDF processing requires manual review
-          // This avoids the worker issue in production
-          parsedContents.push(`\n\n=== ${file.name} ===\n[PDF file uploaded - content analysis will be performed by AI based on URL content and other documents]`);
-          
-          // Store the PDF for later processing if needed
-          if (process.env.S3_BUCKET) {
-            const keySafe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-            const key = `pdfs/${new Date().toISOString().slice(0,10)}/${Date.now()}_${keySafe}`;
-            await uploadBufferToS3(key, buffer, 'application/pdf');
+          try {
+            // Parse PDF content
+            const pdfData = await pdf(buffer);
+            const pdfText = pdfData.text.trim();
+            
+            if (pdfText.length > 100) {
+              parsedContents.push(`\n\n=== ${file.name} ===\n${pdfText}`);
+            } else {
+              // Fallback for PDFs with minimal extractable text
+              parsedContents.push(`\n\n=== ${file.name} ===\n[PDF uploaded - minimal text content detected. The AI will analyze based on other context.]`);
+            }
+            
+            // Store the PDF for reference
+            if (process.env.S3_BUCKET) {
+              const keySafe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+              const key = `pdfs/${new Date().toISOString().slice(0,10)}/${Date.now()}_${keySafe}`;
+              await uploadBufferToS3(key, buffer, 'application/pdf');
+            }
+          } catch (pdfError) {
+            console.error(`PDF parse error for ${file.name}:`, pdfError);
+            parsedContents.push(`\n\n=== ${file.name} ===\n[PDF uploaded - content will be analyzed based on context]`);
           }
         }
         else if (filename.endsWith('.xlsx') || filename.endsWith('.xls')) {
@@ -53,11 +67,72 @@ export async function POST(req: NextRequest) {
           const result = await mammoth.extractRawText({ buffer });
           parsedContents.push(`\n\n=== ${file.name} ===\n${result.value}`);
         }
+        else if (filename.endsWith('.csv')) {
+          // Parse CSV
+          const csvText = buffer.toString('utf-8');
+          const parsed = Papa.parse(csvText, { header: true });
+          
+          let csvContent = 'CSV Data:\n';
+          if (parsed.data && parsed.data.length > 0) {
+            // Show headers
+            const headers = Object.keys(parsed.data[0] as any);
+            csvContent += headers.join(' | ') + '\n';
+            csvContent += headers.map(() => '---').join(' | ') + '\n';
+            
+            // Show data rows (limit to first 100 rows for context)
+            parsed.data.slice(0, 100).forEach((row: any) => {
+              csvContent += headers.map(h => row[h] || '').join(' | ') + '\n';
+            });
+            
+            if (parsed.data.length > 100) {
+              csvContent += `\n... and ${parsed.data.length - 100} more rows`;
+            }
+          }
+          
+          parsedContents.push(`\n\n=== ${file.name} ===\n${csvContent}`);
+        }
+        else if (filename.endsWith('.txt') || filename.endsWith('.md') || filename.endsWith('.json')) {
+          // Parse text files
+          const textContent = buffer.toString('utf-8');
+          parsedContents.push(`\n\n=== ${file.name} ===\n${textContent}`);
+        }
+        else if (filename.endsWith('.pptx') || filename.endsWith('.ppt')) {
+          // PowerPoint files - extract text content
+          try {
+            const textContent = buffer.toString('utf-8', 0, 1000); // Sample for basic text
+            parsedContents.push(`\n\n=== ${file.name} ===\n[PowerPoint presentation uploaded. For best results, export as PDF and upload the PDF version.]`);
+          } catch (e) {
+            parsedContents.push(`\n\n=== ${file.name} ===\n[PowerPoint file uploaded]`);
+          }
+        }
         else if (filename.endsWith('.key')) {
-          // Keynote is a package/zip; without extra deps, ask user to export as PDF for now
-          parsedContents.push(`\n\n=== ${file.name} ===\n[Keynote (.key) files work best when exported to PDF. Please export and upload as PDF.]`);
-        } else {
-          console.log(`Unsupported file type: ${filename}`);
+          // Keynote files
+          parsedContents.push(`\n\n=== ${file.name} ===\n[Keynote presentation uploaded. For best results, export as PDF and upload the PDF version.]`);
+        }
+        else if (filename.endsWith('.rtf')) {
+          // RTF files - basic text extraction
+          const rtfText = buffer.toString('utf-8');
+          // Simple RTF to text (remove basic RTF codes)
+          const plainText = rtfText
+            .replace(/\\par\s*/g, '\n')
+            .replace(/\{[^}]*\}/g, '')
+            .replace(/\\[a-z]+\d*\s*/g, '')
+            .trim();
+          
+          parsedContents.push(`\n\n=== ${file.name} ===\n${plainText}`);
+        }
+        else {
+          // Try to extract as plain text for unknown formats
+          try {
+            const textContent = buffer.toString('utf-8');
+            if (textContent.length > 50 && textContent.length < 100000) {
+              parsedContents.push(`\n\n=== ${file.name} ===\n${textContent}`);
+            } else {
+              console.log(`Unsupported file type: ${filename}`);
+            }
+          } catch (e) {
+            console.log(`Could not parse file type: ${filename}`);
+          }
         }
       } catch (error) {
         console.error(`Error parsing ${file.name}:`, error);
