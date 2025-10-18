@@ -132,10 +132,11 @@ export async function POST(req: NextRequest) {
             .sort((a, b) => b.similarity - a.similarity)
             .slice(0, 3);
           
-          if (ranked.length > 0 && ranked[0].similarity > 0.7) {
+          const threshold = 0.6; // slightly lower to include more context like brand colors
+          if (ranked.length > 0 && ranked[0].similarity > threshold) {
             ragContext = '\n\nRelevant information from knowledge base:\n' + 
               ranked
-                .filter(r => r.similarity > 0.7) // Only include if similarity > 0.7
+                .filter(r => r.similarity > threshold)
                 .map((r: any) => `[${r.title}](${r.sourceUrl || ''}): ${r.content}`)
                 .join('\n\n');
           }

@@ -106,6 +106,45 @@ export async function POST(req: NextRequest) {
     // Premium: crawl up to 20 pages
     sitemapUrls = Array.from(new Set([targetUrl, ...sitemapUrls])).slice(0, 20);
 
+    // Helper: extract brand colors from CSS
+    const cssToColors = (css: string): string[] => {
+      const colors = new Set<string>();
+      const hexRe = /#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})\b/g;
+      const rgbRe = /rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}(?:\s*,\s*(0|1|0?\.\d+))?\s*\)/g;
+      let m: RegExpExecArray | null;
+      while ((m = hexRe.exec(css))) colors.add(m[0]);
+      while ((m = rgbRe.exec(css))) colors.add(m[0]);
+      return Array.from(colors).slice(0, 50);
+    };
+
+    // Try to fetch a few CSS files for brand clues
+    let brandColors: string[] = [];
+    try {
+      const cssHrefs = new Set<string>();
+      $('link[rel="stylesheet"]').each((_, el) => {
+        const href = $(el).attr('href');
+        if (href) {
+          try { cssHrefs.add(new URL(href, targetUrl).href); } catch {}
+        }
+      });
+      // inline styles too
+      $('style').each((_, el) => {
+        const t = $(el).html() || '';
+        brandColors.push(...cssToColors(t));
+      });
+      const cssList = Array.from(cssHrefs).filter(u => u.startsWith(new URL(targetUrl).origin)).slice(0, 3);
+      for (const href of cssList) {
+        try {
+          const cssRes = await fetchWithRetry(href, { timeoutMs: 5000 });
+          if (cssRes.ok) {
+            const css = await cssRes.text();
+            brandColors.push(...cssToColors(css));
+          }
+        } catch {}
+      }
+      brandColors = Array.from(new Set(brandColors)).slice(0, 20);
+    } catch {}
+
     // Scrape each page
     const pageContents: Array<{ 
       url: string; 
@@ -188,6 +227,20 @@ export async function POST(req: NextRequest) {
       } catch (err) {
         console.error(`Failed to scrape ${pageUrl}:`, err);
       }
+    }
+
+    // Add inferred brand style info as a knowledge page
+    if (brandColors.length > 0) {
+      pageContents.unshift({
+        url: targetUrl,
+        title: 'Brand Styles',
+        text: `Detected brand-related colors from CSS: ${brandColors.join(', ')}`.slice(0, 3000),
+        meta: { description: 'Extracted from CSS' },
+        headings: { h1: ['Brand Styles'], h2: [], h3: [] },
+        links: [],
+        pdfs: [],
+        schema: {}
+      });
     }
 
     // AI Analysis: extract company info, problems, USP, customer type (include documents)
