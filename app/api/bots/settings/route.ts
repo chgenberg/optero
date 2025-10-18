@@ -18,8 +18,7 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         name: true,
-        spec: true,
-        metadata: true
+        spec: true
       }
     });
 
@@ -28,12 +27,13 @@ export async function GET(req: NextRequest) {
     }
 
     // Extract settings from metadata
+    const spec = (bot.spec as any) || {};
     const settings = {
       name: bot.name || "AI Assistant",
-      tone: (bot.metadata as any)?.tone || "Professional",
-      color: (bot.metadata as any)?.color || "#000000",
-      language: (bot.metadata as any)?.language || "en",
-      logo: (bot.metadata as any)?.logo || null
+      tone: spec?.settings?.tone || spec?.brand?.tone || "Professional",
+      color: spec?.settings?.color || spec?.brand?.color || "#000000",
+      language: spec?.settings?.language || spec?.brand?.language || "en",
+      logo: spec?.settings?.logo || null
     };
 
     return NextResponse.json({ settings });
@@ -52,27 +52,36 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Bot ID and settings required" }, { status: 400 });
     }
 
-    const bot = await prisma.bot.findUnique({
-      where: { id: botId }
-    });
+    const bot = await prisma.bot.findUnique({ where: { id: botId } });
 
     if (!bot) {
       return NextResponse.json({ error: "Bot not found" }, { status: 404 });
     }
 
     // Update bot with new settings
+    const currentSpec: any = (bot.spec as any) || {};
+    const nextSpec = {
+      ...currentSpec,
+      brand: {
+        ...(currentSpec.brand || {}),
+        tone: settings.tone,
+        color: settings.color,
+        language: settings.language
+      },
+      settings: {
+        ...(currentSpec.settings || {}),
+        tone: settings.tone,
+        color: settings.color,
+        language: settings.language,
+        logo: settings.logo
+      }
+    };
+
     const updatedBot = await prisma.bot.update({
       where: { id: botId },
       data: {
         name: settings.name || bot.name,
-        metadata: {
-          ...(typeof bot.metadata === 'object' ? bot.metadata : {}),
-          tone: settings.tone,
-          color: settings.color,
-          language: settings.language,
-          logo: settings.logo,
-          updatedAt: new Date().toISOString()
-        }
+        spec: nextSpec
       }
     });
 
@@ -80,10 +89,10 @@ export async function POST(req: NextRequest) {
       success: true, 
       settings: {
         name: updatedBot.name,
-        tone: (updatedBot.metadata as any)?.tone || "Professional",
-        color: (updatedBot.metadata as any)?.color || "#000000",
-        language: (updatedBot.metadata as any)?.language || "en",
-        logo: (updatedBot.metadata as any)?.logo || null
+        tone: (nextSpec as any)?.settings?.tone || (nextSpec as any)?.brand?.tone || "Professional",
+        color: (nextSpec as any)?.settings?.color || (nextSpec as any)?.brand?.color || "#000000",
+        language: (nextSpec as any)?.settings?.language || (nextSpec as any)?.brand?.language || "en",
+        logo: (nextSpec as any)?.settings?.logo || null
       }
     });
   } catch (error) {

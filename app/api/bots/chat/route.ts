@@ -16,24 +16,7 @@ export async function POST(req: NextRequest) {
     
     const bot = await prisma.bot.findUnique({ 
       where: { id: botId }, 
-      include: { versions: true },
-      select: {
-        id: true,
-        name: true,
-        type: true,
-        spec: true,
-        metadata: true,
-        companyUrl: true,
-        createdAt: true,
-        updatedAt: true,
-        userId: true,
-        isActive: true,
-        usageCount: true,
-        lastUsedAt: true,
-        isHeadless: true,
-        cloneCount: true,
-        versions: true
-      }
+      include: { versions: true }
     });
     if (!bot) return NextResponse.json({ error: "Bot not found" }, { status: 404 });
 
@@ -378,7 +361,9 @@ Keep answers concise and helpful.`;
     let toneAdjustment = '';
     
     // Use tone from request or bot metadata
-    const requestedTone = tone || (bot.metadata as any)?.tone;
+    const requestedTone = tone 
+      || (activeSpec as any)?.brand?.tone 
+      || (activeSpec as any)?.settings?.tone;
     if (requestedTone) {
       const toneMap: Record<string, string> = {
         'Professional': '\n\nTONE: Professional and business-focused. Be clear, concise, and authoritative while remaining helpful.',
