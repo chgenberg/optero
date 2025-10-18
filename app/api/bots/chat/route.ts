@@ -237,7 +237,6 @@ export async function POST(req: NextRequest) {
     };
 
     // RAG: Semantic search in BotKnowledge (JSONB-based cosine similarity)
-    let ragContext = '';
     try {
       const lastUserMsg = history.filter((h: any) => h.role === 'user').slice(-1)[0]?.content || '';
       if (lastUserMsg) {
