@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, X, Upload, Loader2, CheckCircle2, Bot, ArrowRight, Paperclip, Star, Zap, Shield } from "lucide-react";
+import { Send, X, Upload, Loader2, CheckCircle2, Bot, ArrowRight, Paperclip, Star, Zap, Shield, Settings } from "lucide-react";
 
 interface ScrapeResult {
   success?: boolean;
@@ -22,6 +22,7 @@ export default function PersonalAgentLanding() {
   const [scrapeProgress, setScrapeProgress] = useState(0);
   const [scrapeResult, setScrapeResult] = useState<ScrapeResult | null>(null);
   const scrapeAbortRef = useRef<AbortController | null>(null);
+  const [scrapingComplete, setScrapingComplete] = useState(false);
 
   const [uploading, setUploading] = useState(false);
   const [uploadText, setUploadText] = useState<string>("");
@@ -35,6 +36,16 @@ export default function PersonalAgentLanding() {
   const [chatLoading, setChatLoading] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const uploadInChatRef = useRef<HTMLInputElement>(null);
+  const [showSettings, setShowSettings] = useState(false);
+  
+  // Bot settings state
+  const [botSettings, setBotSettings] = useState({
+    name: "Your AI Assistant",
+    tone: "Professional",
+    color: "#000000",
+    language: "en",
+    logo: null as string | null
+  });
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -46,17 +57,22 @@ export default function PersonalAgentLanding() {
     try {
       setScraping(true);
       setScrapeProgress(0);
+      setScrapingComplete(false);
       
-      // Simulate progress
-      const progressInterval = setInterval(() => {
-        setScrapeProgress(prev => {
-          if (prev >= 90) {
-            clearInterval(progressInterval);
-            return 90;
-          }
-          return prev + Math.random() * 20;
-        });
-      }, 500);
+      // Progress animation: 0-100% over 1.5 minutes (90 seconds)
+      const startTime = Date.now();
+      const duration = 90000; // 90 seconds
+      let progressInterval: NodeJS.Timeout;
+      
+      progressInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min((elapsed / duration) * 100, 99);
+        setScrapeProgress(Math.round(progress));
+        
+        if (progress >= 99) {
+          clearInterval(progressInterval);
+        }
+      }, 100);
       
       const ctrl = new AbortController();
       scrapeAbortRef.current = ctrl;
@@ -68,6 +84,8 @@ export default function PersonalAgentLanding() {
       });
       const data = (await res.json()) as ScrapeResult;
       
+      // Scraping complete - jump to 100%
+      setScrapingComplete(true);
       clearInterval(progressInterval);
       setScrapeProgress(100);
       setScrapeResult(data);
@@ -175,32 +193,175 @@ export default function PersonalAgentLanding() {
   if (botId && step === 2) {
     // Full chat interface
     return (
-      <div className="h-screen bg-white flex flex-col">
-        {/* Header */}
-        <div className="border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
-                <Bot className="w-6 h-6 text-white" />
+      <>
+        {/* Settings Modal */}
+        <AnimatePresence>
+          {showSettings && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+              onClick={() => setShowSettings(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-2xl p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">Bot Settings</h2>
+                  <button
+                    onClick={() => setShowSettings(false)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {/* Bot Name */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Bot Name
+                    </label>
+                    <input
+                      type="text"
+                      value={botSettings.name}
+                      onChange={(e) => setBotSettings({ ...botSettings, name: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Tone */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Tone
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {['Professional', 'Friendly', 'Casual', 'Formal'].map((tone) => (
+                        <button
+                          key={tone}
+                          onClick={() => setBotSettings({ ...botSettings, tone })}
+                          className={`px-4 py-3 border rounded-2xl transition-all focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent ${
+                            botSettings.tone === tone 
+                              ? 'bg-black text-white border-black' 
+                              : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300'
+                          }`}
+                        >
+                          {tone}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Color */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Accent Color
+                    </label>
+                    <div className="flex gap-2">
+                      {['#000000', '#FF0000', '#00FF00', '#0000FF', '#FF00FF', '#00FFFF'].map((color) => (
+                        <button
+                          key={color}
+                          onClick={() => setBotSettings({ ...botSettings, color })}
+                          className={`w-12 h-12 rounded-2xl border-2 hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black ${
+                            botSettings.color === color ? 'border-black ring-2 ring-black ring-offset-2' : 'border-gray-200'
+                          }`}
+                          style={{ backgroundColor: color }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Language */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Language
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { code: 'en', name: 'English' },
+                        { code: 'sv', name: 'Svenska' },
+                        { code: 'es', name: 'Español' },
+                        { code: 'fr', name: 'Français' }
+                      ].map((lang) => (
+                        <button
+                          key={lang.code}
+                          onClick={() => setBotSettings({ ...botSettings, language: lang.code })}
+                          className={`px-4 py-3 border rounded-2xl transition-all focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent ${
+                            botSettings.language === lang.code 
+                              ? 'bg-black text-white border-black' 
+                              : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300'
+                          }`}
+                        >
+                          {lang.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Logo Upload */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Bot Logo
+                    </label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-gray-400 transition-colors cursor-pointer">
+                      <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                      <p className="text-sm text-gray-600">Click to upload logo</p>
+                      <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 2MB</p>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setShowSettings(false)}
+                  className="w-full mt-8 px-6 py-3 bg-black text-white rounded-2xl font-medium hover:bg-gray-800 transition-colors"
+                >
+                  Save Settings
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 md:p-8">
+        <div className="w-full max-w-2xl bg-black rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[85vh] md:h-[600px]">
+          {/* Header */}
+          <div className="bg-black border-b border-gray-800 px-4 md:px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                  <Bot className="w-6 h-6 text-black" />
+                </div>
+                <div>
+                  <h1 className="font-semibold text-white">{botSettings.name}</h1>
+                  <p className="text-sm text-gray-400">Always ready to help</p>
+                </div>
               </div>
-              <div>
-                <h1 className="font-semibold">Your AI Assistant</h1>
-                <p className="text-sm text-gray-600">Always ready to help</p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowSettings(true)}
+                  className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-800"
+                >
+                  <Settings className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => window.location.href = "/"}
+                  className="text-sm text-gray-400 hover:text-white transition-colors"
+                >
+                  Exit
+                </button>
               </div>
             </div>
-            <button
-              onClick={() => window.location.href = "/"}
-              className="text-sm text-gray-600 hover:text-black transition-colors"
-            >
-              Exit
-            </button>
           </div>
-        </div>
 
-        {/* Messages */}
-        <div ref={chatContainerRef} className="flex-1 overflow-y-auto px-6 py-6">
-          <div className="max-w-3xl mx-auto space-y-4">
-            {chatMessages.map((msg, i) => (
+          {/* Messages */}
+          <div ref={chatContainerRef} className="flex-1 overflow-y-auto px-4 md:px-6 py-6 bg-white">
+            <div className="space-y-4">
+              {chatMessages.map((msg, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 10 }}
@@ -251,16 +412,17 @@ export default function PersonalAgentLanding() {
               </motion.div>
             )}
           </div>
-        </div>
+            </div>
+          </div>
 
-        {/* Input */}
-        <div className="border-t border-gray-200 px-6 py-4">
-          <div className="max-w-3xl mx-auto flex items-center gap-2">
-            <button 
-              onClick={() => uploadInChatRef.current?.click()} 
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Paperclip className="w-5 h-5" />
+          {/* Input */}
+          <div className="bg-black border-t border-gray-800 px-4 md:px-6 py-4">
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => uploadInChatRef.current?.click()} 
+                className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                <Paperclip className="w-5 h-5 text-white" />
             </button>
             <input 
               ref={uploadInChatRef} 
@@ -287,25 +449,26 @@ export default function PersonalAgentLanding() {
                 e.currentTarget.value = '';
               }} 
             />
-            <div className="relative flex-1">
-              <input
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }}}
-                placeholder="Ask anything about your company…"
-                className="w-full border border-gray-300 rounded-full px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-              />
-              <button
-                onClick={sendChat}
-                disabled={!chatInput.trim() || chatLoading}
-                className="absolute right-1 top-1/2 -translate-y-1/2 p-2 bg-black text-white rounded-full disabled:opacity-40 transition-opacity"
-              >
-                <Send className="w-4 h-4" />
-              </button>
+              <div className="relative flex-1">
+                <input
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }}}
+                  placeholder="Ask anything about your company…"
+                  className="w-full bg-gray-900 text-white border border-gray-700 rounded-full px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent placeholder-gray-500"
+                />
+                <button
+                  onClick={sendChat}
+                  disabled={!chatInput.trim() || chatLoading}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 p-2 bg-white text-black rounded-full disabled:opacity-40 transition-opacity hover:bg-gray-200"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -521,16 +684,26 @@ export default function PersonalAgentLanding() {
                     >
                       {scraping && (
                         <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                          <div className="flex items-center gap-3 mb-2">
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                            <span className="font-medium">Analyzing your website...</span>
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-3">
+                              <Loader2 className="w-5 h-5 animate-spin" />
+                              <span className="font-medium">Analyzing your website...</span>
+                            </div>
+                            <span className="text-sm font-medium">{scrapeProgress}%</span>
                           </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                             <motion.div
-                              className="bg-black h-2 rounded-full"
+                              className="bg-black h-3 rounded-full relative"
                               initial={{ width: 0 }}
                               animate={{ width: `${scrapeProgress}%` }}
-                            />
+                              transition={{ duration: 0.3 }}
+                            >
+                              <motion.div
+                                className="absolute inset-0 bg-white/20"
+                                animate={{ x: ["0%", "100%"] }}
+                                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                              />
+                            </motion.div>
                           </div>
                         </div>
                       )}
