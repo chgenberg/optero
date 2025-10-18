@@ -330,68 +330,85 @@ export default function PersonalAgentLanding() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center max-w-3xl w-full"
+            className="max-w-3xl w-full"
           >
-            {/* Icon */}
+            {/* Box with pulsating shadow */}
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", duration: 0.6 }}
-              className="w-24 h-24 bg-black rounded-full mx-auto mb-8 flex items-center justify-center relative"
+              className="relative bg-white border-2 border-black rounded-2xl p-12 text-center"
+              animate={{
+                boxShadow: [
+                  "0 0 20px rgba(0,0,0,0.1)",
+                  "0 0 40px rgba(0,0,0,0.15)",
+                  "0 0 20px rgba(0,0,0,0.1)"
+                ]
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
             >
-              <Bot className="w-12 h-12 text-white" />
+              {/* Icon */}
               <motion.div
-                className="absolute inset-0 bg-black rounded-full"
-                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-            </motion.div>
-
-            {/* Title */}
-            <h2 className="text-5xl font-bold mb-6 tracking-tight">
-              Create your personal agent
-            </h2>
-            
-            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-              Transform your company knowledge into an intelligent AI assistant. 
-              Upload documents, connect your website, and start chatting in minutes.
-            </p>
-            
-            {/* CTA Button */}
-            <motion.button
-              onClick={onStartHere}
-              className="bg-black text-white px-10 py-5 rounded-full font-medium text-lg inline-flex items-center gap-3 group"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Start here
-              <motion.span
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", duration: 0.6 }}
+                className="w-24 h-24 bg-black rounded-full mx-auto mb-8 flex items-center justify-center relative"
               >
-                →
-              </motion.span>
-            </motion.button>
-            
-            {/* Features */}
-            <div className="flex justify-center gap-8 mt-12">
-              {[
-                { Icon: Star, text: "Free" },
-                { Icon: Zap, text: "Easy setup" },
-                { Icon: Shield, text: "Super safe" }
-              ].map((item, i) => (
+                <Bot className="w-12 h-12 text-white" />
                 <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + i * 0.1 }}
-                  className="flex items-center gap-2"
+                  className="absolute inset-0 bg-black rounded-full"
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+              </motion.div>
+
+              {/* Title */}
+              <h2 className="text-5xl font-bold mb-6 tracking-tight">
+                Create your personal agent
+              </h2>
+              
+              <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+                Transform your company knowledge into an intelligent AI assistant. 
+                Upload documents, connect your website, and start chatting in minutes.
+              </p>
+              
+              {/* CTA Button */}
+              <motion.button
+                onClick={onStartHere}
+                className="bg-black text-white px-10 py-5 rounded-full font-medium text-lg inline-flex items-center gap-3 group"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Start here
+                <motion.span
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  <item.Icon className="w-5 h-5 text-black" />
-                  <span className="font-medium">{item.text}</span>
-                </motion.div>
-              ))}
-            </div>
+                  →
+                </motion.span>
+              </motion.button>
+              
+              {/* Features */}
+              <div className="flex justify-center gap-8 mt-12">
+                {[
+                  { Icon: Star, text: "Free" },
+                  { Icon: Zap, text: "Easy setup" },
+                  { Icon: Shield, text: "Super safe" }
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + i * 0.1 }}
+                    className="flex items-center gap-2"
+                  >
+                    <item.Icon className="w-5 h-5 text-black" />
+                    <span className="font-medium">{item.text}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       )}
