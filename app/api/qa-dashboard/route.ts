@@ -283,16 +283,16 @@ export async function GET(req: NextRequest) {
 
     // Build bot-specific stats
     const botStats: BotQAStats[] = Array.from(botStatsMap.values()).map((stats): BotQAStats => {
-      const topQuestions: Array<{ question: string; count: number }> = Array.from(stats.questionCounts.entries())
-        .map(([q, count]) => ({ 
+      const topQuestions = Array.from(stats.questionCounts.entries())
+        .map(([q, count]): { question: string; count: number } => ({ 
           question: String(q), 
           count: Number(count) 
         }))
         .sort((a, b) => b.count - a.count)
         .slice(0, 10);
       
-      const unansweredQuestions: string[] = Array.from(stats.unansweredQuestions)
-        .map(q => String(q))
+      const unansweredQuestions = Array.from(stats.unansweredQuestions)
+        .map((q): string => String(q))
         .slice(0, 20);
 
       return {
