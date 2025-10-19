@@ -432,6 +432,7 @@ model Bot {
   knowledge    BotKnowledge[]
   sessions     BotSession[]
   ratings      BotRating[]
+  qaDatabase   BotQA[]
   
   @@index([companyUrl])
   @@index([userId])
@@ -470,6 +471,47 @@ model BotKnowledge {
   
   @@index([botId])
   @@index([sourceUrl])
+}
+
+// Question-Answer pairs for structured RAG
+model BotQA {
+  id            String   @id @default(cuid())
+  botId         String
+  
+  // Question and answer
+  question      String   @db.Text
+  answer        String   @db.Text
+  category      String   // "customer" | "internal" | "faq" | "policy" | "product" | "support"
+  
+  // Quality metrics
+  confidence    Float    @default(0) // 0-1, GPT's confidence in answer
+  verified      Boolean  @default(false) // Admin verified
+  verifiedBy    String?  // Admin user ID who verified
+  verifiedAt    DateTime?
+  
+  // Source tracking
+  sourceUrl     String?  // Where this Q&A came from
+  sourceType    String   @default("generated") // "generated" | "faq_detected" | "manual"
+  
+  // Usage stats
+  hitCount      Int      @default(0) // How many times this Q&A was used
+  feedbackScore Float?   // Average user feedback (1-5)
+  feedbackCount Int      @default(0)
+  
+  // Search optimization
+  keywords      Json?    // Array of keywords for faster matching
+  relatedQuestions Json? // Array of similar questions
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  bot           Bot      @relation(fields: [botId], references: [id], onDelete: Cascade)
+  
+  @@index([botId])
+  @@index([category])
+  @@index([verified])
+  @@index([confidence])
+  @@index([hitCount])
 }
 
 // Session tracking for multi-turn conversations

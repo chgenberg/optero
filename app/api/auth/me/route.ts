@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
       include: {
-        company: true
+        companyRef: true
       }
     });
 
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
       id: user.id,
       email: user.email,
       name: user.name,
-      company: user.company,
+      company: user.companyRef,
       isInternal: user.isInternal,
       role: user.role,
       permissions: user.permissions

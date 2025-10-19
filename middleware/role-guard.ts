@@ -9,6 +9,7 @@ interface DecodedToken {
   email: string;
   role: UserRole;
   isInternal: boolean;
+  companyId?: string;
 }
 
 /**

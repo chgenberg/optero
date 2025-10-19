@@ -286,10 +286,98 @@ Keep answers concise and helpful.`;
       } catch { return text; }
     };
 
-    // RAG: Semantic search in BotKnowledge (JSONB-based cosine similarity)
+    // STEP 1: Q&A Database search (fastest, most accurate)
+    let qaMatch: any = null;
     try {
       const lastUserMsg = history.filter((h: any) => h.role === 'user').slice(-1)[0]?.content || '';
-      if (lastUserMsg) {
+      if (lastUserMsg && lastUserMsg.length > 5) {
+        // Get all Q&A pairs for this bot (sorted by confidence)
+        const allQAs = await prisma.botQA.findMany({
+          where: { botId },
+          orderBy: [
+            { verified: 'desc' },
+            { confidence: 'desc' },
+            { hitCount: 'desc' }
+          ],
+          take: 100
+        });
+
+        if (allQAs.length > 0) {
+          // Simple keyword matching with scoring
+          const userMsgLower = lastUserMsg.toLowerCase();
+          const userWords = userMsgLower.split(/\s+/).filter(w => w.length > 2);
+          
+          const scoredQAs = allQAs.map(qa => {
+            const questionLower = qa.question.toLowerCase();
+            
+            // Exact match = highest score
+            if (questionLower === userMsgLower) {
+              return { qa, score: 1.0 };
+            }
+            
+            // Substring match
+            if (questionLower.includes(userMsgLower) || userMsgLower.includes(questionLower)) {
+              return { qa, score: 0.85 };
+            }
+            
+            // Keyword overlap scoring
+            const qWords = questionLower.split(/\s+/).filter(w => w.length > 2);
+            const overlap = userWords.filter(w => qWords.some(qw => qw.includes(w) || w.includes(qw)));
+            const keywordScore = overlap.length / Math.max(userWords.length, qWords.length);
+            
+            // Boost score if verified or high confidence
+            const boostMultiplier = qa.verified ? 1.2 : (qa.confidence > 0.8 ? 1.1 : 1.0);
+            
+            return { qa, score: keywordScore * boostMultiplier };
+          });
+
+          // Get best match above threshold
+          const bestMatch = scoredQAs
+            .filter(item => item.score > 0.4)
+            .sort((a, b) => b.score - a.score)[0];
+
+          if (bestMatch && bestMatch.score > 0.4) {
+            qaMatch = bestMatch.qa;
+            
+            // Update hit count
+            await prisma.botQA.update({
+              where: { id: qaMatch.id },
+              data: { hitCount: { increment: 1 } }
+            }).catch(() => {});
+            
+            console.log(`✅ Q&A Match: "${qaMatch.question}" (score: ${bestMatch.score.toFixed(2)}, confidence: ${qaMatch.confidence})`);
+            
+            // If high confidence match, use it directly
+            if (bestMatch.score > 0.7 && qaMatch.confidence > 0.7) {
+              ragContext = `\n\n=== VERIFIED ANSWER FROM WEBSITE ===
+The user is asking about: "${qaMatch.question}"
+CORRECT ANSWER (confidence: ${(qaMatch.confidence * 100).toFixed(0)}%, verified: ${qaMatch.verified ? 'YES' : 'NO'}):
+${qaMatch.answer}
+
+INSTRUCTION: Use this answer directly. This information comes from the company's website and has been verified as correct.
+===================================\n`;
+            } else {
+              // Include as context but continue to semantic search
+              ragContext = `\n\n=== POSSIBLE ANSWER FROM WEBSITE ===
+Similar question found: "${qaMatch.question}"
+Suggested answer (confidence: ${(qaMatch.confidence * 100).toFixed(0)}%):
+${qaMatch.answer}
+
+INSTRUCTION: Consider using this answer, but adapt it to the user's specific question if needed.
+===================================\n`;
+            }
+          }
+        }
+      }
+    } catch (qaErr) {
+      console.error('Q&A search error:', qaErr);
+      // Continue without Q&A if it fails
+    }
+
+    // STEP 2: RAG Semantic search (fallback if no high-confidence Q&A match)
+    try {
+      const lastUserMsg = history.filter((h: any) => h.role === 'user').slice(-1)[0]?.content || '';
+      if (lastUserMsg && (!qaMatch || qaMatch.confidence < 0.7)) {
         // Generate embedding for user query
         const queryEmbedding = await openai.embeddings.create({
           model: "text-embedding-ada-002",
@@ -327,11 +415,15 @@ Keep answers concise and helpful.`;
           
           const threshold = 0.6; // slightly lower to include more context like brand colors
           if (ranked.length > 0 && ranked[0].similarity > threshold) {
-            ragContext = '\n\nRelevant information from knowledge base:\n' + 
+            const semanticContext = '\n\n=== ADDITIONAL INFORMATION FROM WEBSITE ===\n' + 
               ranked
                 .filter(r => r.similarity > threshold)
-                .map((r: any) => `[${r.title}](${r.sourceUrl || ''}): ${r.content}`)
-                .join('\n\n');
+                .map((r: any, index: number) => `Source ${index + 1} (relevance: ${(r.similarity * 100).toFixed(0)}%):\n${r.content}`)
+                .join('\n\n') +
+              '\n\nINSTRUCTION: Use this contextual information to provide a complete answer.\n===================================';
+            
+            // Append to existing ragContext (don't overwrite Q&A match)
+            ragContext += semanticContext;
           }
         }
       }
@@ -415,7 +507,24 @@ Keep answers concise and helpful.`;
       return 'RESPOND IN: Match the user\'s language.';
     })();
 
-    const system = `You are a helpful business chatbot. Be conversational and friendly.\n\nIMPORTANT: Always respond to greetings naturally (Hi, Hello, How are you, etc.). Don't use fallback for basic conversation.\n\nLANGUAGE: ${languageHint}\n\nSpec: ${specSafe}\n\nBot type: ${bot.type}.${subtype || ''}${policies}\n${extra}\n${typeInstructions}${lengthInstr}${ragContext}${personalizedGreeting}${toneAdjustment}${offHoursNote}\n\nFor business questions where information is missing from context: ${fallbackText}`;
+    const system = `You are a helpful business chatbot. Be conversational and friendly.
+
+IMPORTANT INSTRUCTIONS:
+1. Always respond to greetings naturally (Hi, Hello, How are you, etc.)
+2. When you see "VERIFIED ANSWER FROM WEBSITE" - use that answer directly, it's confirmed correct
+3. When you see "POSSIBLE ANSWER FROM WEBSITE" - adapt it to the user's specific question
+4. When you see "ADDITIONAL INFORMATION FROM WEBSITE" - use it to enhance your answer
+5. Always prioritize information from the website over general knowledge
+
+LANGUAGE: ${languageHint}
+
+Spec: ${specSafe}
+
+Bot type: ${bot.type}.${subtype || ''}${policies}
+${extra}
+${typeInstructions}${lengthInstr}${ragContext}${personalizedGreeting}${toneAdjustment}${offHoursNote}
+
+For business questions where information is missing from context: ${fallbackText}`;
 
     const messages = [
       { role: "system", content: system },

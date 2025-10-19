@@ -28,8 +28,10 @@ interface Message {
 
 export default function InternalBotDashboard() {
   const router = useRouter();
-  const params = useParams();
-  const botId = params.botId as string;
+  const params = useParams() as Record<string, string | string[]> | null;
+  const botId = params
+    ? (Array.isArray(params.botId) ? params.botId[0] : (params.botId || ""))
+    : "";
   
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -44,6 +46,7 @@ export default function InternalBotDashboard() {
   useEffect(() => {
     // Check authentication
     const checkAuth = async () => {
+      if (!botId) return;
       try {
         const authResponse = await fetch("/api/auth/me");
         if (!authResponse.ok) {

@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       include: {
-        company: true
+        companyRef: true
       }
     });
 
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         id: user.id,
         email: user.email,
         name: user.name,
-        company: user.company,
+        company: user.companyRef,
         role: user.role,
         permissions: user.permissions
       },

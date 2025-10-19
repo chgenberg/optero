@@ -136,9 +136,27 @@ export function getRolePermissions(
   customPermissions?: Permission[]
 ): Permission[] {
   const basePermissions = rolePermissions[role] || [];
-  return customPermissions 
-    ? [...new Set([...basePermissions, ...customPermissions])]
-    : basePermissions;
+  if (!customPermissions || customPermissions.length === 0) {
+    return basePermissions;
+  }
+  // Avoid Set iteration for ES5 targets by deduping via object keys
+  const dedup: Record<string, true> = {};
+  const out: Permission[] = [];
+  for (const p of basePermissions) {
+    const k = String(p);
+    if (!dedup[k]) {
+      dedup[k] = true;
+      out.push(p);
+    }
+  }
+  for (const p of customPermissions) {
+    const k = String(p);
+    if (!dedup[k]) {
+      dedup[k] = true;
+      out.push(p);
+    }
+  }
+  return out;
 }
 
 /**

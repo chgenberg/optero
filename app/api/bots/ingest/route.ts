@@ -36,6 +36,20 @@ export async function POST(req: NextRequest) {
       }
     });
 
+    // Trigger Q&A generation in background (don't await)
+    if (content.length > 200) {
+      fetch(`${req.url.replace('/ingest', '/qa/generate')}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          botId,
+          content,
+          sourceUrl: source || null,
+          botPurpose: (bot.spec as any)?.purpose || 'customer'
+        })
+      }).catch(e => console.error('Q&A generation failed:', e));
+    }
+
     return NextResponse.json({ success: true, id: knowledge.id });
   } catch (e: any) {
     return NextResponse.json({ error: "failed_to_ingest", details: e?.message }, { status: 500 });

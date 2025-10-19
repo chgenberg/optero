@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { 
@@ -14,10 +14,10 @@ import {
   EyeOff
 } from "lucide-react";
 
-export default function InternalLoginPage() {
+function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/dashboard';
+  const redirect = (searchParams ? searchParams.get('redirect') : null) || '/dashboard';
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -240,5 +240,13 @@ export default function InternalLoginPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function InternalLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-pulse"><div className="w-12 h-12 bg-gray-300 rounded-full mx-auto mb-4"></div><div className="h-4 bg-gray-300 rounded w-32"></div></div></div>}>
+      <LoginPageContent />
+    </Suspense>
   );
 }

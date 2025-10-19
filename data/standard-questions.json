@@ -1,0 +1,223 @@
+{
+  "customer": {
+    "general": [
+      "What are your opening hours?",
+      "Where are you located?",
+      "How can I contact you?",
+      "What is your phone number?",
+      "What is your email address?",
+      "Do you have a physical store?",
+      "What areas do you serve?",
+      "What languages do you support?",
+      "Are you hiring?",
+      "How long have you been in business?"
+    ],
+    "products": [
+      "What products do you offer?",
+      "What services do you provide?",
+      "Do you have a product catalog?",
+      "What are your most popular products?",
+      "Do you offer custom solutions?",
+      "What brands do you carry?",
+      "Are your products sustainable?",
+      "Do you offer product demos?",
+      "What is the difference between your products?",
+      "Which product is right for me?"
+    ],
+    "pricing": [
+      "How much does it cost?",
+      "What are your prices?",
+      "Do you offer discounts?",
+      "Do you have a price list?",
+      "Are there any hidden fees?",
+      "What payment methods do you accept?",
+      "Do you offer payment plans?",
+      "Can I get a quote?",
+      "Do you offer bulk discounts?",
+      "Is there a subscription option?"
+    ],
+    "shipping": [
+      "Do you offer shipping?",
+      "What are the shipping costs?",
+      "How long does shipping take?",
+      "Do you ship internationally?",
+      "Can I track my order?",
+      "What is your return policy?",
+      "Do you offer free shipping?",
+      "What carriers do you use?",
+      "Can I pick up my order?",
+      "Do you offer express shipping?"
+    ],
+    "support": [
+      "How can I get support?",
+      "What is your support phone number?",
+      "Do you offer email support?",
+      "Is there a live chat?",
+      "What are your support hours?",
+      "Do you offer technical support?",
+      "How do I report a problem?",
+      "Where can I find help documentation?",
+      "Do you have a knowledge base?",
+      "Can I schedule a support call?"
+    ],
+    "returns": [
+      "What is your return policy?",
+      "How do I return a product?",
+      "How long do I have to return?",
+      "Do you charge a restocking fee?",
+      "How long does a refund take?",
+      "Can I exchange a product?",
+      "What condition must returns be in?",
+      "Who pays for return shipping?",
+      "How do I get a return label?",
+      "Can I return opened products?"
+    ],
+    "account": [
+      "How do I create an account?",
+      "How do I reset my password?",
+      "How do I update my profile?",
+      "How do I change my email?",
+      "How do I delete my account?",
+      "Is my data secure?",
+      "How do I view my order history?",
+      "Can I save my payment information?",
+      "How do I manage my subscriptions?",
+      "How do I update my billing information?"
+    ],
+    "orders": [
+      "How do I place an order?",
+      "Can I cancel my order?",
+      "How do I modify my order?",
+      "Where is my order?",
+      "Can I change my shipping address?",
+      "What if my order is wrong?",
+      "What if my order is damaged?",
+      "Can I reorder the same items?",
+      "How do I apply a promo code?",
+      "Can I order over the phone?"
+    ],
+    "company": [
+      "Who are you?",
+      "What is your mission?",
+      "What are your values?",
+      "Where can I read your story?",
+      "Do you have case studies?",
+      "Who are your clients?",
+      "What makes you different?",
+      "Are you certified?",
+      "Do you have partners?",
+      "Where can I read reviews?"
+    ],
+    "legal": [
+      "What is your privacy policy?",
+      "What are your terms and conditions?",
+      "Do you use cookies?",
+      "How do you handle my data?",
+      "Can I request my data?",
+      "Can I delete my data?",
+      "What is your GDPR policy?",
+      "Do you share my information?",
+      "What are your cookie settings?",
+      "Where can I find your legal documents?"
+    ]
+  },
+  "internal": {
+    "hr": [
+      "How do I request time off?",
+      "What is the vacation policy?",
+      "How do I report sick leave?",
+      "What are the company benefits?",
+      "How do I enroll in health insurance?",
+      "What is the parental leave policy?",
+      "How do I update my personal information?",
+      "What is the dress code?",
+      "What are the office hours?",
+      "How do I request remote work?"
+    ],
+    "it": [
+      "How do I reset my password?",
+      "How do I access VPN?",
+      "What is the WiFi password?",
+      "How do I request software?",
+      "Who do I contact for IT support?",
+      "How do I report a technical issue?",
+      "How do I set up my email?",
+      "What are the security policies?",
+      "How do I access shared drives?",
+      "What devices are approved?"
+    ],
+    "finance": [
+      "How do I submit an expense report?",
+      "What expenses can I claim?",
+      "When do I get reimbursed?",
+      "What is the travel policy?",
+      "How do I request a purchase?",
+      "What is the approval process?",
+      "What credit cards are available?",
+      "How do I access payroll information?",
+      "What is the invoice process?",
+      "Who approves budgets?"
+    ],
+    "brand": [
+      "What are our brand colors?",
+      "Where can I find logo files?",
+      "What fonts do we use?",
+      "What is our brand voice?",
+      "What are the brand guidelines?",
+      "Can I use the logo externally?",
+      "What are approved templates?",
+      "Where are marketing assets?",
+      "What is the social media policy?",
+      "Who approves marketing materials?"
+    ],
+    "operations": [
+      "How do I book a meeting room?",
+      "What is the office layout?",
+      "How do I order supplies?",
+      "What is the parking policy?",
+      "How do I report a facility issue?",
+      "What is the emergency procedure?",
+      "Where are the fire exits?",
+      "How do I get building access?",
+      "What is the visitor policy?",
+      "How do I report safety concerns?"
+    ],
+    "policies": [
+      "What is the code of conduct?",
+      "What is the anti-harassment policy?",
+      "What is the data protection policy?",
+      "What is the social media policy?",
+      "What is the conflict of interest policy?",
+      "What is the whistleblower policy?",
+      "What are the ethics guidelines?",
+      "What is the remote work policy?",
+      "What is the BYOD policy?",
+      "What is the sustainability policy?"
+    ],
+    "tools": [
+      "How do I use our CRM?",
+      "What project management tools do we use?",
+      "How do I access the knowledge base?",
+      "What communication tools do we use?",
+      "How do I share files?",
+      "What analytics tools are available?",
+      "How do I create a report?",
+      "What are the Excel templates?",
+      "How do I automate tasks?",
+      "Where is the documentation?"
+    ],
+    "onboarding": [
+      "What do I need on my first day?",
+      "Who is my manager?",
+      "What is the org structure?",
+      "How do I access training?",
+      "What is my probation period?",
+      "When do I get my equipment?",
+      "How do I set up email signature?",
+      "What meetings should I attend?",
+      "Who are my team members?",
+      "Where can I find the employee handbook?"
+    ]
+  }
+}
+
