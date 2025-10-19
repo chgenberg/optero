@@ -18,11 +18,13 @@ import Stepper from "@/components/Stepper";
 export default function LaunchBotPage() {
   const router = useRouter();
   const [botType, setBotType] = useState('support');
+  const [botSubtype, setBotSubtype] = useState('');
   const [botPurpose, setBotPurpose] = useState('customer');
   const [isHeadless, setIsHeadless] = useState(false);
   const [hasIntegrations, setHasIntegrations] = useState(false);
   const [copied, setCopied] = useState(false);
   const [botId, setBotId] = useState('');
+  const [websiteUrl, setWebsiteUrl] = useState('');
 
   // Build embed code using state only (no window/sessionStorage here)
   const embedCode = `<script>\n  (function() {\n    const script = document.createElement('script');\n    script.src = 'https://myaiguy.com/widget.js';\n    script.setAttribute('data-bot-id', '${botId}');\n    script.async = true;\n    document.head.appendChild(script);\n  })();\n</script>`;
@@ -32,6 +34,9 @@ export default function LaunchBotPage() {
     const storedType = typeof window !== 'undefined' ? (sessionStorage.getItem('selectedBotType') || 'support') : 'support';
     setBotType(storedType);
     
+    const storedSubtype = typeof window !== 'undefined' ? (sessionStorage.getItem('selectedBotSubtype') || '') : '';
+    setBotSubtype(storedSubtype);
+    
     const storedPurpose = typeof window !== 'undefined' ? (sessionStorage.getItem('botPurpose') || 'customer') : 'customer';
     setBotPurpose(storedPurpose);
 
@@ -39,9 +44,20 @@ export default function LaunchBotPage() {
     setHasIntegrations(storedHasIntegrations);
     setIsHeadless(storedPurpose === 'internal' || storedHasIntegrations || storedType === 'workflow');
 
+    const storedUrl = typeof window !== 'undefined' ? (sessionStorage.getItem('botWebsiteUrl') || '') : '';
+    setWebsiteUrl(storedUrl);
+
     // Generate mock bot ID
     setBotId('bot_' + Math.random().toString(36).substr(2, 9));
   }, []);
+
+  const handleChangePurpose = () => {
+    router.push('/business/bot-builder/bot-purpose');
+  };
+
+  const handleChangeType = () => {
+    router.push('/business/bot-builder/select');
+  };
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(embedCode);
@@ -92,6 +108,69 @@ export default function LaunchBotPage() {
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Congratulations! Your {botType} bot has been successfully created and configured.
           </p>
+        </motion.div>
+
+        {/* Configuration Summary */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white rounded-2xl border-2 border-gray-200 p-6 mb-8"
+        >
+          <h3 className="font-semibold text-black mb-6 flex items-center gap-2">
+            <Sparkles className="w-5 h-5" />
+            Bot Configuration Summary
+          </h3>
+          
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Bot Purpose</p>
+              <p className="text-lg font-bold text-black mb-1">
+                {botPurpose === 'internal' ? 'Internal Bot' : 'Customer Bot'}
+              </p>
+              <p className="text-xs text-gray-600 mb-3">
+                {botPurpose === 'internal' ? 'For your team' : 'For website visitors'}
+              </p>
+              <button
+                onClick={handleChangePurpose}
+                className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Change →
+              </button>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Bot Type</p>
+              <p className="text-lg font-bold text-black mb-1 capitalize">
+                {botType}
+              </p>
+              <p className="text-xs text-gray-600 mb-3">
+                {botSubtype ? `Subtype: ${botSubtype}` : 'Standard configuration'}
+              </p>
+              <button
+                onClick={handleChangeType}
+                className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Change →
+              </button>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Website</p>
+              <p className="text-sm font-medium text-black mb-1 truncate">
+                {websiteUrl || 'Not configured'}
+              </p>
+              <p className="text-xs text-gray-600 mb-3">
+                Knowledge source
+              </p>
+              <button
+                onClick={() => router.push('/business/bot-builder/identify')}
+                className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Change →
+              </button>
+            </div>
+          </div>
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8 mb-12">

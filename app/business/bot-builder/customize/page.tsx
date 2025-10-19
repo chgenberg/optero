@@ -62,22 +62,28 @@ export default function CustomizeBotPage() {
   useEffect(() => {
     const storedType = sessionStorage.getItem("selectedBotType");
     const storedSubtype = sessionStorage.getItem("selectedBotSubtype");
+    const storedPurpose = sessionStorage.getItem("botPurpose") || 'customer';
     
     if (storedType) {
       setBotType(storedType);
       setBotSubtype(storedSubtype || '');
       
-      // Set default bot names based on type
+      // Set default bot names based on type and purpose
       const nameDefaults: Record<string, string> = {
-        'lead': 'Sales Assistant',
-        'support': 'Support Agent',
-        'workflow': 'Process Helper',
-        'knowledge': 'Knowledge Expert'
+        'lead': storedPurpose === 'internal' ? 'Internal Lead Assistant' : 'Sales Assistant',
+        'support': storedPurpose === 'internal' ? 'Internal Support Bot' : 'Support Agent',
+        'workflow': storedPurpose === 'internal' ? 'Internal Workflow Helper' : 'Process Helper',
+        'knowledge': storedPurpose === 'internal' ? 'Company Knowledge Bot' : 'Knowledge Expert'
       };
       setBotName(nameDefaults[storedType] || 'AI Assistant');
       
-      // Set default welcome messages based on type
-      const welcomeDefaults: Record<string, string> = {
+      // Set default welcome messages based on type and purpose
+      const welcomeDefaults: Record<string, string> = storedPurpose === 'internal' ? {
+        'lead': 'Hi! I can help you with internal lead processes and CRM workflows.',
+        'support': 'Hello! I can assist you with company policies and internal support.',
+        'workflow': 'Welcome! I\'m here to help with internal workflows and procedures.',
+        'knowledge': 'Hi there! Ask me about company policies, brand guidelines, or any internal documentation.'
+      } : {
         'lead': 'Hi! I can help you find the perfect solution for your needs.',
         'support': 'Hello! How can I assist you today?',
         'workflow': 'Welcome! I\'m here to help you get things done quickly.',

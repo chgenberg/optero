@@ -86,10 +86,17 @@ export default function BotPurposePage() {
     // Store the bot purpose
     sessionStorage.setItem("botPurpose", selectedPurpose);
     
-    // Set appropriate bot type based on purpose
+    // Set appropriate bot type and subtype based on purpose
     if (selectedPurpose === 'internal') {
       sessionStorage.setItem("selectedBotType", "knowledge");
       sessionStorage.setItem("selectedBotSubtype", "internal");
+    } else if (selectedPurpose === 'customer') {
+      // Default customer bot to knowledge/faq unless user selected different type earlier
+      const existingType = sessionStorage.getItem("selectedBotType");
+      if (!existingType) {
+        sessionStorage.setItem("selectedBotType", "knowledge");
+        sessionStorage.setItem("selectedBotSubtype", "faq");
+      }
     }
     
     // Navigate to next step

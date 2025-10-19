@@ -119,8 +119,18 @@ export async function POST(req: NextRequest) {
         logoUrl: brandConfig?.logoUrl || null,
         logoPosition: brandConfig?.logoPosition || 'bottom-right',
         logoOffset: brandConfig?.logoOffset || { x: 20, y: 20 },
-        fontUrl: brandConfig?.fontUrl || null
+        fontUrl: brandConfig?.fontUrl || null,
+        responseLength: brandConfig?.responseLength || 'normal',
+        fallbackText: brandConfig?.fallbackText || null,
+        workingHours: brandConfig?.workingHoursStart && brandConfig?.workingHoursEnd ? {
+          startHour: brandConfig.workingHoursStart,
+          endHour: brandConfig.workingHoursEnd,
+          offHoursMessage: brandConfig?.offHoursMessage || ''
+        } : null
       },
+      welcomeMessage: brandConfig?.welcomeMessage || null,
+      quickReplies: brandConfig?.quickReplies || [],
+      customButtons: brandConfig?.customButtons || [],
       policies: defaultPolicies,
       typeSettings
     };
@@ -146,11 +156,18 @@ export async function POST(req: NextRequest) {
       }
     } catch {}
 
+    // Use custom bot name from brandConfig if provided, otherwise generate from company name and purpose
+    let botName = brandConfig?.botName;
+    if (!botName) {
+      const purposeSuffix = botPurpose === 'internal' ? ' (Internal)' : '';
+      botName = `${companyName} ${botType.charAt(0).toUpperCase() + botType.slice(1)} Bot${purposeSuffix}`;
+    }
+
     const bot = await prisma.bot.create({
       data: {
         userId,
         companyUrl: consult.url || null,
-        name: `${companyName} Chatbot`,
+        name: botName,
         type: botType,
         spec
       }
