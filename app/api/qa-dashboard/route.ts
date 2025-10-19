@@ -282,28 +282,34 @@ export async function GET(req: NextRequest) {
       .slice(0, 50);
 
     // Build bot-specific stats
-    const botStats: BotQAStats[] = Array.from(botStatsMap.values()).map(stats => ({
-      botId: stats.botId,
-      botName: stats.botName,
-      totalQuestions: stats.totalQuestions,
-      uniqueQuestions: stats.uniqueQuestions.size,
-      answeredRate: stats.totalQuestions > 0
-        ? (stats.answeredCount / stats.totalQuestions) * 100
-        : 0,
-      avgResponseTime: stats.answeredCount > 0
-        ? stats.totalResponseTime / stats.answeredCount
-        : 0,
-      topQuestions: Array.from(stats.questionCounts.entries())
-        .map(([q, count]): { question: string; count: number } => ({ 
+    const botStats: BotQAStats[] = Array.from(botStatsMap.values()).map((stats): BotQAStats => {
+      const topQuestions: Array<{ question: string; count: number }> = Array.from(stats.questionCounts.entries())
+        .map(([q, count]) => ({ 
           question: String(q), 
           count: Number(count) 
         }))
         .sort((a, b) => b.count - a.count)
-        .slice(0, 10),
-      unansweredQuestions: Array.from(stats.unansweredQuestions)
+        .slice(0, 10);
+      
+      const unansweredQuestions: string[] = Array.from(stats.unansweredQuestions)
         .map(q => String(q))
-        .slice(0, 20),
-    }));
+        .slice(0, 20);
+
+      return {
+        botId: stats.botId,
+        botName: stats.botName,
+        totalQuestions: stats.totalQuestions,
+        uniqueQuestions: stats.uniqueQuestions.size,
+        answeredRate: stats.totalQuestions > 0
+          ? (stats.answeredCount / stats.totalQuestions) * 100
+          : 0,
+        avgResponseTime: stats.answeredCount > 0
+          ? stats.totalResponseTime / stats.answeredCount
+          : 0,
+        topQuestions,
+        unansweredQuestions,
+      };
+    });
 
     // Calculate overall metrics
     const totalQuestions = messages.length;
