@@ -26,6 +26,19 @@ interface BotQAStats {
   unansweredQuestions: string[];
 }
 
+// Internal working shape for aggregating per-bot stats
+type BotStatsWorking = {
+  botId: string;
+  botName: string;
+  totalQuestions: number;
+  uniqueQuestions: Set<string>;
+  answeredCount: number;
+  totalResponseTime: number;
+  totalResponseLength: number;
+  questionCounts: Map<string, number>;
+  unansweredQuestions: Set<string>;
+};
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -184,7 +197,7 @@ export async function GET(req: NextRequest) {
 
     // Build question analytics
     const questionMap = new Map<string, QuestionAnalytics>();
-    const botStatsMap = new Map<string, any>();
+    const botStatsMap = new Map<string, BotStatsWorking>();
 
     // Initialize bot stats
     bots.forEach(bot => {
@@ -282,17 +295,17 @@ export async function GET(req: NextRequest) {
       .slice(0, 50);
 
     // Build bot-specific stats
-    const botStats: BotQAStats[] = Array.from(botStatsMap.values()).map((stats): BotQAStats => {
+    const botStats: BotQAStats[] = Array.from(botStatsMap.values()).map((stats: BotStatsWorking): BotQAStats => {
       const topQuestions = Array.from(stats.questionCounts.entries())
-        .map(([q, count]): { question: string; count: number } => ({ 
+        .map(([q, count]: [string, number]): { question: string; count: number } => ({ 
           question: String(q), 
           count: Number(count) 
         }))
         .sort((a, b) => b.count - a.count)
         .slice(0, 10);
       
-      const unansweredQuestions = Array.from(stats.unansweredQuestions)
-        .map((q): string => String(q))
+      const unansweredQuestions = Array.from(stats.unansweredQuestions.values())
+        .map((q: string): string => String(q))
         .slice(0, 20);
 
       return {
