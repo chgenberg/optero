@@ -294,10 +294,15 @@ export async function GET(req: NextRequest) {
         ? stats.totalResponseTime / stats.answeredCount
         : 0,
       topQuestions: Array.from(stats.questionCounts.entries())
-        .map(([q, count]) => ({ question: q, count }))
+        .map(([q, count]): { question: string; count: number } => ({ 
+          question: String(q), 
+          count: Number(count) 
+        }))
         .sort((a, b) => b.count - a.count)
         .slice(0, 10),
-      unansweredQuestions: Array.from(stats.unansweredQuestions).slice(0, 20),
+      unansweredQuestions: Array.from(stats.unansweredQuestions)
+        .map(q => String(q))
+        .slice(0, 20),
     }));
 
     // Calculate overall metrics
