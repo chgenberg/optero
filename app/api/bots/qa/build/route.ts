@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 
     for (const item of toProcess) {
       try {
-        const messages = [
+        const messages: any[] = [
           { role: 'system', content: system },
           { role: 'user', content: `Question: ${item.question}\n\nWebsite context (partial):\n${siteText}` }
         ];
