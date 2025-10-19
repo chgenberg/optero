@@ -119,6 +119,66 @@
       "Do you share my information?",
       "What are your cookie settings?",
       "Where can I find your legal documents?"
+    ],
+    "ecommerce": [
+      "Do you offer same-day delivery?",
+      "What sizes are available?",
+      "Do you have a size guide?",
+      "Can I try before I buy?",
+      "Do you offer gift wrapping?",
+      "What is your loyalty program?",
+      "Do you have a mobile app?",
+      "Can I save items to wishlist?",
+      "Do you offer student discounts?",
+      "What are your delivery options?"
+    ],
+    "saas": [
+      "Do you offer a free trial?",
+      "What integrations do you support?",
+      "Is there an API available?",
+      "What is your uptime guarantee?",
+      "Do you offer white-label solutions?",
+      "What security certifications do you have?",
+      "Can I export my data?",
+      "Do you offer SSO?",
+      "What is your data retention policy?",
+      "Do you have a developer portal?"
+    ],
+    "services": [
+      "Do you offer consultations?",
+      "What is your response time?",
+      "Do you work on weekends?",
+      "Do you offer emergency services?",
+      "What certifications do you have?",
+      "Do you provide quotes?",
+      "What is included in your service?",
+      "Do you have references?",
+      "Are you insured?",
+      "What areas do you cover?"
+    ],
+    "b2b": [
+      "Do you offer volume discounts?",
+      "What are your payment terms?",
+      "Do you provide invoicing?",
+      "Can we get a dedicated account manager?",
+      "Do you offer training?",
+      "What is your SLA?",
+      "Do you have case studies?",
+      "Can we schedule a demo?",
+      "Do you offer pilot programs?",
+      "What is your implementation timeline?"
+    ],
+    "sustainability": [
+      "Are your products eco-friendly?",
+      "Do you use sustainable packaging?",
+      "What is your carbon footprint?",
+      "Do you have diversity initiatives?",
+      "Where are your products made?",
+      "Do you donate to charity?",
+      "Are you B-Corp certified?",
+      "What are your sustainability goals?",
+      "Do you use renewable energy?",
+      "Are your products vegan/cruelty-free?"
     ]
   },
   "internal": {
@@ -217,6 +277,30 @@
       "What meetings should I attend?",
       "Who are my team members?",
       "Where can I find the employee handbook?"
+    ],
+    "career": [
+      "How do I request professional development?",
+      "What training courses are available?",
+      "How do promotions work?",
+      "Can I transfer departments?",
+      "What is the performance review process?",
+      "Do we have mentorship programs?",
+      "How do I get a certification reimbursed?",
+      "What are the career paths available?",
+      "How often are reviews conducted?",
+      "What is the promotion timeline?"
+    ],
+    "culture": [
+      "What employee benefits do we have?",
+      "Do we have team building events?",
+      "What is the work-from-home policy?",
+      "Are there employee resource groups?",
+      "What wellness programs exist?",
+      "Do we have a mental health policy?",
+      "What holidays do we observe?",
+      "Is there a dress code?",
+      "Can I bring my pet to work?",
+      "What perks are available?"
     ]
   }
 }

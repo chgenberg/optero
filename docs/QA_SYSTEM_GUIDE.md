@@ -59,29 +59,39 @@ model BotQA {
 
 **Categories:**
 
-### Customer Questions (10 kategorier):
-- General (10 frågor): öppettider, kontakt, location
-- Products (10 frågor): produkter, tjänster, varumärken
-- Pricing (10 frågor): priser, rabatter, betalning
-- Shipping (10 frågor): frakt, leverans, spårning
-- Support (10 frågor): support, kontakt, hjälp
-- Returns (10 frågor): returer, återbetalning, byten
-- Account (10 frågor): konto, profil, säkerhet
-- Orders (10 frågor): beställningar, ändringar
-- Company (10 frågor): företagsinfo, värderingar
-- Legal (10 frågor): GDPR, cookies, villkor
+### Customer Questions (15 kategorier):
+**General (100 frågor):**
+- General (10): öppettider, kontakt, location
+- Products (10): produkter, tjänster, varumärken
+- Pricing (10): priser, rabatter, betalning
+- Shipping (10): frakt, leverans, spårning
+- Support (10): support, kontakt, hjälp
+- Returns (10): returer, återbetalning, byten
+- Account (10): konto, profil, säkerhet
+- Orders (10): beställningar, ändringar
+- Company (10): företagsinfo, värderingar
+- Legal (10): GDPR, cookies, villkor
 
-### Internal Questions (8 kategorier):
-- HR (10 frågor): semester, förmåner, föräldraledighet
-- IT (10 frågor): VPN, password, support
-- Finance (10 frågor): expenses, travel, invoices
-- Brand (10 frågor): färger, logotyper, guidelines
-- Operations (10 frågor): faciliteter, booking, säkerhet
-- Policies (10 frågor): etik, GDPR, whistleblower
-- Tools (10 frågor): CRM, project management, Excel
-- Onboarding (10 frågor): första dagen, träning, handbook
+**Bransch-specifika (50 frågor):**
+- E-commerce (10): same-day delivery, size guides, loyalty
+- SaaS/Tech (10): free trial, API, uptime, SSO
+- Services (10): consultations, quotes, certifications
+- B2B (10): volume discounts, SLA, demos
+- Sustainability (10): eco-friendly, carbon footprint, diversity
 
-**Total: 100+ frågor**
+### Internal Questions (10 kategorier):
+- HR (10): semester, förmåner, föräldraledighet
+- IT (10): VPN, password, support
+- Finance (10): expenses, travel, invoices
+- Brand (10): färger, logotyper, guidelines
+- Operations (10): faciliteter, booking, säkerhet
+- Policies (10): etik, GDPR, whistleblower
+- Tools (10): CRM, project management, Excel
+- Onboarding (10): första dagen, träning, handbook
+- Career (10): utveckling, promotion, mentorskap
+- Culture (10): benefits, wellness, work-from-home
+
+**Total: 250 frågor** (150 customer + 100 internal)
 
 ---
 
