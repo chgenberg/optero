@@ -305,7 +305,7 @@ Keep answers concise and helpful.`;
         if (allQAs.length > 0) {
           // Simple keyword matching with scoring
           const userMsgLower = lastUserMsg.toLowerCase();
-          const userWords = userMsgLower.split(/\s+/).filter(w => w.length > 2);
+          const userWords = userMsgLower.split(/\s+/).filter((w: string) => w.length > 2);
           
           const scoredQAs = allQAs.map(qa => {
             const questionLower = qa.question.toLowerCase();
@@ -321,8 +321,8 @@ Keep answers concise and helpful.`;
             }
             
             // Keyword overlap scoring
-            const qWords = questionLower.split(/\s+/).filter(w => w.length > 2);
-            const overlap = userWords.filter(w => qWords.some(qw => qw.includes(w) || w.includes(qw)));
+            const qWords = questionLower.split(/\s+/).filter((w: string) => w.length > 2);
+            const overlap = userWords.filter((w: string) => qWords.some((qw: string) => qw.includes(w) || w.includes(qw)));
             const keywordScore = overlap.length / Math.max(userWords.length, qWords.length);
             
             // Boost score if verified or high confidence
