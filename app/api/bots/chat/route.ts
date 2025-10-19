@@ -5,6 +5,7 @@ import { z } from "zod";
 import { upsertHubspotContactStub } from "@/lib/integrations";
 import { listCentraProducts } from "@/lib/centra";
 import * as cheerio from "cheerio";
+import { deepScrapeSite } from "@/lib/deepScrape";
 import { withRateLimit, rateLimitConfigs } from "@/lib/rate-limit";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -154,19 +155,11 @@ export async function POST(req: NextRequest) {
     const websiteSmartAnswer = async (question: string, companyUrl: string): Promise<string | null> => {
       try {
         const siteUrl = companyUrl && /^https?:\/\//i.test(companyUrl) ? companyUrl : `https://${companyUrl}`;
-        const base = internalBase; // use derived internal base to reach our own API in container
-        
-        // First try deep scrape
-        const dsRes = await fetchWithTimeout(`${base}/api/business/deep-scrape`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: siteUrl })
-        }).catch(() => null as any);
-        
+        // Prefer calling internal function directly to avoid HTTP hops
         let context = '';
-        if (dsRes && dsRes.ok) {
-          const ds = await dsRes.json().catch(() => ({}));
-          const pages: Array<{ title?: string; text?: string }> = Array.isArray(ds?.pages) ? ds.pages : [];
+        try {
+          const ds = await deepScrapeSite(siteUrl);
+          const pages: Array<{ title?: string; text?: string }> = Array.isArray(ds?.pages) ? (ds.pages as any) : [];
           if (pages.length > 0) {
             context = pages
               .slice(0, 6)
@@ -174,7 +167,7 @@ export async function POST(req: NextRequest) {
               .join('\n\n---\n\n')
               .slice(0, 10000);
           }
-        }
+        } catch {}
         
         // For product-specific questions or when scraping doesn't provide enough context, also do a web search
         const needsWebSearch = /products?|catalog|shop|items?|inventory/i.test(question) || context.length < 500;
