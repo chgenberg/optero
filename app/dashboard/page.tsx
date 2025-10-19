@@ -87,6 +87,15 @@ export default function DashboardPage() {
               </p>
             </div>
             <motion.button
+              onClick={() => router.push('/integrations')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="minimal-button-outline flex items-center gap-2"
+            >
+              <Link2 className="w-5 h-5" />
+              <span className="hidden sm:inline">INTEGRATIONS</span>
+            </motion.button>
+            <motion.button
               onClick={() => router.push('/business/bot-builder')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -95,15 +104,6 @@ export default function DashboardPage() {
               <Plus className="w-5 h-5" />
               <span className="hidden sm:inline">CREATE NEW BOT</span>
               <span className="sm:hidden">NEW BOT</span>
-            </motion.button>
-            <motion.button
-              onClick={() => router.push('/integrations')}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="minimal-button-outline flex items-center gap-2"
-            >
-              <Link2 className="w-5 h-5" />
-              <span className="hidden sm:inline">INTEGRATIONS</span>
             </motion.button>
           </div>
         </motion.div>

@@ -10,7 +10,28 @@ export async function GET(req: NextRequest) {
     const email = searchParams.get("email");
     
     if (!botId && !email) {
-      return NextResponse.json({ error: "botId or email required" }, { status: 400 });
+      // Admin mode: return all bots
+      const allBots = await prisma.bot.findMany({
+        orderBy: { createdAt: 'desc' },
+        include: {
+          _count: { select: { usages: true, sessions: true, knowledge: true } }
+        }
+      });
+      return NextResponse.json({
+        bots: allBots.map(b => ({
+          id: b.id,
+          name: b.name,
+          type: b.type,
+          companyUrl: b.companyUrl,
+          isActive: b.isActive,
+          createdAt: b.createdAt,
+          stats: {
+            messages: b._count.usages,
+            sessions: b._count.sessions,
+            knowledgeChunks: b._count.knowledge
+          }
+        }))
+      });
     }
 
     if (botId) {
@@ -122,6 +143,31 @@ export async function GET(req: NextRequest) {
     }
 
     if (email) {
+      // Admin mode: email explicitly 'all' → return all bots
+      if (email === 'all') {
+        const allBots = await prisma.bot.findMany({
+          orderBy: { createdAt: 'desc' },
+          include: {
+            _count: { select: { usages: true, sessions: true, knowledge: true } }
+          }
+        });
+        return NextResponse.json({
+          bots: allBots.map(b => ({
+            id: b.id,
+            name: b.name,
+            type: b.type,
+            companyUrl: b.companyUrl,
+            isActive: b.isActive,
+            createdAt: b.createdAt,
+            stats: {
+              messages: b._count.usages,
+              sessions: b._count.sessions,
+              knowledgeChunks: b._count.knowledge
+            }
+          }))
+        });
+      }
+
       // Get user by email
       const user = await prisma.user.findUnique({ where: { email } });
       if (!user) {
