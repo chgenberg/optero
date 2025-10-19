@@ -753,9 +753,8 @@ export default function PersonalAgentLanding() {
                     </div>
                   </motion.div>
                 )}
-          </div>
+              </div>
             </div>
-          </div>
 
             {/* Input */}
             <div className="bg-white border-t border-gray-200 px-4 py-3">
@@ -811,6 +810,7 @@ export default function PersonalAgentLanding() {
                     <Send className="w-4 h-4" />
                   </button>
                 </div>
+              </div>
             </div>
           </div>
         </div>
