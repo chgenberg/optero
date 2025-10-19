@@ -5,7 +5,7 @@ import { z } from "zod";
 import { upsertHubspotContactStub } from "@/lib/integrations";
 import { listCentraProducts } from "@/lib/centra";
 import * as cheerio from "cheerio";
-import { deepScrapeSite } from "@/lib/deepScrape";
+import { deepScrapeSite, deepScrapeQuick } from "@/lib/deepScrape";
 import { withRateLimit, rateLimitConfigs } from "@/lib/rate-limit";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -158,8 +158,9 @@ export async function POST(req: NextRequest) {
         // Prefer calling internal function directly to avoid HTTP hops
         let context = '';
         try {
-          const ds = await deepScrapeSite(siteUrl);
-          const pages: Array<{ title?: string; text?: string }> = Array.isArray(ds?.pages) ? (ds.pages as any) : [];
+          // Use lightweight scraper for speed in chat
+          const dsQuick = await deepScrapeQuick(siteUrl, 6);
+          const pages: Array<{ title?: string; text?: string }> = Array.isArray(dsQuick?.pages) ? (dsQuick.pages as any) : [];
           if (pages.length > 0) {
             context = pages
               .slice(0, 6)
@@ -193,7 +194,7 @@ For product counts, if you see product categories or listings, provide a reasona
 Keep answers concise and helpful.`;
         
         const siteMessages: any[] = [
-          { role: 'system', content: systemSite },
+          { role: 'system', content: systemSite + `\n\nSTRICT RULES:\n- Never answer with generic personal finance or irrelevant advice.\n- Always tailor the answer to the company's website context and the user's question.\n- If context is insufficient for a precise answer, ask ONE clarifying question first.` },
           { role: 'user', content: `Question: ${question}\n\nContext:\n${fullContext}` }
         ];
         

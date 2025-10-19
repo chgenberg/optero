@@ -52,6 +52,64 @@ async function fetchWithRetry(input: string, init: RequestInit & { timeoutMs?: n
   throw lastErr;
 }
 
+// Lightweight scraper for chat use (no AI analysis). Returns a few page texts fast.
+export async function deepScrapeQuick(url: string, maxPages: number = 8): Promise<{ url: string; pages: DeepScrapePage[] }> {
+  if (!url || !String(url).trim()) throw new Error('URL required');
+  let targetUrl = String(url).trim().replace(/\.+$/g, '');
+  if (!/^https?:\/\//i.test(targetUrl)) targetUrl = `https://${targetUrl}`;
+  try { targetUrl = new URL(targetUrl).href; } catch { throw new Error('Invalid URL format'); }
+
+  const mainResponse = await fetchWithRetry(targetUrl, { timeoutMs: 6000 });
+  const mainHtml = await mainResponse.text();
+  const $ = cheerio.load(mainHtml);
+
+  let sitemapUrls: string[] = [];
+  try {
+    const sitemapResponse = await fetchWithRetry(`${new URL(targetUrl).origin}/sitemap.xml`, { timeoutMs: 4000 });
+    if (sitemapResponse.ok) {
+      const sitemapXml = await sitemapResponse.text();
+      const $sitemap = cheerio.load(sitemapXml, { xmlMode: true });
+      $sitemap('url > loc').each((_, el) => {
+        const locUrl = $sitemap(el).text();
+        if (locUrl) sitemapUrls.push(locUrl);
+      });
+    }
+  } catch {}
+
+  if (sitemapUrls.length === 0) {
+    const baseUrl = new URL(targetUrl).origin;
+    const internalLinks = new Set<string>();
+    $('a[href]').each((_, el) => {
+      const href = $(el).attr('href');
+      if (!href) return;
+      try {
+        const fullUrl = new URL(href, targetUrl).href;
+        if (fullUrl.startsWith(baseUrl) && !fullUrl.includes('#') && !/\.(jpg|jpeg|png|gif|svg|ico|pdf)$/i.test(fullUrl)) {
+          internalLinks.add(fullUrl);
+        }
+      } catch {}
+    });
+    sitemapUrls = Array.from(internalLinks);
+  }
+
+  const chosen = Array.from(new Set([targetUrl, ...sitemapUrls])).slice(0, Math.max(1, maxPages));
+  const pages: DeepScrapePage[] = [];
+  for (const pageUrl of chosen) {
+    try {
+      const res = await fetchWithRetry(pageUrl, { timeoutMs: 5000 });
+      if (!res.ok) continue;
+      const html = await res.text();
+      const $page = cheerio.load(html);
+      $page('script, style, nav, footer, header').remove();
+      const title = ($page('title').text() || $page('h1').first().text() || '').trim();
+      const text = $page('body').text().replace(/\s+/g, ' ').trim().slice(0, 6000);
+      if (text) pages.push({ url: pageUrl, title, text });
+    } catch {}
+  }
+
+  return { url: targetUrl, pages };
+}
+
 export async function deepScrapeSite(url: string, documentContent?: string): Promise<DeepScrapeResult> {
   if (!url || !String(url).trim()) {
     throw new Error("URL required");
