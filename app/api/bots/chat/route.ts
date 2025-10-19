@@ -511,21 +511,43 @@ INSTRUCTION: Consider using this answer, but adapt it to the user's specific que
     else if (responseLength === 'long') lengthInstr = '\n- Answer thoroughly in 4-6 sentences.';
 
     const policies = Array.isArray((activeSpec as any)?.policies) ? `\nPOLICIES:\n- ${((activeSpec as any).policies as string[]).join('\n- ')}` : '';
-    const languageHint = (() => {
+    
+    // Auto-detect language from user's messages
+    const detectLanguage = (): string => {
       const loc = (locale || '').toLowerCase();
-      if (loc.startsWith('sv')) return 'RESPOND IN: Swedish.';
-      if (loc.startsWith('en')) return 'RESPOND IN: English.';
-      return 'RESPOND IN: Match the user\'s language.';
-    })();
+      if (loc.startsWith('sv')) return 'Swedish';
+      if (loc.startsWith('en')) return 'English';
+      if (loc.startsWith('de')) return 'German';
+      if (loc.startsWith('fr')) return 'French';
+      if (loc.startsWith('es')) return 'Spanish';
+      if (loc.startsWith('no')) return 'Norwegian';
+      if (loc.startsWith('da')) return 'Danish';
+      if (loc.startsWith('fi')) return 'Finnish';
+      
+      // Fallback: detect from user messages
+      const userMessages = history.filter((h: any) => h.role === 'user').map((h: any) => h.content).join(' ');
+      if (/\b(hej|tack|är|du|kan|vad|hur|jag|det|och|för|till)\b/i.test(userMessages)) return 'Swedish';
+      if (/\b(danke|ist|sie|können|was|wie|ich|das|und|für)\b/i.test(userMessages)) return 'German';
+      if (/\b(merci|est|vous|pouvez|quoi|comment|je|le|et|pour)\b/i.test(userMessages)) return 'French';
+      if (/\b(gracias|es|usted|puede|qué|cómo|yo|el|y|para)\b/i.test(userMessages)) return 'Spanish';
+      
+      return 'the same language as the user';
+    };
+    
+    const detectedLanguage = detectLanguage();
+    const languageHint = `CRITICAL: ALWAYS respond in ${detectedLanguage}. Match the user's language exactly.`;
 
     const system = `You are a helpful business chatbot. Be conversational and friendly.
 
+${languageHint}
+
 IMPORTANT INSTRUCTIONS:
-1. Always respond to greetings naturally (Hi, Hello, How are you, etc.)
+1. Always respond to greetings naturally (Hi, Hello, Hej, etc.)
 2. When you see "VERIFIED ANSWER FROM WEBSITE" - use that answer directly, it's confirmed correct
 3. When you see "POSSIBLE ANSWER FROM WEBSITE" - adapt it to the user's specific question
 4. When you see "ADDITIONAL INFORMATION FROM WEBSITE" - use it to enhance your answer
 5. Always prioritize information from the website over general knowledge
+6. Detect and match the user's language in every response
 
 FORMATTING RULES (CRITICAL):
 - Use <p> tags for paragraphs - DO NOT write wall of text
@@ -535,8 +557,6 @@ FORMATTING RULES (CRITICAL):
 - Example: "<p>Here's what you need to know:</p><ul><li><strong>First point</strong>: Details here</li><li><strong>Second point</strong>: More details</li></ul>"
 - Break answers into 2-4 short paragraphs for readability
 - Use <strong> for key terms, numbers, benefits, and important facts
-
-LANGUAGE: ${languageHint}
 
 Spec: ${specSafe}
 
