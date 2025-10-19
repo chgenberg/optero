@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
       }
     } catch {}
 
-    // Fallback: crawl internal links from main page (limit to 20 for better coverage)
+    // Fallback: crawl internal links from main page (limit to 50 for better coverage)
     if (sitemapUrls.length === 0) {
       const baseUrl = new URL(targetUrl).origin;
       const internalLinks = new Set<string>();
@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
         if (!href) return;
         try {
           const fullUrl = new URL(href, targetUrl).href;
-          if (fullUrl.startsWith(baseUrl) && internalLinks.size < 20 && !fullUrl.includes('#') && !fullUrl.match(/\.(jpg|jpeg|png|gif|svg|ico)$/i)) {
+          if (fullUrl.startsWith(baseUrl) && internalLinks.size < 50 && !fullUrl.includes('#') && !fullUrl.match(/\.(jpg|jpeg|png|gif|svg|ico)$/i)) {
             internalLinks.add(fullUrl);
           }
         } catch {}
@@ -128,8 +128,8 @@ export async function POST(req: NextRequest) {
       sitemapUrls = Array.from(internalLinks);
     }
 
-    // Premium: crawl up to 20 pages
-    sitemapUrls = Array.from(new Set([targetUrl, ...sitemapUrls])).slice(0, 20);
+    // Premium: crawl up to 50 pages
+    sitemapUrls = Array.from(new Set([targetUrl, ...sitemapUrls])).slice(0, 50);
 
     // Helper: extract brand colors from CSS
     const cssToColors = (css: string): string[] => {
