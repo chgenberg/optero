@@ -244,6 +244,13 @@ export async function POST(req: NextRequest) {
       }
     } catch {}
 
+    // Fire-and-forget: build Q&A coverage in background
+    try {
+      fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/bots/qa/build?botId=${bot.id}&limit=250`, {
+        method: 'POST'
+      }).catch(() => {});
+    } catch {}
+
     return NextResponse.json({ botId: bot.id });
   } catch (e: any) {
     console.error("Bot build failed", e);

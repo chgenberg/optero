@@ -63,6 +63,7 @@ export default function BotDetailPage() {
   const [trainAnswer, setTrainAnswer] = useState("");
   const [training, setTraining] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [buildingQA, setBuildingQA] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview'|'analytics'|'training'>('overview');
 
   useEffect(() => {
@@ -193,6 +194,21 @@ export default function BotDetailPage() {
     }
   };
 
+  const handleBuildQA = async () => {
+    if (!botId) return;
+    setBuildingQA(true);
+    try {
+      const res = await fetch(`/api/bots/qa/build?botId=${botId}&limit=250`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'build_failed');
+      alert(`Q&A built: +${data.created} answers. Coverage: ${data.coverage.answered}/${data.coverage.total} (${data.coverage.percent}%). High confidence: ${data.coverage.highConfidence}.`);
+    } catch (e: any) {
+      alert('Failed to build Q&A');
+    } finally {
+      setBuildingQA(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -275,6 +291,16 @@ export default function BotDetailPage() {
               >
                 <Link2 className="w-4 h-4" />
                 <span className="hidden sm:inline">INTEGRATIONS</span>
+              </motion.button>
+              <motion.button
+                onClick={handleBuildQA}
+                disabled={buildingQA}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="minimal-button-outline flex items-center gap-2 disabled:opacity-50"
+              >
+                <Database className="w-4 h-4" />
+                {buildingQA ? 'BUILDING Q&A…' : 'BUILD Q&A'}
               </motion.button>
               <motion.button
                 onClick={() => router.push(`/approvals`)}

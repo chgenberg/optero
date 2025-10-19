@@ -49,6 +49,11 @@ export async function POST(req: NextRequest) {
 
     const embedData = await embedRes.json();
 
+    // Fire-and-forget: rebuild Q&A coverage
+    try {
+      fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/bots/qa/build?botId=${botId}&limit=250`, { method: 'POST' }).catch(() => {});
+    } catch {}
+
     return NextResponse.json({
       success: true,
       pagesScraped: scrapeData.pagesScraped,
