@@ -1038,23 +1038,23 @@ export default function PersonalAgentLanding() {
                       exit={{ opacity: 0, x: -20 }}
                     >
                       {scraping && (
-                        <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                          <div className="flex items-center justify-between mb-2">
+                        <div className="mb-6 p-6 bg-black rounded-lg">
+                          <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-3">
-                              <Loader2 className="w-5 h-5 animate-spin" />
-                              <span className="font-medium">Analyzing your website...</span>
+                              <Loader2 className="w-5 h-5 animate-spin text-white" />
+                              <span className="font-medium text-white">Analyzing your website...</span>
                             </div>
-                            <span className="text-sm font-medium">{scrapeProgress}%</span>
+                            <span className="text-sm font-medium text-white">{scrapeProgress}%</span>
                           </div>
-                          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                          <div className="w-full bg-white rounded-full h-3 overflow-hidden">
                             <motion.div
-                              className="bg-black h-3 rounded-full relative"
+                              className="bg-gray-700 h-3 rounded-full relative"
                               initial={{ width: 0 }}
                               animate={{ width: `${scrapeProgress}%` }}
                               transition={{ duration: 0.3 }}
                             >
                               <motion.div
-                                className="absolute inset-0 bg-white/20"
+                                className="absolute inset-0 bg-gray-900/20"
                                 animate={{ x: ["0%", "100%"] }}
                                 transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
                               />

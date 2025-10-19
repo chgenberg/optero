@@ -95,12 +95,12 @@ function AnalysisContent() {
       </div>
 
       {/* Progress bar - more visual */}
-      <div className="fixed top-0 left-0 right-0 h-2 bg-gray-200/50 backdrop-blur-sm z-50">
+      <div className="fixed top-0 left-0 right-0 h-2 bg-black backdrop-blur-sm z-50">
         <div 
-          className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-700 ease-out relative overflow-hidden"
+          className="h-full bg-white transition-all duration-700 ease-out relative overflow-hidden"
           style={{ width: `${progress}%` }}
         >
-          <div className="absolute inset-0 bg-white/30 animate-shimmer" />
+          <div className="absolute inset-0 bg-gray-700 animate-shimmer" />
         </div>
       </div>
 

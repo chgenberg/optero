@@ -58,11 +58,11 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="w-16 h-16 border-4 border-gray-300 border-t-black rounded-full"
+          className="w-16 h-16 border-4 border-white border-t-gray-700 rounded-full"
         />
       </div>
     );

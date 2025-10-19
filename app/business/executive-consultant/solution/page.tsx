@@ -118,8 +118,8 @@ export default function ExecutiveSolution() {
             
             {/* Progress bar */}
             <div className="space-y-4">
-              <div className="bg-gray-100 rounded-full h-3 overflow-hidden">
-                <div className="bg-gray-900 h-full rounded-full transition-all duration-1000 loading-progress" />
+              <div className="bg-white rounded-full h-3 overflow-hidden border border-gray-200">
+                <div className="bg-gray-700 h-full rounded-full transition-all duration-1000 loading-progress" />
               </div>
               
               <div className="space-y-2 text-sm">

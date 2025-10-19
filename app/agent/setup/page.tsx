@@ -146,9 +146,9 @@ export default function AgentSetupPage() {
 
               {/* Progress Bar */}
               <div className="max-w-md mx-auto">
-                <div className="bg-gray-100 rounded-full h-3 overflow-hidden">
+                <div className="bg-white rounded-full h-3 overflow-hidden border border-gray-200">
                   <motion.div
-                    className="bg-black h-full rounded-full"
+                    className="bg-gray-700 h-full rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${scrapeProgress}%` }}
                     transition={{ duration: 0.5 }}

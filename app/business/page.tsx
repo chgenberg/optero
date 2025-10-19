@@ -136,9 +136,9 @@ export default function BusinessPage() {
 
             {/* Progress bar */}
             <div className="space-y-2">
-              <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+              <div className="w-full bg-white rounded-full h-3 overflow-hidden border border-gray-200">
                 <div
-                  className="bg-gray-900 h-2 rounded-full transition-all duration-1000 ease-out"
+                  className="bg-gray-700 h-3 rounded-full transition-all duration-1000 ease-out"
                   style={{ width: `${progress}%` }}
                 />
               </div>
