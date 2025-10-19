@@ -5,10 +5,15 @@ import { z } from "zod";
 import { upsertHubspotContactStub } from "@/lib/integrations";
 import { listCentraProducts } from "@/lib/centra";
 import * as cheerio from "cheerio";
+import { withRateLimit, rateLimitConfigs } from "@/lib/rate-limit";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: NextRequest) {
+  // Rate limiting for chat messages
+  const rateLimitResult = await withRateLimit(req, rateLimitConfigs.chat);
+  if (rateLimitResult) return rateLimitResult;
+  
   try {
     const { botId, history, sessionId, locale, tone } = await req.json();
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
@@ -237,17 +242,23 @@ Keep answers concise and helpful.`;
     let typeInstructions = '';
     if (bot.type === 'knowledge') {
       const cite = typeSettings?.knowledge?.citeSources ? '\n- Always cite sources.' : '';
-      typeInstructions = 'KNOWLEDGE BOT:\n- Answer only from context and RAG data.\n- If info is missing: ask ONE clear follow-up question.' + cite + '\n';
+      const isInternal = subtype === 'internal' || (activeSpec as any)?.purpose === 'internal';
+      
+      if (isInternal) {
+        typeInstructions = 'INTERNAL KNOWLEDGE BOT:\n- You are an internal company assistant helping employees.\n- Be conversational and helpful with all questions.\n- Answer questions about: company policies, brand guidelines, procedures, Excel formulas, internal documentation.\n- Use all available knowledge including uploaded documents and web searches when needed.\n- If you don\'t know something, suggest where the employee might find the information or who to contact.' + cite + '\n';
+      } else {
+        typeInstructions = 'KNOWLEDGE BOT:\n- You can engage in polite small talk (greetings, how are you, thanks, etc.).\n- For business questions: Answer only from context and RAG data.\n- If business info is missing: ask ONE clear follow-up question.' + cite + '\n';
+      }
     } else if (bot.type === 'lead') {
       const req = typeSettings?.lead?.requiredFields || {};
       const required = Object.entries(req).filter(([k,v])=>v).map(([k])=>k).join(', ') || 'email';
       const qs = (typeSettings?.lead?.qualificationQuestions || []).slice(0,6).map((q:string)=>`- ${q}`).join('\n');
-      typeInstructions = 'LEAD BOT:\n- Collect required fields: ' + required + '.\n- Ask in order: problem → goals/KPI → budget → timeline → decision role.\n- When collected: summarize + say "CALL:WEBHOOK"\n- If Calendly is configured: offer booking with "CALL:BOOK"\n' + (qs? ('- Qualification questions:\n' + qs + '\n') : '');
+      typeInstructions = 'LEAD BOT:\n- Be friendly and conversational. Respond naturally to greetings.\n- Collect required fields: ' + required + '.\n- Ask in order: problem → goals/KPI → budget → timeline → decision role.\n- When collected: summarize + say "CALL:WEBHOOK"\n- If Calendly is configured: offer booking with "CALL:BOOK"\n' + (qs? ('- Qualification questions:\n' + qs + '\n') : '');
     } else if (bot.type === 'support') {
       const cats = (typeSettings?.support?.categories || []).join(', ');
       const pri = typeSettings?.support?.collectPriority ? '\n- Ask for ticket priority (low/normal/high).' : '';
       const reqEmail = typeSettings?.support?.requireEmail ? '\n- Require email for ticket creation.' : '';
-      typeInstructions = 'SUPPORT BOT:\n- Collect: description, category, urgency, previous steps, contact info.\n' + (cats? ('- Categories: ' + cats + '.\n') : '') + '- Try to solve from KB first.\n- If not solvable: "CALL:TICKET" to escalate.' + pri + reqEmail + '\n';
+      typeInstructions = 'SUPPORT BOT:\n- Be helpful and empathetic. Respond naturally to greetings.\n- Collect: description, category, urgency, previous steps, contact info.\n' + (cats? ('- Categories: ' + cats + '.\n') : '') + '- Try to solve from KB first.\n- If not solvable: "CALL:TICKET" to escalate.' + pri + reqEmail + '\n';
     } else if (bot.type === 'workflow') {
       const workflowSubtype = subtype || '';
       if (workflowSubtype.includes('booking')) {
@@ -404,7 +415,7 @@ Keep answers concise and helpful.`;
       return 'RESPOND IN: Match the user\'s language.';
     })();
 
-    const system = `You are a business chatbot. Follow the specification.\n\nLANGUAGE: ${languageHint}\n\nSpec: ${specSafe}\n\nBot type: ${bot.type}.${subtype || ''}${policies}\n${extra}\n${typeInstructions}${lengthInstr}${ragContext}${personalizedGreeting}${toneAdjustment}${offHoursNote}\n\nIf information is missing in context: use Fallback: ${fallbackText}`;
+    const system = `You are a helpful business chatbot. Be conversational and friendly.\n\nIMPORTANT: Always respond to greetings naturally (Hi, Hello, How are you, etc.). Don't use fallback for basic conversation.\n\nLANGUAGE: ${languageHint}\n\nSpec: ${specSafe}\n\nBot type: ${bot.type}.${subtype || ''}${policies}\n${extra}\n${typeInstructions}${lengthInstr}${ragContext}${personalizedGreeting}${toneAdjustment}${offHoursNote}\n\nFor business questions where information is missing from context: ${fallbackText}`;
 
     const messages = [
       { role: "system", content: system },

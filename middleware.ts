@@ -1,4 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
+import { authMiddleware, requiresAuth } from './middleware/auth';
 
 // Keep EN as default. Only switch locale when explicitly requested via query (?lang=sv|en).
 export function middleware(req: NextRequest) {
@@ -7,6 +8,11 @@ export function middleware(req: NextRequest) {
   // Skip API/static
   if (pathname.startsWith('/api') || pathname.startsWith('/_next') || /\.[a-zA-Z0-9]+$/.test(pathname)) {
     return NextResponse.next();
+  }
+
+  // Check if this is an internal route that requires authentication
+  if (requiresAuth(pathname)) {
+    return authMiddleware(req);
   }
 
   const lang = searchParams.get('lang');

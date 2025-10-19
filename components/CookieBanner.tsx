@@ -47,9 +47,9 @@ export default function CookieBanner() {
           <Shield className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <p className="text-sm text-gray-700 mb-3">
-              Vi använder cookies för att förbättra din upplevelse. 
-              <Link href="/integritetspolicy" className="underline hover:no-underline ml-1">
-                Läs mer
+              Vi använder cookies för att förbättra din upplevelse, analysera användning och komma ihåg dina preferenser. 
+              <Link href="/integritetspolicy" className="text-gray-900 underline hover:no-underline ml-1">
+                Läs mer om cookies
               </Link>
             </p>
             <div className="flex gap-2">
@@ -57,13 +57,13 @@ export default function CookieBanner() {
                 onClick={acceptCookies}
                 className="text-xs bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors"
               >
-                Acceptera
+                Acceptera alla
               </button>
               <button
                 onClick={rejectCookies}
-                className="text-xs text-gray-600 hover:text-gray-900 px-3 py-2"
+                className="text-xs text-gray-600 hover:text-gray-900 px-3 py-2 underline"
               >
-                Avböj
+                Endast nödvändiga
               </button>
             </div>
           </div>

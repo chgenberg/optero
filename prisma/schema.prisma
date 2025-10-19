@@ -318,19 +318,49 @@ model Subscription {
   @@index([status])
 }
 
+enum UserRole {
+  ADMIN
+  USER
+  VIEWER
+}
+
 model User {
-  id            String   @id @default(cuid())
-  email         String   @unique
+  id            String    @id @default(cuid())
+  email         String    @unique
   name          String?
   profession    String?
   company       String?
+  password      String?   // For internal users
+  isInternal    Boolean   @default(false)
+  role          UserRole  @default(USER)
+  permissions   Json?     // Additional fine-grained permissions
+  lastLogin     DateTime?
+  companyId     String?
+  companyRef    Company?  @relation(fields: [companyId], references: [id])
   
   bots          Bot[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([email])
+  @@index([companyId])
+  @@index([role])
+}
+
+model Company {
+  id            String   @id @default(cuid())
+  name          String
+  code          String   @unique // Company code for signup
+  emailDomain   String?  // e.g., "company.com" to validate email domains
+  isActive      Boolean  @default(true)
+  
+  users         User[]
   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   
-  @@index([email])
+  @@index([code])
 }
 
 // Business flow: company-specific prompts and metadata

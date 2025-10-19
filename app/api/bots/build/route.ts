@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
 
     const botType = consult.botType || 'knowledge';
     const botSubtype = consult.botSubtype || consult.subtype || consult.problems?.[0] || '';
+    const botPurpose = consult.botPurpose || 'customer';
     const integrationsData = consult.integrations || integrations || {};
     const typeSettings = consult.typeSettings || {};
 
@@ -91,6 +92,7 @@ export async function POST(req: NextRequest) {
       problem: consult.problems?.[0] || "",
       type: botType, // knowledge | lead | support | workflow
       subtype: botSubtype, // specific variant key
+      purpose: botPurpose, // internal | customer
       webhookUrl: integrationsData.webhookUrl || null,
       slackWebhook: integrationsData.slackWebhook || null,
       hubspotEnabled: integrationsData.hubspotEnabled || false,

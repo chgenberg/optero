@@ -38,6 +38,7 @@ export default function BotBuilderSolution() {
         const documentFiles = JSON.parse(sessionStorage.getItem("botDocumentFiles") || '[]');
         const userEmail = sessionStorage.getItem("botUserEmail") || "";
         const botSubtype = sessionStorage.getItem("selectedBotSubtype") || "";
+        const botPurpose = sessionStorage.getItem("botPurpose") || "customer";
         
         const consult = {
           url,
@@ -48,6 +49,7 @@ export default function BotBuilderSolution() {
           problems: [`Build a ${selectedBotType} bot`],
           botType: selectedBotType,
           botSubtype: botSubtype || null,
+          botPurpose,
           userEmail,
           brandConfig: brand,
           integrations,

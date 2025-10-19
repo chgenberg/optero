@@ -18,6 +18,7 @@ import Stepper from "@/components/Stepper";
 export default function LaunchBotPage() {
   const router = useRouter();
   const [botType, setBotType] = useState('support');
+  const [botPurpose, setBotPurpose] = useState('customer');
   const [isHeadless, setIsHeadless] = useState(false);
   const [hasIntegrations, setHasIntegrations] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -30,10 +31,13 @@ export default function LaunchBotPage() {
     // Access sessionStorage only on client
     const storedType = typeof window !== 'undefined' ? (sessionStorage.getItem('selectedBotType') || 'support') : 'support';
     setBotType(storedType);
+    
+    const storedPurpose = typeof window !== 'undefined' ? (sessionStorage.getItem('botPurpose') || 'customer') : 'customer';
+    setBotPurpose(storedPurpose);
 
     const storedHasIntegrations = typeof window !== 'undefined' ? (sessionStorage.getItem('hasIntegrations') === 'true') : false;
     setHasIntegrations(storedHasIntegrations);
-    setIsHeadless(storedHasIntegrations || storedType === 'workflow');
+    setIsHeadless(storedPurpose === 'internal' || storedHasIntegrations || storedType === 'workflow');
 
     // Generate mock bot ID
     setBotId('bot_' + Math.random().toString(36).substr(2, 9));
@@ -132,7 +136,31 @@ export default function LaunchBotPage() {
               How to Use Your Bot
             </h3>
             
-            {isHeadless ? (
+            {botPurpose === 'internal' ? (
+              <div className="space-y-4">
+                <p className="text-sm text-gray-600">
+                  Your internal bot is ready for your team to use. It's accessible through a secure login-based dashboard.
+                </p>
+                <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                  <p className="text-xs font-semibold text-blue-800 mb-2">WHAT YOUR BOT CAN DO:</p>
+                  <ul className="text-xs text-blue-700 space-y-1">
+                    <li>• Answer questions about company policies</li>
+                    <li>• Help with brand guidelines & colors</li>
+                    <li>• Assist with Excel formulas & calculations</li>
+                    <li>• Provide internal documentation</li>
+                  </ul>
+                </div>
+                <motion.button
+                  onClick={handleChatWithBot}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full minimal-button flex items-center justify-center gap-2"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Open Internal Bot Dashboard
+                </motion.button>
+              </div>
+            ) : isHeadless ? (
               <div className="space-y-4">
                 <p className="text-sm text-gray-600">
                   Your bot is configured as a headless bot with system integrations. 
