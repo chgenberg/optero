@@ -54,7 +54,35 @@ export async function GET(req: NextRequest) {
     // Build bot filter
     let botFilter: any = {};
     if (email && email !== "all") {
-      botFilter.userEmail = email;
+      // Find user by email first
+      const user = await prisma.user.findUnique({
+        where: { email },
+        select: { id: true },
+      });
+      if (user) {
+        botFilter.userId = user.id;
+      } else {
+        // No user found with this email, return empty results
+        return NextResponse.json({
+          summary: {
+            totalQuestions: 0,
+            uniqueQuestions: 0,
+            answeredQuestions: 0,
+            unansweredQuestions: 0,
+            answerRate: 0,
+            avgResponseTime: 0,
+            timeRange,
+            botsAnalyzed: 0,
+          },
+          topQuestions: [],
+          unansweredQuestions: [],
+          recentQuestions: [],
+          trendingQuestions: [],
+          categories: [],
+          botStats: [],
+          bots: [],
+        });
+      }
     }
     if (botId) {
       botFilter.id = botId;
@@ -66,48 +94,92 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         name: true,
-        userEmail: true,
+        userId: true,
       },
     });
 
     const botIds = bots.map(b => b.id);
 
-    // Get all messages (questions from users)
-    const messageWhere: any = {
+    if (botIds.length === 0) {
+      return NextResponse.json({
+        summary: {
+          totalQuestions: 0,
+          uniqueQuestions: 0,
+          answeredQuestions: 0,
+          unansweredQuestions: 0,
+          answerRate: 0,
+          avgResponseTime: 0,
+          timeRange,
+          botsAnalyzed: 0,
+        },
+        topQuestions: [],
+        unansweredQuestions: [],
+        recentQuestions: [],
+        trendingQuestions: [],
+        categories: [],
+        botStats: [],
+        bots: [],
+      });
+    }
+
+    // Get all sessions with messages
+    const sessionWhere: any = {
       botId: { in: botIds },
-      role: "user", // Only user questions
     };
 
     if (dateFilter) {
-      messageWhere.createdAt = { gte: dateFilter };
+      sessionWhere.createdAt = { gte: dateFilter };
     }
 
-    const messages = await prisma.message.findMany({
-      where: messageWhere,
+    const sessions = await prisma.botSession.findMany({
+      where: sessionWhere,
       select: {
         id: true,
-        content: true,
         botId: true,
-        sessionId: true,
+        messages: true,
         createdAt: true,
+        updatedAt: true,
       },
-      orderBy: { createdAt: "desc" },
-      take: limit * 10, // Get more to analyze
+      orderBy: { updatedAt: "desc" },
+      take: limit * 10, // Get more sessions to analyze
     });
 
-    // Get corresponding bot responses
-    const sessionIds = [...new Set(messages.map(m => m.sessionId))];
-    const botResponses = await prisma.message.findMany({
-      where: {
-        sessionId: { in: sessionIds },
-        role: "assistant",
-      },
-      select: {
-        id: true,
-        content: true,
-        sessionId: true,
-        createdAt: true,
-      },
+    // Extract individual messages from sessions
+    interface MessageExtracted {
+      content: string;
+      botId: string;
+      sessionId: string;
+      createdAt: Date;
+      role: string;
+    }
+
+    const messages: MessageExtracted[] = [];
+    const botResponses: MessageExtracted[] = [];
+
+    sessions.forEach(session => {
+      const sessionMessages = Array.isArray(session.messages) ? session.messages : [];
+      sessionMessages.forEach((msg: any, idx: number) => {
+        const msgTimestamp = msg.timestamp ? new Date(msg.timestamp) : session.createdAt;
+        
+        // Apply date filter to individual messages
+        if (dateFilter && msgTimestamp < dateFilter) {
+          return;
+        }
+
+        const extracted: MessageExtracted = {
+          content: msg.content || "",
+          botId: session.botId,
+          sessionId: session.id,
+          createdAt: msgTimestamp,
+          role: msg.role || "user",
+        };
+
+        if (msg.role === "user") {
+          messages.push(extracted);
+        } else if (msg.role === "assistant") {
+          botResponses.push(extracted);
+        }
+      });
     });
 
     // Build question analytics
@@ -167,9 +239,10 @@ export async function GET(req: NextRequest) {
       if (msg.createdAt < qa.firstAsked) qa.firstAsked = msg.createdAt;
       if (msg.createdAt > qa.lastAsked) qa.lastAsked = msg.createdAt;
 
-      // Find corresponding response
+      // Find corresponding response (next assistant message in same session)
       const response = botResponses.find(
-        r => r.sessionId === msg.sessionId && r.createdAt > msg.createdAt
+        r => r.sessionId === msg.sessionId && 
+             r.createdAt.getTime() >= msg.createdAt.getTime()
       );
 
       if (response) {
