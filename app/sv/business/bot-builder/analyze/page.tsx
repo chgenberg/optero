@@ -1,4 +1,6 @@
 "use client";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -318,7 +320,8 @@ export default function AnalyzeProblem() {
       details: bot
     }));
     
-    router.push("/business/bot-builder/customize");
+    // Gå till val av bot‑purpose (inhouse/customer)
+    router.push("/business/bot-builder/bot-purpose");
   };
 
   const handleConsultation = () => {
