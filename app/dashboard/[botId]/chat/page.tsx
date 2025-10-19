@@ -282,7 +282,14 @@ export default function HeadlessChatPage() {
                       : "bg-white border border-gray-200"
                   }`}
                 >
-                  <p className="whitespace-pre-wrap">{message.content}</p>
+                  {message.role === "assistant" ? (
+                    <div 
+                      className="prose prose-sm max-w-none prose-p:my-2 prose-strong:font-bold prose-strong:text-black prose-ul:my-2 prose-li:my-1"
+                      dangerouslySetInnerHTML={{ __html: message.content }}
+                    />
+                  ) : (
+                    <p className="whitespace-pre-wrap">{message.content}</p>
+                  )}
                   {message.metadata && (
                     <div className="mt-2 pt-2 border-t border-gray-100">
                       <p className="text-xs text-gray-500">

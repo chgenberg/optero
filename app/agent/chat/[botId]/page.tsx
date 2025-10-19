@@ -285,7 +285,14 @@ export default function AgentChatPage() {
                         ? "bg-gray-100 text-gray-900"
                         : "bg-white border border-gray-200"
                     }`}>
-                      <p className="whitespace-pre-wrap">{message.content}</p>
+                      {message.role === "assistant" ? (
+                        <div 
+                          className="prose prose-sm max-w-none prose-p:my-2 prose-strong:font-bold prose-strong:text-black prose-ul:my-2 prose-li:my-1"
+                          dangerouslySetInnerHTML={{ __html: message.content }}
+                        />
+                      ) : (
+                        <p className="whitespace-pre-wrap">{message.content}</p>
+                      )}
                     </div>
                     <p className="text-xs text-gray-500 mt-1 px-2">
                       {new Date(message.timestamp).toLocaleTimeString()}

@@ -718,7 +718,14 @@ export default function PersonalAgentLanding() {
                         }`}
                         style={msg.role === "user" ? { backgroundColor: botSettings.color } : {}}
                       >
-                        <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                        {msg.role === "assistant" ? (
+                          <div 
+                            className="text-sm prose prose-sm max-w-none prose-p:my-2 prose-strong:font-bold prose-ul:my-2 prose-li:my-1"
+                            dangerouslySetInnerHTML={{ __html: msg.content }}
+                          />
+                        ) : (
+                          <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                        )}
                       </div>
                     </div>
                   </motion.div>

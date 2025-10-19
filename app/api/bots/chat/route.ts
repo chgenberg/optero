@@ -527,6 +527,15 @@ IMPORTANT INSTRUCTIONS:
 4. When you see "ADDITIONAL INFORMATION FROM WEBSITE" - use it to enhance your answer
 5. Always prioritize information from the website over general knowledge
 
+FORMATTING RULES (CRITICAL):
+- Use <p> tags for paragraphs - DO NOT write wall of text
+- Use <strong> tags for important words/phrases (not ** markdown)
+- Use <ul> and <li> for lists
+- Use <br> for line breaks when needed
+- Example: "<p>Here's what you need to know:</p><ul><li><strong>First point</strong>: Details here</li><li><strong>Second point</strong>: More details</li></ul>"
+- Break answers into 2-4 short paragraphs for readability
+- Use <strong> for key terms, numbers, benefits, and important facts
+
 LANGUAGE: ${languageHint}
 
 Spec: ${specSafe}

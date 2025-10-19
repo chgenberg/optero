@@ -198,7 +198,14 @@ function ChatInner() {
                       backgroundColor: brand.primaryColor
                     } : {}}
                   >
-                    <p className="text-sm leading-relaxed">{m.content}</p>
+                    {m.role === 'assistant' ? (
+                      <div 
+                        className="text-sm leading-relaxed prose prose-sm max-w-none prose-p:my-2 prose-strong:font-bold prose-ul:my-2 prose-li:my-1"
+                        dangerouslySetInnerHTML={{ __html: m.content }}
+                      />
+                    ) : (
+                      <p className="text-sm leading-relaxed">{m.content}</p>
+                    )}
                   </div>
                 </div>
               </div>

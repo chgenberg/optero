@@ -357,7 +357,14 @@ export default function InternalBotDashboard() {
                     ? 'bg-gray-900 text-white' 
                     : 'bg-white border border-gray-200 text-gray-800'
                 }`}>
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  {message.role === "assistant" ? (
+                    <div 
+                      className="text-sm prose prose-sm max-w-none prose-p:my-2 prose-strong:font-bold prose-strong:text-black prose-ul:my-2 prose-li:my-1"
+                      dangerouslySetInnerHTML={{ __html: message.content }}
+                    />
+                  ) : (
+                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  )}
                   {message.attachments && (
                     <div className="mt-2 space-y-1">
                       {message.attachments.map((file, idx) => (
