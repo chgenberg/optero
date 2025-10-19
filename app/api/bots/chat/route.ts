@@ -18,6 +18,22 @@ export async function POST(req: NextRequest) {
     const { botId, history, sessionId, locale, tone } = await req.json();
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
     const userAgent = req.headers.get('user-agent') || '';
+    // Derive internal base URL for self-calls (works in Docker/Railway)
+    const forwardedProto = req.headers.get('x-forwarded-proto') || undefined;
+    const forwardedHost = req.headers.get('x-forwarded-host') || undefined;
+    const host = req.headers.get('host') || 'localhost:8080';
+    const internalBase = `${forwardedProto || 'http'}://${forwardedHost || host}`;
+    
+    // Fetch with timeout helper to avoid hanging/ECONNREFUSED spam
+    const fetchWithTimeout = async (url: string, options: any = {}, timeoutMs = 5000): Promise<Response> => {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        return await fetch(url, { ...options, signal: controller.signal });
+      } finally {
+        clearTimeout(id);
+      }
+    };
     
     const bot = await prisma.bot.findUnique({ 
       where: { id: botId }, 
@@ -138,17 +154,17 @@ export async function POST(req: NextRequest) {
     const websiteSmartAnswer = async (question: string, companyUrl: string): Promise<string | null> => {
       try {
         const siteUrl = companyUrl && /^https?:\/\//i.test(companyUrl) ? companyUrl : `https://${companyUrl}`;
-        const base = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        const base = internalBase; // use derived internal base to reach our own API in container
         
         // First try deep scrape
-        const dsRes = await fetch(`${base}/api/business/deep-scrape`, {
+        const dsRes = await fetchWithTimeout(`${base}/api/business/deep-scrape`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: siteUrl })
-        });
+        }).catch(() => null as any);
         
         let context = '';
-        if (dsRes.ok) {
+        if (dsRes && dsRes.ok) {
           const ds = await dsRes.json().catch(() => ({}));
           const pages: Array<{ title?: string; text?: string }> = Array.isArray(ds?.pages) ? ds.pages : [];
           if (pages.length > 0) {
@@ -165,14 +181,14 @@ export async function POST(req: NextRequest) {
         let webSearchContext = '';
         
         if (needsWebSearch) {
-          try {
-            // Extract company name from URL
-            const companyName = new URL(siteUrl).hostname.replace(/^www\./i, '').split('.')[0];
-            const searchQuery = `${companyName} ${question}`;
-            
-            // Simulate web search results (in production, this would call a real web search API)
-            webSearchContext = `\n\nWeb Search Results:\n- The company appears to have 6 main product categories\n- Product catalog includes various items across different price ranges\n- Recent updates show focus on quality and customer service`;
-          } catch {}
+            try {
+              // Extract company name from URL
+              const companyName = new URL(siteUrl).hostname.replace(/^www\./i, '').split('.')[0];
+              const searchQuery = `${companyName} ${question}`;
+              
+              // Simulate web search results (in production, this would call a real web search API)
+              webSearchContext = `\n\nWeb Search Results:\n- The company appears to have 6 main product categories\n- Product catalog includes various items across different price ranges\n- Recent updates show focus on quality and customer service`;
+            } catch {}
         }
 
         const fullContext = context + webSearchContext;
@@ -197,8 +213,10 @@ Keep answers concise and helpful.`;
         
         const siteReply = siteResp.choices[0]?.message?.content?.trim() || '';
         if (siteReply) return siteReply;
-      } catch (e) {
-        console.error('websiteSmartAnswer error:', e);
+      } catch (e: any) {
+        const code = (e && (e.code || e.name)) || 'UNKNOWN';
+        // Downgrade to warn and avoid stack spam in production
+        console.warn(`websiteSmartAnswer warning: fetch failed (${code})`);
       }
       return null;
     }
