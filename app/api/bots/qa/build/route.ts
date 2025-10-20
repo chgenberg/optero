@@ -21,8 +21,9 @@ export async function POST(req: NextRequest) {
     if (!url) return NextResponse.json({ error: 'no_company_url' }, { status: 400 });
 
     // Quick context for the site (fast scrape)
-    const quick = await deepScrapeQuick(url, 10);
-    const siteText = quick.pages.map(p => `${p.title}\n${p.text}`).join('\n\n').slice(0, 12000);
+    const quick: any = await deepScrapeQuick(url as string);
+    const pages = Array.isArray(quick) ? quick : Array.isArray(quick?.pages) ? quick.pages : [];
+    const siteText = pages.slice(0, 10).map((p: any) => `${p.title || ''}\n${p.text || ''}`).join('\n\n').slice(0, 12000);
 
     // Flatten 250 questions (customer + internal)
     const allQuestions: Array<{ category: string; question: string }> = [];
