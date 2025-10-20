@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
   
   try {
     const { botId, history, sessionId, locale, tone } = await req.json();
+    const lang = String(locale || '').toLowerCase().startsWith('sv') ? 'sv' : 'en';
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
     const userAgent = req.headers.get('user-agent') || '';
     // Derive internal base URL for self-calls (works in Docker/Railway)
@@ -85,12 +86,12 @@ export async function POST(req: NextRequest) {
         // Try Shopify first
         const shopifyCount = await getShopifyProductCountForBot(bot.id);
         if (typeof shopifyCount === 'number') {
-          forcedReply = `${shopifyCount} products.`;
+          forcedReply = lang === 'sv' ? `<p><strong>${shopifyCount} produkter</strong>.</p>` : `<p><strong>${shopifyCount} products</strong>.</p>`;
         } else {
           // Try Centra fallback
           const centra = await listCentraProducts(bot.id);
           if (Array.isArray(centra)) {
-            forcedReply = `${centra.length} products.`;
+            forcedReply = lang === 'sv' ? `<p><strong>${centra.length} produkter</strong>.</p>` : `<p><strong>${centra.length} products</strong>.</p>`;
           }
         }
       } catch {}
@@ -118,7 +119,9 @@ export async function POST(req: NextRequest) {
             } catch {}
 
             if (typeof countFromSitemap === 'number') {
-              forcedReply = `Approximately ${countFromSitemap} products (estimated from sitemap).`;
+              forcedReply = lang === 'sv'
+                ? `<p><strong>Kan inte ge exakt antal</strong> utan integration. (Sitemap indikerar cirka ${countFromSitemap} produktsidor.)</p>`
+                : `<p><strong>Cannot provide an exact count</strong> without an integration. (Sitemap indicates ~${countFromSitemap} product pages.)</p>`;
             } else {
               // Fallback: parse homepage links
               try {
@@ -137,7 +140,9 @@ export async function POST(req: NextRequest) {
                     } catch {}
                   });
                   if (hrefs.size > 0) {
-                    forcedReply = `At least ${hrefs.size} products (estimated from visible links on homepage).`;
+                    forcedReply = lang === 'sv'
+                      ? `<p><strong>Kan inte ge exakt antal</strong>. Hemsidan visar minst ${hrefs.size} produktlänkar, men jag gissar inte.</p>`
+                      : `<p><strong>Cannot provide an exact count</strong>. Homepage shows at least ${hrefs.size} product links, but I won't guess.</p>`;
                   }
                 }
               } catch {}
@@ -549,6 +554,7 @@ IMPORTANT INSTRUCTIONS:
 4. When you see "ADDITIONAL INFORMATION FROM WEBSITE" - use it to enhance your answer
 5. Always prioritize information from the website over general knowledge
 6. Detect and match the user's language in every response
+7. STRICT NUMERIC POLICY: Never guess numbers (counts, prices, dates). Only provide numbers if explicitly present in context or integrations. If uncertain, state that the information is not available and propose the next step (e.g., connect Shopify/Centra or share a source).
 
 FORMATTING RULES (CRITICAL):
 - Use <p> tags for paragraphs - DO NOT write wall of text
@@ -589,6 +595,25 @@ For business questions where information is missing from context: ${fallbackText
       completionTokens = (resp as any)?.usage?.completion_tokens || 0;
       totalTokens = (resp as any)?.usage?.total_tokens || (promptTokens + completionTokens);
     }
+
+    // Ensure HTML formatting even if model returns plain text
+    const ensureHtml = (text: string): string => {
+      try {
+        if (!text) return text;
+        const hasHtml = /<\s*(p|ul|ol|li|br|strong|em|h\d)\b/i.test(text);
+        if (hasHtml) return text;
+        // Convert **bold** to <strong>
+        let t = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        // Split into paragraphs by double newline or sentence breaks
+        const parts = t.split(/\n\n+/).filter(s => s.trim().length > 0);
+        if (parts.length <= 1) {
+          const sentences = t.match(/[^.!?]+[.!?]+\s*/g) || [t];
+          return sentences.map(s => `<p>${s.trim()}</p>`).join('');
+        }
+        return parts.map(s => `<p>${s.trim()}</p>`).join('');
+      } catch { return text; }
+    };
+    reply = ensureHtml(reply);
 
     // Intent parser: CALL:ACTION {json}
     const IntentSchema = z.object({
