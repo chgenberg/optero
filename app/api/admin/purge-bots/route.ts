@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireAdminAuth } from "@/lib/admin-auth";
 
 // WARNING: Destructive. Use carefully. Optionally pass ?email=... to scope.
 export async function POST(req: NextRequest) {
+  // Require admin auth
+  const authError = requireAdminAuth(req);
+  if (authError) return authError;
+  
   try {
     const { searchParams } = new URL(req.url);
     const email = searchParams.get('email');

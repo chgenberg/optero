@@ -1,506 +1,317 @@
 (function() {
-  // Mendio Chat Widget v1.0
   'use strict';
-
-  // Configuration
-  const WIDGET_API_URL = 'https://myaiguy.com/api/bots/chat';
-  const WIDGET_STYLES_URL = 'https://myaiguy.com/widget-styles.css';
   
   // Get bot ID from script tag
   const currentScript = document.currentScript || document.querySelector('script[data-bot-id]');
-  const botId = currentScript ? currentScript.getAttribute('data-bot-id') : null;
+  const botId = currentScript?.getAttribute('data-bot-id');
   
   if (!botId) {
-    console.error('Mendio Widget: No bot ID provided');
+    console.error('Mendio Widget: Missing data-bot-id attribute');
     return;
   }
 
-  // Create widget container
-  const widgetContainer = document.createElement('div');
-  widgetContainer.id = 'mendio-widget-container';
-  widgetContainer.innerHTML = `
-    <div id="mendio-widget-button" class="mendio-widget-button">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="currentColor"/>
-        <path d="M7 9H17V11H7V9ZM7 13H14V15H7V13Z" fill="white"/>
-      </svg>
-      <span class="mendio-unread-badge" style="display: none;">1</span>
-    </div>
-    <div id="mendio-widget-chat" class="mendio-widget-chat" style="display: none;">
-      <div class="mendio-chat-header">
-        <div class="mendio-chat-header-content">
-          <div class="mendio-chat-title">Chat with us</div>
-          <div class="mendio-chat-subtitle">We typically reply within minutes</div>
-        </div>
-        <button id="mendio-close-chat" class="mendio-close-button">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
-      </div>
-      <div id="mendio-messages" class="mendio-messages">
-        <div class="mendio-message mendio-bot-message">
-          <div class="mendio-message-content">Hi! How can I help you today?</div>
-        </div>
-      </div>
-      <form id="mendio-chat-form" class="mendio-chat-form">
-        <input 
-          type="text" 
-          id="mendio-message-input" 
-          class="mendio-message-input" 
-          placeholder="Type your message..."
-          autocomplete="off"
-        />
-        <button type="submit" class="mendio-send-button">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M2 10L18 2L10 18L8 11L2 10Z" fill="currentColor"/>
-          </svg>
-        </button>
-      </form>
-    </div>
-  `;
+  const API_BASE = currentScript?.src?.includes('localhost') 
+    ? 'http://localhost:3000' 
+    : 'https://optero-production.up.railway.app';
 
-  // Inject styles
-  const styles = `
-    #mendio-widget-container {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 999999;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-
-    .mendio-widget-button {
-      width: 60px;
-      height: 60px;
-      border-radius: 30px;
-      background: #000;
-      color: white;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transition: transform 0.2s, box-shadow 0.2s;
-      position: relative;
-    }
-
-    .mendio-widget-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    .mendio-unread-badge {
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      background: #ef4444;
-      color: white;
-      font-size: 12px;
-      font-weight: bold;
-      padding: 2px 6px;
-      border-radius: 10px;
-      min-width: 20px;
-      text-align: center;
-    }
-
-    .mendio-widget-chat {
-      position: absolute;
-      bottom: 80px;
-      right: 0;
-      width: 380px;
-      height: 600px;
-      max-height: calc(100vh - 100px);
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      animation: mendio-slide-up 0.3s ease-out;
-    }
-
-    @keyframes mendio-slide-up {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .mendio-chat-header {
-      background: #000;
-      color: white;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .mendio-chat-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .mendio-chat-subtitle {
-      font-size: 14px;
-      opacity: 0.8;
-    }
-
-    .mendio-close-button {
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-      padding: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      transition: background 0.2s;
-    }
-
-    .mendio-close-button:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .mendio-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .mendio-message {
-      max-width: 70%;
-      word-wrap: break-word;
-    }
-
-    .mendio-bot-message {
-      align-self: flex-start;
-    }
-
-    .mendio-user-message {
-      align-self: flex-end;
-    }
-
-    .mendio-message-content {
-      padding: 12px 16px;
-      border-radius: 12px;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .mendio-bot-message .mendio-message-content {
-      background: #f3f4f6;
-      color: #111827;
-    }
-
-    .mendio-user-message .mendio-message-content {
-      background: #000;
-      color: white;
-    }
-
-    .mendio-chat-form {
-      padding: 20px;
-      border-top: 1px solid #e5e7eb;
-      display: flex;
-      gap: 12px;
-    }
-
-    .mendio-message-input {
-      flex: 1;
-      padding: 12px 16px;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .mendio-message-input:focus {
-      border-color: #000;
-    }
-
-    .mendio-send-button {
-      background: #000;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 12px 16px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.2s;
-    }
-
-    .mendio-send-button:hover {
-      opacity: 0.8;
-    }
-
-    .mendio-send-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .mendio-typing-indicator {
-      display: flex;
-      gap: 4px;
-      padding: 12px 16px;
-      background: #f3f4f6;
-      border-radius: 12px;
-      width: fit-content;
-    }
-
-    .mendio-typing-dot {
-      width: 8px;
-      height: 8px;
-      background: #6b7280;
-      border-radius: 50%;
-      animation: mendio-typing 1.4s infinite;
-    }
-
-    .mendio-typing-dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .mendio-typing-dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes mendio-typing {
-      0%, 60%, 100% {
-        opacity: 0.3;
-      }
-      30% {
-        opacity: 1;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .mendio-widget-chat {
-        width: 100vw;
-        height: 100vh;
-        max-height: 100vh;
-        bottom: 0;
-        right: 0;
-        border-radius: 0;
-      }
-      
-      #mendio-widget-container {
-        bottom: 0;
-        right: 0;
-      }
-      
-      .mendio-widget-button {
-        bottom: 20px;
-        right: 20px;
-        position: fixed;
-      }
-    }
-  `;
-
-  // Inject styles into page
-  const styleSheet = document.createElement('style');
-  styleSheet.textContent = styles;
-  document.head.appendChild(styleSheet);
-
-  // State management
+  // Widget state
   let isOpen = false;
-  let messages = [];
   let sessionId = null;
+  let history = [];
+  let botSettings = {
+    name: 'AI Assistant',
+    color: '#000000',
+    welcomeMessage: 'Hi! How can I help you today?'
+  };
 
-  // Load bot configuration
-  async function loadBotConfig() {
+  // Create widget container
+  const container = document.createElement('div');
+  container.id = 'mendio-widget-container';
+  container.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999999;
+    font-family: system-ui, -apple-system, sans-serif;
+  `;
+  document.body.appendChild(container);
+
+  // Load bot settings
+  async function loadBotSettings() {
     try {
-      const response = await fetch(`https://myaiguy.com/api/bots/${botId}/config`);
-      if (response.ok) {
-        const config = await response.json();
-        // Apply custom branding
-        if (config.brand?.primaryColor) {
-          document.documentElement.style.setProperty('--mendio-primary', config.brand.primaryColor);
-        }
-        // Update welcome message
-        if (config.welcomeMessage) {
-          document.querySelector('.mendio-bot-message .mendio-message-content').textContent = config.welcomeMessage;
-        }
-        // Update header title
-        if (config.name) {
-          document.querySelector('.mendio-chat-title').textContent = config.name;
+      const res = await fetch(`${API_BASE}/api/bots/settings?botId=${botId}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.settings) {
+          botSettings = { ...botSettings, ...data.settings };
         }
       }
-    } catch (error) {
-      console.error('Failed to load bot config:', error);
+    } catch (e) {
+      console.warn('Failed to load bot settings:', e);
     }
   }
 
-  // DOM elements
-  const widgetButton = document.getElementById('mendio-widget-button');
-  const widgetChat = document.getElementById('mendio-widget-chat');
-  const closeButton = document.getElementById('mendio-close-chat');
-  const chatForm = document.getElementById('mendio-chat-form');
-  const messageInput = document.getElementById('mendio-message-input');
-  const messagesContainer = document.getElementById('mendio-messages');
-
-  // Event handlers
-  widgetButton.addEventListener('click', () => {
-    isOpen = true;
-    widgetChat.style.display = 'flex';
-    widgetButton.style.display = 'none';
-    messageInput.focus();
-    // Clear unread badge
-    const badge = document.querySelector('.mendio-unread-badge');
-    if (badge) badge.style.display = 'none';
-  });
-
-  closeButton.addEventListener('click', () => {
-    isOpen = false;
-    widgetChat.style.display = 'none';
-    widgetButton.style.display = 'flex';
-  });
-
-  chatForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const message = messageInput.value.trim();
-    if (!message) return;
-
-    // Add user message to UI
-    addMessage(message, 'user');
-    messageInput.value = '';
-
-    // Show typing indicator
-    showTypingIndicator();
-
+  // Send message to bot
+  async function sendMessage(content) {
     try {
-      // Send message to API
-      const response = await fetch(WIDGET_API_URL, {
+      history.push({ role: 'user', content, timestamp: new Date() });
+      renderMessages();
+
+      const res = await fetch(`${API_BASE}/api/bots/chat`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           botId,
-          history: messages.map(m => ({
-            role: m.role,
-            content: m.content
-          })),
+          history,
           sessionId,
-          locale: navigator.language
+          locale: navigator.language || 'en',
+          tone: botSettings.tone || 'Professional'
         })
       });
 
-      hideTypingIndicator();
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.sessionId && !sessionId) {
-          sessionId = data.sessionId;
-        }
-        addMessage(data.reply, 'bot');
-      } else {
-        addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+      const data = await res.json();
+      const reply = data.reply || "I'm sorry, I couldn't process that.";
+      
+      if (data.sessionId && !sessionId) {
+        sessionId = data.sessionId;
       }
-    } catch (error) {
-      hideTypingIndicator();
-      addMessage('Sorry, I couldn\'t connect to the server. Please try again.', 'bot');
-    }
-  });
 
-  function addMessage(content, role) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `mendio-message mendio-${role}-message`;
-    messageDiv.innerHTML = `<div class="mendio-message-content">${escapeHtml(content)}</div>`;
-    messagesContainer.appendChild(messageDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    
-    // Save to history
-    messages.push({ role: role === 'bot' ? 'assistant' : 'user', content });
-    
-    // Show unread badge if chat is closed and bot sent a message
-    if (!isOpen && role === 'bot') {
-      const badge = document.querySelector('.mendio-unread-badge');
-      if (badge) {
-        badge.style.display = 'block';
-        badge.textContent = '1';
-      }
+      history.push({ role: 'assistant', content: reply, timestamp: new Date() });
+      renderMessages();
+    } catch (e) {
+      console.error('Chat error:', e);
+      history.push({ 
+        role: 'assistant', 
+        content: 'Sorry, something went wrong. Please try again.', 
+        timestamp: new Date() 
+      });
+      renderMessages();
     }
   }
 
-  function showTypingIndicator() {
-    const indicator = document.createElement('div');
-    indicator.className = 'mendio-message mendio-bot-message';
-    indicator.id = 'mendio-typing-indicator';
-    indicator.innerHTML = `
-      <div class="mendio-typing-indicator">
-        <div class="mendio-typing-dot"></div>
-        <div class="mendio-typing-dot"></div>
-        <div class="mendio-typing-dot"></div>
-      </div>
-    `;
-    messagesContainer.appendChild(indicator);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-  }
+  // Render chat messages
+  function renderMessages() {
+    const messagesContainer = document.getElementById('mendio-messages');
+    if (!messagesContainer) return;
 
-  function hideTypingIndicator() {
-    const indicator = document.getElementById('mendio-typing-indicator');
-    if (indicator) indicator.remove();
+    messagesContainer.innerHTML = history.map(msg => {
+      const isUser = msg.role === 'user';
+      return `
+        <div style="display: flex; gap: 8px; margin-bottom: 12px; ${isUser ? 'justify-content: flex-end;' : ''}">
+          ${!isUser ? `
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: ${botSettings.color}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                <circle cx="12" cy="5" r="2"></circle>
+                <path d="M12 7v4"></path>
+              </svg>
+            </div>
+          ` : ''}
+          <div style="max-width: 70%; ${isUser ? 'order: 1;' : ''}">
+            <div style="
+              padding: 10px 14px;
+              border-radius: 16px;
+              ${isUser 
+                ? `background: ${botSettings.color}; color: white;` 
+                : 'background: #f3f4f6; color: #1f2937;'
+              }
+              font-size: 14px;
+              line-height: 1.5;
+            ">
+              ${isUser ? escapeHtml(msg.content) : msg.content}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }
 
   function escapeHtml(text) {
-    const map = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#039;'
-    };
-    return text.replace(/[&<>"']/g, m => map[m]);
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
+
+  // Toggle widget
+  function toggleWidget() {
+    isOpen = !isOpen;
+    render();
+    
+    if (isOpen && history.length === 0) {
+      // Add welcome message
+      history.push({
+        role: 'assistant',
+        content: `<p>${botSettings.welcomeMessage || 'Hi! How can I help you today?'}</p>`,
+        timestamp: new Date()
+      });
+      renderMessages();
+    }
+  }
+
+  // Render widget
+  function render() {
+    if (isOpen) {
+      container.innerHTML = `
+        <div id="mendio-chat-window" style="
+          width: 380px;
+          height: 600px;
+          max-height: 90vh;
+          background: white;
+          border-radius: 16px;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        ">
+          <!-- Header -->
+          <div style="
+            background: ${botSettings.color};
+            color: white;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          ">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                  <circle cx="12" cy="5" r="2"></circle>
+                  <path d="M12 7v4"></path>
+                </svg>
+              </div>
+              <div>
+                <div style="font-weight: 600; font-size: 15px;">${escapeHtml(botSettings.name)}</div>
+                <div style="font-size: 12px; opacity: 0.9;">Online now</div>
+              </div>
+            </div>
+            <button onclick="window.mendioWidget.toggle()" style="
+              background: none;
+              border: none;
+              color: white;
+              cursor: pointer;
+              padding: 4px;
+              display: flex;
+              align-items: center;
+              opacity: 0.8;
+            ">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Messages -->
+          <div id="mendio-messages" style="
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background: #fafafa;
+          "></div>
+
+          <!-- Input -->
+          <div style="
+            border-top: 1px solid #e5e7eb;
+            padding: 12px;
+            background: white;
+          ">
+            <form id="mendio-form" style="display: flex; gap: 8px;">
+              <input 
+                id="mendio-input" 
+                type="text" 
+                placeholder="Type a message..."
+                style="
+                  flex: 1;
+                  padding: 10px 14px;
+                  border: 1px solid #d1d5db;
+                  border-radius: 20px;
+                  font-size: 14px;
+                  outline: none;
+                "
+              />
+              <button type="submit" style="
+                background: ${botSettings.color};
+                color: white;
+                border: none;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+              ">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      `;
+
+      // Attach form handler
+      const form = document.getElementById('mendio-form');
+      const input = document.getElementById('mendio-input');
+      
+      if (form && input) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const value = input.value.trim();
+          if (value) {
+            sendMessage(value);
+            input.value = '';
+          }
+        });
+        input.focus();
+      }
+
+      renderMessages();
+    } else {
+      container.innerHTML = `
+        <button 
+          onclick="window.mendioWidget.toggle()"
+          style="
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: ${botSettings.color};
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+          "
+          onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 6px 16px rgba(0,0,0,0.2)';"
+          onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)';"
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </button>
+      `;
+    }
+  }
+
+  // Public API
+  window.mendioWidget = {
+    toggle: toggleWidget,
+    open: () => { if (!isOpen) toggleWidget(); },
+    close: () => { if (isOpen) toggleWidget(); },
+    sendMessage: sendMessage
+  };
 
   // Initialize
-  document.body.appendChild(widgetContainer);
-  loadBotConfig();
-
-  // Store session in localStorage
-  const storageKey = `mendio-session-${botId}`;
-  const savedSession = localStorage.getItem(storageKey);
-  if (savedSession) {
-    try {
-      const parsed = JSON.parse(savedSession);
-      sessionId = parsed.sessionId;
-      messages = parsed.messages || [];
-    } catch (e) {
-      // Invalid session data
-    }
-  }
-
-  // Save session on unload
-  window.addEventListener('beforeunload', () => {
-    if (sessionId || messages.length > 0) {
-      localStorage.setItem(storageKey, JSON.stringify({
-        sessionId,
-        messages: messages.slice(-10) // Keep last 10 messages
-      }));
-    }
-  });
-
-  // Keyboard shortcuts
-  document.addEventListener('keydown', (e) => {
-    // Ctrl/Cmd + Shift + M to toggle chat
-    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'M') {
-      if (isOpen) {
-        closeButton.click();
-      } else {
-        widgetButton.click();
-      }
-    }
-  });
+  (async () => {
+    await loadBotSettings();
+    render();
+  })();
 })();

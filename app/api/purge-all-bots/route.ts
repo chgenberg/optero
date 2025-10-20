@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireAdminAuth } from "@/lib/admin-auth";
 
 // Emergency purge: requires query confirm=DELETE-ALL
 export async function POST(req: NextRequest) {
+  // Require admin auth
+  const authError = requireAdminAuth(req);
+  if (authError) return authError;
+  
   try {
     const { searchParams } = new URL(req.url);
     const confirm = searchParams.get('confirm');
