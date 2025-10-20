@@ -40,6 +40,13 @@ export default function PersonalAgentLanding() {
   const [showSettings, setShowSettings] = useState(false);
   const [settingsTab, setSettingsTab] = useState<'general' | 'integrations'>('general');
   
+  // Save bot modal
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [selectedPurpose, setSelectedPurpose] = useState<'customer' | 'internal' | null>(null);
+  const [savedBotId, setSavedBotId] = useState<string | null>(null);
+  const [embedCode, setEmbedCode] = useState<string>("");
+  const [saving, setSaving] = useState(false);
+  
   // Bot settings state
   const [botSettings, setBotSettings] = useState({
     name: "Your AI Assistant",
@@ -226,6 +233,50 @@ export default function PersonalAgentLanding() {
     } catch {
       setChatMessages((m) => [...m, { role: "assistant", content: "Technical error. Please try again." }]);
     } finally { setChatLoading(false); }
+  };
+
+  const handleSaveBot = async (purpose: 'customer' | 'internal') => {
+    if (!botId) return;
+    setSaving(true);
+    try {
+      // Update bot purpose and finalize
+      await fetch(`/api/bots/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          botId,
+          updates: {
+            spec: {
+              purpose,
+              brand: botSettings,
+              integrations
+            }
+          }
+        })
+      });
+      
+      setSavedBotId(botId);
+      
+      // Generate embed code for customer bots
+      if (purpose === 'customer') {
+        const code = `<script>
+  (function() {
+    const script = document.createElement('script');
+    script.src = 'https://optero-production.up.railway.app/widget.js';
+    script.setAttribute('data-bot-id', '${botId}');
+    script.async = true;
+    document.head.appendChild(script);
+  })();
+</script>`;
+        setEmbedCode(code);
+      }
+      
+      setSelectedPurpose(purpose);
+    } catch (e) {
+      alert('Failed to save bot');
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (botId && step === 2) {
@@ -657,6 +708,181 @@ export default function PersonalAgentLanding() {
           )}
         </AnimatePresence>
 
+        {/* Save Bot Modal */}
+        <AnimatePresence>
+          {showSaveModal && !selectedPurpose && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+              onClick={() => setShowSaveModal(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-2xl p-8 max-w-2xl w-full"
+              >
+                <h2 className="text-3xl font-bold mb-6">Save Your Bot</h2>
+                <p className="text-gray-600 mb-8">Choose how you want to deploy your AI assistant:</p>
+                
+                <div className="grid md:grid-cols-2 gap-4 mb-6">
+                  {/* Customer Bot */}
+                  <button
+                    onClick={() => handleSaveBot('customer')}
+                    disabled={saving}
+                    className="p-6 border-2 border-gray-200 hover:border-black rounded-xl text-left transition-all hover:shadow-lg disabled:opacity-50"
+                  >
+                    <div className="text-4xl mb-3">🌐</div>
+                    <h3 className="text-xl font-bold mb-2">Customer Bot</h3>
+                    <p className="text-sm text-gray-600 mb-3">For website visitors & customers</p>
+                    <ul className="space-y-1 text-xs text-gray-500">
+                      <li>✓ Embed on your website</li>
+                      <li>✓ 24/7 customer support</li>
+                      <li>✓ Lead generation</li>
+                      <li>✓ Get embed code</li>
+                    </ul>
+                  </button>
+
+                  {/* Internal Bot */}
+                  <button
+                    onClick={() => handleSaveBot('internal')}
+                    disabled={saving}
+                    className="p-6 border-2 border-gray-200 hover:border-black rounded-xl text-left transition-all hover:shadow-lg disabled:opacity-50"
+                  >
+                    <div className="text-4xl mb-3">🏢</div>
+                    <h3 className="text-xl font-bold mb-2">Internal Bot</h3>
+                    <p className="text-sm text-gray-600 mb-3">For your team & employees</p>
+                    <ul className="space-y-1 text-xs text-gray-500">
+                      <li>✓ Secure login access</li>
+                      <li>✓ Company policies & docs</li>
+                      <li>✓ Brand guidelines</li>
+                      <li>✓ Dashboard access</li>
+                    </ul>
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => setShowSaveModal(false)}
+                  className="w-full py-2 text-gray-600 hover:text-black transition-colors text-sm"
+                >
+                  Cancel
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Success Modal - Customer Bot */}
+          {showSaveModal && selectedPurpose === 'customer' && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                className="bg-white rounded-2xl p-8 max-w-2xl w-full"
+              >
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle2 className="w-10 h-10 text-white" />
+                  </div>
+                  <h2 className="text-3xl font-bold mb-2">Bot Saved!</h2>
+                  <p className="text-gray-600">Your customer bot is ready to deploy</p>
+                </div>
+
+                <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                  <label className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-2 block">
+                    Embed Code
+                  </label>
+                  <div className="relative">
+                    <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto">
+                      <code>{embedCode}</code>
+                    </pre>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(embedCode);
+                        alert('Copied to clipboard!');
+                      }}
+                      className="absolute top-2 right-2 px-3 py-1 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Add this code just before the closing &lt;/body&gt; tag on your website
+                  </p>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => window.location.href = `/dashboard/${savedBotId}`}
+                    className="flex-1 py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
+                  >
+                    Go to Dashboard
+                  </button>
+                  <button
+                    onClick={() => setShowSaveModal(false)}
+                    className="px-6 py-3 border-2 border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                  >
+                    Close
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Success Modal - Internal Bot */}
+          {showSaveModal && selectedPurpose === 'internal' && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                className="bg-white rounded-2xl p-8 max-w-lg w-full"
+              >
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle2 className="w-10 h-10 text-white" />
+                  </div>
+                  <h2 className="text-3xl font-bold mb-2">Internal Bot Saved!</h2>
+                  <p className="text-gray-600">Your team can now access this bot</p>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-6">
+                  <h3 className="font-semibold text-blue-900 mb-2">Next Steps:</h3>
+                  <ul className="space-y-2 text-sm text-blue-800">
+                    <li>• Bot is available in your dashboard</li>
+                    <li>• Team members can access with secure login</li>
+                    <li>• Manage knowledge & integrations anytime</li>
+                  </ul>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => window.location.href = `/dashboard/${savedBotId}`}
+                    className="flex-1 py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
+                  >
+                    Go to Dashboard
+                  </button>
+                  <button
+                    onClick={() => setShowSaveModal(false)}
+                    className="px-6 py-3 border-2 border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                  >
+                    Close
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="min-h-screen bg-gray-100 flex items-center justify-center">
           <div className="w-full h-screen md:max-w-4xl md:h-[700px] bg-white md:rounded-xl shadow-xl overflow-hidden flex flex-col">
             {/* Header */}
@@ -674,7 +900,21 @@ export default function PersonalAgentLanding() {
                     <p className="text-xs text-gray-500">Active now</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
+                  {!savedBotId && (
+                    <button
+                      onClick={() => setShowSaveModal(true)}
+                      className="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+                    >
+                      Save Bot
+                    </button>
+                  )}
+                  {savedBotId && (
+                    <span className="text-xs text-green-600 font-medium flex items-center gap-1">
+                      <CheckCircle2 className="w-4 h-4" />
+                      Saved
+                    </span>
+                  )}
                   <button
                     onClick={() => setShowSettings(true)}
                     className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
