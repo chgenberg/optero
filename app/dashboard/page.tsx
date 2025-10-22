@@ -107,8 +107,8 @@ export default function DashboardPage() {
   const router = useRouter();
   const [bots, setBots] = useState<Bot[]>([]);
   const [integrations, setIntegrations] = useState<Integration[]>([]);
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [loading, setLoading] = useState(true);
   const [showIntegrationMenu, setShowIntegrationMenu] = useState(false);
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);

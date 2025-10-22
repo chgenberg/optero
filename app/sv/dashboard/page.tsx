@@ -107,8 +107,8 @@ export default function DashboardPage() {
   const router = useRouter();
   const [bots, setBots] = useState<Bot[]>([]);
   const [integrations, setIntegrations] = useState<Integration[]>([]);
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [loading, setLoading] = useState(true);
   const [showIntegrationMenu, setShowIntegrationMenu] = useState(false);
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
@@ -136,12 +136,12 @@ export default function DashboardPage() {
           const intData = await intRes.json();
           setIntegrations(intData.integrations || []);
         }
-      } catch (error) {
+    } catch (error) {
         console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
     fetchData();
   }, [router]);
@@ -264,12 +264,12 @@ export default function DashboardPage() {
             <span className="text-xl font-bold">+</span>
           </button>
           
-          <button
+              <button
             onClick={() => router.push("/sv/dashboard/qa")}
             className="bg-white border-2 border-black rounded-full px-4 py-2 text-xs font-semibold hover:bg-gray-50 transition-colors"
           >
             F&S
-          </button>
+              </button>
           
           <button
             onClick={() => router.push("/sv/bot")}
@@ -300,8 +300,8 @@ export default function DashboardPage() {
                   </button>
                 ))}
               </div>
-            </motion.div>
-          )}
+          </motion.div>
+        )}
         </AnimatePresence>
 
         {/* React Flow Canvas */}
@@ -353,22 +353,22 @@ export default function DashboardPage() {
             >
               <h2 className="text-xl font-bold mb-4">
                 Konfigurera {selectedIntegration.name}
-              </h2>
+            </h2>
               
               <div className="space-y-4">
                 {selectedIntegration.type === "webhook" && (
                   <>
-                    <div>
+              <div>
                       <label className="block text-sm font-medium mb-1">
                         Webhook URL
                       </label>
-                      <input
+                <input
                         type="url"
                         className="w-full px-3 py-2 border-2 border-black rounded"
                         placeholder="https://din-webhook-url.com"
-                      />
-                    </div>
-                    <div>
+                />
+              </div>
+              <div>
                       <label className="block text-sm font-medium mb-1">
                         Händelser att trigga
                       </label>
@@ -404,12 +404,12 @@ export default function DashboardPage() {
                       <label className="block text-sm font-medium mb-1">
                         Kanal
                       </label>
-                      <input
-                        type="text"
+                <input
+                  type="text"
                         className="w-full px-3 py-2 border-2 border-black rounded"
                         placeholder="#general"
-                      />
-                    </div>
+                />
+              </div>
                   </>
                 )}
                 
@@ -427,9 +427,9 @@ export default function DashboardPage() {
                     className="flex-1 px-4 py-2 border-2 border-black rounded hover:bg-gray-100"
                   >
                     Avbryt
-                  </button>
-                </div>
+                </button>
               </div>
+            </div>
             </motion.div>
           </motion.div>
         )}
