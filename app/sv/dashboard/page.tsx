@@ -119,29 +119,32 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         const email = localStorage.getItem("userEmail");
-        if (!email) {
-          router.push("/sv");
-          return;
-        }
+        const botsUrl = email
+          ? `/api/bots/stats?email=${encodeURIComponent(email)}`
+          : `/api/bots/stats?email=all`;
 
-        // Fetch bots
-        const botsRes = await fetch(`/api/bots/stats?email=${encodeURIComponent(email)}`);
+        // Hämta bottar (fallback till admin-läge om ingen e‑post finns)
+        const botsRes = await fetch(botsUrl);
         if (!botsRes.ok) throw new Error("Failed to fetch bots");
         const botsData = await botsRes.json();
         setBots(botsData.bots || []);
 
-        // Fetch integrations
-        const intRes = await fetch(`/api/integrations?email=${encodeURIComponent(email)}`);
-        if (intRes.ok) {
-          const intData = await intRes.json();
-          setIntegrations(intData.integrations || []);
+        // Hämta integrationer endast när e‑post finns
+        if (email) {
+          const intRes = await fetch(`/api/integrations?email=${encodeURIComponent(email)}`);
+          if (intRes.ok) {
+            const intData = await intRes.json();
+            setIntegrations(intData.integrations || []);
+          }
+        } else {
+          setIntegrations([]);
         }
-    } catch (error) {
+      } catch (error) {
         console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchData();
   }, [router]);

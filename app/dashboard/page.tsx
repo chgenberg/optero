@@ -119,22 +119,26 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         const email = localStorage.getItem("userEmail");
-        if (!email) {
-          router.push("/");
-          return;
-        }
+        const botsUrl = email
+          ? `/api/bots/stats?email=${encodeURIComponent(email)}`
+          : `/api/bots/stats?email=all`;
 
-        // Fetch bots
-        const botsRes = await fetch(`/api/bots/stats?email=${encodeURIComponent(email)}`);
+        // Fetch bots (fallback to admin mode when no email present)
+        const botsRes = await fetch(botsUrl);
         if (!botsRes.ok) throw new Error("Failed to fetch bots");
         const botsData = await botsRes.json();
         setBots(botsData.bots || []);
 
         // Fetch integrations
-        const intRes = await fetch(`/api/integrations?email=${encodeURIComponent(email)}`);
-        if (intRes.ok) {
-          const intData = await intRes.json();
-          setIntegrations(intData.integrations || []);
+        if (email) {
+          const intRes = await fetch(`/api/integrations?email=${encodeURIComponent(email)}`);
+          if (intRes.ok) {
+            const intData = await intRes.json();
+            setIntegrations(intData.integrations || []);
+          }
+        } else {
+          // No email -> show no integrations (still allow viewing bots)
+          setIntegrations([]);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
