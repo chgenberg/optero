@@ -339,6 +339,7 @@ model User {
   companyRef    Company?  @relation(fields: [companyId], references: [id])
   
   bots          Bot[]
+  integrations  Integration[]
   
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -430,6 +431,7 @@ model Bot {
   actions      BotAction[]
   integration  BotIntegration?
   knowledge    BotKnowledge[]
+  integrationConnections BotIntegrationConnection[]
   sessions     BotSession[]
   ratings      BotRating[]
   qaDatabase   BotQA[]
@@ -589,6 +591,40 @@ model BotIntegration {
   bot                  Bot      @relation(fields: [botId], references: [id], onDelete: Cascade)
 
   @@index([botId])
+}
+
+// New: General purpose integrations (webhook, slack, etc)
+model Integration {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // "webhook" | "slack" | "teams" | "discord" | "zapier" | "email" | "sms" | "calendar" | "crm" | "analytics" | "database" | "api"
+  name      String
+  settings  Json     // Type-specific settings (URLs, tokens, etc)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  botIntegrations BotIntegrationConnection[]
+  
+  @@index([userId])
+  @@index([type])
+}
+
+// Many-to-many connection between bots and integrations
+model BotIntegrationConnection {
+  id            String   @id @default(cuid())
+  botId         String
+  integrationId String
+  config        Json?    // Bot-specific config for this integration
+  createdAt     DateTime @default(now())
+  
+  bot           Bot          @relation(fields: [botId], references: [id], onDelete: Cascade)
+  integration   Integration  @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  
+  @@unique([botId, integrationId])
+  @@index([botId])
+  @@index([integrationId])
 }
 
 model BotVersion {
