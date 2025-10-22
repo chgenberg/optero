@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import ReactFlow, {
+import {
+  ReactFlow,
   Node,
   Edge,
   Controls,
