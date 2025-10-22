@@ -108,13 +108,13 @@ export async function PUT(request: NextRequest) {
     // Update bot connections
     if (connectedBots !== undefined) {
       // Remove all existing connections
-      await prisma.botIntegration.deleteMany({
+      await prisma.botIntegrationConnection.deleteMany({
         where: { integrationId },
       });
 
       // Add new connections
       if (connectedBots.length > 0) {
-        await prisma.botIntegration.createMany({
+        await prisma.botIntegrationConnection.createMany({
           data: connectedBots.map((botId: string) => ({
             botId,
             integrationId,
