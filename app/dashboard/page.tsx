@@ -185,7 +185,7 @@ function DashboardContent() {
           const isInternal = bot.spec?.purpose === 'internal';
           if (isInternal) {
             router.push(`/internal/${bot.id}`);
-          } else {
+    } else {
             router.push(`/bots/chat?botId=${bot.id}`);
           }
         }
@@ -266,7 +266,7 @@ function DashboardContent() {
     []
   );
 
-  const addNewIntegration = async (type: string, name: string) => {
+  const addNewIntegration = async (type: string, name: string, position?: { x: number; y: number }) => {
     try {
       // Try to get email from localStorage or from first bot's userId
       let email = localStorage.getItem("userEmail");
@@ -301,7 +301,7 @@ function DashboardContent() {
         const newIntegrationNode: Node = {
           id: `integration-${integration.id}`,
           type: "integration",
-          position: { 
+          position: position || { 
             x: 300 + Math.random() * 200, 
             y: 100 + Math.random() * 200 
           },
@@ -327,6 +327,32 @@ function DashboardContent() {
       alert("Failed to create integration");
     }
     setShowIntegrationMenu(false);
+  };
+
+  // DnD from integration menu → canvas
+  const handleDragStart = (e: React.DragEvent<HTMLButtonElement>, int: { type: string; name: string }) => {
+    try {
+      e.dataTransfer.setData('application/xy-integration', JSON.stringify(int));
+      e.dataTransfer.effectAllowed = 'move';
+    } catch {}
+  };
+
+  const onDragOverCanvas = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+  };
+
+  const onDropCanvas = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    try {
+      const payload = e.dataTransfer.getData('application/xy-integration');
+      if (!payload) return;
+      const int = JSON.parse(payload) as { type: string; name: string };
+      const pos = rfInstance?.screenToFlowPosition
+        ? rfInstance.screenToFlowPosition({ x: e.clientX, y: e.clientY })
+        : { x: 200, y: 200 };
+      await addNewIntegration(int.type, int.name, pos);
+    } catch {}
   };
 
   const saveIntegrationSettings = async () => {
@@ -402,7 +428,7 @@ function DashboardContent() {
           >
             NEW BOT
           </button>
-        </div>
+            </div>
 
         {/* Integration menu */}
         <AnimatePresence>
@@ -411,7 +437,7 @@ function DashboardContent() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="absolute top-20 right-4 z-20 bg-white border-2 border-black rounded-lg p-4 shadow-lg"
+              className="absolute top-20 right-4 z-30 bg-white border-2 border-black rounded-lg p-4 shadow-lg pointer-events-auto"
             >
               <h3 className="font-bold mb-3">Add Integration</h3>
               <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
@@ -420,6 +446,8 @@ function DashboardContent() {
                   return (
                     <button
                       key={int.type}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, int)}
                       onClick={() => addNewIntegration(int.type, int.name)}
                       className={`${colorClass} text-left p-3 rounded-lg border-2 hover:scale-105 transition-all cursor-pointer`}
                     >
@@ -427,13 +455,13 @@ function DashboardContent() {
                     </button>
                   );
                 })}
-              </div>
-            </motion.div>
+          </div>
+        </motion.div>
           )}
         </AnimatePresence>
 
         {/* React Flow Canvas */}
-        <div className="w-full h-full" style={{ height: "calc(100vh - 200px)" }}>
+        <div className="w-full h-full" style={{ height: "calc(100vh - 200px)" }} onDragOver={onDragOverCanvas} onDrop={onDropCanvas}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -448,7 +476,7 @@ function DashboardContent() {
             <Background color="#e5e5e5" gap={20} />
             <Controls className="bg-white border-2 border-black" />
           </ReactFlow>
-        </div>
+          </div>
 
         {/* Empty state */}
         {bots.length === 0 && (
@@ -466,9 +494,9 @@ function DashboardContent() {
       {/* Integration Settings Modal */}
       <AnimatePresence>
         {showIntegrationModal && selectedIntegration && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
             onClick={() => setShowIntegrationModal(false)}
@@ -482,7 +510,7 @@ function DashboardContent() {
             >
               <h2 className="text-xl font-bold mb-4">
                 Configure {selectedIntegration.name}
-              </h2>
+                </h2>
               
               <div className="space-y-4">
                 {selectedIntegration.type === "webhook" && (
@@ -498,7 +526,7 @@ function DashboardContent() {
                         value={integrationSettings.webhookUrl || ''}
                         onChange={(e) => setIntegrationSettings({...integrationSettings, webhookUrl: e.target.value})}
                       />
-                    </div>
+              </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">
                         Events to trigger
@@ -520,18 +548,18 @@ function DashboardContent() {
                     </div>
                   </>
                 )}
-                
+
                 {selectedIntegration.type === "slack" && (
                   <>
-                    <div>
+                      <div>
                       <label className="block text-sm font-medium mb-1">
                         Slack Workspace
                       </label>
                       <button className="w-full px-3 py-2 border-2 border-black rounded bg-gray-100 hover:bg-gray-200">
                         Connect to Slack
                       </button>
-                    </div>
-                    <div>
+                      </div>
+                      <div>
                       <label className="block text-sm font-medium mb-1">
                         Channel
                       </label>
@@ -540,7 +568,7 @@ function DashboardContent() {
                         className="w-full px-3 py-2 border-2 border-black rounded"
                         placeholder="#general"
                       />
-                    </div>
+                        </div>
                   </>
                 )}
                 
@@ -555,7 +583,7 @@ function DashboardContent() {
                         className="w-full px-3 py-2 border-2 border-black rounded"
                         placeholder="https://outlook.office.com/webhook/..."
                       />
-                    </div>
+                        </div>
                   </>
                 )}
                 
@@ -570,8 +598,8 @@ function DashboardContent() {
                         className="w-full px-3 py-2 border-2 border-black rounded"
                         placeholder="notifications@company.com"
                       />
-                    </div>
-                    <div>
+                      </div>
+                      <div>
                       <label className="block text-sm font-medium mb-1">
                         Email on
                       </label>
@@ -629,23 +657,23 @@ function DashboardContent() {
                         className="w-full px-3 py-2 border-2 border-black rounded"
                         placeholder="Your API key"
                       />
-                    </div>
+            </div>
                   </>
                 )}
                 
                 {selectedIntegration.type === "api" && (
                   <>
-                    <div>
+              <div>
                       <label className="block text-sm font-medium mb-1">
                         API Endpoint
                       </label>
-                      <input
+                <input
                         type="url"
                         className="w-full px-3 py-2 border-2 border-black rounded"
                         placeholder="https://api.example.com/endpoint"
-                      />
-                    </div>
-                    <div>
+                />
+              </div>
+              <div>
                       <label className="block text-sm font-medium mb-1">
                         Headers (JSON)
                       </label>
@@ -653,8 +681,8 @@ function DashboardContent() {
                         className="w-full px-3 py-2 border-2 border-black rounded font-mono text-sm"
                         rows={3}
                         placeholder='{"Authorization": "Bearer YOUR_TOKEN"}'
-                      />
-                    </div>
+                />
+              </div>
                   </>
                 )}
                 
@@ -673,9 +701,9 @@ function DashboardContent() {
                     className="flex-1 px-4 py-2 border-2 border-black rounded hover:bg-gray-100"
                   >
                     Cancel
-                  </button>
-                </div>
+                </button>
               </div>
+            </div>
             </motion.div>
           </motion.div>
         )}

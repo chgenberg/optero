@@ -154,15 +154,15 @@ function DashboardContent() {
             const intData = await intRes.json();
             setIntegrations(intData.integrations || []);
           }
-        } else {
+    } else {
           setIntegrations([]);
         }
-      } catch (error) {
+    } catch (error) {
         console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
     fetchData();
   }, [router]);
@@ -263,7 +263,7 @@ function DashboardContent() {
     []
   );
 
-  const addNewIntegration = async (type: string, name: string) => {
+  const addNewIntegration = async (type: string, name: string, position?: { x: number; y: number }) => {
     try {
       const email = localStorage.getItem("userEmail");
       if (!email) return;
@@ -276,12 +276,41 @@ function DashboardContent() {
 
       if (res.ok) {
         const { integration } = await res.json();
+        const newNode: Node = {
+          id: `integration-${integration.id}`,
+          type: "integration",
+          position: position || { x: 300 + Math.random() * 200, y: 100 + Math.random() * 200 },
+          data: {
+            integration: { ...integration, connectedBots: [] },
+            onClick: () => {
+              setSelectedIntegration({ ...integration, connectedBots: [] });
+              setShowIntegrationModal(true);
+            }
+          }
+        };
+        setNodes((nds) => [...nds, newNode]);
         setIntegrations([...integrations, { ...integration, connectedBots: [] }]);
       }
     } catch (error) {
       console.error("Error creating integration:", error);
     }
     setShowIntegrationMenu(false);
+  };
+
+  // DnD från integrationsmeny → canvas
+  const handleDragStart = (e: React.DragEvent<HTMLButtonElement>, int: { type: string; name: string }) => {
+    try { e.dataTransfer.setData('application/xy-integration', JSON.stringify(int)); e.dataTransfer.effectAllowed = 'move'; } catch {}
+  };
+  const onDragOverCanvas = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); if (e.dataTransfer) e.dataTransfer.dropEffect = 'move'; };
+  const onDropCanvas = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    try {
+      const payload = e.dataTransfer.getData('application/xy-integration');
+      if (!payload) return;
+      const int = JSON.parse(payload) as { type: string; name: string };
+      const pos = rfInstance?.screenToFlowPosition ? rfInstance.screenToFlowPosition({ x: e.clientX, y: e.clientY }) : { x: 200, y: 200 };
+      await addNewIntegration(int.type, int.name, pos);
+    } catch {}
   };
 
   if (loading) {
@@ -319,7 +348,7 @@ function DashboardContent() {
           >
             NY BOT
           </button>
-        </div>
+                    </div>
 
         {/* Integration menu */}
         <AnimatePresence>
@@ -328,26 +357,31 @@ function DashboardContent() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="absolute top-20 right-4 z-20 bg-white border-2 border-black rounded-lg p-4 shadow-lg"
+              className="absolute top-20 right-4 z-30 bg-white border-2 border-black rounded-lg p-4 shadow-lg pointer-events-auto"
             >
               <h3 className="font-bold mb-3">Lägg till integration</h3>
               <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
-                {AVAILABLE_INTEGRATIONS.map((int) => (
-                  <button
-                    key={int.type}
-                    onClick={() => addNewIntegration(int.type, int.name)}
-                    className="text-left p-2 hover:bg-gray-100 rounded border border-gray-300"
-                  >
-                    {int.name}
-                  </button>
-                ))}
+                {AVAILABLE_INTEGRATIONS.map((int) => {
+                  const colorClass = integrationColors[int.type] || "bg-gray-100 border-gray-300";
+                  return (
+                    <button
+                      key={int.type}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, int)}
+                      onClick={() => addNewIntegration(int.type, int.name)}
+                      className={`${colorClass} text-left p-3 rounded-lg border-2 hover:scale-105 transition-all cursor-pointer`}
+                    >
+                      <span className="font-semibold text-sm">{int.name}</span>
+                    </button>
+                  );
+                })}
               </div>
           </motion.div>
         )}
         </AnimatePresence>
 
         {/* React Flow Canvas */}
-        <div className="w-full h-full" style={{ height: "calc(100vh - 200px)" }}>
+        <div className="w-full h-full" style={{ height: "calc(100vh - 200px)" }} onDragOver={onDragOverCanvas} onDrop={onDropCanvas}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
