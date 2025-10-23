@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ReactFlow,
   Node,
@@ -41,14 +41,11 @@ interface Integration {
 }
 
 // Custom Bot Node Component
-const BotNode = ({ data }: { data: { bot: Bot; onEdit: () => void } }) => {
+const BotNode = ({ data }: { data: { bot: Bot; onChat: () => void } }) => {
   return (
     <div
-      className="relative bg-white border-2 border-black rounded-full w-32 h-32 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform"
-      style={{
-        clipPath: "polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%)",
-      }}
-      onClick={data.onEdit}
+      className="relative bg-white border-2 border-black rounded-full w-32 h-32 flex items-center justify-center cursor-pointer hover:scale-105 transition-all bot-node-shadow"
+      onClick={data.onChat}
     >
       <Handle type="source" position={Position.Right} className="opacity-0" />
       <Handle type="target" position={Position.Left} className="opacity-0" />
@@ -65,11 +62,29 @@ const BotNode = ({ data }: { data: { bot: Bot; onEdit: () => void } }) => {
   );
 };
 
+// Pastel colors for different integration types
+const integrationColors: Record<string, string> = {
+  webhook: "bg-purple-100 border-purple-300",
+  slack: "bg-pink-100 border-pink-300",
+  teams: "bg-blue-100 border-blue-300",
+  discord: "bg-indigo-100 border-indigo-300",
+  zapier: "bg-orange-100 border-orange-300",
+  email: "bg-green-100 border-green-300",
+  sms: "bg-yellow-100 border-yellow-300",
+  calendar: "bg-red-100 border-red-300",
+  crm: "bg-teal-100 border-teal-300",
+  analytics: "bg-cyan-100 border-cyan-300",
+  database: "bg-gray-100 border-gray-300",
+  api: "bg-purple-100 border-purple-300",
+};
+
 // Custom Integration Node Component
 const IntegrationNode = ({ data }: { data: { integration: Integration; onClick: () => void } }) => {
+  const colorClass = integrationColors[data.integration.type] || "bg-gray-100 border-gray-300";
+  
   return (
     <div
-      className="bg-white border-2 border-black rounded-full w-20 h-20 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform"
+      className={`${colorClass} border-2 rounded-full w-20 h-20 flex items-center justify-center cursor-pointer hover:scale-110 transition-all shadow-md hover:shadow-lg`}
       onClick={data.onClick}
     >
       <Handle type="source" position={Position.Right} className="opacity-0" />
@@ -105,6 +120,7 @@ const AVAILABLE_INTEGRATIONS = [
 
 export default function DashboardPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [bots, setBots] = useState<Bot[]>([]);
   const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
@@ -113,6 +129,7 @@ export default function DashboardPage() {
   const [showIntegrationMenu, setShowIntegrationMenu] = useState(false);
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
   const [showIntegrationModal, setShowIntegrationModal] = useState(false);
+  const [rfInstance, setRfInstance] = useState<any>(null);
 
   // Fetch bots and integrations
   useEffect(() => {
@@ -161,7 +178,15 @@ export default function DashboardPage() {
       },
       data: { 
         bot, 
-        onEdit: () => router.push(`/dashboard/${bot.id}`)
+        onChat: () => {
+          // Check if bot has internal purpose, route accordingly
+          const isInternal = bot.spec?.purpose === 'internal';
+          if (isInternal) {
+            router.push(`/internal/${bot.id}`);
+          } else {
+            router.push(`/bots/chat?botId=${bot.id}`);
+          }
+        }
       },
     }));
 
@@ -197,6 +222,19 @@ export default function DashboardPage() {
 
     setEdges(newEdges);
   }, [bots, integrations, router]);
+
+  // Center on specific bot if focus query param is present
+  useEffect(() => {
+    const focusId = searchParams?.get('focus');
+    if (!focusId || !rfInstance) return;
+    // Wait a tick to ensure nodes are mounted
+    const t = setTimeout(() => {
+      try {
+        rfInstance.fitView({ nodes: [{ id: `bot-${focusId}` }], padding: 0.3, includeHiddenNodes: true });
+      } catch {}
+    }, 50);
+    return () => clearTimeout(t);
+  }, [searchParams, rfInstance, nodes]);
 
   const onConnect = useCallback(
     (params: Connection) => {
@@ -319,6 +357,7 @@ export default function DashboardPage() {
             nodeTypes={nodeTypes}
             fitView
             className="bg-gray-100"
+            onInit={(instance) => setRfInstance(instance)}
           >
             <Background color="#e5e5e5" gap={20} />
             <Controls className="bg-white border-2 border-black" />

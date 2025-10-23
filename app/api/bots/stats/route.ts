@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
           id: b.id,
           name: b.name,
           type: b.type,
+          spec: b.spec,
           companyUrl: b.companyUrl,
           isActive: b.isActive,
           createdAt: b.createdAt,
@@ -114,6 +115,7 @@ export async function GET(req: NextRequest) {
           id: bot.id,
           name: bot.name,
           type: bot.type,
+          spec: bot.spec,
           createdAt: bot.createdAt
         },
         stats: {
@@ -156,6 +158,7 @@ export async function GET(req: NextRequest) {
             id: b.id,
             name: b.name,
             type: b.type,
+            spec: b.spec,
             companyUrl: b.companyUrl,
             isActive: b.isActive,
             createdAt: b.createdAt,
@@ -194,6 +197,7 @@ export async function GET(req: NextRequest) {
           id: b.id,
           name: b.name,
           type: b.type,
+          spec: b.spec,
           companyUrl: b.companyUrl,
           isActive: b.isActive,
           createdAt: b.createdAt,

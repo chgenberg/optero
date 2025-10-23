@@ -284,6 +284,16 @@ export default function BotDetailPage() {
                 </motion.button>
               )}
               <motion.button
+                onClick={() => router.push(`/dashboard?focus=${botId}`)}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="minimal-button-outline flex items-center gap-2"
+                title="Open interactive canvas"
+              >
+                <Settings className="w-4 h-4" />
+                OPEN CANVAS
+              </motion.button>
+              <motion.button
                 onClick={() => router.push(`/integrations?botId=${botId}`)}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
