@@ -37,6 +37,50 @@ export async function POST(req: NextRequest) {
     pushCat((standardQuestions as any).customer || {}, 'customer');
     pushCat((standardQuestions as any).internal || {}, 'internal');
 
+    // If we have fewer than the requested limit, auto-generate domain questions from bot knowledge
+    const ensureExtraQuestions = async () => {
+      try {
+        const currentCount = allQuestions.length;
+        if (currentCount >= limit) return;
+
+        const need = Math.min(limit - currentCount, 400); // safety cap
+        // Load some knowledge chunks as seed context
+        const kb = await prisma.botKnowledge.findMany({
+          where: { botId },
+          select: { content: true, title: true },
+          take: 50
+        });
+        const seed = kb.map(k => `${k.title || 'Doc'}:\n${k.content}`)
+          .join('\n\n')
+          .slice(0, 12000);
+
+        const sys = 'Generate diverse, duplicate-free, company-specific and domain-specific questions (Swedish and English) about an electrical installations company (construction, contracts, service & maintenance, safety, brand, projects, finances, policies). Output as a JSON array of strings only.';
+        const usr = `Company/site context (excerpt):\n${seed}\n\nGenerate ${need} unique questions covering: history, founders, services, safety, certifications, pricing principles, response times, projects, capacity, employees, sustainability, insurance, warranties, finance/ratios (non-sensitive), contact, working hours. Include misspelling variants occasionally. Return ONLY JSON array of strings.`;
+        const extraMessages: any[] = [
+          { role: 'system', content: sys },
+          { role: 'user', content: usr }
+        ];
+        const r = await openai.chat.completions.create({
+          model: 'gpt-5-mini',
+          messages: extraMessages,
+          max_completion_tokens: 1200,
+          temperature: 0.6
+        });
+        const raw = r.choices[0]?.message?.content || '[]';
+        const match = raw.match(/\[([\s\S]*)\]/);
+        const json = JSON.parse(match ? match[0] : raw);
+        if (Array.isArray(json)) {
+          for (const q of json) {
+            if (typeof q === 'string' && q.trim().length > 5) {
+              allQuestions.push({ category: 'generated.auto', question: q.trim() });
+            }
+          }
+        }
+      } catch {}
+    };
+
+    await ensureExtraQuestions();
+
     const existing = await prisma.botQA.findMany({ where: { botId }, select: { question: true } });
     const existingSet = new Set(existing.map(e => e.question.toLowerCase()));
 
