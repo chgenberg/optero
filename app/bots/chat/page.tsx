@@ -179,7 +179,7 @@ function ChatInner() {
             </div>
           </div>
           {/* Messages Container */}
-          <div ref={containerRef} className="h-[450px] md:h-[500px] overflow-y-auto p-4 md:p-6 space-y-3">
+          <div ref={containerRef} className="h-[380px] md:h-[440px] overflow-y-auto p-4 md:p-6 space-y-3">
             {messages.map((m, i) => (
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`flex items-end gap-2 max-w-[80%] ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
