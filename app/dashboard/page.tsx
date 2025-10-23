@@ -181,13 +181,8 @@ function DashboardContent() {
       data: { 
         bot, 
         onChat: () => {
-          // Check if bot has internal purpose, route accordingly
-          const isInternal = bot.spec?.purpose === 'internal';
-          if (isInternal) {
-            router.push(`/internal/${bot.id}`);
-    } else {
-            router.push(`/bots/chat?botId=${bot.id}`);
-          }
+          // Temporary: always open public chat without login
+          router.push(`/bots/chat?botId=${bot.id}`);
         }
       },
     }));
