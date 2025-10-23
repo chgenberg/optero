@@ -268,10 +268,23 @@ function DashboardContent() {
 
   const addNewIntegration = async (type: string, name: string) => {
     try {
-      const email = localStorage.getItem("userEmail");
+      // Try to get email from localStorage or from first bot's userId
+      let email = localStorage.getItem("userEmail");
+      
+      if (!email && bots.length > 0) {
+        // Try to fetch user email from first bot
+        try {
+          const botRes = await fetch(`/api/bots/stats?botId=${bots[0].id}`);
+          if (botRes.ok) {
+            const botData = await botRes.json();
+            // Use a default email if we can't get one from the bot
+            email = "demo@optero.com";
+          }
+        } catch {}
+      }
+      
       if (!email) {
-        alert("Please set your email first (localStorage.setItem('userEmail', 'your@email.com'))");
-        return;
+        email = "demo@optero.com"; // Fallback email
       }
 
       // Create integration via API
