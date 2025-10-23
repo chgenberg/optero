@@ -130,6 +130,7 @@ export default function DashboardPage() {
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
   const [showIntegrationModal, setShowIntegrationModal] = useState(false);
   const [rfInstance, setRfInstance] = useState<any>(null);
+  const [integrationSettings, setIntegrationSettings] = useState<any>({});
 
   // Fetch bots and integrations
   useEffect(() => {
@@ -201,6 +202,7 @@ export default function DashboardPage() {
         integration,
         onClick: () => {
           setSelectedIntegration(integration);
+          setIntegrationSettings(integration.settings || {});
           setShowIntegrationModal(true);
         }
       },
@@ -266,8 +268,12 @@ export default function DashboardPage() {
   const addNewIntegration = async (type: string, name: string) => {
     try {
       const email = localStorage.getItem("userEmail");
-      if (!email) return;
+      if (!email) {
+        alert("Please set your email first (localStorage.setItem('userEmail', 'your@email.com'))");
+        return;
+      }
 
+      // Create integration via API
       const res = await fetch("/api/integrations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -276,12 +282,75 @@ export default function DashboardPage() {
 
       if (res.ok) {
         const { integration } = await res.json();
+        
+        // Add new integration node to canvas
+        const newIntegrationNode: Node = {
+          id: `integration-${integration.id}`,
+          type: "integration",
+          position: { 
+            x: 300 + Math.random() * 200, 
+            y: 100 + Math.random() * 200 
+          },
+          data: { 
+            integration: { ...integration, connectedBots: [] },
+            onClick: () => {
+              setSelectedIntegration({ ...integration, connectedBots: [] });
+              setIntegrationSettings(integration.settings || {});
+              setShowIntegrationModal(true);
+            }
+          },
+        };
+        
+        setNodes((nds) => [...nds, newIntegrationNode]);
         setIntegrations([...integrations, { ...integration, connectedBots: [] }]);
+        
+        // Open config modal immediately
+        setSelectedIntegration({ ...integration, connectedBots: [] });
+        setShowIntegrationModal(true);
       }
     } catch (error) {
       console.error("Error creating integration:", error);
+      alert("Failed to create integration");
     }
     setShowIntegrationMenu(false);
+  };
+
+  const saveIntegrationSettings = async () => {
+    if (!selectedIntegration) return;
+    
+    try {
+      // Get connected bot IDs from edges
+      const connectedBotIds = edges
+        .filter(edge => edge.source === `integration-${selectedIntegration.id}`)
+        .map(edge => edge.target.replace('bot-', ''));
+      
+      const res = await fetch('/api/integrations', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          integrationId: selectedIntegration.id,
+          settings: integrationSettings,
+          connectedBots: connectedBotIds
+        })
+      });
+      
+      if (res.ok) {
+        // Update local state
+        setIntegrations(prev => 
+          prev.map(int => 
+            int.id === selectedIntegration.id 
+              ? { ...int, settings: integrationSettings, connectedBots: connectedBotIds }
+              : int
+          )
+        );
+        alert('Integration saved!');
+        setShowIntegrationModal(false);
+        setIntegrationSettings({});
+      }
+    } catch (error) {
+      console.error('Error saving integration:', error);
+      alert('Failed to save integration');
+    }
   };
 
   if (loading) {
@@ -332,15 +401,18 @@ export default function DashboardPage() {
             >
               <h3 className="font-bold mb-3">Add Integration</h3>
               <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
-                {AVAILABLE_INTEGRATIONS.map((int) => (
-                  <button
-                    key={int.type}
-                    onClick={() => addNewIntegration(int.type, int.name)}
-                    className="text-left p-2 hover:bg-gray-100 rounded border border-gray-300"
-                  >
-                    {int.name}
-                  </button>
-                ))}
+                {AVAILABLE_INTEGRATIONS.map((int) => {
+                  const colorClass = integrationColors[int.type] || "bg-gray-100 border-gray-300";
+                  return (
+                    <button
+                      key={int.type}
+                      onClick={() => addNewIntegration(int.type, int.name)}
+                      className={`${colorClass} text-left p-3 rounded-lg border-2 hover:scale-105 transition-all cursor-pointer`}
+                    >
+                      <span className="font-semibold text-sm">{int.name}</span>
+                    </button>
+                  );
+                })}
               </div>
             </motion.div>
           )}
@@ -409,6 +481,8 @@ export default function DashboardPage() {
                         type="url"
                         className="w-full px-3 py-2 border-2 border-black rounded"
                         placeholder="https://your-webhook-url.com"
+                        value={integrationSettings.webhookUrl || ''}
+                        onChange={(e) => setIntegrationSettings({...integrationSettings, webhookUrl: e.target.value})}
                       />
                     </div>
                     <div>
@@ -456,17 +530,132 @@ export default function DashboardPage() {
                   </>
                 )}
                 
-                {/* Add more integration types as needed */}
+                {selectedIntegration.type === "teams" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Teams Webhook URL
+                      </label>
+                      <input
+                        type="url"
+                        className="w-full px-3 py-2 border-2 border-black rounded"
+                        placeholder="https://outlook.office.com/webhook/..."
+                      />
+                    </div>
+                  </>
+                )}
+                
+                {selectedIntegration.type === "email" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        className="w-full px-3 py-2 border-2 border-black rounded"
+                        placeholder="notifications@company.com"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Email on
+                      </label>
+                      <div className="space-y-2">
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" defaultChecked />
+                          New leads
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" />
+                          Daily summary
+                        </label>
+                      </div>
+                    </div>
+                  </>
+                )}
+                
+                {selectedIntegration.type === "zapier" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Zapier Webhook URL
+                      </label>
+                      <input
+                        type="url"
+                        className="w-full px-3 py-2 border-2 border-black rounded"
+                        placeholder="https://hooks.zapier.com/..."
+                      />
+                    </div>
+                    <p className="text-xs text-gray-600">
+                      Create a Zapier trigger with "Webhooks by Zapier"
+                    </p>
+                  </>
+                )}
+                
+                {selectedIntegration.type === "crm" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        CRM System
+                      </label>
+                      <select className="w-full px-3 py-2 border-2 border-black rounded">
+                        <option value="">Select CRM</option>
+                        <option value="hubspot">HubSpot</option>
+                        <option value="salesforce">Salesforce</option>
+                        <option value="pipedrive">Pipedrive</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        API Key
+                      </label>
+                      <input
+                        type="password"
+                        className="w-full px-3 py-2 border-2 border-black rounded"
+                        placeholder="Your API key"
+                      />
+                    </div>
+                  </>
+                )}
+                
+                {selectedIntegration.type === "api" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        API Endpoint
+                      </label>
+                      <input
+                        type="url"
+                        className="w-full px-3 py-2 border-2 border-black rounded"
+                        placeholder="https://api.example.com/endpoint"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Headers (JSON)
+                      </label>
+                      <textarea
+                        className="w-full px-3 py-2 border-2 border-black rounded font-mono text-sm"
+                        rows={3}
+                        placeholder='{"Authorization": "Bearer YOUR_TOKEN"}'
+                      />
+                    </div>
+                  </>
+                )}
                 
                 <div className="pt-4 flex gap-2">
                   <button
-                    onClick={() => setShowIntegrationModal(false)}
+                    onClick={saveIntegrationSettings}
                     className="flex-1 px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
                   >
                     Save
                   </button>
                   <button
-                    onClick={() => setShowIntegrationModal(false)}
+                    onClick={() => {
+                      setShowIntegrationModal(false);
+                      setIntegrationSettings({});
+                    }}
                     className="flex-1 px-4 py-2 border-2 border-black rounded hover:bg-gray-100"
                   >
                     Cancel
