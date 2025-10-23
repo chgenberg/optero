@@ -29,6 +29,7 @@ interface Bot {
   id: string;
   name: string;
   companyUrl?: string;
+  spec?: any;
   integrations?: any[];
 }
 
