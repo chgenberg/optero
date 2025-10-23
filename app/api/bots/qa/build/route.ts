@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import standardQuestions from "@/data/standard-questions.json";
 import { deepScrapeQuick } from "@/lib/deepScrape";
 
-export const maxDuration = 120;
+export const maxDuration = 300;
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const botId = searchParams.get('botId') || '';
-    const limit = Math.min(Number(searchParams.get('limit') || 250), 250);
+    const limit = Math.min(Number(searchParams.get('limit') || 600), 600);
     if (!botId) return NextResponse.json({ error: 'botId required' }, { status: 400 });
 
     const bot = await prisma.bot.findUnique({ where: { id: botId } });
