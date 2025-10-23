@@ -36,6 +36,40 @@ export async function POST(req: NextRequest) {
         clearTimeout(id);
       }
     };
+    // Lightweight query rewrite: normalize, correct typos, expand synonyms
+    const rewriteUserQuery = async (text: string, langCode: string): Promise<string> => {
+      try {
+        if (!text || text.length < 2) return text || '';
+        let t = text.trim();
+        // Quick heuristics
+        const repl: Array<[RegExp,string]> = [
+          [/vems?\b/gi, 'vem '],
+          [/grundaren\b/gi, 'grundare'],
+          [/företaget\b/gi, 'företag'],
+          [/oms?(?:ättn)?(?:ing)?\b/gi, 'omsättning'],
+          [/anställda?\b/gi, 'antal anställda'],
+        ];
+        for (const [r, s] of repl) { t = t.replace(r, s); }
+        // Collapse whitespace
+        t = t.replace(/\s+/g, ' ').trim();
+        // Optional LLM normalization (short budget)
+        try {
+          const sys = langCode === 'sv'
+            ? 'Omskriv kort frågan till korrekt svenska och synonymer som passar sökning. Behåll betydelsen. Returnera endast den omskrivna frågan.'
+            : 'Rewrite the user query into a normalized, typo-corrected form optimized for semantic search. Return only the rewritten query.';
+          const r = await openai.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [ { role: 'system', content: sys }, { role: 'user', content: t } ],
+            max_completion_tokens: 32,
+            temperature: 0.1
+          });
+          const out = r.choices[0]?.message?.content?.trim();
+          if (out && out.length > 0 && out.length < 300) return out;
+        } catch {}
+        return t;
+      } catch { return text || ''; }
+    };
+
     
     const bot = await prisma.bot.findUnique({ 
       where: { id: botId }, 
@@ -303,11 +337,14 @@ Keep answers concise and helpful.`;
       } catch { return text; }
     };
 
+    // Prepare user query (rewrite for tolerance)
+    const userMsgOriginal = history.filter((h: any) => h.role === 'user').slice(-1)[0]?.content || '';
+    const userMsgForSearch = await rewriteUserQuery(userMsgOriginal, lang);
+
     // STEP 1: Q&A Database search (fastest, most accurate)
     let qaMatch: any = null;
     try {
-      const lastUserMsg = history.filter((h: any) => h.role === 'user').slice(-1)[0]?.content || '';
-      if (lastUserMsg && lastUserMsg.length > 5) {
+      if (userMsgForSearch && userMsgForSearch.length > 5) {
         // Get all Q&A pairs for this bot (sorted by confidence)
         const allQAs = await prisma.botQA.findMany({
           where: { botId },
@@ -321,7 +358,7 @@ Keep answers concise and helpful.`;
 
         if (allQAs.length > 0) {
           // Simple keyword matching with scoring
-          const userMsgLower = lastUserMsg.toLowerCase();
+          const userMsgLower = userMsgForSearch.toLowerCase();
           const userWords = userMsgLower.split(/\s+/).filter((w: string) => w.length > 2);
           
           const scoredQAs = allQAs.map(qa => {
@@ -393,12 +430,11 @@ INSTRUCTION: Consider using this answer, but adapt it to the user's specific que
 
     // STEP 2: RAG Semantic search (fallback if no high-confidence Q&A match)
     try {
-      const lastUserMsg = history.filter((h: any) => h.role === 'user').slice(-1)[0]?.content || '';
-      if (lastUserMsg && (!qaMatch || qaMatch.confidence < 0.7)) {
+      if (userMsgForSearch && (!qaMatch || qaMatch.confidence < 0.7)) {
         // Generate embedding for user query
         const queryEmbedding = await openai.embeddings.create({
           model: "text-embedding-ada-002",
-          input: lastUserMsg
+          input: userMsgForSearch
         });
         const queryVector = queryEmbedding.data[0]?.embedding;
         
@@ -543,7 +579,12 @@ INSTRUCTION: Consider using this answer, but adapt it to the user's specific que
     const detectedLanguage = detectLanguage();
     const languageHint = `CRITICAL: ALWAYS respond in ${detectedLanguage}. Match the user's language exactly.`;
 
-    const system = `You are a helpful business chatbot. Be conversational and friendly.
+    // Domain-guard fallback system when no internal context matched
+    const guardSystem = lang === 'sv'
+      ? `Du är en intern assistent på Nymans Elektriska AB. Svara ENDAST på frågor som rör el, elinstallationer, elsäkerhet, elbranschen eller företaget. Om frågan inte handlar om detta: svara kort att du inte kan hjälpa till med just den frågan men gärna besvarar elrelaterade frågor. Hitta aldrig på fakta. Var tydlig och hjälpsam.`
+      : `You are an internal assistant at Nymans Elektriska AB. Only answer questions related to electricity, electrical installations, electrical safety, the electrical industry, or our company. If unrelated, politely decline and say you can answer electricity-related questions. Never fabricate facts.`;
+
+    const baseSystem = `You are a helpful business chatbot. Be conversational and friendly.
 
 ${languageHint}
 
@@ -572,6 +613,9 @@ ${extra}
 ${typeInstructions}${lengthInstr}${ragContext}${personalizedGreeting}${toneAdjustment}${offHoursNote}
 
 For business questions where information is missing from context: ${fallbackText}`;
+
+    const useDomainGuard = !forcedReply && (!ragContext || ragContext.trim().length === 0);
+    const system = useDomainGuard ? (guardSystem + "\n\n" + baseSystem) : baseSystem;
 
     const messages = [
       { role: "system", content: system },
