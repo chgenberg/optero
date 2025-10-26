@@ -38,7 +38,7 @@ export default function PersonalAgentLanding() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const uploadInChatRef = useRef<HTMLInputElement>(null);
   const [showSettings, setShowSettings] = useState(false);
-  const [settingsTab, setSettingsTab] = useState<'general' | 'integrations'>('general');
+  const [settingsTab, setSettingsTab] = useState<'general' | 'integrations' | 'knowledge'>('general');
   
   // Save bot modal
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -298,7 +298,7 @@ export default function PersonalAgentLanding() {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-2xl p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto"
+                className="bg-white rounded-2xl p-6 md:p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
               >
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold">Bot Settings</h2>
@@ -311,10 +311,10 @@ export default function PersonalAgentLanding() {
                 </div>
 
                 {/* Tabs */}
-                <div className="flex gap-2 mb-6 border-b border-gray-200">
+                <div className="flex gap-2 mb-6 border-b border-gray-200 overflow-x-auto">
                   <button
                     onClick={() => setSettingsTab('general')}
-                    className={`px-4 py-2 font-medium transition-colors border-b-2 ${
+                    className={`px-4 py-2 font-medium transition-colors border-b-2 whitespace-nowrap ${
                       settingsTab === 'general'
                         ? 'border-black text-black'
                         : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -323,8 +323,18 @@ export default function PersonalAgentLanding() {
                     General
                   </button>
                   <button
+                    onClick={() => setSettingsTab('knowledge')}
+                    className={`px-4 py-2 font-medium transition-colors border-b-2 whitespace-nowrap ${
+                      settingsTab === 'knowledge'
+                        ? 'border-black text-black'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    Knowledge
+                  </button>
+                  <button
                     onClick={() => setSettingsTab('integrations')}
-                    className={`px-4 py-2 font-medium transition-colors border-b-2 ${
+                    className={`px-4 py-2 font-medium transition-colors border-b-2 whitespace-nowrap ${
                       settingsTab === 'integrations'
                         ? 'border-black text-black'
                         : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -447,6 +457,84 @@ export default function PersonalAgentLanding() {
                         <p className="text-sm text-gray-600">Click to upload logo</p>
                         <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 2MB</p>
                       </div>
+                    </div>
+                  </div>
+                )}
+
+                {settingsTab === 'knowledge' && (
+                  <div className="space-y-6">
+                    <p className="text-sm text-gray-600">
+                      Upload documents to teach your bot about your business. Supported formats: PDF, Word, Excel, PowerPoint, Text files, and more.
+                    </p>
+
+                    {/* Document upload area */}
+                    <div
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.currentTarget.classList.add("border-black", "bg-gray-50");
+                      }}
+                      onDragLeave={(e) => {
+                        e.currentTarget.classList.remove("border-black", "bg-gray-50");
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.currentTarget.classList.remove("border-black", "bg-gray-50");
+                        handleFilesSelected(e.dataTransfer.files);
+                      }}
+                      className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-gray-400 transition-all cursor-pointer"
+                      onClick={() => {
+                        const input = document.createElement("input");
+                        input.type = "file";
+                        input.multiple = true;
+                        input.accept = ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.json";
+                        input.onchange = (e) => handleFilesSelected((e.target as HTMLInputElement).files);
+                        input.click();
+                      }}
+                    >
+                      {uploading ? (
+                        <Loader2 className="w-10 h-10 mx-auto mb-3 animate-spin" />
+                      ) : (
+                        <Upload className="w-10 h-10 mx-auto mb-3 text-gray-400" />
+                      )}
+                      <p className="font-medium mb-1">
+                        Drop documents here or click to upload
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        PDF, Word (.doc, .docx), Excel (.xls, .xlsx), PowerPoint (.ppt, .pptx), Text, CSV, JSON
+                      </p>
+                    </div>
+
+                    {/* Uploaded files list */}
+                    {uploadFiles.length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-900 mb-3">Uploaded Documents ({uploadFiles.length})</h3>
+                        <div className="space-y-2 max-h-64 overflow-y-auto">
+                          {uploadFiles.map((f, i) => (
+                            <div key={i} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                              <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 truncate">{f.name}</p>
+                                <p className="text-xs text-gray-500">{(f.size / 1024).toFixed(1)} KB</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="text-xs text-gray-500 mt-3">
+                          💡 Tip: For Excel files, all sheets will be processed. For multi-page documents, all pages are included.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Supported formats info */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <h4 className="text-sm font-semibold text-blue-900 mb-2">📄 Supported Document Types</h4>
+                      <ul className="text-sm text-blue-800 space-y-1">
+                        <li>• <strong>Word:</strong> .doc, .docx</li>
+                        <li>• <strong>Excel:</strong> .xls, .xlsx (all sheets)</li>
+                        <li>• <strong>PowerPoint:</strong> .ppt, .pptx</li>
+                        <li>• <strong>PDF:</strong> .pdf (all pages)</li>
+                        <li>• <strong>Text:</strong> .txt, .csv, .json</li>
+                      </ul>
                     </div>
                   </div>
                 )}
@@ -701,7 +789,7 @@ export default function PersonalAgentLanding() {
                   }}
                   className="w-full mt-8 px-6 py-3 bg-black text-white rounded-2xl font-medium hover:bg-gray-800 transition-colors"
                 >
-                  Save {settingsTab === 'integrations' ? 'Integrations' : 'Settings'}
+                  Save {settingsTab === 'integrations' ? 'Integrations' : settingsTab === 'knowledge' ? 'Knowledge' : 'Settings'}
                 </button>
               </motion.div>
             </motion.div>

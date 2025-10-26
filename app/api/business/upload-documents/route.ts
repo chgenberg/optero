@@ -13,6 +13,20 @@ async function getPdfParser() {
 }
 import Papa from "papaparse";
 
+// Dynamic import for pptx parsing
+let parseOfficeOpen: any;
+async function getPptxParser() {
+  if (!parseOfficeOpen) {
+    try {
+      const mod: any = await import("officeparser");
+      parseOfficeOpen = mod;
+    } catch (e) {
+      console.warn("officeparser not available, PPTX support limited");
+    }
+  }
+  return parseOfficeOpen;
+}
+
 export const maxDuration = 60; // 1 minute for file processing
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -108,8 +122,13 @@ export async function POST(req: NextRequest) {
         else if (filename.endsWith('.pptx') || filename.endsWith('.ppt')) {
           // PowerPoint files - extract text content
           try {
-            const textContent = buffer.toString('utf-8', 0, 1000); // Sample for basic text
-            parsedContents.push(`\n\n=== ${file.name} ===\n[PowerPoint presentation uploaded. For best results, export as PDF and upload the PDF version.]`);
+            const pptxParser = await getPptxParser();
+            if (pptxParser) {
+              const textContent = await pptxParser.extractText(buffer);
+              parsedContents.push(`\n\n=== ${file.name} ===\n${textContent}`);
+            } else {
+              parsedContents.push(`\n\n=== ${file.name} ===\n[PowerPoint presentation uploaded. For best results, export as PDF and upload the PDF version.]`);
+            }
           } catch (e) {
             parsedContents.push(`\n\n=== ${file.name} ===\n[PowerPoint file uploaded]`);
           }

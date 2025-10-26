@@ -24,6 +24,7 @@ import "@xyflow/react/dist/style.css";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { X } from "lucide-react";
 
 interface Bot {
   id: string;
@@ -327,27 +328,51 @@ function DashboardContent() {
   // DnD from integration menu → canvas
   const handleDragStart = (e: React.DragEvent<HTMLButtonElement>, int: { type: string; name: string }) => {
     try {
-      e.dataTransfer.setData('application/xy-integration', JSON.stringify(int));
-      e.dataTransfer.effectAllowed = 'move';
-    } catch {}
+      e.dataTransfer!.setData('application/xy-integration', JSON.stringify(int));
+      e.dataTransfer!.effectAllowed = 'move';
+      // Add visual feedback
+      e.currentTarget.style.opacity = '0.5';
+    } catch (err) {
+      console.error('Drag start error:', err);
+    }
+  };
+
+  const handleDragEnd = (e: React.DragEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.opacity = '1';
   };
 
   const onDragOverCanvas = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+    e.stopPropagation();
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = 'move';
+      // Visual feedback on canvas
+      e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.05)';
+    }
+  };
+
+  const onDragLeaveCanvas = (e: React.DragEvent<HTMLDivElement>) => {
+    if (e.currentTarget === e.target) {
+      e.currentTarget.style.backgroundColor = '';
+    }
   };
 
   const onDropCanvas = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.style.backgroundColor = '';
+    
     try {
-      const payload = e.dataTransfer.getData('application/xy-integration');
+      const payload = e.dataTransfer?.getData('application/xy-integration');
       if (!payload) return;
       const int = JSON.parse(payload) as { type: string; name: string };
       const pos = rfInstance?.screenToFlowPosition
         ? rfInstance.screenToFlowPosition({ x: e.clientX, y: e.clientY })
         : { x: 200, y: 200 };
       await addNewIntegration(int.type, int.name, pos);
-    } catch {}
+    } catch (err) {
+      console.error('Drop error:', err);
+    }
   };
 
   const saveIntegrationSettings = async () => {
@@ -411,13 +436,6 @@ function DashboardContent() {
           </button>
           
           <button
-            onClick={() => router.push("/dashboard/qa")}
-            className="bg-white border-2 border-black rounded-full px-4 py-2 text-xs font-semibold hover:bg-gray-50 transition-colors"
-          >
-            Q&A
-          </button>
-          
-          <button
             onClick={() => router.push("/bot")}
             className="bg-white border-2 border-black rounded-full px-4 py-2 text-xs font-semibold hover:bg-gray-50 transition-colors"
           >
@@ -432,9 +450,10 @@ function DashboardContent() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="absolute top-20 right-4 z-30 bg-white border-2 border-black rounded-lg p-4 shadow-lg pointer-events-auto"
+              className="absolute top-20 right-4 z-30 bg-white border-2 border-black rounded-lg p-4 shadow-lg pointer-events-auto max-w-xs"
             >
-              <h3 className="font-bold mb-3">Add Integration</h3>
+              <h3 className="font-bold mb-2">Add Integration</h3>
+              <p className="text-xs text-gray-500 mb-4">Drag to canvas or click to add</p>
               <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
                 {AVAILABLE_INTEGRATIONS.map((int) => {
                   const colorClass = integrationColors[int.type] || "bg-gray-100 border-gray-300";
@@ -443,8 +462,10 @@ function DashboardContent() {
                       key={int.type}
                       draggable
                       onDragStart={(e) => handleDragStart(e, int)}
+                      onDragEnd={handleDragEnd}
                       onClick={() => addNewIntegration(int.type, int.name)}
-                      className={`${colorClass} text-left p-3 rounded-lg border-2 hover:scale-105 transition-all cursor-pointer`}
+                      className={`${colorClass} text-left p-3 rounded-lg border-2 hover:scale-105 transition-all cursor-move hover:shadow-md`}
+                      title={`Click to add or drag to canvas: ${int.name}`}
                     >
                       <span className="font-semibold text-sm">{int.name}</span>
                     </button>
@@ -456,7 +477,7 @@ function DashboardContent() {
         </AnimatePresence>
 
         {/* React Flow Canvas */}
-        <div className="w-full h-full" style={{ height: "calc(100vh - 200px)" }} onDragOver={onDragOverCanvas} onDrop={onDropCanvas}>
+        <div className="w-full h-full" style={{ height: "calc(100vh - 200px)" }} onDragOver={onDragOverCanvas} onDragLeave={onDragLeaveCanvas} onDrop={onDropCanvas}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -493,37 +514,53 @@ function DashboardContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
             onClick={() => setShowIntegrationModal(false)}
           >
             <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
-              className="bg-white border-2 border-black rounded-lg p-6 max-w-md w-full mx-4"
+              className="bg-white border-2 border-black rounded-lg p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-xl font-bold mb-4">
-                Configure {selectedIntegration.name}
-                </h2>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold">
+                    Configure {selectedIntegration.name}
+                  </h2>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Set up the credentials and connect to your bots
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowIntegrationModal(false);
+                    setIntegrationSettings({});
+                  }}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {selectedIntegration.type === "webhook" && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-sm font-medium mb-2">
                         Webhook URL
                       </label>
                       <input
                         type="url"
-                        className="w-full px-3 py-2 border-2 border-black rounded"
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 transition-all"
                         placeholder="https://your-webhook-url.com"
                         value={integrationSettings.webhookUrl || ''}
                         onChange={(e) => setIntegrationSettings({...integrationSettings, webhookUrl: e.target.value})}
                       />
               </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-sm font-medium mb-2">
                         Events to trigger
                       </label>
                       <div className="space-y-2">
@@ -547,20 +584,20 @@ function DashboardContent() {
                 {selectedIntegration.type === "slack" && (
                   <>
                       <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-sm font-medium mb-2">
                         Slack Workspace
                       </label>
-                      <button className="w-full px-3 py-2 border-2 border-black rounded bg-gray-100 hover:bg-gray-200">
+                      <button className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors font-medium">
                         Connect to Slack
                       </button>
                       </div>
                       <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-sm font-medium mb-2">
                         Channel
                       </label>
                       <input
                         type="text"
-                        className="w-full px-3 py-2 border-2 border-black rounded"
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 transition-all"
                         placeholder="#general"
                       />
                         </div>
@@ -570,12 +607,12 @@ function DashboardContent() {
                 {selectedIntegration.type === "teams" && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-sm font-medium mb-2">
                         Teams Webhook URL
                       </label>
                       <input
                         type="url"
-                        className="w-full px-3 py-2 border-2 border-black rounded"
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 transition-all"
                         placeholder="https://outlook.office.com/webhook/..."
                       />
                         </div>
@@ -585,17 +622,17 @@ function DashboardContent() {
                 {selectedIntegration.type === "email" && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-sm font-medium mb-2">
                         Email Address
                       </label>
                       <input
                         type="email"
-                        className="w-full px-3 py-2 border-2 border-black rounded"
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 transition-all"
                         placeholder="notifications@company.com"
                       />
                       </div>
                       <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-sm font-medium mb-2">
                         Email on
                       </label>
                       <div className="space-y-2">
@@ -615,12 +652,12 @@ function DashboardContent() {
                 {selectedIntegration.type === "zapier" && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-sm font-medium mb-2">
                         Zapier Webhook URL
                       </label>
                       <input
                         type="url"
-                        className="w-full px-3 py-2 border-2 border-black rounded"
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 transition-all"
                         placeholder="https://hooks.zapier.com/..."
                       />
                     </div>
@@ -633,10 +670,10 @@ function DashboardContent() {
                 {selectedIntegration.type === "crm" && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-sm font-medium mb-2">
                         CRM System
                       </label>
-                      <select className="w-full px-3 py-2 border-2 border-black rounded">
+                      <select className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 transition-all">
                         <option value="">Select CRM</option>
                         <option value="hubspot">HubSpot</option>
                         <option value="salesforce">Salesforce</option>
@@ -644,12 +681,12 @@ function DashboardContent() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-sm font-medium mb-2">
                         API Key
                       </label>
                       <input
                         type="password"
-                        className="w-full px-3 py-2 border-2 border-black rounded"
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 transition-all"
                         placeholder="Your API key"
                       />
             </div>
@@ -659,21 +696,21 @@ function DashboardContent() {
                 {selectedIntegration.type === "api" && (
                   <>
               <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-sm font-medium mb-2">
                         API Endpoint
                       </label>
                 <input
                         type="url"
-                        className="w-full px-3 py-2 border-2 border-black rounded"
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 transition-all"
                         placeholder="https://api.example.com/endpoint"
                 />
               </div>
               <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-sm font-medium mb-2">
                         Headers (JSON)
                       </label>
                       <textarea
-                        className="w-full px-3 py-2 border-2 border-black rounded font-mono text-sm"
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 transition-all font-mono text-sm"
                         rows={3}
                         placeholder='{"Authorization": "Bearer YOUR_TOKEN"}'
                 />
@@ -681,19 +718,19 @@ function DashboardContent() {
                   </>
                 )}
                 
-                <div className="pt-4 flex gap-2">
+                <div className="pt-4 flex gap-2 border-t border-gray-200 mt-6">
                   <button
                     onClick={saveIntegrationSettings}
-                    className="flex-1 px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
+                    className="flex-1 px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 font-medium transition-colors"
                   >
-                    Save
+                    Save Configuration
                   </button>
                   <button
                     onClick={() => {
                       setShowIntegrationModal(false);
                       setIntegrationSettings({});
                     }}
-                    className="flex-1 px-4 py-2 border-2 border-black rounded hover:bg-gray-100"
+                    className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg hover:bg-gray-50 font-medium transition-colors"
                   >
                     Cancel
                 </button>

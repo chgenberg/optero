@@ -1,16 +1,24 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { Menu, X } from "lucide-react";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const isSwedish = pathname?.startsWith('/sv') || false;
   const prefix = isSwedish ? '/sv' : '';
+
+  // Load user email from localStorage on mount
+  useEffect(() => {
+    setUserEmail(localStorage.getItem("userEmail"));
+    setMounted(true);
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200">
@@ -29,12 +37,21 @@ export default function Header() {
             >
               {isSwedish ? 'Bygg bot' : 'Build bot'}
             </a>
-            <a
-              href={`${prefix}/dashboard`}
-              className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
-            >
-              Dashboard
-            </a>
+            {mounted && !userEmail ? (
+              <a
+                href={`${prefix}/login`}
+                className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
+              >
+                {isSwedish ? 'Logga in' : 'Login'}
+              </a>
+            ) : (
+              <a
+                href={`${prefix}/dashboard`}
+                className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
+              >
+                Dashboard
+              </a>
+            )}
             <a
               href={`${prefix}/contact`}
               className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
@@ -72,12 +89,21 @@ export default function Header() {
               >
                 {isSwedish ? 'Bygg bot' : 'Build bot'}
               </a>
-              <a
-                href={`${prefix}/dashboard`}
-                className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
-              >
-                Dashboard
-              </a>
+              {mounted && !userEmail ? (
+                <a
+                  href={`${prefix}/login`}
+                  className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
+                >
+                  {isSwedish ? 'Logga in' : 'Login'}
+                </a>
+              ) : (
+                <a
+                  href={`${prefix}/dashboard`}
+                  className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
+                >
+                  Dashboard
+                </a>
+              )}
               <a
                 href={`${prefix}/contact`}
                 className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
