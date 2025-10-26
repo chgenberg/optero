@@ -10,7 +10,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Email required" }, { status: 400 });
     }
 
-    // Find all saved results for this email
+    // Find user with this email
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: {
+        bots: {
+          where: { isActive: true },
+          take: 1
+        }
+      }
+    });
+
+    // Also check for shared results (old system)
     const results = await prisma.sharedResult.findMany({
       where: {
         email: email,
@@ -24,6 +35,38 @@ export async function POST(request: NextRequest) {
       take: 1 // Get the most recent
     });
 
+    // If we have a user with bots, send dashboard link
+    if (user && user.bots && user.bots.length > 0) {
+      const dashboardLink = `${request.nextUrl.origin}/dashboard`;
+      
+      // Store email in localStorage via response hint
+      const emailResult = await sendMagicLinkEmail(
+        email,
+        dashboardLink,
+        "Dashboard"
+      );
+
+      if (!emailResult.success) {
+        console.error("Failed to send email:", emailResult.error);
+        return NextResponse.json({ 
+          success: true,
+          found: true,
+          magicLink: dashboardLink,
+          count: user.bots.length,
+          message: "Dashboard hittat! Kunde inte skicka email, men här är din länk."
+        });
+      }
+
+      return NextResponse.json({ 
+        success: true,
+        found: true,
+        magicLink: dashboardLink,
+        count: user.bots.length,
+        message: "Magic link skickad till din email!"
+      });
+    }
+
+    // Fall back to shared results
     if (results.length === 0) {
       return NextResponse.json({ 
         error: "Inga resultat hittades för denna email",

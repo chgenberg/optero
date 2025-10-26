@@ -28,17 +28,20 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (response.ok && data.found) {
+        // Set email in localStorage for dashboard access
+        localStorage.setItem("userEmail", email);
+        
         setMessage({ 
           type: 'success', 
           text: `Magic link sent! We found ${data.count} bot(s) for your email.` 
         });
         setSubmitted(true);
         
-        // For demo: Show the link directly
+        // For demo: Show the link directly and auto-redirect
         if (data.magicLink) {
           setTimeout(() => {
             window.location.href = data.magicLink;
-          }, 2000);
+          }, 1500);
         }
       } else {
         setMessage({ 
