@@ -19,6 +19,21 @@ export default function LoginPage() {
     setMessage(null);
 
     try {
+      // Special handling for demo account - instant login
+      if (email === "demo@mendio.com") {
+        localStorage.setItem("userEmail", email);
+        setMessage({ 
+          type: 'success', 
+          text: `Welcome! Logging in as demo account...` 
+        });
+        setSubmitted(true);
+        
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 800);
+        return;
+      }
+
       const response = await fetch("/api/magic-link/request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
