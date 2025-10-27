@@ -38,13 +38,27 @@ export default function AgentLandingPage() {
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <img
-              src="/Mascots/Mr.Green.webp?v=3"
-              alt="Mr. Green AI Agent"
-              width="120"
-              height="120"
-              style={{ objectFit: 'contain' }}
-            />
+            <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+              {/* Green circular body */}
+              <circle cx="60" cy="60" r="50" fill="#22c55e" />
+              
+              {/* Head */}
+              <circle cx="60" cy="40" r="25" fill="#16a34a" />
+              
+              {/* Eyes */}
+              <circle cx="50" cy="35" r="3" fill="white" />
+              <circle cx="70" cy="35" r="3" fill="white" />
+              
+              {/* Smile */}
+              <path d="M 50 45 Q 60 50 70 45" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" />
+              
+              {/* Body accent */}
+              <ellipse cx="60" cy="70" rx="20" ry="15" fill="#15803d" opacity="0.5" />
+              
+              {/* Arms */}
+              <rect x="30" y="55" width="30" height="8" rx="4" fill="#16a34a" />
+              <rect x="60" y="55" width="30" height="8" rx="4" fill="#16a34a" />
+            </svg>
           </motion.div>
           
           <h2 className="text-5xl font-bold tracking-tight mb-4">
