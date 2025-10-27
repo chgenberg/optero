@@ -110,13 +110,13 @@ const integrationColors: Record<string, string> = {
   calendar: "bg-red-100 border-red-300",
   crm: "bg-teal-100 border-teal-300",
   analytics: "bg-cyan-100 border-cyan-300",
-  database: "bg-gray-100 border-gray-300",
+  database: "bg-white border-gray-300",
   api: "bg-purple-100 border-purple-300",
 };
 
 // Custom Integration Node Component
 const IntegrationNode = ({ data }: { data: { integration: Integration; onClick: () => void } }) => {
-  const colorClass = integrationColors[data.integration.type] || "bg-gray-100 border-gray-300";
+  const colorClass = integrationColors[data.integration.type] || "bg-white border-gray-300";
   
   return (
     <div
@@ -473,14 +473,14 @@ function DashboardContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       <Header />
       
       <main className="flex-1 relative">
@@ -532,7 +532,7 @@ function DashboardContent() {
               <p className="text-xs text-gray-500 mb-4">Drag to canvas or click to add</p>
               <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
                 {AVAILABLE_INTEGRATIONS.map((int) => {
-                  const colorClass = integrationColors[int.type] || "bg-gray-100 border-gray-300";
+                  const colorClass = integrationColors[int.type] || "bg-white border-gray-300";
                   return (
                     <button
                       key={int.type}
@@ -562,10 +562,10 @@ function DashboardContent() {
             onConnect={onConnect}
             nodeTypes={nodeTypes}
             fitView
-            className="bg-gray-100"
+            className="bg-white"
             onInit={(instance) => setRfInstance(instance)}
           >
-            <Background color="#e5e5e5" gap={20} />
+            <Background color="#f0f0f0" gap={20} />
             <Controls className="bg-white border-2 border-black" />
           </ReactFlow>
           </div>
@@ -614,7 +614,7 @@ function DashboardContent() {
                     setShowIntegrationModal(false);
                     setIntegrationSettings({});
                   }}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-white rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -663,7 +663,7 @@ function DashboardContent() {
                       <label className="block text-sm font-medium mb-2">
                         Slack Workspace
                       </label>
-                      <button className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors font-medium">
+                      <button className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg bg-gray-50 hover:bg-white transition-colors font-medium">
                         Connect to Slack
                       </button>
                       </div>
@@ -823,7 +823,7 @@ function DashboardContent() {
 export default function DashboardPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
       </div>
     }>
