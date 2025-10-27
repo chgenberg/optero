@@ -240,7 +240,7 @@ function DashboardContent() {
         onEdit: () => {
           // Implement edit bot logic
           console.log("Edit bot:", bot.id);
-          router.push(`/bot/${bot.id}`);
+          router.push(`/bots/${bot.id}`);
         },
         stats: bot.spec?.stats || {} // Assuming bot.spec contains stats
       },
