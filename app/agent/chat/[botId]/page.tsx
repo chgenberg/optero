@@ -7,6 +7,7 @@ import { Send, Paperclip, Menu, X, LogOut, Settings, Bot, User, Loader2 } from "
 import Image from "next/image";
 import { fetchAgentProfile, fetchChatSession, saveChatSession } from "@/lib/agents-client";
 import SessionHistory from "@/components/SessionHistory";
+import AgentTreeOnboarding from "@/components/AgentTreeOnboarding";
 
 interface Message {
   id: string;
@@ -35,6 +36,7 @@ export default function AgentChatPage() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [agentData, setAgentData] = useState<AgentData | null>(null);
   const [agentLoading, setAgentLoading] = useState(true);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -57,15 +59,23 @@ export default function AgentChatPage() {
             color: profile.agentType.color,
             selectedCategoryPath: profile.selectedCategoryPath,
           });
+          setNeedsOnboarding(false);
+        } else {
+          // No profile yet - show onboarding
+          setNeedsOnboarding(true);
         }
       } catch (error) {
         console.error("Failed to load agent profile:", error);
+        // If error fetching profile, show onboarding
+        setNeedsOnboarding(true);
       } finally {
         setAgentLoading(false);
       }
     };
 
-    loadAgent();
+    if (botId) {
+      loadAgent();
+    }
   }, [botId]);
 
   // Load or create session
@@ -241,6 +251,44 @@ export default function AgentChatPage() {
       <div className="h-screen flex items-center justify-center bg-white">
         <Loader2 className="w-8 h-8 animate-spin" />
       </div>
+    );
+  }
+
+  // Show onboarding if no agent profile exists
+  if (needsOnboarding) {
+    return (
+      <AgentTreeOnboarding
+        botId={botId}
+        onComplete={(profile) => {
+          // Reload agent data after onboarding
+          setNeedsOnboarding(false);
+          setAgentData({
+            id: profile.agentTypeId,
+            name: "", // Will be loaded in next effect
+            mascot: profile.mascot,
+            color: "",
+            selectedCategoryPath: [],
+          });
+          // Reload the agent profile
+          const loadAgent = async () => {
+            try {
+              const profile = await fetchAgentProfile(botId);
+              if (profile && profile.agentType) {
+                setAgentData({
+                  id: profile.agentType.id,
+                  name: profile.agentType.name,
+                  mascot: profile.agentType.mascot,
+                  color: profile.agentType.color,
+                  selectedCategoryPath: profile.selectedCategoryPath,
+                });
+              }
+            } catch (error) {
+              console.error("Failed to reload agent profile:", error);
+            }
+          };
+          loadAgent();
+        }}
+      />
     );
   }
 
