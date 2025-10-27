@@ -1211,7 +1211,7 @@ export default function PersonalAgentLanding() {
 
               {/* Title */}
               <h2 className="text-5xl font-bold mb-6 tracking-tight">
-                Create your personal agent
+                CREATE YOUR PERSONAL AGENT
               </h2>
               
               <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">

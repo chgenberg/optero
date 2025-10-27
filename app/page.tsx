@@ -58,7 +58,7 @@ export default function Home() {
 
               {/* Title */}
               <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
-                Create your personal agent
+                CREATE YOUR PERSONAL AGENT
               </h1>
               
               <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
