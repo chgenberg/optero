@@ -160,6 +160,7 @@ export default function BotDetailPage() {
 
   const [bot, setBot] = useState<Bot | null>(null);
   const [integrations, setIntegrations] = useState<Integration[]>([]);
+  const [knowledge, setKnowledge] = useState<any[]>([]);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [showSettings, setShowSettings] = useState(false);
@@ -168,6 +169,7 @@ export default function BotDetailPage() {
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
   const [settingsTab, setSettingsTab] = useState<"general" | "integrations" | "knowledge" | "approvals">("general");
+  const [loading, setLoading] = useState(true);
 
   // Load bot data
   useEffect(() => {
@@ -176,60 +178,89 @@ export default function BotDetailPage() {
 
   const loadBotData = async () => {
     try {
-      const res = await fetch(`/api/bots/${botId}`);
-      if (res.ok) {
-        const botData = await res.json();
-        setBot(botData);
-        
-        // Create nodes for visualization
-        const botNode: Node = {
-          id: `bot-${botData.id}`,
-          type: "bot",
-          position: { x: 400, y: 250 },
-          data: { bot: botData, isMain: true },
-        };
+      setLoading(true);
+      // Load bot details
+      const botRes = await fetch(`/api/bots/${botId}`);
+      if (!botRes.ok) throw new Error("Failed to load bot");
+      const botData = await botRes.json();
+      setBot(botData);
+      
+      // Load integrations
+      const intRes = await fetch(`/api/bots/${botId}/integrations`);
+      if (intRes.ok) {
+        const { integrations: integrationsData } = await intRes.json();
+        setIntegrations(integrationsData);
+      }
 
-        // Mock integrations for demo
-        const mockIntegrations: Integration[] = [
-          { id: "1", type: "webhook", name: "Webhook", connectedBots: [botData.id] },
-          { id: "2", type: "email", name: "Email", connectedBots: [botData.id] },
-          { id: "3", type: "analytics", name: "Analytics", connectedBots: [] },
-        ];
-        setIntegrations(mockIntegrations);
+      // Load knowledge
+      const knowRes = await fetch(`/api/bots/${botId}/knowledge`);
+      if (knowRes.ok) {
+        const { documents } = await knowRes.json();
+        setKnowledge(documents);
+      }
+      
+      // Create nodes for visualization
+      const botNode: Node = {
+        id: `bot-${botData.id}`,
+        type: "bot",
+        position: { x: 400, y: 250 },
+        data: { bot: botData, isMain: true },
+      };
 
-        const integrationNodes: Node[] = mockIntegrations.map((integration, index) => ({
-          id: `integration-${integration.id}`,
-          type: "integration",
-          position: { 
-            x: 150 + (index % 2) * 500, 
-            y: 150 + Math.floor(index / 2) * 200 
-          },
-          data: { integration },
+      // Load integrations from API
+      const intRes2 = await fetch(`/api/bots/${botId}/integrations`);
+      let integrationsForNodes: any[] = [];
+      if (intRes2.ok) {
+        const { integrations: apiIntegrations } = await intRes2.json();
+        integrationsForNodes = apiIntegrations;
+      }
+
+      const integrationNodes: Node[] = integrationsForNodes.map((integration, index) => ({
+        id: `integration-${integration.id}`,
+        type: "integration",
+        position: { 
+          x: 150 + (index % 2) * 500, 
+          y: 150 + Math.floor(index / 2) * 200 
+        },
+        data: { integration },
+      }));
+
+      setNodes([botNode, ...integrationNodes]);
+
+      // Create edges for connected integrations
+      const edgesData: Edge[] = integrationsForNodes
+        .filter((i: any) => i.isConnected)
+        .map((integration: any) => ({
+          id: `edge-${integration.id}-${botData.id}`,
+          source: `integration-${integration.id}`,
+          target: `bot-${botData.id}`,
+          type: "smoothstep",
+          animated: true,
+          style: { stroke: "#666", strokeWidth: 2 },
+          markerEnd: { type: MarkerType.ArrowClosed, color: "#666" },
         }));
 
-        setNodes([botNode, ...integrationNodes]);
-
-        // Create edges for connected integrations
-        const edges: Edge[] = mockIntegrations
-          .filter(i => i.connectedBots.includes(botData.id))
-          .map(integration => ({
-            id: `edge-${integration.id}-${botData.id}`,
-            source: `integration-${integration.id}`,
-            target: `bot-${botData.id}`,
-            type: "smoothstep",
-            animated: true,
-            style: { stroke: "#666", strokeWidth: 2 },
-            markerEnd: { type: MarkerType.ArrowClosed, color: "#666" },
-          }));
-
-        setEdges(edges);
-      }
+      setEdges(edgesData);
     } catch (error) {
       console.error("Failed to load bot:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const onConnect = useCallback((params: Connection) => {
+    // Extract integration ID from source node
+    const sourceId = params.source?.replace("integration-", "") || "";
+    
+    // Save connection to API
+    if (sourceId) {
+      fetch(`/api/bots/${botId}/integrations/connect`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ integrationId: sourceId }),
+      }).catch(err => console.error("Failed to save connection:", err));
+    }
+
     setEdges((eds) => addEdge({
       ...params,
       type: "smoothstep",
@@ -237,7 +268,7 @@ export default function BotDetailPage() {
       style: { stroke: "#666", strokeWidth: 2 },
       markerEnd: { type: MarkerType.ArrowClosed, color: "#666" },
     }, eds));
-  }, [setEdges]);
+  }, [setEdges, botId]);
 
   const sendChat = async () => {
     if (!chatInput.trim() || chatLoading) return;
@@ -439,16 +470,97 @@ export default function BotDetailPage() {
 
                   {settingsTab === "knowledge" && (
                     <div className="space-y-4">
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                      {/* Document Upload Area */}
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
                         <FileText className="mx-auto text-gray-400 mb-4" size={48} />
                         <p className="text-gray-600 mb-2">Drop documents here to upload</p>
-                        <p className="text-sm text-gray-500">
-                          Supports PDF, Word, Excel, PowerPoint, and more
+                        <p className="text-sm text-gray-500 mb-4">
+                          Supports PDF, Word, Excel, PowerPoint, CSV, and more
                         </p>
-                        <button className="mt-4 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800">
-                          Browse Files
-                        </button>
+                        <label className="inline-block">
+                          <input
+                            type="file"
+                            multiple
+                            onChange={async (e) => {
+                              const files = e.currentTarget.files;
+                              if (!files) return;
+
+                              const formData = new FormData();
+                              for (let i = 0; i < files.length; i++) {
+                                formData.append("files", files[i]);
+                              }
+
+                              try {
+                                const res = await fetch(`/api/bots/${botId}/knowledge/upload`, {
+                                  method: "POST",
+                                  body: formData,
+                                });
+                                
+                                if (res.ok) {
+                                  const data = await res.json();
+                                  console.log("Uploaded:", data);
+                                  // Reload knowledge
+                                  const knowRes = await fetch(`/api/bots/${botId}/knowledge`);
+                                  if (knowRes.ok) {
+                                    const { documents } = await knowRes.json();
+                                    setKnowledge(documents);
+                                  }
+                                }
+                              } catch (error) {
+                                console.error("Upload failed:", error);
+                              }
+                            }}
+                            className="hidden"
+                            accept=".pdf,.docx,.xlsx,.xls,.csv,.txt,.md,.json,.rtf"
+                          />
+                          <button
+                            type="button"
+                            onClick={(e) => e.currentTarget.previousElementSibling?.click()}
+                            className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
+                          >
+                            Browse Files
+                          </button>
+                        </label>
                       </div>
+
+                      {/* Uploaded Documents List */}
+                      {knowledge.length > 0 && (
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-sm">Uploaded Documents ({knowledge.length})</h4>
+                          <div className="space-y-2 max-h-96 overflow-y-auto">
+                            {knowledge.map((doc) => (
+                              <div
+                                key={doc.id}
+                                className="bg-gray-50 p-3 rounded-lg border border-gray-200 flex items-center justify-between"
+                              >
+                                <div className="flex items-center gap-2 flex-1">
+                                  <FileText size={16} className="text-gray-400" />
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium truncate">{doc.title}</p>
+                                    <p className="text-xs text-gray-500">
+                                      {doc.fileType} • {new Date(doc.createdAt).toLocaleDateString()}
+                                    </p>
+                                  </div>
+                                </div>
+                                <button
+                                  onClick={async () => {
+                                    // Delete document
+                                    const res = await fetch(`/api/bots/${botId}/knowledge/${doc.id}`, {
+                                      method: "DELETE",
+                                    });
+                                    if (res.ok) {
+                                      setKnowledge(prev => prev.filter(d => d.id !== doc.id));
+                                    }
+                                  }}
+                                  className="text-red-600 hover:text-red-800 text-xs font-medium"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
