@@ -225,7 +225,7 @@ export default function BotDetailPage() {
         data: { integration },
       }));
 
-      setNodes([botNode, ...integrationNodes]);
+      setNodes([botNode, ...integrationNodes] as Node[]);
 
       // Create edges for connected integrations
       const edgesData: Edge[] = integrationsForNodes
