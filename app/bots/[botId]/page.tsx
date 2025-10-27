@@ -515,7 +515,10 @@ export default function BotDetailPage() {
                           />
                           <button
                             type="button"
-                            onClick={(e) => e.currentTarget.previousElementSibling?.click()}
+                            onClick={(e) => {
+                              const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                              input?.click();
+                            }}
                             className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
                           >
                             Browse Files
