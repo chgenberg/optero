@@ -17,8 +17,8 @@ export async function GET(
         knowledge: {
           select: {
             id: true,
-            fileName: true,
-            fileType: true,
+            title: true,
+            metadata: true,
             createdAt: true,
           },
         },
