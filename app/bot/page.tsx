@@ -56,6 +56,10 @@ export default function PersonalAgentLanding() {
   const [embedCode, setEmbedCode] = useState<string>("");
   const [saving, setSaving] = useState(false);
   
+  // Error handling and notifications
+  const [toast, setToast] = useState<{ type: 'error' | 'success' | 'info'; message: string } | null>(null);
+  const [retryCount, setRetryCount] = useState<Record<string, number>>({});
+  
   // Bot settings state
   const [botSettings, setBotSettings] = useState({
     name: "Your AI Assistant",
@@ -169,6 +173,12 @@ export default function PersonalAgentLanding() {
     }
   };
 
+  // Toast helper functions
+  const showToast = (message: string, type: 'error' | 'success' | 'info' = 'info') => {
+    setToast({ type, message });
+    setTimeout(() => setToast(null), 3000);
+  };
+
   const onStartHere = () => {
     setOpen(true);
     setStep(0);
@@ -264,42 +274,89 @@ export default function PersonalAgentLanding() {
     
     setChatMessages((m) => [...m, userMessage]);
     setChatLoading(true);
-    try {
-      const res = await fetch("/api/bots/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          botId, 
-          history: [...chatMessages, userMessage],
-          locale: botSettings.language,
-          tone: botSettings.tone
-        })
-      });
-      const data = await res.json();
-      const reply = data?.reply || "I couldn't answer that. Please try another question.";
-      
-      const assistantMessageId = `msg-${Date.now()}-${Math.random().toString(36).substring(7)}`;
-      const assistantMessage: ChatMessage = {
-        id: assistantMessageId,
-        role: "assistant",
-        content: reply,
-        feedback: null,
-        timestamp: Date.now()
-      };
-      
-      setChatMessages((m) => [...m, assistantMessage]);
-    } catch {
-      const errorMessage: ChatMessage = {
-        id: `msg-${Date.now()}-${Math.random().toString(36).substring(7)}`,
-        role: "assistant",
-        content: "Technical error. Please try again.",
-        feedback: null,
-        timestamp: Date.now()
-      };
-      setChatMessages((m) => [...m, errorMessage]);
-    } finally { 
-      setChatLoading(false); 
-    }
+    
+    const maxRetries = 2;
+    let attempt = 0;
+    
+    const attemptSendChat = async () => {
+      try {
+        attempt++;
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Request timeout')), 30000)
+        );
+
+        const fetchPromise = fetch("/api/bots/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            botId, 
+            history: [...chatMessages, userMessage],
+            locale: botSettings.language,
+            tone: botSettings.tone
+          })
+        });
+
+        const res = await Promise.race([fetchPromise, timeoutPromise]) as Response;
+        
+        if (!res.ok) {
+          throw new Error(`Server error: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        
+        if (!data?.reply) {
+          throw new Error('No response from bot');
+        }
+        
+        const assistantMessageId = `msg-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+        const assistantMessage: ChatMessage = {
+          id: assistantMessageId,
+          role: "assistant",
+          content: data.reply,
+          feedback: null,
+          timestamp: Date.now()
+        };
+        
+        setChatMessages((m) => [...m, assistantMessage]);
+        showToast('Response received', 'success');
+        setRetryCount(prev => ({ ...prev, [userMessageId]: 0 }));
+      } catch (error: any) {
+        const isTimeout = error.message?.includes('timeout') || error.name === 'AbortError';
+        const isNetworkError = error.message?.includes('fetch');
+        
+        if (attempt < maxRetries && (isTimeout || isNetworkError)) {
+          showToast(`Retrying... (${attempt}/${maxRetries})`, 'info');
+          setRetryCount(prev => ({ ...prev, [userMessageId]: attempt }));
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+          return attemptSendChat();
+        }
+        
+        let errorMessage = 'Failed to get response';
+        if (isTimeout) {
+          errorMessage = 'Request timed out - please try again';
+        } else if (isNetworkError) {
+          errorMessage = 'Network error - check your connection';
+        } else if (error.message?.includes('No response')) {
+          errorMessage = 'Bot is not responding - try later';
+        }
+        
+        showToast(errorMessage, 'error');
+        
+        const errorAssistantMessage: ChatMessage = {
+          id: `msg-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+          role: "assistant",
+          content: `❌ ${errorMessage}. Please try again or refresh the page.`,
+          feedback: null,
+          timestamp: Date.now()
+        };
+        
+        setChatMessages((m) => [...m, errorAssistantMessage]);
+      } finally {
+        setChatLoading(false);
+      }
+    };
+
+    attemptSendChat();
   };
 
   const handleSaveBot = async (purpose: 'customer' | 'internal') => {
@@ -1219,6 +1276,22 @@ export default function PersonalAgentLanding() {
                 )}
               </div>
             </div>
+
+            {/* Toast Notification */}
+            {toast && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                className={`fixed bottom-4 left-1/2 -translate-x-1/2 text-white px-6 py-3 rounded-lg shadow-lg z-50 font-medium ${
+                  toast.type === 'error' ? 'bg-red-500' :
+                  toast.type === 'success' ? 'bg-green-500' :
+                  'bg-blue-500'
+                }`}
+              >
+                {toast.message}
+              </motion.div>
+            )}
 
             {/* Input */}
             <div className="bg-white border-t border-gray-200 px-4 py-3">
