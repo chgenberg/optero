@@ -336,6 +336,12 @@ export default function BotDetailPage() {
               animated: true,
             }}
             fitView
+            fitViewOptions={{
+              padding: 0.3,
+              minZoom: 0.5,
+              maxZoom: 1.5,
+            }}
+            defaultViewport={{ x: 0, y: 0, zoom: 0.7 }}
           >
             <Background color="#f0f0f0" gap={20} />
             <Controls />
@@ -456,7 +462,7 @@ export default function BotDetailPage() {
                               <div>
                                 <h4 className="font-medium">{integration.name}</h4>
                                 <p className="text-sm text-gray-500">
-                                  {integration.connectedBots.includes(botId) ? "Connected" : "Not connected"}
+                                  {integration.connectedBots?.includes(botId) ? "Connected" : "Not connected"}
                                 </p>
                               </div>
                               <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
