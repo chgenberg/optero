@@ -80,7 +80,7 @@ export default function OnboardingChat({
           id: "welcome",
           role: "assistant",
           content:
-            "Hey! Nice to see you! My name is Mr. Agent and I'll be your personal AI assistant. First, let me learn a bit about what you need so I can help you better.",
+            "Hey! 👋 Nice to see you!\n\nI'm here to become your perfect AI assistant. To do that, I need to learn a bit about you and your business so I can personalize everything exactly to your needs.\n\nThis will only take a few minutes, and I promise to ask smart questions! Let's get started! 🚀",
           timestamp: new Date(),
           type: "text",
         };
@@ -91,7 +91,7 @@ export default function OnboardingChat({
           const agentSelectMsg: Message = {
             id: "agent-select",
             role: "assistant",
-            content: "Which type of assistant would you like to create?",
+            content: "First, what type of assistant would you like to create? Choose the one that best fits your needs:",
             timestamp: new Date(),
             type: "buttons",
             buttons: types.map((t) => ({
@@ -100,7 +100,7 @@ export default function OnboardingChat({
             })),
           };
           setMessages((prev) => [...prev, agentSelectMsg]);
-        }, 1000);
+        }, 1500);
       } catch (error) {
         console.error("Failed to load agent types:", error);
       } finally {
@@ -136,15 +136,28 @@ export default function OnboardingChat({
     setTimeout(() => {
       const questions = ONBOARDING_QUESTIONS[agent.slug] || [];
       if (questions.length > 0) {
-        const firstQuestion: Message = {
-          id: `question-0`,
+        // Add confirmation message
+        const confirmMsg: Message = {
+          id: `confirm-${Date.now()}`,
           role: "assistant",
-          content: questions[0],
+          content: `Perfect! 👌 I'll be a ${agent.name} assistant. This is great!\n\nNow I'm going to ask you 5 quick questions to learn all about your business and how I can help you best. Ready? Let's go! 💪`,
           timestamp: new Date(),
           type: "text",
         };
-        setMessages((prev) => [...prev, firstQuestion]);
-        setCurrentQuestionIndex(0);
+        setMessages((prev) => [...prev, confirmMsg]);
+
+        // Add first question after confirmation
+        setTimeout(() => {
+          const firstQuestion: Message = {
+            id: `question-0`,
+            role: "assistant",
+            content: `Question 1 of ${questions.length}\n\n${questions[0]}`,
+            timestamp: new Date(),
+            type: "text",
+          };
+          setMessages((prev) => [...prev, firstQuestion]);
+          setCurrentQuestionIndex(0);
+        }, 1200);
       }
     }, 500);
   };
@@ -176,18 +189,41 @@ export default function OnboardingChat({
     // Check if there are more questions
     const nextQuestionIndex = currentQuestionIndex + 1;
     if (nextQuestionIndex < questions.length) {
+      // Add positive feedback
+      const feedbackMessages = [
+        "Thanks for sharing! That's really helpful. 👌",
+        "Great! I'm starting to understand your business better. 💡",
+        "Perfect! This info will help me serve you better. ✨",
+        "Excellent! I'm learning so much about you. 🎯",
+        "Love it! You're doing great. 🚀",
+      ];
+      
+      const randomFeedback = feedbackMessages[Math.floor(Math.random() * feedbackMessages.length)];
+      
+      setTimeout(() => {
+        const feedbackMsg: Message = {
+          id: `feedback-${nextQuestionIndex}`,
+          role: "assistant",
+          content: randomFeedback,
+          timestamp: new Date(),
+          type: "text",
+        };
+        setMessages((prev) => [...prev, feedbackMsg]);
+      }, 300);
+
       // Add next question
       setTimeout(() => {
+        const progressText = `Question ${nextQuestionIndex + 1} of ${questions.length}`;
         const nextQuestion: Message = {
           id: `question-${nextQuestionIndex}`,
           role: "assistant",
-          content: questions[nextQuestionIndex],
+          content: `${progressText}\n\n${questions[nextQuestionIndex]}`,
           timestamp: new Date(),
           type: "text",
         };
         setMessages((prev) => [...prev, nextQuestion]);
         setCurrentQuestionIndex(nextQuestionIndex);
-      }, 500);
+      }, 1500);
     } else {
       // All questions answered - generate system prompt
       await finalizeOnboarding();
@@ -199,6 +235,16 @@ export default function OnboardingChat({
 
     setLoading(true);
     try {
+      // Add processing message
+      const processingMsg: Message = {
+        id: `processing-${Date.now()}`,
+        role: "assistant",
+        content: "Thanks so much! 🙏 Let me create your personalized system with all this information...",
+        timestamp: new Date(),
+        type: "text",
+      };
+      setMessages((prev) => [...prev, processingMsg]);
+
       // Generate system prompt
       const systemPrompt = await generateSystemPrompt({
         agentTypeId: selectedAgent.id,
@@ -208,30 +254,44 @@ export default function OnboardingChat({
         companyData: {},
       });
 
-      // Add completion message
-      const completionMsg: Message = {
-        id: `completion-${Date.now()}`,
-        role: "assistant",
-        content: `Perfect! I'm all set up now. I've learned everything I need to help you. Let's start our conversation!`,
-        timestamp: new Date(),
-        type: "text",
-      };
-      setMessages((prev) => [...prev, completionMsg]);
-
-      // Complete onboarding
+      // Add intermediate success message
       setTimeout(() => {
-        onComplete({
-          agentTypeId: selectedAgent.id,
-          systemPrompt,
-          mascot: selectedAgent.mascot,
-        });
+        const successMsg: Message = {
+          id: `success-${Date.now()}`,
+          role: "assistant",
+          content: `✅ Done! I've analyzed everything you told me and I'm now fully configured to help you.\n\nI understand your needs, your business, and exactly how to help. I'm ready to answer questions, provide guidance, and support you in everything you do.`,
+          timestamp: new Date(),
+          type: "text",
+        };
+        setMessages((prev) => [...prev, successMsg]);
       }, 1500);
+
+      // Add completion message with what they can do now
+      setTimeout(() => {
+        const completionMsg: Message = {
+          id: `completion-${Date.now()}`,
+          role: "assistant",
+          content: `Let's get started! 🚀\n\nYou can now:\n• Ask me questions about anything\n• Get advice and recommendations\n• Brainstorm ideas\n• Get help with tasks\n\nI'll use everything you told me to give you the best possible help. What would you like to know?`,
+          timestamp: new Date(),
+          type: "text",
+        };
+        setMessages((prev) => [...prev, completionMsg]);
+
+        // Complete onboarding
+        setTimeout(() => {
+          onComplete({
+            agentTypeId: selectedAgent.id,
+            systemPrompt,
+            mascot: selectedAgent.mascot,
+          });
+        }, 2000);
+      }, 3500);
     } catch (error) {
       console.error("Failed to finalize onboarding:", error);
       const errorMsg: Message = {
         id: `error-${Date.now()}`,
         role: "assistant",
-        content: "Sorry, something went wrong. Please try again.",
+        content: "Oops! Something went wrong. 😅 Let's try that again. Could you help me understand what went wrong?",
         timestamp: new Date(),
         type: "text",
       };
