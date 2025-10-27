@@ -19,11 +19,12 @@ export async function GET(
     }
 
     // Get all integrations for this user (if user exists)
-    let allIntegrations = [];
+    const allIntegrations: any[] = [];
     if (bot.userId) {
-      allIntegrations = await prisma.integration.findMany({
+      const userIntegrations = await prisma.integration.findMany({
         where: { userId: bot.userId },
       });
+      allIntegrations.push(...userIntegrations);
     }
 
     // Get connected integrations for this bot
