@@ -336,7 +336,7 @@ export default function BotDetailPage() {
             }}
             fitView
           >
-            <Background variant="dots" gap={20} size={1} color="#e5e5e5" />
+            <Background color="#e5e5e5" gap={20} />
             <Controls />
           </ReactFlow>
         </ReactFlowProvider>
