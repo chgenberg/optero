@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Bot, Mail, Building2, ArrowRight, Lock, Star, Zap, Shield } from "lucide-react";
-import Image from "next/image";
 
 export default function AgentLandingPage() {
   const router = useRouter();
@@ -35,18 +34,18 @@ export default function AgentLandingPage() {
           className="text-center mb-16"
         >
           <motion.div 
-            className="inline-flex items-center justify-center w-32 h-32 mb-6 relative"
+            className="inline-flex items-center justify-center w-32 h-32 mb-6"
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <Image
+            <img
               src="/Mascots/Mr.Green.png"
               alt="Mr. Green AI Agent"
-              width={120}
-              height={120}
-              priority
-              className="object-contain"
-              style={{ maxWidth: '120px', height: 'auto' }}
+              style={{ 
+                width: '120px', 
+                height: '120px',
+                objectFit: 'contain'
+              }}
             />
           </motion.div>
           
