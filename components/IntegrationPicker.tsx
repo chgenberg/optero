@@ -69,18 +69,22 @@ export default function IntegrationPicker({
     return filtered;
   }, [searchTerm, selectedCategory]);
 
-  const handleDragStart = (e: React.DragEvent, integration: IntegrationItem) => {
+  const handleDragStart = (e: any, integration: IntegrationItem) => {
     setDraggedIntegration(integration);
-    e.dataTransfer.effectAllowed = "copy";
+    if (e?.dataTransfer) {
+      e.dataTransfer.effectAllowed = "copy";
+    }
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "copy";
+  const handleDragOver = (e: any) => {
+    e?.preventDefault();
+    if (e?.dataTransfer) {
+      e.dataTransfer.dropEffect = "copy";
+    }
   };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
+  const handleDrop = (e: any) => {
+    e?.preventDefault();
     if (draggedIntegration && onAdd) {
       // Check if already connected
       if (!connectedIds.has(draggedIntegration.id)) {
@@ -252,7 +256,7 @@ export default function IntegrationPicker({
                     <motion.div
                       key={integration.id}
                       draggable={!connectedIds.has(integration.id)}
-                      onDragStart={(e) => handleDragStart(e as React.DragEvent, integration)}
+                      onDragStart={(e) => handleDragStart(e, integration)}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className={`flex flex-col items-center gap-2 p-3 rounded-lg border transition-all cursor-move ${
