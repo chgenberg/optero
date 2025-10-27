@@ -341,7 +341,7 @@ export default function BotDetailPage() {
               minZoom: 0.5,
               maxZoom: 1.5,
             }}
-            defaultViewport={{ x: 0, y: 0, zoom: 0.7 }}
+            defaultViewport={{ x: 0, y: 0, zoom: 0.5 }}
           >
             <Background color="#f0f0f0" gap={20} />
             <Controls />
