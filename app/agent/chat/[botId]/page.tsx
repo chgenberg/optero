@@ -8,6 +8,7 @@ import Image from "next/image";
 import { fetchAgentProfile, fetchChatSession, saveChatSession } from "@/lib/agents-client";
 import SessionHistory from "@/components/SessionHistory";
 import AgentTreeOnboarding from "@/components/AgentTreeOnboarding";
+import OnboardingChat from "@/components/OnboardingChat";
 
 interface Message {
   id: string;
@@ -257,7 +258,7 @@ export default function AgentChatPage() {
   // Show onboarding if no agent profile exists
   if (needsOnboarding) {
     return (
-      <AgentTreeOnboarding
+      <OnboardingChat
         botId={botId}
         onComplete={(profile) => {
           // Reload agent data after onboarding
