@@ -10,10 +10,10 @@ export default function DashboardRedirect() {
     // Fetch user's bots and redirect to first one, or to build bot page
     const fetchAndRedirect = async () => {
       try {
-        const res = await fetch("/api/bots");
+        const res = await fetch("/api/bots/list");
         if (res.ok) {
-          const bots = await res.json();
-          if (bots.length > 0) {
+          const { bots } = await res.json();
+          if (bots && bots.length > 0) {
             // Redirect to first bot
             router.push(`/bots/${bots[0].id}`);
           } else {
