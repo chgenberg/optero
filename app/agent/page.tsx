@@ -39,7 +39,7 @@ export default function AgentLandingPage() {
             transition={{ duration: 2, repeat: Infinity }}
           >
             <img
-              src="/Mascots/Mr.Green.webp?v=2"
+              src="/Mascots/Mr.Green.webp?v=3"
               alt="Mr. Green AI Agent"
               width="120"
               height="120"
