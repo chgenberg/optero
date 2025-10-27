@@ -47,20 +47,20 @@ interface Integration {
 const BotNode = ({ data }: { data: { bot: Bot; onChat: () => void; onDelete: () => void; onEdit: () => void; stats?: any } }) => {
   return (
     <div className="relative">
-      <div
-        className="relative bg-white border-2 border-black rounded-full w-32 h-32 flex items-center justify-center cursor-pointer hover:scale-105 transition-all bot-node-shadow"
-        onClick={data.onChat}
-      >
-        <Handle type="source" position={Position.Right} className="opacity-0" />
-        <Handle type="target" position={Position.Left} className="opacity-0" />
-        <Handle type="source" position={Position.Top} className="opacity-0" />
-        <Handle type="target" position={Position.Bottom} className="opacity-0" />
-        
-        <div className="text-center p-4">
-          <p className="text-xs font-bold truncate">{data.bot.name}</p>
-          <p className="text-xs text-gray-500 truncate mt-1">
-            {data.bot.companyUrl?.replace(/https?:\/\//, "") || "No URL"}
-          </p>
+    <div
+      className="relative bg-white border-2 border-black rounded-full w-32 h-32 flex items-center justify-center cursor-pointer hover:scale-105 transition-all bot-node-shadow"
+      onClick={data.onChat}
+    >
+      <Handle type="source" position={Position.Right} className="opacity-0" />
+      <Handle type="target" position={Position.Left} className="opacity-0" />
+      <Handle type="source" position={Position.Top} className="opacity-0" />
+      <Handle type="target" position={Position.Bottom} className="opacity-0" />
+      
+      <div className="text-center p-4">
+        <p className="text-xs font-bold truncate">{data.bot.name}</p>
+        <p className="text-xs text-gray-500 truncate mt-1">
+          {data.bot.companyUrl?.replace(/https?:\/\//, "") || "No URL"}
+        </p>
           {data.stats && (
             <p className="text-xs text-blue-600 mt-1">
               💬 {data.stats.chats || 0}
@@ -216,8 +216,8 @@ function DashboardContent() {
       data: { 
         bot, 
         onChat: () => {
-          // Temporary: always open public chat without login
-          router.push(`/bots/chat?botId=${bot.id}`);
+          // Navigate to bot detail page
+          router.push(`/bots/${bot.id}`);
         },
         onDelete: async () => {
           try {
@@ -603,8 +603,8 @@ function DashboardContent() {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className="text-2xl font-bold">
-                    Configure {selectedIntegration.name}
-                  </h2>
+                Configure {selectedIntegration.name}
+                </h2>
                   <p className="text-sm text-gray-600 mt-1">
                     Set up the credentials and connect to your bots
                   </p>
