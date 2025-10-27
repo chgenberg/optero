@@ -34,11 +34,17 @@ export default function AgentLandingPage() {
           className="text-center mb-16"
         >
           <motion.div 
-            className="inline-flex items-center justify-center w-32 h-32 mb-6 text-6xl"
+            className="inline-flex items-center justify-center w-32 h-32 mb-6"
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            🤖
+            <img
+              src="/Mascots/Mr.Green.webp"
+              alt="Mr. Green AI Agent"
+              width="120"
+              height="120"
+              style={{ objectFit: 'contain' }}
+            />
           </motion.div>
           
           <h2 className="text-5xl font-bold tracking-tight mb-4">
