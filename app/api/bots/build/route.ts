@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 export async function POST(req: NextRequest) {
   let urlForLock = '';
   try {
-    const { consult, conversations, brandConfig, integrations } = await req.json();
+    const { consult, conversations, brandConfig, integrations, agentProfile } = await req.json();
     urlForLock = consult?.url || '';
     // lightweight build lock per URL to avoid spikes
     const key = `build:${consult.url}`;
@@ -172,6 +172,26 @@ export async function POST(req: NextRequest) {
         spec
       }
     });
+
+    // Save agent profile if provided
+    if (agentProfile && agentProfile.agentTypeId) {
+      try {
+        await prisma.agentProfile.create({
+          data: {
+            botId: bot.id,
+            agentTypeId: agentProfile.agentTypeId,
+            systemPrompt: agentProfile.systemPrompt || "",
+            selectedCategoryPath: [],
+            selectedUseCases: [],
+            onboardingResponses: {},
+            generatedContext: "",
+            onboardingCompleted: true,
+          },
+        });
+      } catch (e) {
+        console.error("Failed to create agent profile:", e);
+      }
+    }
 
     // Initial versioning (v1)
     try {

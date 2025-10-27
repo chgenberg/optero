@@ -101,6 +101,7 @@ export default function AgentSetupPage() {
 
   const buildBot = async () => {
     const scrapeData = JSON.parse(sessionStorage.getItem("agentScrapeData") || "{}");
+    const profileData = agentProfile;
     
     const res = await fetch("/api/bots/build", {
       method: "POST",
@@ -115,7 +116,12 @@ export default function AgentSetupPage() {
           userEmail: email,
           botType: "knowledge",
           botSubtype: "pro"
-        }
+        },
+        agentProfile: profileData ? {
+          agentTypeId: profileData.agentTypeId,
+          systemPrompt: profileData.systemPrompt,
+          mascot: profileData.mascot,
+        } : undefined
       })
     });
     
