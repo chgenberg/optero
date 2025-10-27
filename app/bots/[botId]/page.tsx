@@ -161,7 +161,7 @@ export default function BotDetailPage() {
   const [bot, setBot] = useState<Bot | null>(null);
   const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [knowledge, setKnowledge] = useState<any[]>([]);
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [showSettings, setShowSettings] = useState(false);
   const [showChat, setShowChat] = useState(false);
@@ -225,7 +225,7 @@ export default function BotDetailPage() {
         data: { integration },
       }));
 
-      setNodes([botNode, ...integrationNodes] as Node[]);
+      setNodes([botNode, ...integrationNodes]);
 
       // Create edges for connected integrations
       const edgesData: Edge[] = integrationsForNodes
