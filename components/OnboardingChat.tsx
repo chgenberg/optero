@@ -301,13 +301,17 @@ export default function OnboardingChat({
       setMessages((prev) => [...prev, processingMsg]);
 
       // Generate system prompt
-      const systemPrompt = await generateSystemPrompt({
+      const promptResponse = await generateSystemPrompt({
         agentTypeId: selectedAgent.id,
         selectedCategoryPath: [selectedAgent.slug],
         selectedUseCases: [],
         onboardingResponses: responses,
         companyData: {},
       });
+
+      const systemPrompt = typeof promptResponse === 'string' 
+        ? promptResponse 
+        : (promptResponse as any).systemPrompt || "";
 
       // Add intermediate success message
       setTimeout(() => {
