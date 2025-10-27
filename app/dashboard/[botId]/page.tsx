@@ -119,7 +119,20 @@ export default function BotDetailPage() {
       const res = await fetch(`/api/bots/integrations?botId=${botId}`);
       if (res.ok) {
         const data = await res.json();
-        setConnectedIntegrations(data.integrations);
+        // Transform API response to ConnectedIntegration format
+        const transformed = data.integrations.map((conn: any) => {
+          // Find the integration details from integrations.json
+          const integrationDetails = require('@/data/integrations.json').find(
+            (i: any) => i.id === conn.integrationId
+          );
+          return {
+            ...integrationDetails,
+            id: conn.id, // Use connection ID for removal
+            integrationId: conn.integrationId,
+            connectedAt: new Date(conn.createdAt),
+          };
+        });
+        setConnectedIntegrations(transformed);
       }
     } catch (error) {
       console.error("Failed to load integrations:", error);
@@ -876,7 +889,11 @@ export default function BotDetailPage() {
               <h2 className="text-xl font-bold uppercase tracking-wider text-black mb-6">
                 CONNECTED INTEGRATIONS
               </h2>
-              <IntegrationPicker botId={botId} onIntegrationsChange={setConnectedIntegrations} />
+              <IntegrationPicker 
+                botId={botId} 
+                connectedIntegrations={connectedIntegrations}
+                onIntegrationsChange={loadConnectedIntegrations} 
+              />
             </div>
           </motion.div>
         )}

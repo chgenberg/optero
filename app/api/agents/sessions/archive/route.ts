@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -67,9 +67,10 @@ export async function GET(request: Request) {
     // Count messages for each
     const sessionsWithCounts = archivedSessions.map((session) => {
       // Note: We don't load full messages for archived list for performance
+      const metadata = session.metadata as { title?: string } | null;
       return {
         id: session.id,
-        title: session.metadata?.title || "Chat",
+        title: metadata?.title || "Chat",
         createdAt: session.createdAt,
         updatedAt: session.updatedAt,
         archivedAt: session.archivedAt,

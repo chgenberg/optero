@@ -252,7 +252,7 @@ export default function IntegrationPicker({
                     <motion.div
                       key={integration.id}
                       draggable={!connectedIds.has(integration.id)}
-                      onDragStart={(e) => handleDragStart(e, integration)}
+                      onDragStart={(e) => handleDragStart(e as React.DragEvent, integration)}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className={`flex flex-col items-center gap-2 p-3 rounded-lg border transition-all cursor-move ${

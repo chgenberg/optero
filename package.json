@@ -18,6 +18,7 @@
     "evals:golden:healthcare": "tsx scripts/evals-golden-healthcare.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.31.0",
     "@aws-sdk/client-s3": "^3.910.0",
     "@mozilla/readability": "^0.4.4",
     "@prisma/client": "^5.18.0",

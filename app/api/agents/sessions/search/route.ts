@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -52,7 +52,9 @@ export async function GET(request: Request) {
         const matchCount = matchingMessages.length;
         
         // Get first match preview
-        const firstMatch = matchingMessages[0];
+        const firstMatch = matchingMessages[0] as { role: string; content: string; timestamp?: string };
+        if (!firstMatch) return null;
+        
         const preview = firstMatch.content
           .substring(0, 100)
           .toLowerCase()
@@ -61,6 +63,7 @@ export async function GET(request: Request) {
             `**${query}**`
           );
 
+        const metadata = session.metadata as { title?: string } | null;
         return {
           sessionId: session.id,
           matchCount,
@@ -68,7 +71,7 @@ export async function GET(request: Request) {
           firstMatchContent: firstMatch.content,
           createdAt: session.createdAt,
           updatedAt: session.updatedAt,
-          title: session.metadata?.title || "Chat",
+          title: metadata?.title || "Chat",
         };
       })
       .filter((result) => result !== null)

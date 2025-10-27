@@ -151,7 +151,7 @@ const nodeTypes = {
 export default function BotDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const botId = params.botId as string;
+  const botId = params?.botId as string;
 
   const [bot, setBot] = useState<Bot | null>(null);
   const [integrations, setIntegrations] = useState<Integration[]>([]);

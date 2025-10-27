@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -78,28 +78,30 @@ export async function GET(request: Request) {
 
     // Get all sessions for this bot
     const sessions = await prisma.botSession.findMany({
-      where: { botId },
+      where: { botId, isArchived: false },
       select: {
         id: true,
         metadata: true,
         createdAt: true,
         updatedAt: true,
-        messages: {
-          select: {} as any, // Don't return full messages in list
-        },
+        messages: true,
       },
       orderBy: { updatedAt: "desc" },
       take: 50, // Limit to 50 sessions
     });
 
     // Count messages for each session
-    const sessionsWithCounts = sessions.map((session) => ({
-      ...session,
-      messageCount: Array.isArray(session.messages)
-        ? session.messages.length
-        : 0,
-      messages: undefined, // Remove the empty messages field
-    }));
+    const sessionsWithCounts = sessions.map((session) => {
+      const metadata = session.metadata as { title?: string } | null;
+      const messages = session.messages as any[];
+      return {
+        id: session.id,
+        title: metadata?.title || `Session ${session.id.substring(0, 8)}`,
+        createdAt: session.createdAt,
+        updatedAt: session.updatedAt,
+        messageCount: Array.isArray(messages) ? messages.length : 0,
+      };
+    });
 
     return NextResponse.json({
       sessions: sessionsWithCounts,
