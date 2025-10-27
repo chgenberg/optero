@@ -56,28 +56,23 @@ interface ChatMessage {
 }
 
 // Enhanced Bot Node Component
-const BotNode = ({ data }: { data: { bot: Bot; isMain?: boolean } }) => {
-  const gradients = [
-    "from-gray-900 to-gray-700",
-    "from-gray-800 to-gray-600",
-    "from-black to-gray-800"
-  ];
-  const gradient = gradients[Math.floor(Math.random() * gradients.length)];
-
+const BotNode = ({ data }: { data: { bot: Bot; isMain?: boolean; onChatClick: () => void } }) => {
   return (
     <div className={`relative group ${data.isMain ? 'scale-125' : ''}`}>
-      <div className={`
-        relative bg-gradient-to-br ${gradient} 
+      <div 
+        onClick={data.onChatClick}
+        className={`
+        relative bg-black
         ${data.isMain ? 'w-40 h-40' : 'w-32 h-32'}
         rounded-2xl flex items-center justify-center cursor-pointer 
-        transform transition-all duration-300 hover:scale-110 hover:rotate-3
-        shadow-2xl hover:shadow-3xl
-        border-2 border-gray-300 hover:border-white
+        transform transition-all duration-300 hover:opacity-90
+        shadow-2xl
+        border-2 border-gray-800
       `}>
-        <Handle type="source" position={Position.Right} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
-        <Handle type="target" position={Position.Left} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
-        <Handle type="source" position={Position.Top} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
-        <Handle type="target" position={Position.Bottom} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
+        <Handle type="source" position={Position.Right} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
+        <Handle type="target" position={Position.Left} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
+        <Handle type="source" position={Position.Top} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
+        <Handle type="target" position={Position.Bottom} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
         
         <div className="text-center p-4">
           <div className="text-white mb-2">
@@ -111,26 +106,26 @@ const IntegrationNode = ({ data }: { data: { integration: Integration } }) => {
   };
 
   const colors: Record<string, string> = {
-    webhook: "from-purple-600 to-purple-800",
-    email: "from-blue-600 to-blue-800",
-    slack: "from-green-600 to-green-800",
-    analytics: "from-orange-600 to-orange-800",
-    documents: "from-red-600 to-red-800",
+    webhook: "bg-purple-600",
+    email: "bg-blue-600",
+    slack: "bg-green-600",
+    analytics: "bg-orange-600",
+    documents: "bg-red-600",
   };
 
   return (
     <div className="relative group">
       <div className={`
-        relative bg-gradient-to-br ${colors[data.integration.type] || 'from-gray-600 to-gray-800'}
+        relative ${colors[data.integration.type] || 'bg-gray-600'}
         w-24 h-24 rounded-xl flex items-center justify-center cursor-pointer
-        transform transition-all duration-300 hover:scale-110 hover:-rotate-3
-        shadow-xl hover:shadow-2xl
-        border-2 border-white/20 hover:border-white/40
+        transform transition-all duration-300 hover:opacity-90
+        shadow-xl
+        border-2 border-gray-800
       `}>
-        <Handle type="source" position={Position.Right} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
-        <Handle type="target" position={Position.Left} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
-        <Handle type="source" position={Position.Top} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
-        <Handle type="target" position={Position.Bottom} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
+        <Handle type="source" position={Position.Right} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
+        <Handle type="target" position={Position.Left} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
+        <Handle type="source" position={Position.Top} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
+        <Handle type="target" position={Position.Bottom} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
         
         <div className="text-center">
           <div className="mb-2">
@@ -204,7 +199,13 @@ export default function BotDetailPage() {
         id: `bot-${botData.id}`,
         type: "bot",
         position: { x: 400, y: 250 },
-        data: { bot: botData, isMain: true },
+        data: { 
+          bot: botData, 
+          isMain: true,
+          onChatClick: () => {
+            router.push(`/dashboard/${botId}/chat`);
+          }
+        },
       };
 
       // Load integrations from API
@@ -236,8 +237,8 @@ export default function BotDetailPage() {
           target: `bot-${botData.id}`,
           type: "smoothstep",
           animated: true,
-          style: { stroke: "#666", strokeWidth: 2 },
-          markerEnd: { type: MarkerType.ArrowClosed, color: "#666" },
+          style: { stroke: "#000", strokeWidth: 3 },
+          markerEnd: { type: MarkerType.ArrowClosed, color: "#000" },
         }));
 
       setEdges(edgesData);
@@ -265,8 +266,8 @@ export default function BotDetailPage() {
       ...params,
       type: "smoothstep",
       animated: true,
-      style: { stroke: "#666", strokeWidth: 2 },
-      markerEnd: { type: MarkerType.ArrowClosed, color: "#666" },
+      style: { stroke: "#000", strokeWidth: 3 },
+      markerEnd: { type: MarkerType.ArrowClosed, color: "#000" },
     }, eds));
   }, [setEdges, botId]);
 
