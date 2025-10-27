@@ -162,7 +162,7 @@ export default function BotDetailPage() {
   const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [knowledge, setKnowledge] = useState<any[]>([]);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [showSettings, setShowSettings] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
