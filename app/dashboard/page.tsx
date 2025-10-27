@@ -484,6 +484,24 @@ function DashboardContent() {
       <Header />
       
       <main className="flex-1 relative">
+        {/* Dashboard Stats Panel */}
+        <div className="absolute top-4 left-4 z-10 bg-white border-2 border-black rounded-lg p-4 shadow-md">
+          <div className="flex gap-6">
+            <div className="text-center">
+              <p className="text-2xl font-bold text-black">{bots.length}</p>
+              <p className="text-xs text-gray-600">Bots</p>
+            </div>
+            <div className="text-center border-l border-gray-200 pl-6">
+              <p className="text-2xl font-bold text-black">{integrations.length}</p>
+              <p className="text-xs text-gray-600">Integrations</p>
+            </div>
+            <div className="text-center border-l border-gray-200 pl-6">
+              <p className="text-2xl font-bold text-blue-600">{bots.reduce((sum, b) => sum + (b.spec?.stats?.totalChats || 0), 0)}</p>
+              <p className="text-xs text-gray-600">Total Chats</p>
+            </div>
+          </div>
+        </div>
+        
         {/* Top right controls */}
         <div className="absolute top-4 right-4 z-10 flex gap-2">
           <button
