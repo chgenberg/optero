@@ -69,10 +69,10 @@ const BotNode = ({ data }: { data: { bot: Bot; isMain?: boolean; onChatClick: ()
         shadow-2xl
         border-2 border-gray-800
       `}>
-        <Handle type="source" position={Position.Right} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
-        <Handle type="target" position={Position.Left} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
-        <Handle type="source" position={Position.Top} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
-        <Handle type="target" position={Position.Bottom} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
+        <Handle type="source" position={Position.Right} className="!w-2 !h-2 !bg-white !border-0 hover:!scale-150 transition-transform !cursor-crosshair" />
+        <Handle type="target" position={Position.Left} className="!w-2 !h-2 !bg-white !border-0 hover:!scale-150 transition-transform !cursor-crosshair" />
+        <Handle type="source" position={Position.Top} className="!w-2 !h-2 !bg-white !border-0 hover:!scale-150 transition-transform !cursor-crosshair" />
+        <Handle type="target" position={Position.Bottom} className="!w-2 !h-2 !bg-white !border-0 hover:!scale-150 transition-transform !cursor-crosshair" />
         
         <div className="text-center p-4">
           <div className="text-white mb-2">
@@ -122,10 +122,10 @@ const IntegrationNode = ({ data }: { data: { integration: Integration } }) => {
         shadow-xl
         border-2 border-gray-800
       `}>
-        <Handle type="source" position={Position.Right} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
-        <Handle type="target" position={Position.Left} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
-        <Handle type="source" position={Position.Top} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
-        <Handle type="target" position={Position.Bottom} className="!w-5 !h-5 !bg-blue-500 !border-2 !border-white hover:!scale-150 transition-transform !cursor-crosshair" />
+        <Handle type="source" position={Position.Right} className="!w-2 !h-2 !bg-white !border-0 hover:!scale-150 transition-transform !cursor-crosshair" />
+        <Handle type="target" position={Position.Left} className="!w-2 !h-2 !bg-white !border-0 hover:!scale-150 transition-transform !cursor-crosshair" />
+        <Handle type="source" position={Position.Top} className="!w-2 !h-2 !bg-white !border-0 hover:!scale-150 transition-transform !cursor-crosshair" />
+        <Handle type="target" position={Position.Bottom} className="!w-2 !h-2 !bg-white !border-0 hover:!scale-150 transition-transform !cursor-crosshair" />
         
         <div className="text-center">
           <div className="mb-2">
