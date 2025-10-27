@@ -34,21 +34,11 @@ export default function AgentLandingPage() {
           className="text-center mb-16"
         >
           <motion.div 
-            className="inline-flex items-center justify-center w-32 h-32 mb-6"
+            className="inline-flex items-center justify-center w-32 h-32 mb-6 text-6xl"
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <img
-              src="./Mascots/Mr.Green.png"
-              alt="Mr. Green AI Agent"
-              onError={(e) => console.error("Image failed to load", e)}
-              onLoad={() => console.log("Image loaded successfully")}
-              style={{ 
-                width: '120px', 
-                height: '120px',
-                objectFit: 'contain'
-              }}
-            />
+            🤖
           </motion.div>
           
           <h2 className="text-5xl font-bold tracking-tight mb-4">
