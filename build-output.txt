@@ -1,0 +1,50 @@
+
+> myaiguy@0.1.0 build
+> prisma generate && next build
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v5.22.0) to ./node_modules/@prisma/client in 350ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want real-time updates to your database without manual polling? Discover how with Pulse: https://pris.ly/tip-0-pulse
+
+┌─────────────────────────────────────────────────────────┐
+│  Update available 5.22.0 -> 6.18.0                      │
+│                                                         │
+│  This is a major update - please follow the guide at    │
+│  https://pris.ly/d/major-version-upgrade                │
+│                                                         │
+│  Run the following to update                            │
+│    npm i --save-dev prisma@latest                       │
+│    npm i @prisma/client@latest                          │
+└─────────────────────────────────────────────────────────┘
+  ▲ Next.js 14.2.33
+  - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+ ⚠ Compiled with warnings
+
+./app/api/business/scrape/route.ts
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./app/api/business/scrape/route.ts
+
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+Failed to compile.
+
+./app/bots/[botId]/page.tsx:159:17
+Type error: 'params' is possibly 'null'.
+
+[0m [90m 157 |[39m   [36mconst[39m router [33m=[39m useRouter()[33m;[39m[0m
+[0m [90m 158 |[39m   [36mconst[39m params [33m=[39m useParams()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 159 |[39m   [36mconst[39m botId [33m=[39m params[33m.[39mbotId [36mas[39m string[33m;[39m[0m
+[0m [90m     |[39m                 [31m[1m^[22m[39m[0m
+[0m [90m 160 |[39m[0m
+[0m [90m 161 |[39m   [36mconst[39m [bot[33m,[39m setBot] [33m=[39m useState[33m<[39m[33mBot[39m [33m|[39m [36mnull[39m[33m>[39m([36mnull[39m)[33m;[39m[0m
+[0m [90m 162 |[39m   [36mconst[39m [integrations[33m,[39m setIntegrations] [33m=[39m useState[33m<[39m[33mIntegration[39m[][33m>[39m([])[33m;[39m[0m
+Next.js build worker exited with code: 1 and signal: null
