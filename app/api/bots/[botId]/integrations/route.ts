@@ -18,10 +18,13 @@ export async function GET(
       return NextResponse.json({ error: "Bot not found" }, { status: 404 });
     }
 
-    // Get all integrations for this user
-    const allIntegrations = await prisma.integration.findMany({
-      where: { userId: bot.userId },
-    });
+    // Get all integrations for this user (if user exists)
+    let allIntegrations = [];
+    if (bot.userId) {
+      allIntegrations = await prisma.integration.findMany({
+        where: { userId: bot.userId },
+      });
+    }
 
     // Get connected integrations for this bot
     const connectedIntegrations = await prisma.botIntegrationConnection.findMany({
