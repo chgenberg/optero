@@ -435,6 +435,7 @@ model Bot {
   sessions     BotSession[]
   ratings      BotRating[]
   qaDatabase   BotQA[]
+  agentProfile AgentProfile?
   
   @@index([companyUrl])
   @@index([userId])
@@ -525,6 +526,14 @@ model BotSession {
   userAgent   String?
   messages    Json     // Array of {role, content, timestamp}
   metadata    Json?    // { lead_captured, booking_made, etc }
+  
+  // Archive support
+  isArchived  Boolean  @default(false)
+  archivedAt  DateTime?
+  
+  // Search optimization
+  searchText  String?  @db.Text // Extracted text for full-text search
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
@@ -532,6 +541,7 @@ model BotSession {
   
   @@index([botId])
   @@index([userId])
+  @@index([isArchived])
   @@index([createdAt])
 }
 
@@ -740,4 +750,145 @@ model CompanyScrapeRun {
   createdAt       DateTime @default(now())
   
   @@index([url])
+}
+
+// ============= AGENT SYSTEM =============
+// Agenttyper - kan läggas till dynamiskt
+model AgentType {
+  id              String   @id @default(cuid())
+  slug            String   @unique // "customer_service", "finance", "creative"
+  name            String   // "Mr. Black - Customer Service"
+  description     String   @db.Text
+  mascot          String   // "mr_black.png", "mrs_pink.png", "mr_green.png"
+  color           String   // #000000, #FF69B4, #00AA00
+  
+  // Standardfråga för denna agenttyp
+  onboardingPrompt String @db.Text
+  
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  categories      AgentCategory[]
+  profiles        AgentProfile[]
+  onboardingSteps OnboardingStep[]
+  
+  @@index([slug])
+}
+
+// Kategorier - hierarkisk struktur (kan vara många nivåer djup!)
+model AgentCategory {
+  id              String   @id @default(cuid())
+  agentTypeId     String   // Vilken agenttyp denna kategori tillhör
+  parentId        String?  // För hierarki: null = huvudkategori
+  
+  name            String   // "Kundstöd", "Fakturering", etc
+  slug            String   // "customer_support", "invoicing"
+  description     String   @db.Text
+  order           Int      @default(0) // Sort order inom samma nivå
+  
+  // Vad ska vi fråga användaren om denna kategori?
+  contextQuestions Json   // ["Vilka är dina vanligaste kundfrågor?", "..."]
+  
+  // Meta för RAG/AI
+  tags            Json?    // ["support", "technical", "urgent"]
+  icon            String?  // Lucide icon name
+  
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  agentType       AgentType @relation(fields: [agentTypeId], references: [id], onDelete: Cascade)
+  parent          AgentCategory? @relation("ChildCategories", fields: [parentId], references: [id])
+  children        AgentCategory[] @relation("ChildCategories")
+  useCases        UseCaseTemplate[]
+  
+  @@unique([agentTypeId, slug])
+  @@index([agentTypeId])
+  @@index([parentId])
+}
+
+// Use case templates - vad kan agenten göra?
+model UseCaseTemplate {
+  id              String   @id @default(cuid())
+  categoryId      String
+  
+  name            String   // "Lead Qualification"
+  description     String   @db.Text
+  icon            String?
+  order           Int      @default(0)
+  
+  // Instruktioner för denna use case
+  systemPromptTemplate String @db.Text // "{...} Your role is to {{role}}"
+  contextTemplate Json?    // Variabler som ska fyllas i
+  
+  // Exempel på vad agenten kan göra
+  exampleTasks    Json?    // ["Bedöm qualification", "Boka möte", ...]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  category        AgentCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  @@index([categoryId])
+}
+
+// Användarens agentprofil - sparar all context
+model AgentProfile {
+  id              String   @id @default(cuid())
+  botId           String   @unique
+  agentTypeId     String   // Vilken agenttyp
+  
+  // Användarens "väg genom trädet"
+  selectedCategoryPath Json // ["customer_service", "support", "faq_based"]
+  selectedUseCases Json?   // Array av UseCaseTemplate IDs eller slugs
+  
+  // Strukturerad kontext från onboarding
+  onboardingResponses Json  // { "question_slug": "answer_text", ... }
+  
+  // Genererad kontext för GPT
+  generatedContext Json?    // {
+                            //   industry: "SaaS",
+                            //   companySize: "10-50",
+                            //   mainChallenges: [...],
+                            //   targetAudience: "Enterprise",
+                            //   customInstructions: "..."
+                            // }
+  
+  // Personaliserad system prompt
+  systemPrompt    String   @db.Text
+  
+  // Metadata
+  onboardingCompleted Boolean @default(false)
+  onboardingVersion Int     @default(1)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  bot             Bot      @relation(fields: [botId], references: [id], onDelete: Cascade)
+  agentType       AgentType @relation(fields: [agentTypeId], references: [id])
+  
+  @@index([botId])
+  @@index([agentTypeId])
+}
+
+// Onboarding steps - varje fråga i processen
+model OnboardingStep {
+  id              String   @id @default(cuid())
+  agentTypeId     String   // Vilken agenttyp denna step tillhör
+  
+  stepNumber      Int      // 1, 2, 3...
+  questionText    String   @db.Text
+  helpText        String?  @db.Text
+  
+  // Hur ska vi fråga?
+  questionType    String   // "multiple_choice", "text", "tree_selection", "ai_generated"
+  options         Json?    // För multiple_choice: [{ label, value }, ...]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  agentType       AgentType @relation(fields: [agentTypeId], references: [id], onDelete: Cascade)
+  
+  @@index([agentTypeId, stepNumber])
 }

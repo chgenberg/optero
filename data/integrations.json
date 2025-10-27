@@ -1,0 +1,571 @@
+{
+  "integrations": [
+    {
+      "id": "salesforce",
+      "name": "Salesforce",
+      "category": "CRM",
+      "description": "Customer relationship management platform",
+      "icon": "🔵",
+      "color": "#00A1E0",
+      "type": "crm"
+    },
+    {
+      "id": "hubspot",
+      "name": "HubSpot",
+      "category": "CRM",
+      "description": "All-in-one platform for marketing, sales and service",
+      "icon": "🧡",
+      "color": "#FF7A59",
+      "type": "crm"
+    },
+    {
+      "id": "pipedrive",
+      "name": "Pipedrive",
+      "category": "CRM",
+      "description": "Sales CRM software",
+      "icon": "💚",
+      "color": "#00A699",
+      "type": "crm"
+    },
+    {
+      "id": "zendesk",
+      "name": "Zendesk",
+      "category": "Support",
+      "description": "Customer support platform",
+      "icon": "💙",
+      "color": "#003B66",
+      "type": "support"
+    },
+    {
+      "id": "intercom",
+      "name": "Intercom",
+      "category": "Support",
+      "description": "Customer communication platform",
+      "icon": "💜",
+      "color": "#1F1F44",
+      "type": "support"
+    },
+    {
+      "id": "freshdesk",
+      "name": "Freshdesk",
+      "category": "Support",
+      "description": "Cloud-based customer support software",
+      "icon": "🔷",
+      "color": "#3DCCE3",
+      "type": "support"
+    },
+    {
+      "id": "slack",
+      "name": "Slack",
+      "category": "Communication",
+      "description": "Team messaging platform",
+      "icon": "🟪",
+      "color": "#E01E5A",
+      "type": "communication"
+    },
+    {
+      "id": "teams",
+      "name": "Microsoft Teams",
+      "category": "Communication",
+      "description": "Unified communication platform",
+      "icon": "🔶",
+      "color": "#6264A7",
+      "type": "communication"
+    },
+    {
+      "id": "discord",
+      "name": "Discord",
+      "category": "Communication",
+      "description": "Community communication platform",
+      "icon": "🟣",
+      "color": "#5865F2",
+      "type": "communication"
+    },
+    {
+      "id": "gmail",
+      "name": "Gmail",
+      "category": "Email",
+      "description": "Email service by Google",
+      "icon": "📧",
+      "color": "#EA4335",
+      "type": "email"
+    },
+    {
+      "id": "outlook",
+      "name": "Outlook",
+      "category": "Email",
+      "description": "Email service by Microsoft",
+      "icon": "📨",
+      "color": "#0078D4",
+      "type": "email"
+    },
+    {
+      "id": "sendgrid",
+      "name": "SendGrid",
+      "category": "Email",
+      "description": "Email delivery platform",
+      "icon": "💌",
+      "color": "#1A73E8",
+      "type": "email"
+    },
+    {
+      "id": "mailchimp",
+      "name": "Mailchimp",
+      "category": "Email",
+      "description": "Email marketing platform",
+      "icon": "🐵",
+      "color": "#FFE01B",
+      "type": "email"
+    },
+    {
+      "id": "stripe",
+      "name": "Stripe",
+      "category": "Payment",
+      "description": "Payment processing platform",
+      "icon": "💳",
+      "color": "#635BFF",
+      "type": "payment"
+    },
+    {
+      "id": "paypal",
+      "name": "PayPal",
+      "category": "Payment",
+      "description": "Online payment system",
+      "icon": "💰",
+      "color": "#003087",
+      "type": "payment"
+    },
+    {
+      "id": "square",
+      "name": "Square",
+      "category": "Payment",
+      "description": "Payment and point of sale system",
+      "icon": "⬜",
+      "color": "#3E3E3E",
+      "type": "payment"
+    },
+    {
+      "id": "google-sheets",
+      "name": "Google Sheets",
+      "category": "Data",
+      "description": "Cloud spreadsheet application",
+      "icon": "📊",
+      "color": "#34A853",
+      "type": "data"
+    },
+    {
+      "id": "airtable",
+      "name": "Airtable",
+      "category": "Data",
+      "description": "No-code database platform",
+      "icon": "🔲",
+      "color": "#FFAD2E",
+      "type": "data"
+    },
+    {
+      "id": "notion",
+      "name": "Notion",
+      "category": "Data",
+      "description": "All-in-one workspace",
+      "icon": "📝",
+      "color": "#000000",
+      "type": "data"
+    },
+    {
+      "id": "monday",
+      "name": "Monday.com",
+      "category": "Project Management",
+      "description": "Work operating system",
+      "icon": "📅",
+      "color": "#0055CC",
+      "type": "project"
+    },
+    {
+      "id": "asana",
+      "name": "Asana",
+      "category": "Project Management",
+      "description": "Project management software",
+      "icon": "📋",
+      "color": "#FF6B6B",
+      "type": "project"
+    },
+    {
+      "id": "jira",
+      "name": "Jira",
+      "category": "Project Management",
+      "description": "Issue tracking and agile management",
+      "icon": "🎯",
+      "color": "#0052CC",
+      "type": "project"
+    },
+    {
+      "id": "trello",
+      "name": "Trello",
+      "category": "Project Management",
+      "description": "Kanban board tool",
+      "icon": "🃏",
+      "color": "#0079BF",
+      "type": "project"
+    },
+    {
+      "id": "figma",
+      "name": "Figma",
+      "category": "Design",
+      "description": "Collaborative design tool",
+      "icon": "🎨",
+      "color": "#A259FF",
+      "type": "design"
+    },
+    {
+      "id": "adobe-creative",
+      "name": "Adobe Creative Cloud",
+      "category": "Design",
+      "description": "Creative design suite",
+      "icon": "🖼️",
+      "color": "#FF0000",
+      "type": "design"
+    },
+    {
+      "id": "canva",
+      "name": "Canva",
+      "category": "Design",
+      "description": "Design platform",
+      "icon": "✨",
+      "color": "#00C4CC",
+      "type": "design"
+    },
+    {
+      "id": "shopify",
+      "name": "Shopify",
+      "category": "E-commerce",
+      "description": "E-commerce platform",
+      "icon": "🛍️",
+      "color": "#96C628",
+      "type": "ecommerce"
+    },
+    {
+      "id": "woocommerce",
+      "name": "WooCommerce",
+      "category": "E-commerce",
+      "description": "WordPress e-commerce plugin",
+      "icon": "🏪",
+      "color": "#96588A",
+      "type": "ecommerce"
+    },
+    {
+      "id": "bigcommerce",
+      "name": "BigCommerce",
+      "category": "E-commerce",
+      "description": "E-commerce platform",
+      "icon": "🏬",
+      "color": "#FF7B1F",
+      "type": "ecommerce"
+    },
+    {
+      "id": "google-analytics",
+      "name": "Google Analytics",
+      "category": "Analytics",
+      "description": "Web analytics service",
+      "icon": "📈",
+      "color": "#E37400",
+      "type": "analytics"
+    },
+    {
+      "id": "mixpanel",
+      "name": "Mixpanel",
+      "category": "Analytics",
+      "description": "Product analytics platform",
+      "icon": "📊",
+      "color": "#2F86EB",
+      "type": "analytics"
+    },
+    {
+      "id": "amplitude",
+      "name": "Amplitude",
+      "category": "Analytics",
+      "description": "Digital analytics platform",
+      "icon": "📉",
+      "color": "#662D91",
+      "type": "analytics"
+    },
+    {
+      "id": "sentry",
+      "name": "Sentry",
+      "category": "Monitoring",
+      "description": "Error tracking platform",
+      "icon": "🚨",
+      "color": "#362D59",
+      "type": "monitoring"
+    },
+    {
+      "id": "datadog",
+      "name": "Datadog",
+      "category": "Monitoring",
+      "description": "Infrastructure monitoring",
+      "icon": "📡",
+      "color": "#632CA6",
+      "type": "monitoring"
+    },
+    {
+      "id": "new-relic",
+      "name": "New Relic",
+      "category": "Monitoring",
+      "description": "Performance monitoring platform",
+      "icon": "🔔",
+      "color": "#1CE783",
+      "type": "monitoring"
+    },
+    {
+      "id": "twilio",
+      "name": "Twilio",
+      "category": "Communication",
+      "description": "SMS and voice API platform",
+      "icon": "☎️",
+      "color": "#F22F46",
+      "type": "communication"
+    },
+    {
+      "id": "aws",
+      "name": "Amazon Web Services",
+      "category": "Cloud",
+      "description": "Cloud computing services",
+      "icon": "☁️",
+      "color": "#FF9900",
+      "type": "cloud"
+    },
+    {
+      "id": "google-cloud",
+      "name": "Google Cloud",
+      "category": "Cloud",
+      "description": "Google cloud platform",
+      "icon": "☁️",
+      "color": "#1F2937",
+      "type": "cloud"
+    },
+    {
+      "id": "azure",
+      "name": "Microsoft Azure",
+      "category": "Cloud",
+      "description": "Microsoft cloud platform",
+      "icon": "☁️",
+      "color": "#0078D4",
+      "type": "cloud"
+    },
+    {
+      "id": "github",
+      "name": "GitHub",
+      "category": "Development",
+      "description": "Code repository platform",
+      "icon": "🐙",
+      "color": "#181717",
+      "type": "dev"
+    },
+    {
+      "id": "gitlab",
+      "name": "GitLab",
+      "category": "Development",
+      "description": "DevOps platform",
+      "icon": "🦊",
+      "color": "#FC6D26",
+      "type": "dev"
+    },
+    {
+      "id": "bitbucket",
+      "name": "Bitbucket",
+      "category": "Development",
+      "description": "Git hosting service",
+      "icon": "🪣",
+      "color": "#0052CC",
+      "type": "dev"
+    },
+    {
+      "id": "jenkins",
+      "name": "Jenkins",
+      "category": "Development",
+      "description": "CI/CD automation server",
+      "icon": "🤖",
+      "color": "#D33C3C",
+      "type": "dev"
+    },
+    {
+      "id": "docker",
+      "name": "Docker",
+      "category": "Development",
+      "description": "Container platform",
+      "icon": "🐳",
+      "color": "#2496ED",
+      "type": "dev"
+    },
+    {
+      "id": "kubernetes",
+      "name": "Kubernetes",
+      "category": "Development",
+      "description": "Container orchestration",
+      "icon": "☸️",
+      "color": "#326CE5",
+      "type": "dev"
+    },
+    {
+      "id": "slack-bot",
+      "name": "Slack Bot Builder",
+      "category": "Automation",
+      "description": "Create Slack bots",
+      "icon": "🤖",
+      "color": "#E01E5A",
+      "type": "automation"
+    },
+    {
+      "id": "zapier",
+      "name": "Zapier",
+      "category": "Automation",
+      "description": "Workflow automation platform",
+      "icon": "⚡",
+      "color": "#FF4F00",
+      "type": "automation"
+    },
+    {
+      "id": "ifttt",
+      "name": "IFTTT",
+      "category": "Automation",
+      "description": "If This Then That automation",
+      "icon": "🔄",
+      "color": "#5D4E60",
+      "type": "automation"
+    },
+    {
+      "id": "make",
+      "name": "Make",
+      "category": "Automation",
+      "description": "Visual workflow automation",
+      "icon": "⚙️",
+      "color": "#0066CC",
+      "type": "automation"
+    },
+    {
+      "id": "linkedin",
+      "name": "LinkedIn",
+      "category": "Social Media",
+      "description": "Professional network platform",
+      "icon": "🔗",
+      "color": "#0A66C2",
+      "type": "social"
+    },
+    {
+      "id": "twitter",
+      "name": "Twitter/X",
+      "category": "Social Media",
+      "description": "Social media platform",
+      "icon": "𝕏",
+      "color": "#000000",
+      "type": "social"
+    },
+    {
+      "id": "facebook",
+      "name": "Facebook",
+      "category": "Social Media",
+      "description": "Social media platform",
+      "icon": "👥",
+      "color": "#1877F2",
+      "type": "social"
+    },
+    {
+      "id": "instagram",
+      "name": "Instagram",
+      "category": "Social Media",
+      "description": "Photo sharing platform",
+      "icon": "📸",
+      "color": "#E4405F",
+      "type": "social"
+    },
+    {
+      "id": "tiktok",
+      "name": "TikTok",
+      "category": "Social Media",
+      "description": "Short-form video platform",
+      "icon": "🎵",
+      "color": "#000000",
+      "type": "social"
+    },
+    {
+      "id": "youtube",
+      "name": "YouTube",
+      "category": "Social Media",
+      "description": "Video sharing platform",
+      "icon": "📺",
+      "color": "#FF0000",
+      "type": "social"
+    },
+    {
+      "id": "quickbooks",
+      "name": "QuickBooks",
+      "category": "Accounting",
+      "description": "Accounting software",
+      "icon": "💵",
+      "color": "#29A2CC",
+      "type": "accounting"
+    },
+    {
+      "id": "xero",
+      "name": "Xero",
+      "category": "Accounting",
+      "description": "Cloud accounting platform",
+      "icon": "💰",
+      "color": "#0066CC",
+      "type": "accounting"
+    },
+    {
+      "id": "wave",
+      "name": "Wave",
+      "category": "Accounting",
+      "description": "Free accounting software",
+      "icon": "💳",
+      "color": "#7045CF",
+      "type": "accounting"
+    },
+    {
+      "id": "slack-call",
+      "name": "Slack Calling",
+      "category": "Communication",
+      "description": "Call through Slack",
+      "icon": "📞",
+      "color": "#E01E5A",
+      "type": "communication"
+    },
+    {
+      "id": "zoom",
+      "name": "Zoom",
+      "category": "Communication",
+      "description": "Video conferencing platform",
+      "icon": "📹",
+      "color": "#0B5CFF",
+      "type": "communication"
+    },
+    {
+      "id": "google-meet",
+      "name": "Google Meet",
+      "category": "Communication",
+      "description": "Video meeting platform",
+      "icon": "📹",
+      "color": "#00BFA5",
+      "type": "communication"
+    },
+    {
+      "id": "microsoft-365",
+      "name": "Microsoft 365",
+      "category": "Productivity",
+      "description": "Office suite",
+      "icon": "📎",
+      "color": "#0078D4",
+      "type": "productivity"
+    },
+    {
+      "id": "google-workspace",
+      "name": "Google Workspace",
+      "category": "Productivity",
+      "description": "Google business apps",
+      "icon": "📑",
+      "color": "#1F2937",
+      "type": "productivity"
+    }
+  ]
+}

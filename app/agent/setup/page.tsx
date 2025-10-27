@@ -3,17 +3,27 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, FileText, Loader2, Check, ArrowRight, X } from "lucide-react";
+import { Upload, FileText, Loader2, Check, ArrowRight } from "lucide-react";
+import AgentTreeOnboarding from "@/components/AgentTreeOnboarding";
+
+type SetupStep = "scraping" | "agent_onboarding" | "documents" | "ready";
+
+interface AgentProfile {
+  agentTypeId: string;
+  systemPrompt: string;
+  mascot: string;
+}
 
 export default function AgentSetupPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [companyUrl, setCompanyUrl] = useState("");
-  const [step, setStep] = useState<"scraping" | "documents" | "ready">("scraping");
+  const [step, setStep] = useState<SetupStep>("scraping");
   const [scrapeProgress, setScrapeProgress] = useState(0);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [botId, setBotId] = useState<string | null>(null);
   const [documentContent, setDocumentContent] = useState("");
+  const [agentProfile, setAgentProfile] = useState<AgentProfile | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -55,10 +65,18 @@ export default function AgentSetupPage() {
       // Store scrape data
       sessionStorage.setItem("agentScrapeData", JSON.stringify(scrapeData));
       
-      setTimeout(() => setStep("documents"), 1000);
+      setTimeout(() => setStep("agent_onboarding"), 1000);
     } catch (error) {
       console.error("Scraping failed:", error);
     }
+  };
+
+  const handleAgentOnboardingComplete = (profile: AgentProfile) => {
+    setAgentProfile(profile);
+    // Store agent profile in session for later use
+    sessionStorage.setItem("agentProfile", JSON.stringify(profile));
+    // Move to document upload step
+    setStep("documents");
   };
 
   const handleFileUpload = async (files: FileList) => {
@@ -104,6 +122,8 @@ export default function AgentSetupPage() {
     const data = await res.json();
     if (data.botId) {
       setBotId(data.botId);
+      // Store the bot ID in session for chat use
+      sessionStorage.setItem("agentBotId", data.botId);
       setStep("ready");
     }
   };
@@ -120,17 +140,17 @@ export default function AgentSetupPage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <AnimatePresence mode="wait">
-          {/* Scraping Step */}
-          {step === "scraping" && (
-            <motion.div
-              key="scraping"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="text-center"
-            >
+      <AnimatePresence mode="wait">
+        {/* Scraping Step */}
+        {step === "scraping" && (
+          <motion.div
+            key="scraping"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="min-h-screen flex items-center justify-center"
+          >
+            <div className="max-w-4xl mx-auto px-6 py-12 text-center w-full">
               <div className="mb-8">
                 <motion.div
                   className="w-24 h-24 bg-black rounded-full mx-auto mb-6 flex items-center justify-center"
@@ -156,17 +176,36 @@ export default function AgentSetupPage() {
                 </div>
                 <p className="text-sm text-gray-600 mt-2">{Math.round(scrapeProgress)}% complete</p>
               </div>
-            </motion.div>
-          )}
+            </div>
+          </motion.div>
+        )}
 
-          {/* Documents Step */}
-          {step === "documents" && (
-            <motion.div
-              key="documents"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
+        {/* Agent Onboarding Step */}
+        {step === "agent_onboarding" && (
+          <motion.div
+            key="agent_onboarding"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="min-h-screen"
+          >
+            <AgentTreeOnboarding 
+              botId={botId || `temp_${Date.now()}`}
+              onComplete={handleAgentOnboardingComplete}
+            />
+          </motion.div>
+        )}
+
+        {/* Documents Step */}
+        {step === "documents" && (
+          <motion.div
+            key="documents"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="min-h-screen flex items-center justify-center"
+          >
+            <div className="max-w-4xl mx-auto px-6 py-12 w-full">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold mb-2">Add your documents</h2>
                 <p className="text-gray-600">Help your assistant learn more about your company</p>
@@ -241,17 +280,19 @@ export default function AgentSetupPage() {
                   </motion.button>
                 </div>
               </div>
-            </motion.div>
-          )}
+            </div>
+          </motion.div>
+        )}
 
-          {/* Ready Step */}
-          {step === "ready" && (
-            <motion.div
-              key="ready"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center"
-            >
+        {/* Ready Step */}
+        {step === "ready" && (
+          <motion.div
+            key="ready"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="min-h-screen flex items-center justify-center"
+          >
+            <div className="max-w-4xl mx-auto px-6 py-12 text-center w-full">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -273,10 +314,10 @@ export default function AgentSetupPage() {
                 Open Assistant
                 <ArrowRight className="w-5 h-5" />
               </motion.button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

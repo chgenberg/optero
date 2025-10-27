@@ -8,6 +8,8 @@ import {
   Globe, RefreshCw, Plus, Play, Settings, BarChart3, 
   Calendar, Clock, Zap, Link2, Loader2, Check
 } from "lucide-react";
+import SessionHistory from "@/components/SessionHistory";
+import IntegrationPicker from "@/components/IntegrationPicker";
 
 interface BotDetailStats {
   bot: {
@@ -64,11 +66,13 @@ export default function BotDetailPage() {
   const [training, setTraining] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [buildingQA, setBuildingQA] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview'|'analytics'|'training'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview'|'analytics'|'training'|'integrations'|'sessions'>('overview');
+  const [connectedIntegrations, setConnectedIntegrations] = useState<any[]>([]);
 
   useEffect(() => {
     if (botId) {
       loadStats();
+      loadConnectedIntegrations();
     }
   }, [botId]);
 
@@ -107,6 +111,18 @@ export default function BotDetailPage() {
       setAnalytics(data);
     } catch (error) {
       console.error('Failed to load analytics:', error);
+    }
+  };
+
+  const loadConnectedIntegrations = async () => {
+    try {
+      const res = await fetch(`/api/bots/integrations?botId=${botId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setConnectedIntegrations(data.integrations);
+      }
+    } catch (error) {
+      console.error("Failed to load integrations:", error);
     }
   };
 
@@ -526,7 +542,9 @@ export default function BotDetailPage() {
             {[
               { id: 'overview', label: 'OVERVIEW', icon: BarChart3 },
               { id: 'analytics', label: 'ANALYTICS', icon: TrendingUp },
-              { id: 'training', label: 'TRAINING', icon: Database }
+              { id: 'training', label: 'TRAINING', icon: Database },
+              { id: 'integrations', label: 'INTEGRATIONS', icon: Link2 },
+              { id: 'sessions', label: 'SESSIONS', icon: Users }
             ].map(tab => (
               <button
                 key={tab.id}
@@ -843,6 +861,48 @@ export default function BotDetailPage() {
                   ADD MANUAL Q&A
                 </motion.button>
               </div>
+            </div>
+          </motion.div>
+        )}
+
+        {activeTab === 'integrations' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="minimal-card animate-pulse-shadow">
+              <h2 className="text-xl font-bold uppercase tracking-wider text-black mb-6">
+                CONNECTED INTEGRATIONS
+              </h2>
+              <IntegrationPicker botId={botId} onIntegrationsChange={setConnectedIntegrations} />
+            </div>
+          </motion.div>
+        )}
+
+        {activeTab === 'sessions' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="minimal-card animate-pulse-shadow">
+              <h2 className="text-xl font-bold uppercase tracking-wider text-black mb-6">
+                SESSION HISTORY
+              </h2>
+              <SessionHistory 
+                botId={botId} 
+                onSessionSelect={(sessionId) => {
+                  // Handle session selection - could navigate or load session
+                  console.log('Selected session:', sessionId);
+                }}
+                onNewSession={() => {
+                  // Handle new session creation
+                  console.log('New session created');
+                }}
+              />
             </div>
           </motion.div>
         )}

@@ -3,13 +3,24 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Paperclip, Menu, X, LogOut, Settings, Bot, User } from "lucide-react";
+import { Send, Paperclip, Menu, X, LogOut, Settings, Bot, User, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { fetchAgentProfile, fetchChatSession, saveChatSession } from "@/lib/agents-client";
+import SessionHistory from "@/components/SessionHistory";
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+}
+
+interface AgentData {
+  id: string;
+  name: string;
+  mascot: string;
+  color: string;
+  selectedCategoryPath: string[];
 }
 
 export default function AgentChatPage() {
@@ -22,25 +33,53 @@ export default function AgentChatPage() {
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [agentData, setAgentData] = useState<AgentData | null>(null);
+  const [agentLoading, setAgentLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
+  // Load agent profile on mount
   useEffect(() => {
-    if (!sessionStorage.getItem("agentEmail")) {
-      router.push("/agent");
-      return;
-    }
-    
-    // Load or create session
-    const existingSessionId = localStorage.getItem(`agent-session-${botId}`);
-    if (existingSessionId) {
-      setSessionId(existingSessionId);
-      loadSession(existingSessionId);
-    } else {
-      createSession();
-    }
+    const loadAgent = async () => {
+      try {
+        if (!sessionStorage.getItem("agentEmail")) {
+          router.push("/agent");
+          return;
+        }
+
+        const profile = await fetchAgentProfile(botId);
+        if (profile && profile.agentType) {
+          setAgentData({
+            id: profile.agentType.id,
+            name: profile.agentType.name,
+            mascot: profile.agentType.mascot,
+            color: profile.agentType.color,
+            selectedCategoryPath: profile.selectedCategoryPath,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load agent profile:", error);
+      } finally {
+        setAgentLoading(false);
+      }
+    };
+
+    loadAgent();
   }, [botId]);
+
+  // Load or create session
+  useEffect(() => {
+    if (!agentLoading) {
+      const existingSessionId = localStorage.getItem(`agent-session-${botId}`);
+      if (existingSessionId) {
+        setSessionId(existingSessionId);
+        loadSession(existingSessionId);
+      } else {
+        createSession();
+      }
+    }
+  }, [botId, agentLoading]);
 
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -51,28 +90,47 @@ export default function AgentChatPage() {
   const createSession = async () => {
     const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
     setSessionId(newSessionId);
-    localStorage.setItem(`agent-session-${botId}`, newSessionId);
     
-    // Add welcome message
-    setMessages([{
+    // Add welcome message from agent
+    const welcomeMessage = agentData
+      ? `Hej! Jag är ${agentData.name}. ${agentData.selectedCategoryPath.join(" → ")} - Hur kan jag hjälpa dig idag?`
+      : "Hej! Jag är din AI-assistent. Hur kan jag hjälpa dig?";
+
+    const initialMessages = [{
       id: "1",
-      role: "assistant",
-      content: "Hello! I'm your company AI assistant. I've learned from your website and documents. How can I help you today?",
+      role: "assistant" as const,
+      content: welcomeMessage,
       timestamp: new Date()
-    }]);
+    }];
+
+    setMessages(initialMessages);
+
+    // Save initial session to DB
+    try {
+      await saveChatSession({
+        botId,
+        sessionId: newSessionId,
+        messages: initialMessages,
+        title: `Chat ${new Date().toLocaleDateString()}`,
+      });
+      // Store session ID in localStorage for quick access
+      localStorage.setItem(`agent-session-${botId}`, newSessionId);
+    } catch (error) {
+      console.error("Failed to save session:", error);
+    }
   };
 
   const loadSession = async (sessionId: string) => {
     try {
-      const res = await fetch(`/api/session?sessionId=${sessionId}`);
-      const data = await res.json();
+      const session = await fetchChatSession(botId, sessionId);
       
-      if (data.session && data.session.messages) {
-        setMessages(data.session.messages);
+      if (session && session.messages) {
+        setMessages(session.messages);
       } else {
         createSession();
       }
     } catch (error) {
+      console.error("Failed to load session:", error);
       createSession();
     }
   };
@@ -107,23 +165,24 @@ export default function AgentChatPage() {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: data.reply || "I couldn't process that request. Please try again.",
+        content: data.reply || "Jag kunde inte bearbeta din begäran. Försök igen.",
         timestamp: new Date()
       };
       
-      setMessages(prev => [...prev, assistantMessage]);
+      const updatedMessages = [...messages, userMessage, assistantMessage];
+      setMessages(updatedMessages);
       
-      // Save session
+      // Save session to DB
       if (sessionId) {
-        await fetch("/api/session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sessionId,
+        try {
+          await saveChatSession({
             botId,
-            messages: [...messages, userMessage, assistantMessage]
-          })
-        });
+            sessionId,
+            messages: updatedMessages,
+          });
+        } catch (error) {
+          console.error("Failed to save session:", error);
+        }
       }
     } catch (error) {
       console.error("Chat error:", error);
@@ -159,7 +218,7 @@ export default function AgentChatPage() {
         setMessages(prev => [...prev, {
           id: Date.now().toString(),
           role: "assistant",
-          content: "I've learned from the documents you uploaded. You can now ask me questions about them!",
+          content: "Jag har lärt mig från dokumenten du skickade. Du kan nu ställa frågor om dem!",
           timestamp: new Date()
         }]);
       }
@@ -171,9 +230,19 @@ export default function AgentChatPage() {
   const logout = () => {
     sessionStorage.removeItem("agentEmail");
     sessionStorage.removeItem("agentCompanyUrl");
-    localStorage.removeItem(`agent-session-${botId}`);
+    // Don't remove localStorage session ID - it will be used when logging back in
     router.push("/agent");
   };
+
+  const getMascotPath = (mascot: string) => `/Mascots/${mascot}`;
+
+  if (agentLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-white">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex bg-white">
@@ -205,28 +274,45 @@ export default function AgentChatPage() {
                   </button>
                 </div>
                 
-                <nav className="space-y-2">
-                  <button className="w-full text-left px-4 py-3 bg-white rounded-lg font-medium flex items-center gap-3">
-                    <Bot className="w-5 h-5" />
-                    Current Chat
-                  </button>
-                  
-                  <button
-                    onClick={() => window.location.reload()}
-                    className="w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg flex items-center gap-3 text-gray-700"
-                  >
-                    <Settings className="w-5 h-5" />
-                    Settings
-                  </button>
-                  
-                  <button
-                    onClick={logout}
-                    className="w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg flex items-center gap-3 text-gray-700"
-                  >
-                    <LogOut className="w-5 h-5" />
-                    Logout
-                  </button>
-                </nav>
+                {/* Agent Info in Sidebar */}
+                {agentData && (
+                  <div className="mb-6 pb-6 border-b border-gray-200">
+                    <div className="relative w-16 h-16 mx-auto mb-3">
+                      <Image
+                        src={getMascotPath(agentData.mascot)}
+                        alt={agentData.name}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                    <p className="text-sm font-semibold text-center">{agentData.name}</p>
+                    <p className="text-xs text-gray-600 text-center mt-1">
+                      {agentData.selectedCategoryPath.join(" → ")}
+                    </p>
+                  </div>
+                )}
+                
+                {/* Session History */}
+                <SessionHistory
+                  botId={botId}
+                  currentSessionId={sessionId || undefined}
+                  onSessionSelect={(newSessionId) => {
+                    setSessionId(newSessionId);
+                    loadSession(newSessionId);
+                  }}
+                  onNewSession={() => {
+                    createSession();
+                  }}
+                />
+
+                {/* Logout Button */}
+                <button
+                  onClick={logout}
+                  className="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-gray-700 hover:bg-red-50 hover:text-red-700 transition-colors mt-4 border-t border-gray-200 pt-4"
+                >
+                  <LogOut className="w-5 h-5" />
+                  Logout
+                </button>
               </div>
             </motion.div>
           </>
@@ -246,9 +332,21 @@ export default function AgentChatPage() {
                 <Menu className="w-5 h-5" />
               </button>
               
-              <div>
-                <h1 className="font-semibold">Company Assistant</h1>
-                <p className="text-sm text-gray-600">Always ready to help</p>
+              <div className="flex items-center gap-3">
+                {agentData && (
+                  <div className="relative w-10 h-10">
+                    <Image
+                      src={getMascotPath(agentData.mascot)}
+                      alt={agentData.name}
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                )}
+                <div>
+                  <h1 className="font-semibold">{agentData?.name || "Company Assistant"}</h1>
+                  <p className="text-sm text-gray-600">Always ready to help</p>
+                </div>
               </div>
             </div>
             
@@ -271,7 +369,17 @@ export default function AgentChatPage() {
                     message.role === "user" ? "justify-end" : "justify-start"
                   }`}
                 >
-                  {message.role === "assistant" && (
+                  {message.role === "assistant" && agentData && (
+                    <div className="relative w-8 h-8 flex-shrink-0">
+                      <Image
+                        src={getMascotPath(agentData.mascot)}
+                        alt={agentData.name}
+                        fill
+                        className="object-contain rounded-full bg-gray-100 p-1"
+                      />
+                    </div>
+                  )}
+                  {message.role === "assistant" && !agentData && (
                     <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center flex-shrink-0">
                       <Bot className="w-5 h-5 text-white" />
                     </div>
@@ -314,9 +422,21 @@ export default function AgentChatPage() {
                 animate={{ opacity: 1 }}
                 className="flex gap-4"
               >
-                <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-white" />
-                </div>
+                {agentData && (
+                  <div className="relative w-8 h-8 flex-shrink-0">
+                    <Image
+                      src={getMascotPath(agentData.mascot)}
+                      alt={agentData.name}
+                      fill
+                      className="object-contain rounded-full bg-gray-100 p-1"
+                    />
+                  </div>
+                )}
+                {!agentData && (
+                  <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-white" />
+                  </div>
+                )}
                 <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
                   <motion.div className="flex gap-1">
                     {[0, 1, 2].map((i) => (
