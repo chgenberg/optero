@@ -348,17 +348,6 @@ export default function BotDetailPage() {
           </ReactFlow>
         </ReactFlowProvider>
 
-        {/* Floating Action Buttons */}
-        <div className="absolute top-4 left-4 z-20">
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="bg-white border-2 border-black rounded-lg px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
-          >
-            <ArrowLeft size={16} />
-            Back to Dashboard
-          </button>
-            </div>
-
         {/* Settings Toggle */}
         <div className="absolute top-1/2 right-0 transform -translate-y-1/2 z-20">
           <button
