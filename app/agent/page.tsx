@@ -39,8 +39,10 @@ export default function AgentLandingPage() {
             transition={{ duration: 2, repeat: Infinity }}
           >
             <img
-              src="/Mascots/Mr.Green.png"
+              src="./Mascots/Mr.Green.png"
               alt="Mr. Green AI Agent"
+              onError={(e) => console.error("Image failed to load", e)}
+              onLoad={() => console.log("Image loaded successfully")}
               style={{ 
                 width: '120px', 
                 height: '120px',
