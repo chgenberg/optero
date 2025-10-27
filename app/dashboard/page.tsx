@@ -216,8 +216,8 @@ function DashboardContent() {
       data: { 
         bot, 
         onChat: () => {
-          // Navigate to bot detail page
-          router.push(`/bots/${bot.id}`);
+          // Navigate to chat page
+          router.push(`/dashboard/${bot.id}/chat`);
         },
         onDelete: async () => {
           try {
