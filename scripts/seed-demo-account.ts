@@ -78,7 +78,6 @@ Key Features:
 
 This is a demo bot to showcase the capabilities of MENDIO's platform.
 Feel free to ask any questions about how MENDIO works!`,
-        source: "demo",
         metadata: {
           type: "introduction",
           language: "en"
