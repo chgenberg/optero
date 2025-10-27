@@ -40,7 +40,7 @@ export async function GET(
     return NextResponse.json({
       ...bot,
       spec: {
-        ...bot.spec,
+        ...(bot.spec as any || {}),
         stats,
       },
     });
