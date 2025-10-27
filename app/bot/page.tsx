@@ -1321,7 +1321,7 @@ export default function PersonalAgentLanding() {
                           headers: { 'Content-Type': 'application/json' }, 
                           body: JSON.stringify({ botId, title: 'Chat upload', content: upj.content, source: 'chat' }) 
                         });
-                        setChatMessages((m) => [...m, { role: 'assistant', content: 'Thanks! I learned from your files and will use them in my answers.' }]);
+                        setChatMessages((m) => [...m, { id: `msg-${Date.now()}`, role: 'assistant', content: 'Thanks! I learned from your files and will use them in my answers.', feedback: null, timestamp: Date.now() }]);
                       }
                     } catch {}
                     e.currentTarget.value = '';
