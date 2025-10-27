@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Paperclip, Menu, X, LogOut, Settings, Bot, User, Loader2 } from "lucide-react";
+import { Send, Paperclip, Menu, X, LogOut, Settings, Bot, User, Loader2, RotateCw } from "lucide-react";
 import Image from "next/image";
 import { fetchAgentProfile, fetchChatSession, saveChatSession } from "@/lib/agents-client";
 import SessionHistory from "@/components/SessionHistory";
@@ -245,6 +245,10 @@ export default function AgentChatPage() {
     router.push("/agent");
   };
 
+  const resetOnboarding = () => {
+    setNeedsOnboarding(true);
+  };
+
   const getMascotPath = (mascot: string) => `/Mascots/${mascot}`;
 
   if (agentLoading) {
@@ -402,6 +406,14 @@ export default function AgentChatPage() {
             <div className="text-sm text-gray-500">
               {sessionStorage.getItem("agentEmail")}
             </div>
+
+            <button
+              onClick={resetOnboarding}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              title="Reset Onboarding"
+            >
+              <RotateCw className="w-5 h-5 text-gray-600" />
+            </button>
           </div>
         </div>
 
