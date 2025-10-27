@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, X, Upload, Loader2, CheckCircle2, Bot, ArrowRight, Paperclip, Star, Zap, Shield, Settings } from "lucide-react";
+import { Send, X, Upload, Loader2, CheckCircle2, Bot, ArrowRight, Paperclip, Star, Zap, Shield, Settings, Copy, ThumbsUp, ThumbsDown } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 interface ScrapeResult {
   success?: boolean;
@@ -10,6 +11,14 @@ interface ScrapeResult {
   pagesScraped?: number;
   pages?: { url: string; title: string; text: string }[];
   analysis?: any;
+}
+
+interface ChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  feedback?: "up" | "down" | null;
+  timestamp: number;
 }
 
 export default function PersonalAgentLanding() {
@@ -32,7 +41,7 @@ export default function PersonalAgentLanding() {
   const [building, setBuilding] = useState(false);
   const [botId, setBotId] = useState<string | null>(null);
 
-  const [chatMessages, setChatMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -73,6 +82,29 @@ export default function PersonalAgentLanding() {
       setOpen(true);
     }
   }, []);
+
+  // Save and load chat history from localStorage
+  useEffect(() => {
+    if (botId) {
+      // Load chat history from localStorage
+      const saved = localStorage.getItem(`chatHistory_${botId}`);
+      if (saved) {
+        try {
+          const messages = JSON.parse(saved) as ChatMessage[];
+          setChatMessages(messages);
+        } catch (e) {
+          console.error('Failed to load chat history:', e);
+        }
+      }
+    }
+  }, [botId]);
+
+  // Save chat history whenever it changes
+  useEffect(() => {
+    if (botId && chatMessages.length > 0) {
+      localStorage.setItem(`chatHistory_${botId}`, JSON.stringify(chatMessages));
+    }
+  }, [chatMessages, botId]);
 
   useEffect(() => {
     if (botId) {
@@ -203,7 +235,13 @@ export default function PersonalAgentLanding() {
         } catch {}
         setStep(2);
         setChatMessages([
-          { role: "assistant", content: "Hi! I'm your personal AI assistant. I've learned everything about your company. Ask me anything!" }
+          { 
+            id: `msg-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+            role: "assistant", 
+            content: "Hi! I'm your personal AI assistant. I've learned everything about your company. Ask me anything!",
+            feedback: null,
+            timestamp: Date.now()
+          }
         ]);
       }
     } catch {}
@@ -214,7 +252,17 @@ export default function PersonalAgentLanding() {
     if (!chatInput.trim() || !botId || chatLoading) return;
     const msg = chatInput.trim();
     setChatInput("");
-    setChatMessages((m) => [...m, { role: "user", content: msg }]);
+    
+    const userMessageId = `msg-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    const userMessage: ChatMessage = {
+      id: userMessageId,
+      role: "user",
+      content: msg,
+      feedback: null,
+      timestamp: Date.now()
+    };
+    
+    setChatMessages((m) => [...m, userMessage]);
     setChatLoading(true);
     try {
       const res = await fetch("/api/bots/chat", {
@@ -222,17 +270,36 @@ export default function PersonalAgentLanding() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           botId, 
-          history: [...chatMessages, { role: "user", content: msg }],
+          history: [...chatMessages, userMessage],
           locale: botSettings.language,
           tone: botSettings.tone
         })
       });
       const data = await res.json();
       const reply = data?.reply || "I couldn't answer that. Please try another question.";
-      setChatMessages((m) => [...m, { role: "assistant", content: reply }]);
+      
+      const assistantMessageId = `msg-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+      const assistantMessage: ChatMessage = {
+        id: assistantMessageId,
+        role: "assistant",
+        content: reply,
+        feedback: null,
+        timestamp: Date.now()
+      };
+      
+      setChatMessages((m) => [...m, assistantMessage]);
     } catch {
-      setChatMessages((m) => [...m, { role: "assistant", content: "Technical error. Please try again." }]);
-    } finally { setChatLoading(false); }
+      const errorMessage: ChatMessage = {
+        id: `msg-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+        role: "assistant",
+        content: "Technical error. Please try again.",
+        feedback: null,
+        timestamp: Date.now()
+      };
+      setChatMessages((m) => [...m, errorMessage]);
+    } finally { 
+      setChatLoading(false); 
+    }
   };
 
   const handleSaveBot = async (purpose: 'customer' | 'internal') => {
@@ -1022,16 +1089,16 @@ export default function PersonalAgentLanding() {
             {/* Messages */}
             <div ref={chatContainerRef} className="flex-1 overflow-y-auto px-4 py-4 bg-gray-50">
               <div className="space-y-2">
-                {chatMessages.map((msg, i) => (
+                {chatMessages.map((msg) => (
                   <motion.div
-                    key={i}
+                    key={msg.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className={`flex gap-2 ${msg.role === "user" ? "justify-end" : ""}`}
                   >
                     {msg.role === "assistant" && (
                       <div 
-                        className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                        className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1"
                         style={{ backgroundColor: botSettings.color }}
                       >
                         <Bot className="w-4 h-4 text-white" />
@@ -1039,7 +1106,7 @@ export default function PersonalAgentLanding() {
                     )}
                     <div className={`max-w-[70%] ${msg.role === "user" ? "order-1" : ""}`}>
                       <div 
-                        className={`rounded-2xl px-4 py-2 ${
+                        className={`rounded-2xl px-4 py-3 ${
                           msg.role === "user" 
                             ? "text-white" 
                             : "bg-gray-200 text-gray-900"
@@ -1047,14 +1114,76 @@ export default function PersonalAgentLanding() {
                         style={msg.role === "user" ? { backgroundColor: botSettings.color } : {}}
                       >
                         {msg.role === "assistant" ? (
-                          <div 
-                            className="text-sm prose prose-sm max-w-none prose-p:my-2 prose-strong:font-bold prose-ul:my-2 prose-li:my-1"
-                            dangerouslySetInnerHTML={{ __html: msg.content }}
-                          />
+                          <div className="text-sm">
+                            <ReactMarkdown
+                              components={{
+                                p: ({ children }) => <p className="my-1">{children}</p>,
+                                strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+                                em: ({ children }) => <em className="italic">{children}</em>,
+                                ul: ({ children }) => <ul className="list-disc list-inside my-1">{children}</ul>,
+                                ol: ({ children }) => <ol className="list-decimal list-inside my-1">{children}</ol>,
+                                li: ({ children }) => <li className="my-0.5">{children}</li>,
+                                code: ({ children }) => <code className="bg-gray-300 px-1 rounded text-xs">{children}</code>,
+                                a: ({ children, href }) => <a href={href} className="underline" target="_blank" rel="noopener noreferrer">{children}</a>,
+                              }}
+                            >
+                              {msg.content}
+                            </ReactMarkdown>
+                          </div>
                         ) : (
                           <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                         )}
                       </div>
+
+                      {/* Actions for assistant messages */}
+                      {msg.role === "assistant" && (
+                        <motion.div 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="flex items-center gap-1 mt-2"
+                        >
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(msg.content);
+                              alert('Copied to clipboard!');
+                            }}
+                            className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-300 rounded transition-colors"
+                            title="Copy message"
+                          >
+                            <Copy className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setChatMessages(m => m.map(message => 
+                                message.id === msg.id ? { ...message, feedback: message.feedback === 'up' ? null : 'up' } : message
+                              ));
+                            }}
+                            className={`p-1.5 rounded transition-colors ${
+                              msg.feedback === 'up' 
+                                ? 'text-green-600 bg-green-100' 
+                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-300'
+                            }`}
+                            title="Helpful response"
+                          >
+                            <ThumbsUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setChatMessages(m => m.map(message => 
+                                message.id === msg.id ? { ...message, feedback: message.feedback === 'down' ? null : 'down' } : message
+                              ));
+                            }}
+                            className={`p-1.5 rounded transition-colors ${
+                              msg.feedback === 'down' 
+                                ? 'text-red-600 bg-red-100' 
+                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-300'
+                            }`}
+                            title="Unhelpful response"
+                          >
+                            <ThumbsDown className="w-3.5 h-3.5" />
+                          </button>
+                        </motion.div>
+                      )}
                     </div>
                   </motion.div>
                 ))}
