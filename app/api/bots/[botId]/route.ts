@@ -13,7 +13,7 @@ export async function GET(
       where: { id: botId },
       include: {
         user: true,
-        integrations: true,
+        integrationConnections: true,
         knowledge: {
           select: {
             id: true,
@@ -34,7 +34,7 @@ export async function GET(
       totalChats: 0, // You can implement actual chat counting
       lastActive: bot.updatedAt,
       knowledgeCount: bot.knowledge.length,
-      integrationCount: bot.integrations.length,
+      integrationCount: bot.integrationConnections.length,
     };
 
     return NextResponse.json({
