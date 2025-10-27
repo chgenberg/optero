@@ -44,7 +44,9 @@ export default function AgentLandingPage() {
               alt="Mr. Green AI Agent"
               width={120}
               height={120}
+              priority
               className="object-contain"
+              style={{ maxWidth: '120px', height: 'auto' }}
             />
           </motion.div>
           
