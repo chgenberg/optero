@@ -32,6 +32,7 @@ interface Bot {
   companyUrl?: string;
   spec?: any;
   integrations?: any[];
+  createdAt?: string;
 }
 
 interface Integration {
@@ -43,22 +44,55 @@ interface Integration {
 }
 
 // Custom Bot Node Component
-const BotNode = ({ data }: { data: { bot: Bot; onChat: () => void } }) => {
+const BotNode = ({ data }: { data: { bot: Bot; onChat: () => void; onDelete: () => void; onEdit: () => void; stats?: any } }) => {
   return (
-    <div
-      className="relative bg-white border-2 border-black rounded-full w-32 h-32 flex items-center justify-center cursor-pointer hover:scale-105 transition-all bot-node-shadow"
-      onClick={data.onChat}
-    >
-      <Handle type="source" position={Position.Right} className="opacity-0" />
-      <Handle type="target" position={Position.Left} className="opacity-0" />
-      <Handle type="source" position={Position.Top} className="opacity-0" />
-      <Handle type="target" position={Position.Bottom} className="opacity-0" />
+    <div className="relative">
+      <div
+        className="relative bg-white border-2 border-black rounded-full w-32 h-32 flex items-center justify-center cursor-pointer hover:scale-105 transition-all bot-node-shadow"
+        onClick={data.onChat}
+      >
+        <Handle type="source" position={Position.Right} className="opacity-0" />
+        <Handle type="target" position={Position.Left} className="opacity-0" />
+        <Handle type="source" position={Position.Top} className="opacity-0" />
+        <Handle type="target" position={Position.Bottom} className="opacity-0" />
+        
+        <div className="text-center p-4">
+          <p className="text-xs font-bold truncate">{data.bot.name}</p>
+          <p className="text-xs text-gray-500 truncate mt-1">
+            {data.bot.companyUrl?.replace(/https?:\/\//, "") || "No URL"}
+          </p>
+          {data.stats && (
+            <p className="text-xs text-blue-600 mt-1">
+              💬 {data.stats.chats || 0}
+            </p>
+          )}
+        </div>
+      </div>
       
-      <div className="text-center p-4">
-        <p className="text-xs font-bold truncate">{data.bot.name}</p>
-        <p className="text-xs text-gray-500 truncate mt-1">
-          {data.bot.companyUrl?.replace(/https?:\/\//, "") || "No URL"}
-        </p>
+      {/* Action buttons */}
+      <div className="absolute -top-2 -right-2 flex gap-1">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            data.onEdit();
+          }}
+          className="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold transition-colors"
+          title="Edit bot"
+        >
+          ✎
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            if (confirm(`Delete "${data.bot.name}"? This cannot be undone.`)) {
+              data.onDelete();
+            }
+          }}
+          className="bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold transition-colors"
+          title="Delete bot"
+        >
+          ✕
+        </button>
       </div>
     </div>
   );
@@ -184,7 +218,31 @@ function DashboardContent() {
         onChat: () => {
           // Temporary: always open public chat without login
           router.push(`/bots/chat?botId=${bot.id}`);
-        }
+        },
+        onDelete: async () => {
+          try {
+            const res = await fetch('/api/bots/delete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ botId: bot.id })
+            });
+            if (res.ok) {
+              setBots(prev => prev.filter(b => b.id !== bot.id));
+              setNodes(prev => prev.filter(node => !node.id.startsWith(`bot-${bot.id}`)));
+              setEdges(prev => prev.filter(edge => !edge.source.startsWith(`bot-${bot.id}`) && !edge.target.startsWith(`bot-${bot.id}`)));
+              alert('Bot deleted successfully');
+            }
+          } catch (error) {
+            console.error('Failed to delete bot:', error);
+            alert('Failed to delete bot');
+          }
+        },
+        onEdit: () => {
+          // Implement edit bot logic
+          console.log("Edit bot:", bot.id);
+          router.push(`/bot/${bot.id}`);
+        },
+        stats: bot.spec?.stats || {} // Assuming bot.spec contains stats
       },
     }));
 
