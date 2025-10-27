@@ -74,10 +74,10 @@ const BotNode = ({ data }: { data: { bot: Bot; isMain?: boolean } }) => {
         shadow-2xl hover:shadow-3xl
         border-2 border-gray-300 hover:border-white
       `}>
-        <Handle type="source" position={Position.Right} className="w-3 h-3 bg-white border-2 border-gray-800" />
-        <Handle type="target" position={Position.Left} className="w-3 h-3 bg-white border-2 border-gray-800" />
-        <Handle type="source" position={Position.Top} className="w-3 h-3 bg-white border-2 border-gray-800" />
-        <Handle type="target" position={Position.Bottom} className="w-3 h-3 bg-white border-2 border-gray-800" />
+        <Handle type="source" position={Position.Right} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
+        <Handle type="target" position={Position.Left} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
+        <Handle type="source" position={Position.Top} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
+        <Handle type="target" position={Position.Bottom} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
         
         <div className="text-center p-4">
           <div className="text-white mb-2">
@@ -127,10 +127,10 @@ const IntegrationNode = ({ data }: { data: { integration: Integration } }) => {
         shadow-xl hover:shadow-2xl
         border-2 border-white/20 hover:border-white/40
       `}>
-        <Handle type="source" position={Position.Right} className="w-3 h-3 bg-white border-2 border-gray-800" />
-        <Handle type="target" position={Position.Left} className="w-3 h-3 bg-white border-2 border-gray-800" />
-        <Handle type="source" position={Position.Top} className="w-3 h-3 bg-white border-2 border-gray-800" />
-        <Handle type="target" position={Position.Bottom} className="w-3 h-3 bg-white border-2 border-gray-800" />
+        <Handle type="source" position={Position.Right} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
+        <Handle type="target" position={Position.Left} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
+        <Handle type="source" position={Position.Top} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
+        <Handle type="target" position={Position.Bottom} className="w-4 h-4 bg-white border-2 border-gray-800 hover:scale-150 transition-transform cursor-grab" />
         
         <div className="text-center">
           <div className="mb-2">
@@ -316,7 +316,7 @@ export default function BotDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Header />
       
       <main className="flex-1 relative" style={{ height: "calc(100vh - 160px)" }}>
@@ -336,7 +336,7 @@ export default function BotDetailPage() {
             }}
             fitView
           >
-            <Background color="#e5e5e5" gap={20} />
+            <Background color="#f0f0f0" gap={20} />
             <Controls />
           </ReactFlow>
         </ReactFlowProvider>
